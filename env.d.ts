@@ -3,5 +3,6 @@ declare namespace NodeJS {
         AUTH0_ID: string
         AUTH0_SECRET: string
         AUTH0_ISSUER: string
+        NEXTAUTH_URL: string
     }
   }
