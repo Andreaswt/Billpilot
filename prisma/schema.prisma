@@ -2,18 +2,17 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 
-// ----- Comment out for local db -----
+// ----- Comment in for local db -----
 // generator client {
 //     provider = "prisma-client-js"
 // }
 
 // datasource db {
-    // provider = "sqlite"
-    //url      = "file:./db.sqlite"
+//     provider = "sqlite"
+//     url      = "file:./db.sqlite"
 // }
 
-
-// ----- Comment out for live db -----
+// ----- Comment in for live db -----
 generator client {
   provider = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
@@ -24,7 +23,6 @@ datasource db {
   url = env("DATABASE_URL")
   referentialIntegrity = "prisma"
 }
-
 
 model Example {
     id String @id @default(cuid())

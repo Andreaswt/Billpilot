@@ -13,6 +13,7 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.AUTH0_ID,
       clientSecret: process.env.AUTH0_SECRET,
       issuer: process.env.AUTH0_ISSUER,
+      authorization: `https://${process.env.AUTH0_ISSUER}/authorize?response_type=code&prompt=login` // Force login after signout with prompt=login
     })
   ],
 };
