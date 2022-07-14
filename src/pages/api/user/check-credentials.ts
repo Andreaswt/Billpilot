@@ -41,6 +41,8 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
     // },
   });
 
+  if (!user?.password) return;
+
   if (user && user.password == hashPassword(req.body.password)) {
     logger.debug("password correct");
     res.json(omit(user, "password"));
