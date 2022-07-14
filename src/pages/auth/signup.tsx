@@ -20,8 +20,9 @@ import { useForm } from "react-hook-form";
 import { logger } from "../../../lib/logger";
 import { useRouter } from "next/router";
 import { resetLevel } from "loglevel";
+import { NextPage } from "next";
 
-export default function SignupCard() {
+const SignupCard: NextPage = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const {
@@ -148,3 +149,5 @@ export default function SignupCard() {
     </Flex>
   );
 }
+
+export default SignupCard;

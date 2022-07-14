@@ -29,8 +29,9 @@ import { each, forOwn, join } from "lodash";
 
 //icons
 import { BiLockAlt } from "react-icons/bi";
+import { NextPage } from "next";
 
-export default function SimpleCard() {
+const SimpleCard: NextPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { isOpen: isOpenCollapse, onToggle: onToggleCollapse } =
     useDisclosure();
@@ -199,3 +200,5 @@ export default function SimpleCard() {
     </Flex>
   );
 }
+
+export default SimpleCard;
