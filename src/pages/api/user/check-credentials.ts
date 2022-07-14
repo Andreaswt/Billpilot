@@ -30,7 +30,7 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
       name: true,
       email: true,
       image: true,
-      password: true,
+      password: true
     },
   });
   if (user && user.password == hashPassword(req.body.password)) {
