@@ -28,7 +28,6 @@ import { useRouter } from "next/router";
 import { each, forOwn, join } from "lodash";
 
 //icons
-import { AiFillGithub } from "react-icons/ai";
 import { BiLockAlt } from "react-icons/bi";
 
 export default function SimpleCard() {

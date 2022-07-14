@@ -7,8 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db": "prisma generate",
-    "env": "npx vercel env pull"
+    "db-generate-client": "prisma generate",
+    "db-update": "prisma db push",
+    "fetch-env": "npx vercel env pull"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.4",
