@@ -18,4 +18,27 @@ export const exampleRouter = createRouter()
     async resolve({ ctx }) {
       return await ctx.prisma.example.findMany();
     },
+  })
+  .query("getSingle", {
+    input: z
+    .object({
+      id: z.string(),
+    })
+    .nullish(),
+    async resolve({ ctx, input }) {
+      const user = await ctx.prisma.user.findUnique({
+        where: { id: input?.id },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+          password: true
+        },
+      });
+
+      return {
+        greeting: `Hello ${input?.id ?? "world"}`,
+      };
+    },
   });
