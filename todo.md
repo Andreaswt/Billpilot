@@ -1,9 +1,7 @@
 ## TODO
 
 ### CI/DC
-- Fiks authentication
-- [X] Lav development og production branched i planetscale og i vercel (se om man stadig kan bruge sqlite til helt lokalt dog)
-
+- Få svar på hvorfor der ikke kan buildes i vercel
 ### Chores
 - Lav en side brugeren vises når de ikke er logget ind, og som viser en login knap
 - Lav en side "dashboard", som brugeren bliver vist når de er logget ind

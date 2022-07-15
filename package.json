@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build --debug",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "db-generate-client": "prisma generate",
@@ -44,7 +44,6 @@
     "@types/react-dom": "18.0.5",
     "eslint": "8.18.0",
     "eslint-config-next": "12.1.6",
-    "prettier": "^2.7.1",
     "prisma": "^4.0.0",
     "typescript": "4.7.4"
   }
