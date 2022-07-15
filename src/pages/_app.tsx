@@ -6,15 +6,21 @@ import superjson from "superjson";
 import { SessionProvider } from "next-auth/react";
 import "../styles/globals.css";
 import { ChakraProvider } from '@chakra-ui/react'
+import theme from "../styles/theme";
+import '@fontsource/raleway/500.css'
+import '@fontsource/open-sans/700.css'
+import SidebarWithHeader from "../components/layout/layout";
 
 const MyApp: AppType = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <SessionProvider session={pageProps.session} refetchInterval={0}>
-        <Component {...pageProps} />
+        <SidebarWithHeader>
+          <Component {...pageProps} />
+        </SidebarWithHeader>
       </SessionProvider>
     </ChakraProvider>
   );

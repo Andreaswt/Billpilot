@@ -15,9 +15,11 @@ import {
 } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import { ReactText } from 'react';
-import { useSession } from "next-auth/react"
 import SidebarContent from './sidebar-content';
 import MobileNav from './mobile-props';
+// import { GetServerSideProps } from 'next';
+// import { Session } from 'next-auth';
+// import { getSession, useSession } from 'next-auth/react';
 
 interface LinkItemProps {
   name: string;
@@ -65,3 +67,12 @@ export default function SidebarWithHeader({
   );
 }
 
+// export const getServerSideProps: GetServerSideProps<{
+//   session: Session | null
+// }> = async (context) => {
+//   return {
+//     props: {
+//       session: await getSession(context),
+//     },
+//   }
+// }

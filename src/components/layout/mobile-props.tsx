@@ -50,8 +50,9 @@ interface MobileProps extends FlexProps {
         <Text
           display={{ base: 'flex', md: 'none' }}
           fontSize="2xl"
-          fontFamily="monospace"
-          fontWeight="bold">
+          fontWeight="bold"
+          fontFamily={'heading'}
+          color={useColorModeValue('gray.800', 'white')}>
           Logo
         </Text>
   

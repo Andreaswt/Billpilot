@@ -45,7 +45,9 @@ interface SidebarProps extends BoxProps {
         h="full"
         {...rest}>
         <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-          <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
+          <Text fontFamily={'heading'}
+            color={useColorModeValue('gray.800', 'white')}
+            fontSize="2xl">
             Logo
           </Text>
           <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />

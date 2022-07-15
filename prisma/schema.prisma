@@ -3,26 +3,26 @@
 
 
 // ----- Comment in for local db -----
-// generator client {
-//     provider = "prisma-client-js"
-// }
-
-// datasource db {
-//     provider = "sqlite"
-//     url      = "file:./db.sqlite"
-// }
-
-// ----- Comment in for live db -----
 generator client {
-  provider = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
-  url = env("DATABASE_URL")
-  referentialIntegrity = "prisma"
+    provider = "sqlite"
+    url      = "file:./db.sqlite"
 }
+
+// ----- Comment in for live db -----
+// generator client {
+//   provider = "prisma-client-js"
+//   previewFeatures = ["referentialIntegrity"]
+// }
+
+// datasource db {
+//   provider = "mysql"
+//   url = env("DATABASE_URL")
+//   referentialIntegrity = "prisma"
+// }
 
 model Example {
     id String @id @default(cuid())
