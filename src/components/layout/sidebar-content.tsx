@@ -24,14 +24,16 @@ interface SidebarProps extends BoxProps {
   interface LinkItemProps {
     name: string;
     icon: IconType;
+    path: string;
   }
   const LinkItems: Array<LinkItemProps> = [
-    { name: 'Home', icon: FiHome },
-    { name: 'Trending', icon: FiTrendingUp },
-    { name: 'Explore', icon: FiCompass },
-    { name: 'Favourites', icon: FiStar },
-    { name: 'Settings', icon: FiSettings },
+    { name: 'Home', icon: FiHome, path: '/dashboard' },
+    { name: 'Trending', icon: FiTrendingUp, path: '/dashboard' },
+    { name: 'Explore', icon: FiCompass, path: '/dashboard' },
+    { name: 'Favourites', icon: FiStar, path: '/dashboard' },
+    { name: 'Settings', icon: FiSettings, path: '/dashboard/settings' },
   ];
+  
   
   const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
     return (
@@ -53,7 +55,7 @@ interface SidebarProps extends BoxProps {
           <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
         </Flex>
         {LinkItems.map((link) => (
-          <NavItem key={link.name} icon={link.icon}>
+          <NavItem key={link.name} icon={link.icon} path={link.path}>
             {link.name}
           </NavItem>
         ))}

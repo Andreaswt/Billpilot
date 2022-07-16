@@ -7,14 +7,17 @@ import {
 } from '@chakra-ui/react';
 import { IconType } from 'react-icons';
 import { ReactText } from 'react';
+import NextLink from 'next/link'
 
 interface NavItemProps extends FlexProps {
-    icon: IconType;
-    children: ReactText;
-  }
-  const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
-    return (
-      <Link href="#" style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
+  icon: IconType;
+  path: string;
+  children: ReactText;
+}
+const NavItem = ({ icon, path, children, ...rest }: NavItemProps) => {
+  return (
+    <NextLink href={path}>
+      <Link style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
         <Flex
           align="center"
           p="4"
@@ -23,7 +26,7 @@ interface NavItemProps extends FlexProps {
           role="group"
           cursor="pointer"
           _hover={{
-            bg: 'blue.800',
+            bg: 'brand.800',
             color: 'white',
           }}
           {...rest}>
@@ -40,7 +43,8 @@ interface NavItemProps extends FlexProps {
           {children}
         </Flex>
       </Link>
-    );
-  };
+    </NextLink >
+  );
+};
 
-  export default NavItem;
+export default NavItem;

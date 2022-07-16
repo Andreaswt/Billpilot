@@ -62,13 +62,14 @@ const SimpleCard: NextPage = () => {
       console.log(`POSTing ${JSON.stringify(body, null, 2)}`);
       let res = await signIn("credentials", {
         ...body,
-        callbackUrl: router.query.callbackUrl,
+        callbackUrl: "/dashboard",
       });
       logger.debug(`signing:onsubmit:res`, res);
     } catch (error) {
       logger.error(error);
     }
   }
+
   if (status === "authenticated") {
     router.push("/index", {
       query: {
