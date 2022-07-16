@@ -71,11 +71,7 @@ const SimpleCard: NextPage = () => {
   }
 
   if (status === "authenticated") {
-    router.push("/index", {
-      query: {
-        callbackUrl: router.query.callbackUrl,
-      },
-    });
+    router.push("/dashboard");
   }
 
   return (

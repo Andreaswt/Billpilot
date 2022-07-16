@@ -12,6 +12,8 @@ const theme = extendTheme({
           500: "#3182CE",
           800: "#2A4365",
           900: "#1A365D",
+          "button-text": "#FFFFFF",
+          "button-bg": "#2A4365",
         },
       },
 })
