@@ -12,7 +12,7 @@
     "db-update": "prisma db push",
     "fetch-env": "npx vercel env pull"
   },
-  "prebuild": "prisma generate",
+  "postinstall": "prisma generate",
   "dependencies": {
     "@chakra-ui/icons": "^2.0.4",
     "@chakra-ui/modal": "^2.1.2",
