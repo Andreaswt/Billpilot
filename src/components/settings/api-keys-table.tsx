@@ -43,58 +43,60 @@ const ApiKeyTable = () => {
     }
 
     return (
-        apiKeys.map((providerAndKeys) => {
-            return (
-                <React.Fragment key={providerAndKeys.provider}>
-                    <Heading size='lg' pb={4}>{providerAndKeys.provider}</Heading>
-                    <Box mb={8} borderWidth={'1px'} py={'2'} rounded='lg'>
-                        <TableContainer>
-                            <Table variant='simple'>
-                                <Thead>
-                                    <Tr>
-                                        <Th>Api Key</Th>
-                                        <Th>Value</Th>
-                                        <Th></Th>
-                                    </Tr>
-                                </Thead>
-                                <Tbody>
+        <>
+            {apiKeys.map((providerAndKeys) => {
+                return (
+                    <React.Fragment key={providerAndKeys.provider}>
+                        <Heading size='lg' pb={4}>{providerAndKeys.provider}</Heading>
+                        <Box mb={8} borderWidth={'1px'} py={'2'} rounded='lg'>
+                            <TableContainer>
+                                <Table variant='simple'>
+                                    <Thead>
+                                        <Tr>
+                                            <Th>Api Key</Th>
+                                            <Th>Value</Th>
+                                            <Th></Th>
+                                        </Tr>
+                                    </Thead>
+                                    <Tbody>
 
-                                    {providerAndKeys.keys.map((apiKey) => {
-                                        let apiKeyValue = data?.find(x => x.key === apiKey)?.value;
+                                        {providerAndKeys.keys.map((apiKey) => {
+                                            let apiKeyValue = data?.find(x => x.key === apiKey)?.value;
 
-                                        return (<Tr key={apiKey}>
-                                            <Td>
-                                                {apiKey}
-                                            </Td>
-                                            {!apiKeyValue
-                                                ?
+                                            return (<Tr key={apiKey}>
                                                 <Td>
-                                                    <Text color={'red.600'}>Not set</Text>
+                                                    {apiKey}
                                                 </Td>
-                                                :
-                                                <Td>
-                                                    <Text>{apiKeyValue}</Text>
+                                                {!apiKeyValue
+                                                    ?
+                                                    <Td>
+                                                        <Text color={'red.600'}>Not set</Text>
+                                                    </Td>
+                                                    :
+                                                    <Td>
+                                                        <Text>{apiKeyValue}</Text>
+                                                    </Td>
+                                                }
+                                                <Td textAlign={'right'}>
+                                                    <ApiKeyModal provider={providerAndKeys.provider} apiKey={apiKey} apiValue={apiKeyValue} />
                                                 </Td>
-                                            }
-                                            <Td textAlign={'right'}>
-                                                <ApiKeyModal provider={providerAndKeys.provider} apiKey={apiKey} apiValue={apiKeyValue} />
-                                            </Td>
-                                        </Tr>)
-                                    })}
-                                </Tbody>
-                                <Tfoot>
-                                    <Tr>
-                                        <Th>Api Key</Th>
-                                        <Th>Click to reveal</Th>
-                                        <Th></Th>
-                                    </Tr>
-                                </Tfoot>
-                            </Table>
-                        </TableContainer>
-                    </Box>
-                </React.Fragment>
-            )
-        })
+                                            </Tr>)
+                                        })}
+                                    </Tbody>
+                                    <Tfoot>
+                                        <Tr>
+                                            <Th>Api Key</Th>
+                                            <Th>Click to reveal</Th>
+                                            <Th></Th>
+                                        </Tr>
+                                    </Tfoot>
+                                </Table>
+                            </TableContainer>
+                        </Box>
+                    </React.Fragment>
+                )
+            })}
+        </>
     )
 }
 
