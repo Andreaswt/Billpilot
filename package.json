@@ -22,7 +22,7 @@
     "@fontsource/open-sans": "^4.5.10",
     "@fontsource/raleway": "^4.5.9",
     "@next-auth/prisma-adapter": "^1.0.3",
-    "@prisma/client": "^4.0.0",
+    "@prisma/client": "^4.1.0",
     "@trpc/client": "^9.25.3",
     "@trpc/next": "^9.25.3",
     "@trpc/react": "^9.25.3",
