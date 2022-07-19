@@ -1,24 +1,17 @@
 import { createRouter } from "./context";
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
+import { useInputGroupStyles } from "@chakra-ui/react";
+import { logger } from "../../../lib/logger";
 
 export const apiKeysRouter = createRouter()
-  .query("newKey", {
-    input: z
-      .object({
-        key: z.string(),
-        value: z.string(),
-      }),
-    async resolve({ input, ctx }) {
-      await ctx.prisma.apiKey.create({
-        data: {
-          key: input.key,
-          value: input.value,
-        }
-      });
-      return {
-        apiKey: input
-      };
-    },
+  .middleware(async ({ ctx, next }) => {
+    const userId = ctx.session?.user.id;
+
+    if (!userId) {
+      throw new TRPCError({ message: "User not found", code: "UNAUTHORIZED" });
+    }
+    return next({ ctx: { ...ctx, userId } })
   })
   .query("getAllKeysAndValues", {
     async resolve({ ctx }) {
@@ -30,4 +23,55 @@ export const apiKeysRouter = createRouter()
           }
         })
     },
+  })
+  .query("newKeyAndValue", {
+    input: z
+      .object({
+        provider: z.string(),
+        key: z.string(),
+        value: z.string(),
+      }),
+    async resolve({ input, ctx }) {
+      await ctx.prisma.apiKey.create({
+        data: {
+          userId: ctx.userId,
+          provider: input.provider,
+          key: input.key,
+          value: input.value,
+        }
+      });
+      return {
+        apiKey: input
+      };
+    },
+  })
+  .mutation("upsertApiKey", {
+    input: z
+      .object({
+        provider: z.string(),
+        key: z.string(),
+        value: z.string(),
+      }),
+    async resolve({ input, ctx }) {
+      const apiKeyResult = await ctx.prisma.apiKey.upsert({
+        where: {
+          usersApiKey: {
+            key: input.key,
+            userId: ctx.userId,
+          }
+        },
+        update: {
+          value: input.value,
+        },
+        create: {
+          userId: ctx.userId,
+          provider: input.provider,
+          key: input.key,
+          value: input.value,
+        },
+      })
+      return {
+        apiKey: apiKeyResult
+      }
+    }
   });

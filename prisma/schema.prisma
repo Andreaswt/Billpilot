@@ -3,26 +3,26 @@
 
 
 // ----- Comment in for local db -----
-// generator client {
-//     provider = "prisma-client-js"
-// }
-
-// datasource db {
-//     provider = "sqlite"
-//     url      = "file:./db.sqlite"
-// }
-
-// ----- Comment in for live db -----
 generator client {
-  provider = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
-  url = env("DATABASE_URL")
-  referentialIntegrity = "prisma"
+    provider = "sqlite"
+    url      = "file:./db.sqlite"
 }
+
+// ----- Comment in for live db -----
+// generator client {
+//   provider = "prisma-client-js"
+//   previewFeatures = ["referentialIntegrity"]
+// }
+
+// datasource db {
+//   provider = "mysql"
+//   url = env("DATABASE_URL")
+//   referentialIntegrity = "prisma"
+// }
 
 model Example {
     id String @id @default(cuid())
@@ -30,8 +30,12 @@ model Example {
 
 model ApiKey {
     id String @id @default(cuid())
-    key String
-    value String
+    provider String // e.g E-conomic
+    key String // e.g. economic-api-key
+    value String // e.g. jsj3hdo3eds0
+    userId String
+    user User @relation(fields: [userId], references: [id])
+    @@unique(fields: [key, userId], name: "usersApiKey")
 }
 
 // Necessary for Next auth
@@ -69,10 +73,12 @@ model User {
   emailVerified DateTime?
   password      String?
   image         String?
+  role          String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
   sessions      Session[]
+  apiKeys       ApiKey[]
 }
 
 model VerificationToken {
