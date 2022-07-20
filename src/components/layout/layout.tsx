@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react';
 import {
   Box,
-  useColorModeValue,
   Drawer,
   DrawerContent,
   useDisclosure,

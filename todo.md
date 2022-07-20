@@ -1,12 +1,21 @@
-## TODO
+# TODO
 
-- Gør så SidebarWithHeader ikke bliver vist når brugeren ikke er logget ind
-- Lav en side brugeren vises når de ikke er logget ind, og som viser en login knap
-- Udfyld dashboard index siden med data (cards fra dashboard)
-- Lav settings side, hvor brugeren kan inputte sine api nøgler
+## Iteration 1: Funktionalitet
 
-### CI/DC
-- Få svar på hvorfor der ikke kan buildes i vercel
+- [Carl] Erstat bell icon, symbol etc i headeren med en "log in" knap når der ikke er en bruger logget ind.
+- [Carl] lav simple stat cards til forsiden, der viser samme statistics som dem fra helloclerk.
 
-### Jira opgave
-- Lav forbindelse til jira ud fra en API nøgle (Lav "jira.ts" fil i lib mappe, der indeholder helpermetoder til at kalde jira api'en i next.js api-endpoints'ne)
+- [Andreas] Gør så SidebarWithHeader ikke bliver vist når brugeren ikke er logget ind
+- [Andreas] Udfyld dashboard index siden med data (cards fra dashboard)
+- [Andreas] Redirect brugeren til login siden hvis han ikke er logget ind
+
+### Vercel
+- [Andreas] Der kan ikke logges ind i preview. Credentials returnerer 401.
+
+### Jira
+- [Andreas] Lav forbindelse til jira ud fra en API nøgle (Lav "jira.ts" fil i lib mappe, der indeholder helpermetoder til at kalde jira api'en i next.js api-endpoints'ne)
+
+## Iteration 2: Design
+
+### Saas UI
+- Køb SaaS UI pro
