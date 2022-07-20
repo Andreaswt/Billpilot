@@ -38,6 +38,19 @@ model ApiKey {
     @@unique(fields: [key, userId], name: "usersApiKey")
 }
 
+model Worklog {
+  id String @id @default(cuid())
+  worklogId String
+  issueId String
+  hours Decimal
+  started DateTime
+  billed Boolean?
+  billedDate DateTime?
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  @@unique([worklogId, userId])
+}
+
 // Necessary for Next auth
 model Account {
   id                 String    @id @default(cuid())
@@ -79,6 +92,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   apiKeys       ApiKey[]
+  worklog       Worklog[]
 }
 
 model VerificationToken {

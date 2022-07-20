@@ -13,7 +13,17 @@
 - [Andreas] Der kan ikke logges ind i preview. Credentials returnerer 401.
 
 ### Jira
-- [Andreas] Lav forbindelse til jira ud fra en API nøgle (Lav "jira.ts" fil i lib mappe, der indeholder helpermetoder til at kalde jira api'en i next.js api-endpoints'ne)
+- X [Andreas] Lav forbindelse til jira ud fra en API nøgle (Lav "jira.ts" fil i lib mappe, der indeholder helpermetoder til at kalde jira api'en i next.js api-endpoints'ne)
+- [Andreas] Lav roles for brugere
+- [Andreas] Lav price lists som roles kan indgå i
+
+- Test:
+-getTotalHoursThisMonth
+-getBillableHoursThisMonth
+
+- Lav:
+-getUnbillableHoursThisMonth
+-getTotalInvoicedThisMonth (I usd/dkk)
 
 ## Iteration 2: Design
 

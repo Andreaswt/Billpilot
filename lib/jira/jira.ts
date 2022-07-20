@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime';
 import JiraApi from 'jira-client';
 import { Version3Client } from 'jira.js';
 import { Worklog } from 'jira.js/out/version3/models';
@@ -57,18 +59,56 @@ export async function getAllIssues() {
 }
 
 // Worklogs
-export async function getWorklogs() {
+export async function getTotalHoursThisMonth() {
+    let worklogs = await getWorklogsThisMonth();
+    console.log(worklogs);
+
+    let hours = 0;
+    worklogs!.forEach(worklog => {
+        hours += worklog.timeSpentSeconds! / 3600;
+    });
+
+    return hours;
+}
+
+export async function getBillableHoursThisMonth() {
+    // Get total hours this month
+    let totalHoursThisMonth = await getTotalHoursThisMonth();
+
+    let [firstDay, lastDay] = firstAndLastDayOfThisMonth()
+
+    // get date an hour ago
+    firstDay = new Date();
+    firstDay.setHours(firstDay.getHours() - 1);
+    
+    // Find all billed hours this month and deduct from total hours for billable hours this month
+    let billedWorklogs = await prisma?.worklog.findMany({
+        where: {
+            started: {
+                lte: firstDay,
+                gte: lastDay,
+              },
+        }
+    });
+
+    let billedTime = 0;
+    billedWorklogs!.forEach(worklog => {
+        billedTime += new Prisma.Decimal(worklog.hours).toNumber();
+    })
+
+    return totalHoursThisMonth - billedTime;
+}
+
+
+async function getWorklogsThisMonth() {
     try {
         // Get all issues with worklogs between start and end date of month
         let response = await client.issueSearch.searchForIssuesUsingJql({jql: "worklogDate >= startOfMonth() and worklogDate <= endOfMonth()", fields: ["worklog"]});
         
-        var date = new Date(), y = date.getFullYear(), m = date.getMonth();
-        var firstDay = new Date(y, m, 1);
-        var lastDay = new Date(y, m + 1, 0);
+        let [firstDay, lastDay] = firstAndLastDayOfThisMonth()
 
         // Create array to contain worklogs
         let worklogs: Worklog[] = [];
-
 
         // Loop through all issues from search if objects exist
         response!.issues!.forEach(issue => {
@@ -80,19 +120,23 @@ export async function getWorklogs() {
                 let date = new Date(worklog.started!);
 
                 // If worklog is between start and end date of month then add to array
-                if (date >= firstDay && date <= lastDay) {
+                if (date >= firstDay! && date <= lastDay!) {
                     worklogs.push(worklog);
                 }
             })
-        })
+        });
 
-        worklogs.forEach(worklog => {
-            console.log(worklog.timeSpent);
-        })
-
-        return "hej";
+        return worklogs;
 
     } catch (error) {
         logger.error(error);
     }
+}
+
+function firstAndLastDayOfThisMonth() {
+    var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+    var firstDay = new Date(y, m, 1);
+    var lastDay = new Date(y, m + 1, 0);
+
+    return [firstDay, lastDay];
 }
