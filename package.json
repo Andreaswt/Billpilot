@@ -10,7 +10,7 @@
     "studio": "prisma studio",
     "db-generate-client": "prisma generate",
     "db-update": "prisma db push",
-    "reset-db": "prisma migration reset",
+    "reset-db": "prisma migrate reset",
     "fetch-env": "npx vercel env pull"
   },
   "postinstall": "prisma generate",
@@ -32,7 +32,6 @@
     "crypto-js": "^4.1.1",
     "formik": "^2.2.9",
     "framer-motion": "^6.5.1",
-    "jira-client": "^8.1.0",
     "jira.js": "^2.15.3",
     "lodash": "^4.17.21",
     "loglevel": "^1.8.0",

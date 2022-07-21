@@ -26,8 +26,23 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
     ...req.body,
     password: hashPassword(req.body.password),
   });
-  const user = await prisma.user.create({
-    data: { ...req.body, password: hashPassword(req.body.password) },
-  });
-  res.json(user);
+
+  // Create a organization, and then a user in that organization
+  const organization = await prisma.organization.create({
+    data: {
+      name: req.body.email,
+      description: "testdescription",
+      users: {
+        create: {
+          ...req.body, password: hashPassword(req.body.password)
+        }
+      }
+    },
+    include: {
+      users: true,
+    },
+  })
+
+  // Only 1 user is created, so we can just return the first user
+  res.json(organization.users[0]);
 }

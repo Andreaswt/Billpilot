@@ -2,16 +2,16 @@ import { createRouter } from "./context";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { logger } from "../../../lib/logger";
-import { authenticateJira, billWorklogs, createAndBillWorklogs, getWorklogsThisMonth } from "../../../lib/jira/jira";
+import { authenticateJira, createAndBillWorklogs, getWorklogsThisMonth } from "../../../lib/jira";
 
 export const jiraRouter = createRouter()
   .middleware(async ({ ctx, next }) => {
-    const userId = ctx.session?.user.id;
+    const organizationId = ctx.session?.user.organizationId;
 
-    if (!userId) {
+    if (!organizationId) {
       throw new TRPCError({ message: "User not found", code: "UNAUTHORIZED" });
     }
-    return next({ ctx: { ...ctx, userId } })
+    return next({ ctx: { ...ctx, organizationId } })
   })
   .query("test", {
     async resolve({ ctx }) {
@@ -23,22 +23,9 @@ export const jiraRouter = createRouter()
       let worklogs = await getWorklogsThisMonth();
 
       if (worklogs) {
-        await createAndBillWorklogs(worklogs, ctx.userId);
+        await createAndBillWorklogs(worklogs, ctx.organizationId);
       }
 
       return "hej";
     },
   });
-  // .mutation("createWorklogs", {
-  //   input: z
-  //     .object({
-  //       userId: z.string(),
-  //       worklogId: z.string(),
-  //       issueId: z.string(),
-  //       hours: z.number(),
-  //       started: z.date()
-  //     }).array(),
-  //   async resolve({ input, ctx }) {
-  //     return createAndBillWorklogs(input, ctx.userId);
-  //   }
-  // });

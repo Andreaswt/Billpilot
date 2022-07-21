@@ -6,12 +6,12 @@ import { logger } from "../../../lib/logger";
 
 export const apiKeysRouter = createRouter()
   .middleware(async ({ ctx, next }) => {
-    const userId = ctx.session?.user.id;
+    const organizationId = ctx.session?.user.organizationId;
 
-    if (!userId) {
+    if (!organizationId) {
       throw new TRPCError({ message: "User not found", code: "UNAUTHORIZED" });
     }
-    return next({ ctx: { ...ctx, userId } })
+    return next({ ctx: { ...ctx, organizationId } })
   })
   .query("getAllKeysAndValues", {
     async resolve({ ctx }) {
@@ -34,7 +34,7 @@ export const apiKeysRouter = createRouter()
     async resolve({ input, ctx }) {
       await ctx.prisma.apiKey.create({
         data: {
-          userId: ctx.userId,
+          organizationId: ctx.organizationId,
           provider: input.provider,
           key: input.key,
           value: input.value,
@@ -55,16 +55,16 @@ export const apiKeysRouter = createRouter()
     async resolve({ input, ctx }) {
       const apiKeyResult = await ctx.prisma.apiKey.upsert({
         where: {
-          usersApiKey: {
+          organizationsApiKey: {
             key: input.key,
-            userId: ctx.userId,
+            organizationId: ctx.organizationId,
           }
         },
         update: {
           value: input.value,
         },
         create: {
-          userId: ctx.userId,
+          organizationId: ctx.organizationId,
           provider: input.provider,
           key: input.key,
           value: input.value,

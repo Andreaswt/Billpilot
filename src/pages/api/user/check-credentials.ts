@@ -32,10 +32,12 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
       image: true,
       password: true,
       role: true,
+      organizationId: true
     },
   });
   if (user && user.password == hashPassword(req.body.password)) {
     logger.debug("password correct");
+    logger.debug(user);
     res.json(omit(user, "password"));
   } else {
     logger.debug("incorrect credentials");

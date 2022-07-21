@@ -1,29 +1,16 @@
 import { Prisma } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime';
-import JiraApi from 'jira-client';
 import { Version3Client } from 'jira.js';
 import { Worklog } from 'jira.js/out/version3/models';
-import { prisma } from "../../src/server/db/client";
-import { logger } from '../logger';
+import { prisma } from "../src/server/db/client";
+import { logger } from './logger';
 
 // Development notes:
 //https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/
 
-
-
-let jira: JiraApi;
 let client: Version3Client;
 
 export async function authenticateJira(connectionsDetails: { host: string, username: string, password: string }) {
-    jira = new JiraApi({
-        protocol: 'https',
-        host: connectionsDetails.host,
-        username: connectionsDetails.username,
-        password: connectionsDetails.password,
-        apiVersion: '3',
-        strictSSL: true
-    });
-
     client = new Version3Client({
         newErrorHandling: true,
         host: connectionsDetails.host,
@@ -39,20 +26,10 @@ export async function authenticateJira(connectionsDetails: { host: string, usern
 }
 
 // Issues
-export async function findIssue(id: string) {
+export async function getIssue(id: string) {
     try {
-        let issue = await jira.findIssue("TES-1");
+        let issue = await client.issues.getIssue({ issueIdOrKey: id });
         return issue;
-    } catch (error) {
-        logger.error(error);
-    }
-}
-
-export async function getAllIssues() {
-    try {
-        let issues = await jira.findIssue("TES-1");
-
-        return issues;
     } catch (error) {
         logger.error(error);
     }
@@ -134,24 +111,14 @@ export async function getWorklogsThisMonth() {
     }
 }
 
-// export async function createAndBillWorklogs(worklogs: { worklogId: string, issueId: string, hours: number, started: Date }[], userId: string) {
-//     const worklogsResult = await prisma.worklog.createMany({
-//         data: worklogs.map(w => ({ ...w, userId: userId }))
-//     })
-
-//     return {
-//         worklogs: worklogsResult
-//     }
-// }
-
-export async function createAndBillWorklogs(worklogs: Worklog[], userId: string) {
+export async function createAndBillWorklogs(worklogs: Worklog[], organizationId: string) {
     let mappedWorklog = worklogs.map(w =>
     ({
         worklogId: w.id!,
         issueId: w.issueId!,
         hours: w.timeSpentSeconds! / 3600,
         started: new Date(w.started!).toISOString(),
-        userId: userId,
+        organizationId: organizationId,
         billed: true,
         billedDate: new Date().toISOString()
     }));
@@ -165,14 +132,14 @@ export async function createAndBillWorklogs(worklogs: Worklog[], userId: string)
     }
 }
 
-export async function billWorklogs(worklogIds: string[], userId: string) {
+export async function billWorklogs(worklogIds: string[], organizationId: string) {
     const worklogsResult = await prisma.worklog.updateMany({
         where: {
             worklogId: {
                 in: worklogIds.map(w => w)
             },
-            userId: {
-                in: userId
+            organizationId: {
+                in: organizationId
             }
         },
         data: worklogIds.map(w => ({ billed: true, billedDate: Date.now() }))

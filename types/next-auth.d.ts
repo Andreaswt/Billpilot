@@ -7,6 +7,7 @@ import { JWT } from "next-auth/jwt"
 interface CustomUser {
   id: string,
   role: string,
+  organizationId: string
 }
 
 import NextAuth, { DefaultSession } from "next-auth"

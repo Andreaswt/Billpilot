@@ -29,14 +29,27 @@ model Example {
     id String @id @default(cuid())
 }
 
+model Organization {
+    id String @id @default(cuid())
+    users User[]
+    name String
+    description String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now())
+    apiKeys ApiKey[]
+    worklog Worklog[]
+    roles Role[]
+    pricelists Pricelist[]
+}
+
 model ApiKey {
     id String @id @default(cuid())
     provider String // e.g E-conomic
     key String // e.g. economic-api-key
     value String // e.g. jsj3hdo3eds0
-    userId String
-    user User @relation(fields: [userId], references: [id])
-    @@unique(fields: [key, userId], name: "usersApiKey")
+    organizationId String
+    organization Organization @relation(fields: [organizationId], references: [id])
+    @@unique(fields: [key, organizationId], name: "organizationsApiKey")
 }
 
 model Worklog {
@@ -47,10 +60,32 @@ model Worklog {
   started DateTime
   billed Boolean?
   billedDate DateTime?
-  userId String
-  user User @relation(fields: [userId], references: [id])
-  // @@unique([worklogId, userId])
-  @@unique(fields: [worklogId, userId], name: "usersWorklog")
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id])
+  @@unique(fields: [worklogId, organizationId], name: "organizationsWorklog")
+}
+
+model Role {
+  name String @id @unique
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id])
+  pricelists RolesOnPricelists[]
+}
+
+model Pricelist {
+  name String @id @unique
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id])
+  roles RolesOnPricelists[]
+}
+
+model RolesOnPricelists {
+  role       Role     @relation(fields: [roleName], references: [name])
+  roleName     String
+  pricelist   Pricelist @relation(fields: [pricelistName], references: [name])
+  pricelistName String
+  hourlyRate Decimal
+  @@id([roleName, pricelistName])
 }
 
 // Necessary for Next auth
@@ -93,8 +128,8 @@ model User {
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
   sessions      Session[]
-  apiKeys       ApiKey[]
-  worklog       Worklog[]
+  organizationId  String
+  organization Organization @relation(fields: [organizationId], references: [id])
 }
 
 model VerificationToken {
