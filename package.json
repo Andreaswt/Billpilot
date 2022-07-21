@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "vercel-build": "prisma generate && prisma migrate deploy && next build",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -14,7 +15,6 @@
     "seed-db": "npx prisma db seed",
     "fetch-env": "npx vercel env pull"
   },
-  "prebuild": "prisma generate",
   "dependencies": {
     "@chakra-ui/icons": "^2.0.4",
     "@chakra-ui/modal": "^2.1.2",
