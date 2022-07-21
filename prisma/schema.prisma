@@ -40,6 +40,8 @@ model Organization {
     worklog Worklog[]
     roles Role[]
     pricelists Pricelist[]
+    currencyName String?
+    currency Currency? @relation(fields: [currencyName], references: [currency])
 }
 
 model ApiKey {
@@ -65,6 +67,7 @@ model Worklog {
   @@unique(fields: [worklogId, organizationId], name: "organizationsWorklog")
 }
 
+// Roles and pricelists
 model Role {
   name String @id @unique
   organizationId String
@@ -86,6 +89,12 @@ model RolesOnPricelists {
   pricelistName String
   hourlyRate Decimal
   @@id([roleName, pricelistName])
+}
+
+model Currency {
+  currency String @id @unique
+  abbreviation String
+  Organization Organization[]
 }
 
 // Necessary for Next auth

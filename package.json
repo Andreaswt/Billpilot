@@ -8,9 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "studio": "prisma studio",
-    "db-generate-client": "prisma generate",
-    "db-update": "prisma db push",
+    "generate-client": "prisma generate",
+    "update-db": "prisma db push",
     "reset-db": "prisma migrate reset",
+    "seed-db": "npx prisma db seed",
     "fetch-env": "npx vercel env pull"
   },
   "postinstall": "prisma generate",
@@ -50,12 +51,16 @@
   "devDependencies": {
     "@types/crypto-js": "^4.1.1",
     "@types/jira-client": "^7.1.4",
-    "@types/node": "18.0.0",
+    "@types/node": "^18.0.0",
     "@types/react": "18.0.14",
     "@types/react-dom": "18.0.5",
     "eslint": "8.18.0",
     "eslint-config-next": "12.1.6",
     "prisma": "^4.1.0",
-    "typescript": "4.7.4"
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   }
 }
