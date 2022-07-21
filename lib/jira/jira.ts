@@ -3,7 +3,7 @@ import { Decimal } from '@prisma/client/runtime';
 import JiraApi from 'jira-client';
 import { Version3Client } from 'jira.js';
 import { Worklog } from 'jira.js/out/version3/models';
-// import {  } from 'jira.js/out/version2/models';
+import { prisma } from "../../src/server/db/client";
 import { logger } from '../logger';
 
 // Development notes:
@@ -14,7 +14,7 @@ import { logger } from '../logger';
 let jira: JiraApi;
 let client: Version3Client;
 
-export async function authenticateJira(connectionsDetails: {host: string, username: string, password: string}) {
+export async function authenticateJira(connectionsDetails: { host: string, username: string, password: string }) {
     jira = new JiraApi({
         protocol: 'https',
         host: connectionsDetails.host,
@@ -29,12 +29,12 @@ export async function authenticateJira(connectionsDetails: {host: string, userna
         host: connectionsDetails.host,
         authentication: {
             basic: {
-            email: connectionsDetails.username,
-            apiToken: connectionsDetails.password,
+                email: connectionsDetails.username,
+                apiToken: connectionsDetails.password,
             },
         },
     })
-    
+
     // TODO: handle jira authentication errors
 }
 
@@ -61,7 +61,6 @@ export async function getAllIssues() {
 // Worklogs
 export async function getTotalHoursThisMonth() {
     let worklogs = await getWorklogsThisMonth();
-    console.log(worklogs);
 
     let hours = 0;
     worklogs!.forEach(worklog => {
@@ -71,7 +70,7 @@ export async function getTotalHoursThisMonth() {
     return hours;
 }
 
-export async function getBillableHoursThisMonth() {
+export async function getUninvoicedHoursThisMonth() {
     // Get total hours this month
     let totalHoursThisMonth = await getTotalHoursThisMonth();
 
@@ -80,14 +79,17 @@ export async function getBillableHoursThisMonth() {
     // get date an hour ago
     firstDay = new Date();
     firstDay.setHours(firstDay.getHours() - 1);
-    
+
     // Find all billed hours this month and deduct from total hours for billable hours this month
     let billedWorklogs = await prisma?.worklog.findMany({
+        select: {
+            hours: true,
+        },
         where: {
             started: {
                 lte: firstDay,
                 gte: lastDay,
-              },
+            },
         }
     });
 
@@ -99,12 +101,11 @@ export async function getBillableHoursThisMonth() {
     return totalHoursThisMonth - billedTime;
 }
 
-
-async function getWorklogsThisMonth() {
+export async function getWorklogsThisMonth() {
     try {
         // Get all issues with worklogs between start and end date of month
-        let response = await client.issueSearch.searchForIssuesUsingJql({jql: "worklogDate >= startOfMonth() and worklogDate <= endOfMonth()", fields: ["worklog"]});
-        
+        let response = await client.issueSearch.searchForIssuesUsingJql({ jql: "worklogDate >= startOfMonth() and worklogDate <= endOfMonth()", fields: ["worklog"] });
+
         let [firstDay, lastDay] = firstAndLastDayOfThisMonth()
 
         // Create array to contain worklogs
@@ -112,7 +113,7 @@ async function getWorklogsThisMonth() {
 
         // Loop through all issues from search if objects exist
         response!.issues!.forEach(issue => {
-            
+
             // Loop through all worklogs
             issue.fields.worklog.worklogs.forEach(worklog => {
 
@@ -130,6 +131,55 @@ async function getWorklogsThisMonth() {
 
     } catch (error) {
         logger.error(error);
+    }
+}
+
+// export async function createAndBillWorklogs(worklogs: { worklogId: string, issueId: string, hours: number, started: Date }[], userId: string) {
+//     const worklogsResult = await prisma.worklog.createMany({
+//         data: worklogs.map(w => ({ ...w, userId: userId }))
+//     })
+
+//     return {
+//         worklogs: worklogsResult
+//     }
+// }
+
+export async function createAndBillWorklogs(worklogs: Worklog[], userId: string) {
+    let mappedWorklog = worklogs.map(w =>
+    ({
+        worklogId: w.id!,
+        issueId: w.issueId!,
+        hours: w.timeSpentSeconds! / 3600,
+        started: new Date(w.started!).toISOString(),
+        userId: userId,
+        billed: true,
+        billedDate: new Date().toISOString()
+    }));
+
+    const worklogsResult = await prisma.worklog.createMany({
+        data: mappedWorklog,
+    })
+
+    return {
+        worklogs: worklogsResult
+    }
+}
+
+export async function billWorklogs(worklogIds: string[], userId: string) {
+    const worklogsResult = await prisma.worklog.updateMany({
+        where: {
+            worklogId: {
+                in: worklogIds.map(w => w)
+            },
+            userId: {
+                in: userId
+            }
+        },
+        data: worklogIds.map(w => ({ billed: true, billedDate: Date.now() }))
+    })
+
+    return {
+        worklogs: worklogsResult
     }
 }
 

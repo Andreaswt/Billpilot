@@ -17,14 +17,6 @@
 - [Andreas] Lav roles for brugere
 - [Andreas] Lav price lists som roles kan indgå i
 
-- Test:
--getTotalHoursThisMonth
--getBillableHoursThisMonth
-
-- Lav:
--getUnbillableHoursThisMonth
--getTotalInvoicedThisMonth (I usd/dkk)
-
 ## Iteration 2: Design
 
 ### Saas UI

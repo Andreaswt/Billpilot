@@ -14,6 +14,7 @@ declare namespace NodeJS {
         VERCEL_GIT_COMMIT_AUTHOR_NAME: string
         NEXTAUTH_URL: string
         DATABASE_URL: string
+        SHADOW_DATABASE_URL: string
         NEXTAUTH_SECRET: string
     }
   }
