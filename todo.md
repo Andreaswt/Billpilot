@@ -13,9 +13,8 @@
 - [Andreas] Der kan ikke logges ind i preview. Credentials returnerer 401.
 
 ### Jira
-- X [Andreas] Lav forbindelse til jira ud fra en API nøgle (Lav "jira.ts" fil i lib mappe, der indeholder helpermetoder til at kalde jira api'en i next.js api-endpoints'ne)
-- [Andreas] Lav roles for brugere
-- [Andreas] Lav price lists som roles kan indgå i
+- [Andreas] Kopier alle helloclerk features
+- [Andreas] Funktioner som "getUninvoicedHoursThisMonth" skal ikke medtage time, hvor projektet er markeret som ikke billable.
 
 ## Iteration 2: Design
 
