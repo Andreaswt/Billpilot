@@ -40,6 +40,7 @@ model Organization {
     worklog Worklog[]
     roles Role[]
     pricelists Pricelist[]
+    projects Project[]
     currencyName String?
     currency Currency? @relation(fields: [currencyName], references: [currency])
 }
@@ -95,6 +96,15 @@ model Currency {
   currency String @id @unique
   abbreviation String
   Organization Organization[]
+}
+
+model Project {
+  key String
+  name String
+  billable Boolean
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id])
+  @@unique([key, organizationId])
 }
 
 // Necessary for Next auth

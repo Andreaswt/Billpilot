@@ -2,8 +2,8 @@ import { Prisma } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime';
 import { Version3Client } from 'jira.js';
 import { Worklog } from 'jira.js/out/version3/models';
-import { prisma } from "../src/server/db/client";
-import { logger } from './logger';
+import { prisma } from "../../src/server/db/client";
+import { logger } from '../logger';
 
 // Development notes:
 //https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/
@@ -150,6 +150,17 @@ export async function billWorklogs(worklogIds: string[], organizationId: string)
     }
 }
 
+// Projects
+export async function getProjects() {
+    try {
+        let projects = await client.projects.getAllProjects();
+        return projects;
+    } catch (error) {
+        logger.error(error);
+    }
+}
+
+// Internal functions
 function firstAndLastDayOfThisMonth() {
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
     var firstDay = new Date(y, m, 1);
