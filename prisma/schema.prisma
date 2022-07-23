@@ -1,17 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-
-// ----- Comment in for SQLITE -----
-// generator client {
-//     provider = "prisma-client-js"
-// }
-
-// datasource db {
-//     provider = "sqlite"
-//     url      = "file:./db.sqlite"
-// }
-
 // ----- Comment in for MySQL -----
 generator client {
   provider = "prisma-client-js"
@@ -41,6 +30,8 @@ model Organization {
     roles Role[]
     pricelists Pricelist[]
     projects Project[]
+    teamSchemes TeamScheme[]
+    jiraEmployees JiraEmployee[]
     currencyName String?
     currency Currency? @relation(fields: [currencyName], references: [currency])
 }
@@ -74,6 +65,8 @@ model Role {
   organizationId String
   organization Organization @relation(fields: [organizationId], references: [id])
   pricelists RolesOnPricelists[]
+  jiraEmployees JiraEmployee[]
+  teamSchemes TeamScheme[]
 }
 
 model Pricelist {
@@ -105,6 +98,28 @@ model Project {
   organizationId String
   organization Organization @relation(fields: [organizationId], references: [id])
   @@unique([key, organizationId])
+}
+
+// Team schemes
+// A team scheme can have multiple roles, and a role can have multiple employees (implicit many-to-many)
+// A role can have multiple employees, and an employee can have multiple roles (implicit many-to-many)
+
+model TeamScheme {
+  id String @id @default(cuid())
+  name String
+  roles Role[]
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id])
+}
+
+model JiraEmployee {
+  id String @id @default(cuid())
+  name String
+  accountId String
+  roles Role[]
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id])
+  @@unique ([accountId, organizationId], name: "organizationsJiraEmployee")
 }
 
 // Necessary for Next auth

@@ -13,7 +13,6 @@
     "update-db": "prisma db push",
     "reset-db": "prisma migrate reset",
     "seed-db": "npx prisma db seed",
-    "hard-db": "prisma migrate reset && prisma db push && npx prisma db seed && prisma generate",
     "fetch-env": "npx vercel env pull"
   },
   "dependencies": {

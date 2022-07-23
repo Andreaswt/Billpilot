@@ -6,7 +6,7 @@ import { prisma } from "../../src/server/db/client";
 import { logger } from '../logger';
 
 // Development notes:
-//https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/
+// https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/
 
 let client: Version3Client;
 
@@ -217,6 +217,29 @@ export async function getProjects() {
     } catch (error) {
         logger.error(error);
     }
+}
+
+// Employees
+export async function getEmployees() {
+    isAuthenticated();
+
+    try {
+        let employees = await client.users.getAllUsers();
+        return employees;
+    } catch (error) {
+        logger.error(error);
+    }
+}
+
+export async function rebuildReport() {
+    isAuthenticated();
+
+    let uninvoicedTime = await getUninvoicedHoursThisMonth();
+    let billableTime = await getBillableHoursThisMonth();
+    let totalTime = await getTotalHoursThisMonth();
+    let nonBillableTime = await getNonBillableHoursThisMonth();
+
+    return {uninvoicedTime: uninvoicedTime, billableTime: billableTime, totalTime: totalTime, nonBillableTime: nonBillableTime};
 }
 
 function firstAndLastDayOfThisMonth() {
