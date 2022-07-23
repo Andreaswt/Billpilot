@@ -2,7 +2,7 @@ import { createRouter } from "./context";
 import { TRPCError } from "@trpc/server";
 import { logger } from "../../../lib/logger";
 import { authenticateJira, getEmployees, getTotalHoursThisMonth } from "../../../lib/integrations/jira";
-import { createRole } from "../../../lib/role";
+import { createRole } from "../../../lib/roles";
 import { createTeamScheme } from "../../../lib/team-schemes";
 
 export const jiraRouter = createRouter()

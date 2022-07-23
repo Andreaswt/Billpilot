@@ -14,7 +14,6 @@
 
 ### Jira
 - [Andreas] Kopier alle helloclerk features
-- [Andreas] Funktioner som "getUninvoicedHoursThisMonth" skal ikke medtage time, hvor projektet er markeret som ikke billable.
 
 ## Iteration 2: Design
 

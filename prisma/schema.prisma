@@ -32,6 +32,14 @@ model Organization {
     projects Project[]
     teamSchemes TeamScheme[]
     jiraEmployees JiraEmployee[]
+    invoices Invoice[]
+    timeItems TimeItem[]
+    fixedPriceTimeItem FixedPriceTimeItem[]
+    clients Client[]
+    taxes Tax[]
+    discounts Discount[]
+    fixedPriceDiscounts FixedPriceDiscount[]
+    invoiceLayouts InvoiceLayout[]
     currencyName String?
     currency Currency? @relation(fields: [currencyName], references: [currency])
 }
@@ -88,7 +96,8 @@ model RolesOnPricelists {
 model Currency {
   currency String @id @unique
   abbreviation String
-  Organization Organization[]
+  organization Organization[]
+  invoice Invoice[]
 }
 
 model Project {
@@ -103,7 +112,6 @@ model Project {
 // Team schemes
 // A team scheme can have multiple roles, and a role can have multiple employees (implicit many-to-many)
 // A role can have multiple employees, and an employee can have multiple roles (implicit many-to-many)
-
 model TeamScheme {
   id String @id @default(cuid())
   name String
@@ -120,6 +128,134 @@ model JiraEmployee {
   organizationId String
   organization Organization @relation(fields: [organizationId], references: [id])
   @@unique ([accountId, organizationId], name: "organizationsJiraEmployee")
+}
+
+model Client {
+  id String @id @default(cuid())
+  name String
+  invoice Invoice[]
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id])
+  @@unique ([name, organizationId], name: "organizationsClient")
+}
+
+// Invoices
+model TimeItem {
+  id String @id @default(cuid())
+  name String
+  hourlyWage Decimal
+  invoiceId String
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id])
+  taxId String
+  tax Tax @relation(fields: [taxId], references: [id])
+  discountId String
+  discount Discount @relation(fields: [discountId], references: [id])
+  fixedPriceDiscountId String
+  fixedPriceDiscount FixedPriceDiscount @relation(fields: [fixedPriceDiscountId], references: [id])
+}
+
+model FixedPriceTimeItem {
+  id String @id @default(cuid())
+  name String
+  amount Decimal
+  invoiceId String
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id])
+  taxId String
+  tax Tax @relation(fields: [taxId], references: [id])
+  discountId String
+  discount Discount @relation(fields: [discountId], references: [id])
+  fixedPriceDiscountId String
+  fixedPriceDiscount FixedPriceDiscount @relation(fields: [fixedPriceDiscountId], references: [id])
+}
+
+model Tax {
+  id String @id @default(cuid())
+  name String
+  percent Decimal
+  invoiceId String
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id])
+  appliesToTimeItems TimeItem[]
+  appliesToFixedPriceTimeItems FixedPriceTimeItem[]
+}
+
+model Discount {
+  id String @id @default(cuid())
+  name String
+  percent Decimal
+  invoiceId String
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id])
+  appliesToTimeItems TimeItem[]
+  appliesToFixedPriceTimeItems FixedPriceTimeItem[]
+}
+
+model FixedPriceDiscount {
+  id String @id @default(cuid())
+  name String
+  amount Decimal
+  invoiceId String
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id])
+  appliesToTimeItems TimeItem[]
+  appliesToFixedPriceTimeItems FixedPriceTimeItem[]
+}
+
+model Language {
+  language String @id @unique
+  invoiceLayout InvoiceLayout[]
+}
+
+model NumberAndDateFormat {
+  format String @id @unique
+  invoiceLayout InvoiceLayout[]
+}
+
+model InvoiceLayout {
+  id String @id @default(cuid())
+  name String
+  companyName String
+  companyDetails String
+  companyLogo String // TODO: add to S3 bucket
+  invoiceLanguage String
+  language Language @relation(fields: [invoiceLanguage], references: [language])
+  format String
+  numberAndDateFormat NumberAndDateFormat @relation(fields: [format], references: [format])
+  showTimeReport Boolean
+  timeReportGroupings String // TODO: Custom string parsing such as project->issue->subtask->employee->worklog
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id])
+}
+
+model Invoice {
+  id String @id @default(cuid())
+  name String
+  status String
+  invoiceNumber Int
+  currencyName String?
+  currency Currency? @relation(fields: [currencyName], references: [currency])
+  invoicedDates DateTime
+  issueDate DateTime
+  dueDate DateTime
+  clientName String
+  client Client @relation(fields: [clientName, organizationId], references: [name, organizationId])
+  timeItems TimeItem[]
+  fixedPriceTimeItems FixedPriceTimeItem[]
+  taxes Tax[]
+  discounts Discount[]
+  fixedPriceDiscounts FixedPriceDiscount[]
+  notesForClient String
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id])
+  // TODO: add invoice layout
+  // TODO: add rounding scheme
 }
 
 // Necessary for Next auth
