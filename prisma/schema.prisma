@@ -237,7 +237,7 @@ model InvoiceLayout {
 model Invoice {
   id String @id @default(cuid())
   name String
-  status String
+  status String //Draft, Sent, Paid dropdown selector
   invoiceNumber Int
   currencyName String?
   currency Currency? @relation(fields: [currencyName], references: [currency])

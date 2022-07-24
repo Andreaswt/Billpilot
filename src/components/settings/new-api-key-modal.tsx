@@ -18,9 +18,9 @@ const ApiKeyModal = (KeyValuePair: IKeyValuePair) => {
     const finalRef = React.useRef(null)
 
     const utils = trpc.useContext();
-    const updateApiKey = trpc.useMutation('apiKeys.upsertApiKey', {
+    const updateApiKey = trpc.useMutation('apikeys.upsertApiKey', {
         onSuccess() {
-            utils.invalidateQueries(['apiKeys.getAllKeysAndValues']);
+            utils.invalidateQueries(['apikeys.getAllKeysAndValues']);
             onClose();
         }
     });

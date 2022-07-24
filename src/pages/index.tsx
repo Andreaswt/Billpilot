@@ -8,11 +8,6 @@ import Layout from "../components/layout/layout";
 import SidebarWithHeader from "../components/layout/layout";
 
 const Home: NextPage = () => {
-  const { data, isLoading } = trpc.useQuery([
-    "example.hello",
-    { text: "from tRPC" },
-  ]);
-
   const { data: session, status } = useSession()
 
   if (status === "unauthenticated" || status === "loading") {
@@ -60,8 +55,6 @@ const Home: NextPage = () => {
                 </li>
               </ul>
               <Button onClick={() => signIn()} colorScheme='blue'>Sign in</Button>
-
-              <div>{data ? <p>{data.greeting}</p> : <p>Loading..</p>}</div>
             </div>
           </div>
       </>

@@ -35,7 +35,7 @@ const ApiKeyTable = () => {
     ];
 
     const { data, isLoading } = trpc.useQuery([
-        "apiKeys.getAllKeysAndValues"
+        "apikeys.getAllKeysAndValues"
     ]);
 
     if (isLoading) {
