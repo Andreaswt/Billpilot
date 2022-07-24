@@ -10,28 +10,51 @@ import { logger } from '../logger';
 
 let client: Version3Client;
 
-export async function authenticateJira(connectionsDetails: { host: string, username: string, password: string }) {
+export async function isAuthenticated(organizationId: string) {
+    // Get api keys from database, and authenticate with them
+    let apikeys = await prisma.apiKey.findMany({
+        where: {
+            organizationId: organizationId,
+            provider: "Jira",
+            key: { in: ["Your Jira Website Link", "Username", "Password" ] }
+        },
+        select: {
+            key: true,
+            value: true
+        }
+    })
+
+    if (!apikeys.find(x => x.key === "Your Jira Website Link")) {
+        throw new Error("No Jira website link found");
+    }
+
+    if (!apikeys.find(x => x.key === "Username")) {
+        throw new Error("No Jira username found");
+    }
+
+    if (!apikeys.find(x => x.key === "Password")) {
+        throw new Error("No Jira password found");
+    }
+
+    let jiraWebsiteLink = apikeys.find(x => x.key === "Your Jira Website Link")!.value;
+    let username = apikeys.find(x => x.key === "Username")!.value;
+    let password = apikeys.find(x => x.key === "Password")!.value;
+
     client = new Version3Client({
         newErrorHandling: true,
-        host: connectionsDetails.host,
+        host: jiraWebsiteLink,
         authentication: {
             basic: {
-                email: connectionsDetails.username,
-                apiToken: connectionsDetails.password,
+                email: username,
+                apiToken: password,
             },
         },
     })
 }
 
-function isAuthenticated() {
-    if (!client) {
-        throw new Error("Jira client not authenticated");
-    }
-}
-
 // Issues
-export async function getIssue(id: string) {
-    isAuthenticated();
+export async function getIssue(id: string, organizationId: string) {
+    isAuthenticated(organizationId);
 
     try {
         let issue = await client.issues.getIssue({ issueIdOrKey: id });
@@ -42,10 +65,10 @@ export async function getIssue(id: string) {
 }
 
 // Worklogs
-export async function getTotalHoursThisMonth() {
-    isAuthenticated();
+export async function getTotalHoursThisMonth(organizationId: string) {
+    isAuthenticated(organizationId);
 
-    let worklogs = await getWorklogsThisMonth();
+    let worklogs = await getWorklogsThisMonth(organizationId);
 
     let hours = 0;
     worklogs!.forEach(worklog => {
@@ -55,10 +78,10 @@ export async function getTotalHoursThisMonth() {
     return hours;
 }
 
-export async function getBillableHoursThisMonth() {
-    isAuthenticated();
+export async function getBillableHoursThisMonth(organizationId: string) {
+    isAuthenticated(organizationId);
 
-    let worklogs = await getWorklogsThisMonth();
+    let worklogs = await getWorklogsThisMonth(organizationId);
 
     let billableHours = 0;
     worklogs!.forEach(worklog => {
@@ -68,22 +91,22 @@ export async function getBillableHoursThisMonth() {
     return billableHours;
 }
 
-export async function getNonBillableHoursThisMonth() {
-    isAuthenticated();
+export async function getNonBillableHoursThisMonth(organizationId: string) {
+    isAuthenticated(organizationId);
 
-    let billableHours = await getBillableHoursThisMonth();
-    let totalTime = await getTotalHoursThisMonth();
+    let billableHours = await getBillableHoursThisMonth(organizationId);
+    let totalTime = await getTotalHoursThisMonth(organizationId);
 
     return totalTime - billableHours; // = non-billable hours
 }
 
-export async function getUninvoicedHoursThisMonth() {
-    isAuthenticated();
+export async function getUninvoicedHoursThisMonth(organizationId: string) {
+    isAuthenticated(organizationId);
 
     // Get total hours this month
-    let totalHoursThisMonth = await getTotalHoursThisMonth();
+    let totalHoursThisMonth = await getTotalHoursThisMonth(organizationId);
 
-    let [firstDay, lastDay] = firstAndLastDayOfThisMonth()
+    let [firstDay, lastDay] = firstAndLastDayOfThisMonth(organizationId)
 
     // get date an hour ago
     firstDay = new Date();
@@ -110,14 +133,14 @@ export async function getUninvoicedHoursThisMonth() {
     return totalHoursThisMonth - billedTime;
 }
 
-export async function getWorklogsThisMonth(onlyBillable: boolean = false) {
-    isAuthenticated();
+export async function getWorklogsThisMonth(organizationId: string, onlyBillable: boolean = false) {
+    isAuthenticated(organizationId);
 
     try {
         // Get all issues with worklogs between start and end date of month
         let response = await client.issueSearch.searchForIssuesUsingJql({ jql: "worklogDate >= startOfMonth() and worklogDate <= endOfMonth()", fields: ["worklog"] });
 
-        let [firstDay, lastDay] = firstAndLastDayOfThisMonth()
+        let [firstDay, lastDay] = firstAndLastDayOfThisMonth(organizationId)
 
         // Create array to contain worklogs
         let worklogs: Worklog[] = [];
@@ -165,7 +188,7 @@ export async function getWorklogsThisMonth(onlyBillable: boolean = false) {
 }
 
 export async function createAndBillWorklogs(worklogs: Worklog[], organizationId: string) {
-    isAuthenticated();
+    isAuthenticated(organizationId);
 
     let mappedWorklog = worklogs.map(w =>
     ({
@@ -188,7 +211,7 @@ export async function createAndBillWorklogs(worklogs: Worklog[], organizationId:
 }
 
 export async function billWorklogs(worklogIds: string[], organizationId: string) {
-    isAuthenticated();
+    isAuthenticated(organizationId);
 
     const worklogsResult = await prisma.worklog.updateMany({
         where: {
@@ -208,8 +231,8 @@ export async function billWorklogs(worklogIds: string[], organizationId: string)
 }
 
 // Projects
-export async function getProjects() {
-    isAuthenticated();
+export async function getProjects(organizationId: string) {
+    isAuthenticated(organizationId);
 
     try {
         let projects = await client.projects.getAllProjects();
@@ -220,8 +243,8 @@ export async function getProjects() {
 }
 
 // Employees
-export async function getEmployees() {
-    isAuthenticated();
+export async function getEmployees(organizationId: string) {
+    isAuthenticated(organizationId);
 
     try {
         let employees = await client.users.getAllUsers();
@@ -231,19 +254,19 @@ export async function getEmployees() {
     }
 }
 
-export async function rebuildReport() {
-    isAuthenticated();
+export async function rebuildReport(organizationId: string) {
+    isAuthenticated(organizationId);
 
-    let uninvoicedTime = await getUninvoicedHoursThisMonth();
-    let billableTime = await getBillableHoursThisMonth();
-    let totalTime = await getTotalHoursThisMonth();
-    let nonBillableTime = await getNonBillableHoursThisMonth();
+    let uninvoicedTime = await getUninvoicedHoursThisMonth(organizationId);
+    let billableTime = await getBillableHoursThisMonth(organizationId);
+    let totalTime = await getTotalHoursThisMonth(organizationId);
+    let nonBillableTime = await getNonBillableHoursThisMonth(organizationId);
 
     return {uninvoicedTime: uninvoicedTime, billableTime: billableTime, totalTime: totalTime, nonBillableTime: nonBillableTime};
 }
 
-function firstAndLastDayOfThisMonth() {
-    isAuthenticated();
+function firstAndLastDayOfThisMonth(organizationId: string) {
+    isAuthenticated(organizationId);
 
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
     var firstDay = new Date(y, m, 1);
