@@ -2,6 +2,7 @@ import React from "react";
 import { NextPage } from "next";
 import { trpc } from "../../utils/trpc";
 import { Button } from "@saas-ui/react";
+import Link from "next/link";
 
 const SimpleCard: NextPage = () => {
 
@@ -12,9 +13,9 @@ const SimpleCard: NextPage = () => {
   return (
     <>
     <h1>dashboard</h1>
-    <a href="/api/xero/redirect">
-      hej
-    </a>
+    <Link href={"/api/xero/redirect"}>
+      Connect til xero
+    </Link>
     </>
   );
 }

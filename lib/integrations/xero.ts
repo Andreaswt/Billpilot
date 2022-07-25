@@ -1,11 +1,5 @@
-import { Invoice as PrismaInvoice, Prisma } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
-import { Version3Client } from 'jira.js';
-import { Worklog } from 'jira.js/out/version3/models';
 import { prisma } from "../../src/server/db/client";
-import { logger } from '../logger';
 import { Invoice, Invoices, LineItem, TokenSet, XeroClient } from 'xero-node';
-import jwtDecode from 'jwt-decode';
 
 export async function getXeroClient(organizationId?: string) {
     let xero = new XeroClient({

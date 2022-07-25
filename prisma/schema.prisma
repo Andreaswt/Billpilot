@@ -209,9 +209,9 @@ model FixedPriceDiscount {
   appliesToFixedPriceTimeItems FixedPriceTimeItem[]
 }
 
-model Language {
-  language String @id @unique
-  invoiceLayout InvoiceLayout[]
+enum Language {
+  DANISH
+  ENGLISH
 }
 
 model NumberAndDateFormat {
@@ -225,8 +225,7 @@ model InvoiceLayout {
   companyName String
   companyDetails String
   companyLogo String // TODO: add to S3 bucket
-  invoiceLanguage String
-  language Language @relation(fields: [invoiceLanguage], references: [language])
+  language Language @default(ENGLISH)
   format String
   numberAndDateFormat NumberAndDateFormat @relation(fields: [format], references: [format])
   showTimeReport Boolean

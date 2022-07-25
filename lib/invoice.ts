@@ -1,9 +1,10 @@
-import { Invoice } from "@prisma/client";
+import { FixedPriceTimeItem, InvoiceStatus, TimeItem } from "@prisma/client";
 import { prisma } from "../src/server/db/client";
 
 interface ICreateInvoiceInput {
-        name: string,
-        status: string
+    invoice: {
+        name: string
+        status: InvoiceStatus
         invoiceNumber: number
         currencyName: string
         invoicedFrom: Date
@@ -12,13 +13,57 @@ interface ICreateInvoiceInput {
         dueDate: Date
         clientName: string
         notesForClient: string
-        // TODO: add invoice lines aswell
-        organizationId: string
+        timeItems: {
+            name: string
+            time: number
+            hourlyWage: number
+            discountsAppliedByName: string[]
+            fixedPriceDiscountsAppliedByName: string[]
+            taxesAppliedByName: string[]
+        }[]
+        fixedPriceTimeItems: {
+            name: string
+            amount: number
+            discountsAppliedByName: string[]
+            fixedPriceDiscountsAppliedByName: string[]
+            taxesAppliedByName: string[]
+        }[]
+
+        // Discounts etc are appliable to multiple time items, so are referenced by name in time items
+        discounts: {
+            name: string
+            percent: number
+        }[]
+        fixedPriceDiscounts: {
+            name: string
+            amount: number
+        }[]
+        taxes: {
+            name: string
+            percent: number
+        }[]
+    }
 }
 
 export async function createInvoice(invoice: ICreateInvoiceInput, organizationId: string) {
-    // TODO: implement
-    throw new Error("Not implemented");
+    // Insert into invoice
+    await prisma.invoice.create({
+        data: {
+            ...invoice.invoice,
+            organizationId: organizationId,
+
+        },
+    })
+
+    // Insert into time items
+
+    // Insert into fixed price time items
+
+    // Insert into discounts
+
+    // Insert into fixed price discounts
+
+    // Insert into taxes
 }
 
 export async function getInvoice(invoiceId: string, organizationId: string) {
