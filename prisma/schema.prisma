@@ -1,7 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// ----- Comment in for MySQL -----
 generator client {
   provider = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
@@ -10,7 +9,6 @@ generator client {
 datasource db {
   provider = "mysql"
   url = env("DATABASE_URL")
-  //shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
   referentialIntegrity = "prisma"
 }
 
@@ -237,14 +235,22 @@ model InvoiceLayout {
   organization Organization @relation(fields: [organizationId], references: [id])
 }
 
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  NOCHARGE
+}
+
 model Invoice {
   id String @id @default(cuid())
   name String
-  status String //Draft, Sent, Paid dropdown selector
+  status InvoiceStatus @default(DRAFT)
   invoiceNumber Int
   currencyName String?
   currency Currency? @relation(fields: [currencyName], references: [currency])
-  invoicedDates DateTime
+  invoicedFrom DateTime
+  invoicedTo DateTime
   issueDate DateTime
   dueDate DateTime
   clientName String
@@ -301,6 +307,11 @@ model Session {
   updatedAt    DateTime @updatedAt
 }
 
+enum UserRoles {
+  USER
+  ADMIN
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -308,7 +319,7 @@ model User {
   emailVerified DateTime?
   password      String?
   image         String?
-  role          String?
+  role          UserRoles @default(USER)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   accounts      Account[]

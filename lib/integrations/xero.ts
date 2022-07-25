@@ -42,10 +42,10 @@ export async function getXeroClient(organizationId?: string) {
     return xero;
 }
 
-export async function createInvoice(invoice: PrismaInvoice, organizationId: string) {
-    let dbInvoice = await prisma.invoice.findUniqueOrThrow({
+export async function createInvoice(invoiceId: string, organizationId: string) {
+    let invoice = await prisma.invoice.findUniqueOrThrow({
         where: {
-            id: invoice.id
+            id: invoiceId
         },
         include: {
             timeItems: true,
@@ -74,10 +74,10 @@ export async function createInvoice(invoice: PrismaInvoice, organizationId: stri
     let lineItems: LineItem[] = [];
 
     // Add all time items
-    dbInvoice.timeItems.map(item => {
-        let discount = dbInvoice.discounts.find(discount => discount.name === item.name);
-        let fixedPriceDiscount = dbInvoice.fixedPriceDiscounts.find(discount => discount.name === item.name);
-        let tax = dbInvoice.taxes.find(tax => tax.name === item.name);
+    invoice.timeItems.map(item => {
+        let discount = invoice.discounts.find(discount => discount.name === item.name);
+        let fixedPriceDiscount = invoice.fixedPriceDiscounts.find(discount => discount.name === item.name);
+        let tax = invoice.taxes.find(tax => tax.name === item.name);
 
         let lineAmount = item.time.toNumber() * item.hourlyWage.toNumber();
 
@@ -94,10 +94,10 @@ export async function createInvoice(invoice: PrismaInvoice, organizationId: stri
     })
 
     // Add all fixed price items
-    dbInvoice.fixedPriceTimeItems.map(item => {
-        let discount = dbInvoice.discounts.find(discount => discount.name === item.name);
-        let fixedPriceDiscount = dbInvoice.fixedPriceDiscounts.find(discount => discount.name === item.name);
-        let tax = dbInvoice.taxes.find(tax => tax.name === item.name);
+    invoice.fixedPriceTimeItems.map(item => {
+        let discount = invoice.discounts.find(discount => discount.name === item.name);
+        let fixedPriceDiscount = invoice.fixedPriceDiscounts.find(discount => discount.name === item.name);
+        let tax = invoice.taxes.find(tax => tax.name === item.name);
 
         let lineAmount = item.amount.toNumber();
 
@@ -114,6 +114,16 @@ export async function createInvoice(invoice: PrismaInvoice, organizationId: stri
         })
     })
 
+    // Add invoiced dates as first element in the line items
+    lineItems.unshift({
+        description: "Invoices dates: " + invoice.invoicedFrom.toISOString() + " - " + invoice.invoicedTo.toISOString(),
+    })
+
+    // Add customer notes as last element in the line items
+    lineItems.push({
+        description: invoice.notesForClient,
+    })
+
     const invoices: Invoices = {
         invoices: [
             {
@@ -121,18 +131,15 @@ export async function createInvoice(invoice: PrismaInvoice, organizationId: stri
                 lineItems: lineItems,
                 date: invoice.issueDate.toISOString().slice(0, 10),
                 dueDate: invoice.dueDate.toISOString().slice(0, 10), // yyyy-mm-dd
-                reference: invoice.name, // TODO: whats this
-                status: Invoice.StatusEnum.DRAFT // Get this
+                reference: invoice.name,
+                status: Invoice.StatusEnum.DRAFT
             }
         ]
     }
 
     let xero = await getXeroClient(organizationId);
 
-    await xero.updateTenants();
-    const activeTenantId = xero.tenants[0].tenantId;
-
-    const createdInvoicesResponse = await xero.accountingApi.createInvoices(activeTenantId, invoices)
+    const createdInvoicesResponse = await xero.accountingApi.createInvoices(await getActiveTenantId(), invoices)
 
     return createdInvoicesResponse.body.invoices![0];
 }
@@ -140,10 +147,7 @@ export async function createInvoice(invoice: PrismaInvoice, organizationId: stri
 export async function getAccounts(organizationId: string) {
     let xero = await getXeroClient(organizationId);
 
-    await xero.updateTenants();
-    const activeTenantId = xero.tenants[0].tenantId;
-
-    const accounts = await xero.accountingApi.getAccounts(activeTenantId);
+    const accounts = await xero.accountingApi.getAccounts(await getActiveTenantId());
 
     return accounts.body.accounts;
 }
@@ -187,4 +191,13 @@ export async function saveTokenset(tokenSet: TokenSet, organizationId: string) {
             scope: tokenSet.scope!,
         }
     })
+}
+
+async function getActiveTenantId() {
+    let xero = await getXeroClient();
+
+    await xero.updateTenants();
+    const activeTenantId = xero.tenants[0].tenantId;
+
+    return activeTenantId;
 }

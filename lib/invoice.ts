@@ -6,11 +6,13 @@ interface ICreateInvoiceInput {
         status: string
         invoiceNumber: number
         currencyName: string
-        invoicedDates: Date
+        invoicedFrom: Date
+        invoicedTo: Date
         issueDate: Date
         dueDate: Date
         clientName: string
         notesForClient: string
+        // TODO: add invoice lines aswell
         organizationId: string
 }
 
