@@ -19,5 +19,7 @@ declare namespace NodeJS {
         XERO_REDIRECT_URI: string
         XERO_CLIENT_ID: string
         XERO_CLIENT_SECRET: string
+        ECONOMIC_APP_SECRET_TOKEN: string
+        ECONOMIC_REDIRECT_URL: string
     }
   }

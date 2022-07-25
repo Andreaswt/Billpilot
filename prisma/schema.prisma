@@ -51,7 +51,7 @@ model ApiKey {
     value String // e.g. jsj3hdo3eds0
     organizationId String
     organization Organization @relation(fields: [organizationId], references: [id])
-    @@unique(fields: [key, organizationId], name: "organizationsApiKey")
+    @@unique(fields: [provider, key, organizationId], name: "organizationsApiKey")
 }
 
 model Worklog {

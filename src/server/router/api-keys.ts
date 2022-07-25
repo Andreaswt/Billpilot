@@ -56,6 +56,7 @@ export const apiKeysRouter = createRouter()
       const apiKeyResult = await ctx.prisma.apiKey.upsert({
         where: {
           organizationsApiKey: {
+            provider: input.provider,
             key: input.key,
             organizationId: ctx.organizationId,
           }

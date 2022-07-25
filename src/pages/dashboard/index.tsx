@@ -16,6 +16,10 @@ const SimpleCard: NextPage = () => {
     <Link href={"/api/xero/redirect"}>
       Connect til xero
     </Link>
+    <br></br>
+    <Link href={"/api/economic/redirect"}>
+      Connect til economic
+    </Link>
     </>
   );
 }

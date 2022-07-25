@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { createInvoice, getInvoice } from "../../../lib/invoice";
 import { z } from "zod";
 import { Invoice } from "@prisma/client";
+import { test } from "../../../lib/integrations/e-conomic";
 
 export const invoicesRouter = createRouter()
   .middleware(async ({ ctx, next }) => {
@@ -16,7 +17,7 @@ export const invoicesRouter = createRouter()
   .query("test", {
     async resolve({ ctx }) {
       
-      // console.log(await createInvoice(invoice, ctx.organizationId));
+      console.log(await test(ctx.organizationId));
 
     },
   })
@@ -28,22 +29,22 @@ export const invoicesRouter = createRouter()
     async resolve({ ctx, input }) {
       return await getInvoice(input.invoiceId, ctx.organizationId);
     },
-  })
-  .mutation("createInvoice", {
-    input: z.object({
-      name: z.string(),
-      status: z.string(),
-      invoiceNumber: z.number(),
-      currencyName: z.string(),
-      invoicedFrom: z.date(),
-      invoicedTo: z.date(),
-      issueDate: z.date(),
-      dueDate: z.date(),
-      clientName: z.string(),
-      notesForClient: z.string(),
-      organizationId: z.string()
-    }),
-    async resolve({ ctx, input }) {
-      return await createInvoice(input, ctx.organizationId);
-    }
   });
+  // .mutation("createInvoice", {
+  //   input: z.object({
+  //     name: z.string(),
+  //     status: z.string(),
+  //     invoiceNumber: z.number(),
+  //     currencyName: z.string(),
+  //     invoicedFrom: z.date(),
+  //     invoicedTo: z.date(),
+  //     issueDate: z.date(),
+  //     dueDate: z.date(),
+  //     clientName: z.string(),
+  //     notesForClient: z.string(),
+  //     organizationId: z.string()
+  //   }),
+  //   async resolve({ ctx, input }) {
+  //     return await createInvoice(input, ctx.organizationId);
+  //   }
+  // });

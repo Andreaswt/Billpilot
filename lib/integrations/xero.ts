@@ -47,7 +47,7 @@ export async function createInvoice(invoiceId: string, organizationId: string) {
             discounts: {
                 select: {
                     name: true,
-                    percent: true
+                    percent: true,
                 }
             },
             fixedPriceDiscounts: {

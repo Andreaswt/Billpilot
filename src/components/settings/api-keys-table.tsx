@@ -23,14 +23,10 @@ interface IUpdateApiTokens {
 }
 
 const ApiKeyTable = () => {
-    // Whether to show asterisk or not
-    const [asterikAppSecretToken, setAsterikAppSecretToken] = useState(false);
-    const [asterikAgreementGrantToken, setAsterikAgreementGrantToken] = useState(false);
-
     const { data: session, status } = useSession();
 
     const apiKeys: { provider: string, keys: string[] }[] = [
-        { provider: "E-conomic", keys: ["App Secret Token", "Agreement Grant Token"] },
+        { provider: "E-conomic", keys: ["Agreement Grant Token"] },
         { provider: "Jira", keys: ["Your Jira Website Link", "Username", "Password"] },
     ];
 
