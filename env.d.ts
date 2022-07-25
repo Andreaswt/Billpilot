@@ -16,5 +16,8 @@ declare namespace NodeJS {
         DATABASE_URL: string
         SHADOW_DATABASE_URL: string
         NEXTAUTH_SECRET: string
+        XERO_REDIRECT_URI: string
+        XERO_CLIENT_ID: string
+        XERO_CLIENT_SECRET: string
     }
   }

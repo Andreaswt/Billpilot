@@ -10,8 +10,6 @@ export async function createProjectsInDatabase(projects: Project[], organization
         organizationId: organizationId
     }));
 
-    console.log(mappedProjects);
-
     return await prisma.project.createMany({
         data: mappedProjects
     })

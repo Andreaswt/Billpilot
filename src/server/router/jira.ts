@@ -19,7 +19,7 @@ export const jiraRouter = createRouter()
 
       // host: "https://atrol21.atlassian.net", username: "atrol21@student.sdu.dk", password: "bhMH87dr3TE7rWF4oepiD912"
 
-      console.log(await getTotalHoursThisMonth(ctx.organizationId));
+      // console.log(await getTotalHoursThisMonth(ctx.organizationId));
 
       return "hej";
     },

@@ -40,6 +40,8 @@ model Organization {
     discounts Discount[]
     fixedPriceDiscounts FixedPriceDiscount[]
     invoiceLayouts InvoiceLayout[]
+    xeroAuthenticationKeyId String?
+    xeroAuthenticationKey XeroAuthenticationKey? @relation(fields: [xeroAuthenticationKeyId], references: [id])
     currencyName String?
     currency Currency? @relation(fields: [currencyName], references: [currency])
 }
@@ -143,6 +145,7 @@ model Client {
 model TimeItem {
   id String @id @default(cuid())
   name String
+  time Decimal
   hourlyWage Decimal
   invoiceId String
   invoice Invoice @relation(fields: [invoiceId], references: [id])
@@ -254,8 +257,20 @@ model Invoice {
   notesForClient String
   organizationId String
   organization Organization @relation(fields: [organizationId], references: [id])
-  // TODO: add invoice layout
   // TODO: add rounding scheme
+}
+
+// Xero
+model XeroAuthenticationKey {
+  id String @id @default(cuid())
+  organizationId String @unique
+  organization Organization[]
+  idToken String @db.Text() // Token id is too long to store in a string, so it's stored in a SQL text instead
+  accessToken String @db.Text()
+  expiresIn Int
+  tokenType String
+  refreshToken String @db.Text()
+  scope String
 }
 
 // Necessary for Next auth

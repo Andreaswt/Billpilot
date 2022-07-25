@@ -1,10 +1,8 @@
 import { createRouter } from "./context";
 import { TRPCError } from "@trpc/server";
-import { logger } from "../../../lib/logger";
-import { authenticateJira } from "../../../lib/integrations/jira";
 import { createInvoice, getInvoice } from "../../../lib/invoice";
 import { z } from "zod";
-import { Invoice } from "@prisma/client";
+import { getAccounts } from "../../../lib/integrations/xero";
 
 export const invoicesRouter = createRouter()
   .middleware(async ({ ctx, next }) => {
@@ -14,6 +12,13 @@ export const invoicesRouter = createRouter()
       throw new TRPCError({ message: "User not found", code: "UNAUTHORIZED" });
     }
     return next({ ctx: { ...ctx, organizationId } })
+  })
+  .query("test", {
+    async resolve({ ctx }) {
+      
+      console.log(await getAccounts(ctx.organizationId));
+
+    },
   })
   .query("getInvoice", {
     input: z
