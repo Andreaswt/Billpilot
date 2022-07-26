@@ -320,7 +320,7 @@ model User {
   image         String?
   role          UserRoles @default(USER)
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  updatedAt     DateTime  @default(now())
   accounts      Account[]
   sessions      Session[]
   organizationId  String
