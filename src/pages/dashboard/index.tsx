@@ -3,12 +3,17 @@ import { NextPage } from "next";
 import { trpc } from "../../utils/trpc";
 import { Button } from "@saas-ui/react";
 import Link from "next/link";
+import { requireAuth } from "../../common/requireAuth";
+
+export const getServerSideProps = requireAuth(async (ctx) => {
+  return { props: {} };
+});
 
 const SimpleCard: NextPage = () => {
 
-  const { data, isLoading } = trpc.useQuery([
-    "invoices.test"
-  ]);
+  // const { data, isLoading } = trpc.useQuery([
+  //   "invoices.test"
+  // ]);
 
   return (
     <>

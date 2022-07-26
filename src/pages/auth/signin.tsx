@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Flex,
   Box,
@@ -23,9 +23,9 @@ import {
 import { useForm } from "react-hook-form";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { signIn, useSession } from "next-auth/react";
-import { logger } from "../../../lib/logger";
 import { useRouter } from "next/router";
-import { each, forOwn, join } from "lodash";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ILogin, loginSchema } from "../../common/validation/auth";
 
 //icons
 import { BiLockAlt } from "react-icons/bi";
@@ -35,40 +35,25 @@ const SimpleCard: NextPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { isOpen: isOpenCollapse, onToggle: onToggleCollapse } =
     useDisclosure();
-  const { isOpen: isOpenEmail, onToggle: onToggleEmail } =
-    useDisclosure();
   const { data: session, status } = useSession();
   const router = useRouter();
 
   const {
     handleSubmit,
     register,
-    watch,
     formState: { errors, isSubmitting },
-  } = useForm();
+  } = useForm<ILogin>({
+    resolver: zodResolver(loginSchema),
+  });
 
-  let defaultBody = {
-    grant_type: "",
-    username: "asdf@gmail.com",
-    password: "asdf",
-    scope: "",
-    client_id: "",
-    client_secret: "",
-  };
-
-  async function onSubmit(values: any) {
-    try {
-      const body = { ...defaultBody, ...values };
-      console.log(`POSTing ${JSON.stringify(body, null, 2)}`);
-      let res = await signIn("credentials", {
-        ...body,
-        callbackUrl: "/dashboard",
-      });
-      logger.debug(`signing:onsubmit:res`, res);
-    } catch (error) {
-      logger.error(error);
-    }
+  interface ILogin {
+    email: string;
+    password: string;
   }
+
+  const onSubmit = useCallback(async (data: ILogin) => {
+    await signIn("credentials", { ...data, callbackUrl: "/dashboard" });
+  }, []);
 
   if (status === "authenticated") {
     router.push("/dashboard");
@@ -113,7 +98,7 @@ const SimpleCard: NextPage = () => {
                   isRequired
                 >
                   <FormLabel>Email</FormLabel>
-                  <Input type="email" {...register("username")} />
+                  <Input type="email" {...register("email")} />
                 </FormControl>
                 <FormControl
                   id="password"

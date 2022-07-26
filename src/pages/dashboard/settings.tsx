@@ -26,6 +26,11 @@ import { signIn, useSession } from "next-auth/react";
 //icons
 import { NextPage } from "next";
 import ApiKeyTab from "../../components/settings/api-keys-tab";
+import { requireAuth } from "../../common/requireAuth";
+
+export const getServerSideProps = requireAuth(async (ctx) => {
+  return { props: {} };
+});
 
 const SettingsPage: NextPage = () => {
   return (

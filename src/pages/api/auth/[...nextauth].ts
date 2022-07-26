@@ -4,54 +4,54 @@ import { prisma } from "../../../server/db/client";
 import { NextApiHandler } from "next";
 import { logger } from "../../../../lib/logger";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { trpc } from "../../../utils/trpc";
+import { omit } from "lodash";
+import sha256 from "crypto-js/sha256";
+import { loginSchema } from "../../../common/validation/auth";
 
 export const authOptions: NextAuthOptions = {
   debug: true,
   providers: [
     CredentialsProvider({
-      id: "credentials",
       name: "credentials",
       credentials: {
-        username: {
-          label: "Username",
-          type: "text",
-          placeholder: "jsmith",
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "jsmith@gmail.com",
         },
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials, req) => {
         if (!credentials) return null;
+        
+        // Check schema for errors
+        await loginSchema.parseAsync(credentials);
 
-        const user = await fetch(
-          `${process.env.NEXTAUTH_URL}/api/user/check-credentials`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-              accept: "application/json",
-            },
-            body: Object.entries(credentials)
-              .map((e) => e.join("="))
-              .join("&"),
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+            password: true,
+            role: true,
+            organizationId: true
           },
-        )
-          .then((res) => res.json())
-          .catch((err) => {
-            return null;
-          });
+        });
 
-        if (user) {
-          return user;
-        } else {
-          return null;
+        if (user && user.password == sha256(credentials.password).toString()) {
+          return omit(user, "password");
         }
+
+        return null;
       },
     }),
   ],
-  // pages
   pages: {
     signIn: "/auth/signin",
-    // signOut: "/auth/signout",
+    newUser: "/auth/signup"
   },
   adapter: PrismaAdapter(prisma),
   secret: process.env.NEXTAUTH_SECRET,
@@ -66,24 +66,28 @@ export const authOptions: NextAuthOptions = {
       logger.debug(code, metadata);
     },
   },
+  // jwt: {
+  //   secret: "super-secret",
+  //   maxAge: 15 * 24 * 30 * 60, // 15 days
+  // },
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
-    async session({session, token}) {
-        session.accessToken = token.accessToken;
-        session.user = token.user;
-        return session;
+    async session({ session, token }) {
+      session.accessToken = token.accessToken;
+      session.user = token.user;
+      return session;
     },
-    async jwt({token, user}) {
-        if (user) {
-            token.accessToken = user._id;
-            token.user = user;
-        }
-        return token;
+    async jwt({ token, user }) {
+      if (user) {
+        token.accessToken = user._id;
+        token.user = user;
+      }
+      return token;
     },
-},
+  },
 };
 
 const authHandler: NextApiHandler = (req, res) =>

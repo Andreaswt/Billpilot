@@ -99,7 +99,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               <MenuItem>Settings</MenuItem>
               <MenuItem>Billing</MenuItem>
               <MenuDivider />
-              <MenuItem onClick={() => signOut()}>Sign out</MenuItem>
+              <MenuItem onClick={() => signOut({ callbackUrl: "/" })}>Sign out</MenuItem>
             </MenuList>
           </Menu>
         </Flex>

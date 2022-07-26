@@ -6,17 +6,14 @@ import { trpc } from "../utils/trpc";
 import { useSession } from "next-auth/react"
 import Layout from "../components/layout/layout";
 import SidebarWithHeader from "../components/layout/layout";
+import { requireAuth } from "../common/requireAuth";
+
+export const getServerSideProps = requireAuth(async (ctx) => {
+  return { props: {} };
+});
 
 const Home: NextPage = () => {
   const { data: session, status } = useSession()
-
-  if (status === "unauthenticated" || status === "loading") {
-    return (
-      <>
-        <Button onClick={() => signIn()} colorScheme='blue'>Sign in</Button>
-      </>
-    )
-  }
 
   if (status === "authenticated") {
     return (
