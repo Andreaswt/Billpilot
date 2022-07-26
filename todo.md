@@ -4,13 +4,13 @@
 
 - [Carl] Erstat bell icon, symbol etc i headeren med en "log in" knap når der ikke er en bruger logget ind.
 - [Carl] lav simple stat cards til forsiden, der viser samme statistics som dem fra helloclerk.
+- [Carl] implementer inimplemented funktioner i filen lib/invoices.ts
 
 - [Andreas] Gør så SidebarWithHeader ikke bliver vist når brugeren ikke er logget ind
 - [Andreas] Udfyld dashboard index siden med data (cards fra dashboard)
-- [Andreas] Redirect brugeren til login siden hvis han ikke er logget ind
 
-### Vercel
-- [Andreas] Der kan ikke logges ind i preview. Credentials returnerer 401.
+### Xero
+- Invalid redirect url når man connecter, når der er deployet på vercel
 
 ### Jira
 - [Andreas] Kopier alle helloclerk features
