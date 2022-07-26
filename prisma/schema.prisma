@@ -320,11 +320,11 @@ model User {
   image         String?
   role          UserRoles @default(USER)
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  updatedAt     DateTime?  @updatedAt @default(now())
   accounts      Account[]
   sessions      Session[]
-  organizationId  String
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organizationId  String?
+  organization Organization? @relation(fields: [organizationId], references: [id])
 }
 
 model VerificationToken {

@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "pscale": "pscale connect billing-app --port 3309",
     "studio": "prisma studio",
     "client-db": "prisma generate",
     "update-db": "prisma db push",
