@@ -1,5 +1,6 @@
 import { prisma } from "../../src/server/db/client";
 import { Invoice, Invoices, LineItem, TokenSet, XeroClient } from 'xero-node';
+import { getInvoiceForExportToIntegration } from "../invoice";
 
 export async function getXeroClient(organizationId?: string) {
     let xero = new XeroClient({
@@ -37,41 +38,21 @@ export async function getXeroClient(organizationId?: string) {
 }
 
 export async function createInvoice(invoiceId: string, organizationId: string) {
-    let invoice = await prisma.invoice.findUniqueOrThrow({
-        where: {
-            id: invoiceId
-        },
-        include: {
-            timeItems: true,
-            fixedPriceTimeItems: true,
-            discounts: {
-                select: {
-                    name: true,
-                    percent: true,
-                }
-            },
-            fixedPriceDiscounts: {
-                select: {
-                    name: true,
-                    amount: true
-                }
-            },
-            taxes: {
-                select: {
-                    name: true,
-                    percent: true
-                }
-            }
-        }
-    })
+    let { invoiceDb,
+        discountAppliesToTimeItems,
+        discountAppliesToFixedPriceTimeItems,
+        fixedDiscountAppliesToTimeItems,
+        fixedDiscountAppliesToFixedPriceTimeItems,
+        taxAppliesToTimeItems,
+        taxAppliesToFixedPriceTimeItems } = await getInvoiceForExportToIntegration(invoiceId, organizationId);
 
     let lineItems: LineItem[] = [];
 
     // Add all time items
-    invoice.timeItems.map(item => {
-        let discount = invoice.discounts.find(discount => discount.name === item.name);
-        let fixedPriceDiscount = invoice.fixedPriceDiscounts.find(discount => discount.name === item.name);
-        let tax = invoice.taxes.find(tax => tax.name === item.name);
+    invoiceDb.timeItems.map(item => {
+        let discount = discountAppliesToTimeItems[item.id];
+        let fixedPriceDiscount = fixedDiscountAppliesToTimeItems[item.id];
+        let tax = taxAppliesToTimeItems[item.id];
 
         let lineAmount = item.time.toNumber() * item.hourlyWage.toNumber();
 
@@ -80,18 +61,18 @@ export async function createInvoice(invoiceId: string, organizationId: string) {
             quantity: item.time,
             accountCode: "200",
             taxType: tax ? "OUTPUT" : "NONE",
-            taxAmount: tax ? lineAmount + (lineAmount * tax.percent.toNumber()) : 0,
+            taxAmount: tax ? lineAmount + (lineAmount * tax.percent) : 0,
             lineAmount: lineAmount,
-            discountRate: discount ? discount.percent.toNumber() : 0,
+            discountRate: discount ? discount.percent : 0,
             discountAmount: fixedPriceDiscount ? fixedPriceDiscount?.amount : 0,
         })
     })
 
     // Add all fixed price items
-    invoice.fixedPriceTimeItems.map(item => {
-        let discount = invoice.discounts.find(discount => discount.name === item.name);
-        let fixedPriceDiscount = invoice.fixedPriceDiscounts.find(discount => discount.name === item.name);
-        let tax = invoice.taxes.find(tax => tax.name === item.name);
+    invoiceDb.fixedPriceTimeItems.map(item => {
+        let discount = discountAppliesToFixedPriceTimeItems[item.id];
+        let fixedPriceDiscount = fixedDiscountAppliesToFixedPriceTimeItems[item.id];
+        let tax = taxAppliesToFixedPriceTimeItems[item.id];
 
         let lineAmount = item.amount.toNumber();
 
@@ -101,21 +82,21 @@ export async function createInvoice(invoiceId: string, organizationId: string) {
             unitPrice: item.amount,
             accountCode: "200",
             taxType: tax ? "OUTPUT" : "NONE",
-            taxAmount: tax ? lineAmount + (lineAmount * tax.percent.toNumber()) : 0,
+            taxAmount: tax ? lineAmount + (lineAmount * tax.percent) : 0,
             lineAmount: lineAmount,
-            discountRate: discount ? discount.percent.toNumber() : 0,
+            discountRate: discount ? discount.percent : 0,
             discountAmount: fixedPriceDiscount ? fixedPriceDiscount?.amount : 0,
         })
     })
 
     // Add invoiced dates as first element in the line items
     lineItems.unshift({
-        description: "Invoices dates: " + invoice.invoicedFrom.toISOString() + " - " + invoice.invoicedTo.toISOString(),
+        description: "Invoices dates: " + invoiceDb.invoicedFrom.toISOString() + " - " + invoiceDb.invoicedTo.toISOString(),
     })
 
     // Add customer notes as last element in the line items
     lineItems.push({
-        description: invoice.notesForClient,
+        description: invoiceDb.notesForClient,
     })
 
     const invoices: Invoices = {
@@ -123,9 +104,9 @@ export async function createInvoice(invoiceId: string, organizationId: string) {
             {
                 type: Invoice.TypeEnum.ACCREC,
                 lineItems: lineItems,
-                date: invoice.issueDate.toISOString().slice(0, 10),
-                dueDate: invoice.dueDate.toISOString().slice(0, 10), // yyyy-mm-dd
-                reference: invoice.name,
+                date: invoiceDb.issueDate.toISOString().slice(0, 10),
+                dueDate: invoiceDb.dueDate.toISOString().slice(0, 10), // yyyy-mm-dd
+                reference: invoiceDb.name,
                 status: Invoice.StatusEnum.DRAFT
             }
         ]

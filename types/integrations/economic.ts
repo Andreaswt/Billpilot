@@ -15,9 +15,10 @@ export interface CreateInvoice {
     customer:                Customer;
     recipient:               Recipient;
     // delivery:                Delivery;
-    // references:              References;
+    references:              References;
     layout:                  Layout;
     lines:                   Line[];
+    notes:                   Note;
 }
 
 export interface Customer {
@@ -38,7 +39,7 @@ export interface Layout {
 }
 
 export interface Line {
-    // lineNumber:           number;
+    lineNumber:           number;
     // sortKey:              number;
     unit:                 Unit;
     product:              Product;
@@ -84,5 +85,16 @@ export interface VatZone {
 }
 
 export interface References {
+    salesPerson: SalesPerson | null;
     other: string;
+}
+
+export interface SalesPerson {
+    employeeNumber: number;
+}
+
+export interface Note {
+    heading: string;
+    // textLine1: string;
+    // textLine2: string;
 }
