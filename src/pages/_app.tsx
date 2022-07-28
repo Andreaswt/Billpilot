@@ -7,7 +7,7 @@ import { SessionProvider } from "next-auth/react";
 import "../styles/globals.css";
 import { ModalsProvider, NProgressNextRouter, SaasProvider } from '@saas-ui/react'
 import { useRouter } from "next/router";
-import { theme } from '@saas-ui/pro'
+import landingPageTheme from '../styles/index';
 import { AppLayout } from "../components/layout/layouts/app-layout";
 
 const MyApp: AppType = ({
@@ -16,7 +16,7 @@ const MyApp: AppType = ({
 }) => {
   const router = useRouter();
   return (
-    <SaasProvider theme={theme}>
+    <SaasProvider theme={landingPageTheme}>
       <SessionProvider session={pageProps.session} refetchInterval={0}>
         <ModalsProvider>
           <AppLayout>

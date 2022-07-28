@@ -1,33 +1,21 @@
-import {
-  Flex,
-  Box,
-  FormControl,
-  FormLabel,
-  Input,
-  InputGroup,
-  HStack,
-  InputRightElement,
-  Stack,
-  Button,
-  Heading,
-  Text,
-  useColorModeValue,
-  Link,
-  FormErrorMessage,
-  FormHelperText,
-} from "@chakra-ui/react";
-import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { useForm } from "react-hook-form";
-import { logger } from "../../../lib/logger";
-import { useRouter } from "next/router";
-import { resetLevel } from "loglevel";
-import { NextPage } from "next";
-import { ISignUp, signUpSchema } from "../../common/validation/auth";
-import { trpc } from "../../utils/trpc";
+import {
+  Box, Button, Container, FormControl, FormErrorMessage, FormLabel, Heading, Input, InputGroup,
+  InputRightElement, Stack, Text, useColorModeValue
+} from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { NextPage } from 'next';
+import NextLink from 'next/link';
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { ISignUp, signUpSchema } from "../common/validation/auth";
+import { BackgroundGradient } from '../components/landing-page/gradients/background-gradient';
+import { SEO } from '../components/landing-page/seo/seo';
+import { trpc } from "../utils/trpc";
 
-const SignupCard: NextPage = () => {
+
+const SignupPage: NextPage = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const {
@@ -48,7 +36,7 @@ const SignupCard: NextPage = () => {
 
       if (result.status === 201) {
         router.push(
-          `signin${router.query.callbackUrl
+          `login${router.query.callbackUrl
             ? `?callbackUrl=${router.query.callbackUrl}`
             : ""
           }`,
@@ -60,35 +48,29 @@ const SignupCard: NextPage = () => {
   }
 
   return (
-    <Flex
-      minH={"100vh"}
-      align={"center"}
-      justify={"center"}
-      bg={useColorModeValue("gray.50", "gray.800")}
-    >
-      <Stack
-        spacing={8}
-        mx={"auto"}
-        w={{ md: "md" }}
-        maxW={"lg"}
-        py={12}
-        px={6}
-      >
-        <Stack align={"center"}>
-          <Heading fontSize={"4xl"} textAlign={"center"}>
-            Sign up
-          </Heading>
-          <Text fontSize={"lg"} color={"gray.600"}>
-            to enjoy all of our cool features ✌️
-          </Text>
-        </Stack>
-        <Box
-          rounded={"lg"}
-          bg={useColorModeValue("white", "gray.700")}
-          boxShadow={"lg"}
-          p={8}
-        >
-          <form onSubmit={handleSubmit(onSubmit)}>
+    <Box>
+      <SEO
+        title="Saas UI Landingspage"
+        description="Free SaaS landingspage starter kit"
+      />
+      <Box>
+        <Box position="relative" overflow="hidden">
+          <BackgroundGradient height="100%" />
+          <Container maxW="container.xl" pt={{ base: 20, lg: 40 }} pb={{ md: 0 }}>
+            <Stack flex="1" direction="row">
+              <Stack
+                flex="1"
+                alignItems="center"
+                justify="center"
+                direction="column"
+                spacing="8"
+              >
+                <Container>
+                  <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+                    <Heading textAlign="center" color={useColorModeValue('gray.800', 'white')} fontSize="3xl">
+                      Sign up for access
+                    </Heading>
+                    <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={4}>
               <Box>
                 <FormControl isInvalid={!errors?.name?.message == false} id="fullName" isRequired>
@@ -132,11 +114,8 @@ const SignupCard: NextPage = () => {
                   size="lg"
                   type="submit"
                   isLoading={isSubmitting}
-                  bg={"blue.400"}
+                  colorScheme="purple"
                   color={"white"}
-                  _hover={{
-                    bg: "blue.500",
-                  }}
                 >
                   Sign up
                 </Button>
@@ -144,17 +123,22 @@ const SignupCard: NextPage = () => {
               <Stack pt={6}>
                 <Text align={"center"}>
                   Already a user?{" "}
-                  <Link color={"blue.400"} href="signin">
+                  <NextLink color={"blue.400"} href="login">
                     Sign in
-                  </Link>
+                  </NextLink>
                 </Text>
               </Stack>
             </Stack>
           </form>
+                  </Stack>
+                </Container>
+              </Stack>
+            </Stack>
+          </Container>
         </Box>
-      </Stack>
-    </Flex>
-  );
+      </Box>
+    </Box>
+  )
 }
 
-export default SignupCard;
+export default SignupPage;

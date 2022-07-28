@@ -2,15 +2,18 @@ import { useRouter } from 'next/router'
 import { FiFrown } from 'react-icons/fi'
 import { Button } from '@saas-ui/react'
 import { ErrorPage } from '@saas-ui/pro'
-import { Center } from '@chakra-ui/react'
+import { Box, Container } from '@chakra-ui/react'
+import { BackgroundGradient } from '../components/landing-page/gradients/background-gradient'
 
 export default function Error404() {
   const router = useRouter()
 
   return (
-    <Center h='100%'>
+    <Box position="relative" overflow="hidden">
+    <BackgroundGradient height="100%" />
+    <Container maxW="container.xl" pt={{ base: 20, lg: 40 }} pb={{ md: 0 }}>
       <ErrorPage
-        title="Oh dear, maybe something broke"
+        title="404: page doesn't exist"
         description="Where do you want to go?"
         icon={FiFrown}
         actions={
@@ -24,6 +27,7 @@ export default function Error404() {
           </>
         }
       />
-    </Center>
+      </Container>
+    </Box>
   )
 }

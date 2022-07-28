@@ -50,8 +50,8 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   pages: {
-    signIn: "/auth/signin",
-    newUser: "/auth/signup"
+    signIn: "/login",
+    newUser: "/signup"
   },
   adapter: PrismaAdapter(prisma),
   secret: process.env.NEXTAUTH_SECRET,

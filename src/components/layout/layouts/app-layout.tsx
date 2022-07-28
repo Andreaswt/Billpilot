@@ -8,6 +8,18 @@ import { useSession } from 'next-auth/react'
 import { ClientOnly } from '../client-only'
 import { AppSidebar } from '../sidebars/authenticated-sidebar'
 import { SettingsSidebar } from '../sidebars/settings-sidebar'
+import { Box } from '@chakra-ui/react'
+import { ReactNode } from 'react'
+
+import { SkipNavContent, SkipNavLink } from '@chakra-ui/skip-nav'
+
+import { Header, HeaderProps } from '../../landing-page/layout/header'
+import {
+    AnnouncementBanner,
+    AnnouncementBannerProps,
+} from '../../landing-page/announcement-banner/announcement-banner'
+import { Footer, FooterProps } from '../../landing-page/layout/footer'
+
 /**
  * Layout for authentication screens (login/signup/etc...)
  */
@@ -36,10 +48,7 @@ export const AuthenticatedLayout: React.FC<LayoutProps> = ({
             sidebar={
                 <AppSidebar />
             }>
-            {/* <Page title="Page" height="400px" contentWidth="full"> */}
-            <Page title="Page" contentWidth="full">
-                {children}
-            </Page>
+            {children}
         </AppShell>
     )
 }
@@ -58,9 +67,7 @@ export const SettingsLayout: React.FC<LayoutProps> = ({
                 <SettingsSidebar />
             }
         >
-            <Page title="Page" height="400px" contentWidth="full">
-                {children}
-            </Page>
+            {children}
         </AppShell>
     )
 }
@@ -72,10 +79,32 @@ export const PublicLayout: React.FC<LayoutProps> = ({
     children,
     ...rest
 }) => {
+    let announcement: AnnouncementBannerProps = { title: "", description: "", href: "/" };
+    let header: HeaderProps = {};
+    let footer: FooterProps = {};
+
     return (
-        <AppShell>{children}</AppShell>
+        <AppShell>
+            <SkipNavLink>Skip to content</SkipNavLink>
+            <AnnouncementBanner {...announcement} />
+            <Header {...header} />
+            <Box as="main">
+                <SkipNavContent />
+                {children}
+            </Box>
+            <Footer {...footer} />
+        </AppShell>
     )
 }
+
+// export const PublicLayout: React.FC<LayoutProps> = ({
+//     children,
+//     ...rest
+// }) => {
+//     return (
+//         <AppShell>{children}</AppShell>
+//     )
+// }
 
 /**
  * Application layout
@@ -94,9 +123,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     const { data: session, status } = useSession();
     const location = useLocation()
 
+    publicRoutes =["/", "/login", "/signup"]
+
     const isPublicRoute = publicRoutes.indexOf(location.pathname) !== -1
     const isSettings = location.pathname.indexOf('/dashboard/settings') === 0
-
 
     let LayoutComponent
     if (isPublicRoute) {

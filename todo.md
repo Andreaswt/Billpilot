@@ -16,6 +16,7 @@
 - [Andreas] Kopier alle helloclerk features
 
 ## Iteration 2: Design
+- Hvis bruger er logget ind og er på landing page, så fjerne login og signup knapper, og vis "go to dashboard" istedet.
 
 ### Saas UI
 - Køb SaaS UI pro
