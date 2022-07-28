@@ -5,20 +5,25 @@ import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
 import { SessionProvider } from "next-auth/react";
 import "../styles/globals.css";
-import { ChakraProvider } from '@chakra-ui/react'
-import SidebarWithHeader from "../components/layout/layout";
-import { SaasProvider } from '@saas-ui/react'
+import { ModalsProvider, NProgressNextRouter, SaasProvider } from '@saas-ui/react'
+import { useRouter } from "next/router";
+import { theme } from '@saas-ui/pro'
+import { AppLayout } from "../components/layout/layouts/app-layout";
 
 const MyApp: AppType = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  const router = useRouter();
   return (
-    <SaasProvider>
+    <SaasProvider theme={theme}>
       <SessionProvider session={pageProps.session} refetchInterval={0}>
-        <SidebarWithHeader>
-          <Component {...pageProps} />
-        </SidebarWithHeader>
+        <ModalsProvider>
+          <AppLayout>
+            <NProgressNextRouter router={router} />
+            <Component {...pageProps} />
+          </AppLayout>
+        </ModalsProvider>
       </SessionProvider>
     </SaasProvider>
   );
@@ -54,5 +59,5 @@ export default withTRPC<AppRouter>({
   /**
    * @link https://trpc.io/docs/ssr
    */
-  ssr: true,
+  ssr: false,
 })(MyApp);
