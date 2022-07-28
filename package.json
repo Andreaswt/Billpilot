@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "vercel-build": "prisma generate && next build",
+    "vercel-build": "npm login --registry=https://npm.saas-ui.dev/ && prisma generate && next build",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
