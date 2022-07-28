@@ -1,17 +1,13 @@
 import * as React from 'react'
 
-import { Flex, FlexProps, Container, Link, Spacer } from '@chakra-ui/react'
-import { Auth, AuthProps } from '@saas-ui/auth'
+import { Flex, FlexProps } from '@chakra-ui/react'
+import { AuthProps } from '@saas-ui/auth'
+import { AppShell, Page } from '@saas-ui/pro'
 import { useLocation } from '@saas-ui/router'
-import { Logo } from '../logo'
-import { AppShell, AppShellProps, DataGridPagination, DataGrid, SidebarOverflow, SidebarNav, SidebarLink, Sidebar, SidebarMenu, Page } from '@saas-ui/pro'
-import { MenuItem, NProgressNextRouter, PersonaAvatar, SaasProvider } from '@saas-ui/react'
-import { FiHome, FiUser, FiUsers } from 'react-icons/fi'
-import { SettingsSidebar } from '../sidebars/settings-sidebar'
-import NextLink from "next/link"
-import { AppSidebar } from '../sidebars/authenticated-sidebar'
-import { useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react'
 import { ClientOnly } from '../client-only'
+import { AppSidebar } from '../sidebars/authenticated-sidebar'
+import { SettingsSidebar } from '../sidebars/settings-sidebar'
 /**
  * Layout for authentication screens (login/signup/etc...)
  */
