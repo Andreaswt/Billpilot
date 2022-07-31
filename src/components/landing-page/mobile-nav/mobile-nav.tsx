@@ -32,7 +32,7 @@ import { Link } from '@saas-ui/react'
 
 interface NavLinkProps extends LinkProps {
   label: string
-  href?: string
+  href: string
   isActive?: boolean
 }
 

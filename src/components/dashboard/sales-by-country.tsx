@@ -1,5 +1,5 @@
 import { Card } from '@saas-ui/react'
-import { DataGrid, Column, DataGridCell } from '@saas-ui/pro'
+import { DataGrid, ColumnDef, DataGridCell } from '@saas-ui/pro'
 import { Sparklines } from '@saas-ui/charts'
 import { Progress } from '@chakra-ui/react'
 
@@ -44,21 +44,17 @@ const data: Data[] = [
   },
 ]
 
-const MetricsCell: DataGridCell<Data> = ({ value }) => {
-  return <Sparklines data={value} height="20px" width="100px" color="primary" />
-}
-
-const ProgressCell: DataGridCell<Data> = ({ row }) => {
+const ProgressCell: DataGridCell<Data> = (cell) => {
   return (
     <Progress
-      value={getPercentage(row.values.revenue)}
+      value={getPercentage(cell.row.getValue('revenue'))}
       size="sm"
       colorScheme="primary"
     />
   )
 }
 
-const CurrencyCell: DataGridCell<Data> = ({ value }) => {
+const CurrencyCell: DataGridCell<Data> = ({ getValue }) => {
   return (
     <>
       {"USD"}
@@ -66,26 +62,30 @@ const CurrencyCell: DataGridCell<Data> = ({ value }) => {
   )
 }
 
-const columns: Column<Data>[] = [
+const columns: ColumnDef<Data>[] = [
   {
     id: 'country',
-    Header: 'Country',
+    header: 'Country',
   },
   {
     id: 'bar',
-    Header: '',
-    Cell: ProgressCell,
+    header: '',
+    cell: ProgressCell,
   },
   {
     id: 'customers',
-    Header: 'Customers',
-    isNumeric: true,
+    header: 'Customers',
+    meta: {
+      isNumeric: true,
+    },
   },
   {
     id: 'revenue',
-    Header: 'Revenue',
-    isNumeric: true,
-    Cell: CurrencyCell,
+    header: 'Revenue',
+    cell: CurrencyCell,
+    meta: {
+      isNumeric: true,
+    },
   },
 ]
 

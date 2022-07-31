@@ -2,7 +2,7 @@ import { mode } from '@chakra-ui/theme-tools'
 
 type Dict = Record<string, any>
 
-export default {
+const Button = {
   variants: {
     'nav-link': (props: Dict) => {
       const { isActive } = props
@@ -23,3 +23,5 @@ export default {
     },
   },
 }
+
+export default Button;

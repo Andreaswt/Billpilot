@@ -4,4 +4,6 @@ import { default as Features, Feature } from './features'
 import { default as SectionTitle } from './section-title'
 import { default as Section } from './section'
 
-export default { Button, CTA, Features, Feature, SectionTitle, Section }
+const Index = { Button, CTA, Features, Feature, SectionTitle, Section }
+
+export default Index;
