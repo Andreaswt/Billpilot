@@ -15,7 +15,7 @@ import {
 import { useSession } from 'next-auth/react';
 import React from 'react';
 import { useState } from 'react';
-import { trpc } from '../../utils/trpc';
+import { trpc } from '../../../utils/trpc';
 import ApiKeyModal from './new-api-key-modal';
 
 interface IUpdateApiTokens {

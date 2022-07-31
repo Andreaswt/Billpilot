@@ -2,7 +2,7 @@ import { Text, Button, FormControl, FormLabel, Input, Modal, ModalBody, ModalClo
 import { ApiKey } from "@prisma/client"
 import React from "react"
 import { Field, Formik, useFormik } from "formik";
-import { trpc } from "../../utils/trpc";
+import { trpc } from "../../../utils/trpc";
 import * as Yup from 'yup';
 
 interface IKeyValuePair {

@@ -9,8 +9,12 @@ import {
   FiHelpCircle,
   FiHash,
   FiUsers,
-  FiSearch,
+  FiSearch
 } from 'react-icons/fi'
+
+import { IoIosPaper } from 'react-icons/io'
+
+import { AiFillFileAdd } from 'react-icons/ai'
 
 import {
   Sidebar,
@@ -85,15 +89,14 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
                 icon={<FiHome />}
               />
               <AppSidebarLink
-                href={"/dashboard/inbox"}
-                label="Inbox"
-                icon={<FiInbox />}
+                href={"/dashboard/create"}
+                label="Create invoice"
+                icon={<AiFillFileAdd />}
               />
               <AppSidebarLink
-                href={"/dashboard/contacts"}
-                isActive={useActivePath('contacts', { end: false })}
-                label="Contacts"
-                icon={<FiUsers />}
+                href={"/dashboard/invoices"}
+                label="Invoices"
+                icon={<IoIosPaper />}
               />
             </SidebarNavGroup>
 
