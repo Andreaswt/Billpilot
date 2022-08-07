@@ -70,7 +70,10 @@ export async function createInvoice(invoice: ICreateInvoiceInput, organizationId
 export async function getInvoiceForExportToIntegration(invoiceId: string, organizationId: string) {
     let invoiceDb = await prisma.invoice.findUniqueOrThrow({
         where: {
-            id: invoiceId
+            organizationsInvoice: {
+                id: invoiceId,
+                organizationId: organizationId,
+            }
         },
         include: {
             timeItems: true,
@@ -248,7 +251,15 @@ export function calculateDiscountPercentage(fixedPriceDiscount: number | undefin
 
 export async function getInvoice(invoiceId: string, organizationId: string) {
     // TODO: implement
-    throw new Error("Not implemented");
+    let invoice = await prisma.invoice.findUnique({
+        where: {
+            organizationsInvoice: {
+                id: invoiceId,
+                organizationId: organizationId
+            }
+        }
+    })
+    // throw new Error("Not implemented");
 }
 
 export async function getTotalInvoiced(organizationId: String) {

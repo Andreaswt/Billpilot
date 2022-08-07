@@ -3,6 +3,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Divider } from '@saas-ui/react';
 import { NextPage } from "next";
 import { requireAuth } from "../../common/requireAuth";
+import React, { useRef } from 'react'
 
 import {
     ArrayFieldAddButton, ArrayFieldContainer, ArrayFieldRemoveButton, ArrayFieldRowContainer,
@@ -32,8 +33,13 @@ const timeItemsSchema = Yup.object().shape({
     timeItems: Yup.array().min(1).of(timeItemSchema),
 })
 
+interface ICheckedItems {
+    project: string[]
+    issue: string[]
+    employee: string[]
+}
+
 const CreateInvoice: NextPage = () => {
-    const organization = "Dashboard";
     let isLoading = false;
 
     return (
@@ -112,6 +118,7 @@ const CreateInvoice: NextPage = () => {
                                             <>
                                                 {fields.map((field, i) => {
                                                     return (
+                                                        <>
                                                         <ArrayFieldRowContainer key={field.id} index={i}>
                                                             <ArrayFieldRowFields columns={3} spacing={1}>
                                                                 <Field label="Name" name="name" placeholder="Enter Time Item Name" />
@@ -120,6 +127,9 @@ const CreateInvoice: NextPage = () => {
                                                             </ArrayFieldRowFields>
                                                             <ArrayFieldRemoveButton />
                                                         </ArrayFieldRowContainer>
+                                                        <TimeItemsTable />
+                                                        <Divider my={4} />
+                                                        </>
                                                     )
                                                 })}
                                             </>
@@ -127,10 +137,10 @@ const CreateInvoice: NextPage = () => {
                                     </ArrayFieldRows>
                                     <ArrayFieldAddButton />
                                 </ArrayFieldContainer>
-
-                                <Divider mb={6} label="Add time from Jira" />
-                                <SubmitButton mr={4} label="Save" />
-                                <TimeItemsTable />
+{/* 
+                                <Divider label="Or add time from Jira" />
+                                <TimeItemsTable /> */}
+                                <SubmitButton ml={4} label="Save" />
                             </Form>
                         </CardBody>
                     </Card>

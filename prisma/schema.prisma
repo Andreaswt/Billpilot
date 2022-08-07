@@ -263,6 +263,7 @@ model Invoice {
   organizationId String
   organization Organization @relation(fields: [organizationId], references: [id])
   // TODO: add rounding scheme
+  @@unique ([id, organizationId], name: "organizationsInvoice")
 }
 
 // Xero

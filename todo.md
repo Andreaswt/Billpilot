@@ -14,9 +14,9 @@
 
 ### Jira
 - [Andreas] Kopier alle helloclerk features
+- Når employees bliver fethcet, skal alle bots ikke også med som users
+- Fiks søgning på jira items under create invoice. 
+(skriv viser x ud af antal items, hvis der er flere pages, og der ikke er et søgeord)
 
 ## Iteration 2: Design
 - Hvis bruger er logget ind og er på landing page, så fjerne login og signup knapper, og vis "go to dashboard" istedet.
-
-### Saas UI
-- Køb SaaS UI pro
