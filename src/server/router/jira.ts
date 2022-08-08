@@ -21,11 +21,17 @@ export const jiraRouter = createRouter()
       }),
     async resolve({ input, ctx }) {
       let projects = await searchProjects(input.searchTerm, ctx.organizationId);
-      let tableFormatProjects: { type: string, key: string, name: string }[] = [];
+      let tableFormatProjects: { 
+        type: string, 
+        key: string, 
+        importTimeId: string, 
+        name: string 
+      }[] = [];
 
       projects?.values!.forEach((project) => {
         tableFormatProjects.push({
           type: "Project",
+          importTimeId: project.key,
           key: project.key,
           name: project.name,
         });
@@ -36,6 +42,7 @@ export const jiraRouter = createRouter()
         total: number,
         tableFormatProjects: {
           type: string,
+          importTimeId: string,
           key: string,
           name: string
         }[]
@@ -55,11 +62,17 @@ export const jiraRouter = createRouter()
     }),
     async resolve({ input, ctx }) {
       let employees = await getEmployees(input.searchTerm, ctx.organizationId);
-      let tableFormatEmployees: { type: string, key: string, name: string }[] = [];
+      let tableFormatEmployees: { 
+        type: string, 
+        importTimeId: string,
+        key: string, 
+        name: string 
+      }[] = [];
 
       employees?.forEach((employee) => {
         tableFormatEmployees.push({
           type: "Employee",
+          importTimeId: employee.accountId,
           key: employee.accountId,
           name: employee.displayName!
         })
@@ -70,6 +83,7 @@ export const jiraRouter = createRouter()
         total: number,
         tableFormatEmployees: {
           type: string,
+          importTimeId: string
           key: string,
           name: string
         }[]
@@ -90,13 +104,11 @@ export const jiraRouter = createRouter()
     async resolve({ input, ctx }) {
       let issues = await searchIssues(input.searchTerm, ctx.organizationId);
 
-      let test = await importJiraTime([], ["TES-1","TES-2","TES-3"], ["TES"], ctx.organizationId);
-      console.log("yeet", test)
-
       let tableFormatIssues: {
         type: string,
         issueType: string,
         key: string,
+        importTimeId: string,
         name: string
       }[] = [];
 
@@ -104,6 +116,7 @@ export const jiraRouter = createRouter()
         tableFormatIssues.push({
           type: "Issue",
           issueType: issue.fields.issuetype?.name!,
+          importTimeId: issue.id,
           key: issue.key,
           name: issue.fields.summary
         })
@@ -115,6 +128,7 @@ export const jiraRouter = createRouter()
         tableFormatIssues: {
           type: string,
           issueType: string,
+          importTimeId: string,
           key: string,
           name: string
         }[]
@@ -134,12 +148,19 @@ export const jiraRouter = createRouter()
       }),
     async resolve({ input, ctx }) {
       let epics = await searchEpics(input.searchTerm, ctx.organizationId);
-      let tableFormatEpics: { type: string, issueType: string, key: string, name: string }[] = [];
+      let tableFormatEpics: { 
+        type: string, 
+        issueType: string, 
+        importTimeId: string, 
+        key: string, 
+        name: string 
+      }[] = [];
 
       epics?.issues?.forEach((epic) => {
         tableFormatEpics.push({
           type: "Issue",
           issueType: epic.fields.issuetype?.name!,
+          importTimeId: epic.key,
           key: epic.key,
           name: epic.fields.summary
         })
@@ -151,6 +172,7 @@ export const jiraRouter = createRouter()
         tableFormatIssues: {
           type: string,
           issueType: string,
+          importTimeId: string
           key: string,
           name: string
         }[]
@@ -162,4 +184,15 @@ export const jiraRouter = createRouter()
 
       return searchResult;
     },
+  })
+  .query("importJiraTime", {
+    input: z
+      .object({
+        accountIds: z.string().array(),
+        issueIds: z.string().array(),
+        projectKeys: z.string().array(),
+      }),
+      async resolve({ input, ctx }) {
+        return await importJiraTime(input.accountIds, input.issueIds, input.projectKeys, ctx.organizationId);
+      }
   });

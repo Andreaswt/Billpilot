@@ -294,10 +294,10 @@ export async function getEmployees(searchTerm: string, organizationId: string) {
     let client = await getClient(organizationId);
 
     try {
-        // let employees = await client.users.getAllUsers();
-        // 'summary ~ "' + searchTerm + '"'
         let employees = await client.userSearch.findUsers({ query: searchTerm });
-        return employees;
+
+        // Real users have accounttype atlassian, and should be filtered since all plugins have bot users, which we don't want
+        return employees.filter(employee => employee.accountType! === "atlassian");
     } catch (error) {
         logger.error(error);
     }
@@ -346,31 +346,27 @@ export async function importJiraTime(accountIds: string[], issueIds: string[], p
     /* ------------ Import employee and issue hours ------------ */
     let worklogs = await getWorklogsThisMonth(organizationId, undefined, true);
 
-    worklogs!.forEach(worklog => {
-        if (importedWorklogs.includes(worklog.id!)) return;
-        
+    for (let worklog of worklogs!) {
+        if (importedWorklogs.includes(worklog.id!)) continue;
+
         // Employee Hours and Issue Hours
         if (accountIds.includes(worklog.author!.accountId!) || issueIds.includes(worklog.issueId!)) {
             hours += new Prisma.Decimal(worklog.timeSpentSeconds!).toNumber() / 3600;
             importedWorklogs.push(worklog.id!);
-            return;
         }
-    })
+    }
 
     /* ------------ Import project hours ------------ */
-    projectsKeys.forEach(async projectKey => {
+    for (let projectKey of projectsKeys) {
         let projectWorklogs = await getWorklogsThisMonth(organizationId, projectKey, true);
 
-        projectWorklogs!.forEach(worklog => {
-            if (importedWorklogs.includes(worklog.id!)) return;
+        for (let worklog of projectWorklogs!) {
+            if (importedWorklogs.includes(worklog.id!)) continue;
 
-            if (!importedWorklogs.includes(worklog.id!)) {
-                hours += new Prisma.Decimal(worklog.timeSpentSeconds!).toNumber() / 3600;
-                importedWorklogs.push(worklog.id!);
-                return;
-            }
-        })
-    })
+            hours += new Prisma.Decimal(worklog.timeSpentSeconds!).toNumber() / 3600;
+            importedWorklogs.push(worklog.id!);
+        }
+    }
 
     return hours;
 }
