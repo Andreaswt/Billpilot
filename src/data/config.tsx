@@ -25,14 +25,14 @@ const siteConfig = {
       },
       {
         id: 'faq',
-        label: 'FAQ',
+        label: 'About Us',
       },
       {
         label: 'Login',
         href: '/login',
       },
       {
-        label: 'Sign Up',
+        label: 'Try It Free',
         href: '/signup',
         variant: 'primary',
       },

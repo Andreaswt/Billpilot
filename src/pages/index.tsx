@@ -63,7 +63,7 @@ const Home: NextPage = () => {
   return (
     <Box>
       <SEO
-        title="Saas UI Landingspage"
+        title="Billpilot Landingspage"
         description="Free SaaS landingspage starter kit"
       />
       <Box>
@@ -87,7 +87,7 @@ const HeroSection: React.FC = () => {
   return (
     <Box position="relative" overflow="hidden">
       <BackgroundGradient height="100%" />
-      <Container maxW="container.xl" pt={{ base: 40, lg: 60 }} pb="40">
+      <Container pt={{ base: 40, lg: 60 }} pb="40">
         <Stack direction={{ base: 'column', lg: 'row' }} alignItems="center">
           <Hero
             id="home"
@@ -95,15 +95,15 @@ const HeroSection: React.FC = () => {
             px="0"
             title={
               <FallInPlace>
-                Build beautiful
-                <Br /> software faster
+                Bill your customers
+                <Br /> at scale.
               </FallInPlace>
             }
             description={
               <FallInPlace delay={0.4} fontWeight="medium">
-                Saas UI is a <Em>React component library</Em>
-                <Br /> that doesn&apos;t get in your way and helps you <Br />{' '}
-                build intuitive SaaS products with speed.
+                Billpilot imports <Em>project mangement data</Em>,
+                <Br /> creates invoices from time reports and <Br />
+                sends them to your accounting app in minutes.
               </FallInPlace>
             }
           >
@@ -113,7 +113,7 @@ const HeroSection: React.FC = () => {
               </HStack>
 
               <ButtonGroup spacing={4} alignItems="center">
-                <ButtonLink colorScheme="primary" size="lg" href="/signup">
+                <ButtonLink colorScheme="purple" size="lg" href="/signup">
                   Sign Up
                 </ButtonLink>
                 <ButtonLink
@@ -133,34 +133,11 @@ const HeroSection: React.FC = () => {
                     />
                   }
                 >
-                  View demo
+                  Schedule Demo
                 </ButtonLink>
               </ButtonGroup>
             </FallInPlace>
           </Hero>
-          <Box
-            height="600px"
-            position="absolute"
-            display={{ base: 'none', lg: 'block' }}
-            left={{ lg: '60%', xl: '55%' }}
-            width="80vw"
-            maxW="1100px"
-            margin="0 auto"
-          >
-            <FallInPlace delay={1}>
-              <Box overflow="hidden" height="100%">
-                <Image
-                  src="/static/screenshots/list.png"
-                  layout="fixed"
-                  width="1200px"
-                  height="762px"
-                  alt="Screenshot of a ListPage in Saas UI Pro"
-                  quality="75"
-                  priority
-                />
-              </Box>
-            </FallInPlace>
-          </Box>
         </Stack>
       </Container>
 
@@ -172,14 +149,14 @@ const HeroSection: React.FC = () => {
         pt="20"
         features={[
           {
-            title: 'Accessible',
+            title: 'Modular',
             icon: FiSmile,
             description: 'All components strictly follow WAI-ARIA standards.',
             iconPosition: 'left',
             delay: 0.6,
           },
           {
-            title: 'Themable',
+            title: 'Flexible',
             icon: FiSliders,
             description:
               'Fully customize all components to your brand with theme support and style props.',
@@ -258,19 +235,16 @@ const HighlightsSection = () => {
         <Text color="muted" fontSize="lg">
           We don&apos;t like to re-invent the wheel, neither should you. We
           selected the most productive and established tools in the scene and
-          build Saas UI on top of it.
+          build Billpilot on top of it.
         </Text>
       </HighlightsItem>
-      <HighlightsTestimonialItem
-        name="Renata Alink"
-        description="Founder"
-        avatar="/static/images/avatar.jpg"
-        gradient={['pink.200', 'purple.500']}
-      >
-        “Saas UI helped us set up a beautiful modern UI in no time. It saved us
-        hundreds of hours in development time and allowed us to focus on
-        business logic for our specific use-case from the start.”
-      </HighlightsTestimonialItem>
+      <HighlightsItem title="Solid foundations">
+        <Text color="muted" fontSize="lg">
+          We don&apos;t like to re-invent the wheel, neither should you. We
+          selected the most productive and established tools in the scene and
+          build Billpilot on top of it.
+        </Text>
+      </HighlightsItem>
       <HighlightsItem
         colSpan={[1, null, 2]}
         title="Start your next idea two steps ahead"
@@ -315,6 +289,12 @@ const HighlightsSection = () => {
   )
 }
 
+// const IntegrationsSection = () => {
+//   return (
+
+//   ) 
+// }
+
 const FeaturesSection = () => {
   return (
     <Features
@@ -326,16 +306,15 @@ const FeaturesSection = () => {
           textAlign="left"
           as="p"
         >
-          Not your standard
-          <Br /> dashboard template.
+          Features
+          <Br /> 
         </Heading>
       }
       description={
         <>
-          Saas UI Pro includes everything you need to build modern frontends.
+          We love hearing from our customers.
           <Br />
-          Use it as a template for your next product or foundation for your
-          design system.
+          Let us know if you think we're missing something.
         </>
       }
       align="left"
@@ -343,69 +322,46 @@ const FeaturesSection = () => {
       iconSize={4}
       features={[
         {
-          title: 'Components.',
+          title: 'Flexible Time Filters.',
           icon: FiBox,
           description:
-            'All premium components are available on a private NPM registery, no more copy pasting and always up-to-date.',
+            'Filter imported invoice time from Jira by employee, project, issue type and other parameters',
           variant: 'inline',
         },
         {
-          title: 'Starterkits.',
+          title: 'JQL Time Filters.',
           icon: FiLock,
           description:
-            'Example apps in Next.JS, Electron. Including authentication, billing, example pages, everything you need to get started FAST.',
+            'Filter invoice time by JQL that may have any filtration logic and can operate any Jira issue field',
           variant: 'inline',
         },
         {
-          title: 'Documentation.',
+          title: 'Taxing.',
           icon: FiSearch,
           description:
-            'Extensively documented, including storybooks, best practices, use-cases and examples.',
+            'Apply multiple taxes to invoices. Enable or disable taxes for any invoice item individually',
           variant: 'inline',
         },
         {
-          title: 'Onboarding.',
+          title: 'Discounting.',
           icon: FiUserPlus,
           description:
-            'Add user onboarding flows, like tours, hints and inline documentation without breaking a sweat.',
+            'Add discount to invoices. Easily enable or disable discount for any invoice item individually',
           variant: 'inline',
         },
         {
-          title: 'Feature flags.',
+          title: 'Fixed Price.',
           icon: FiFlag,
           description:
-            "Implement feature toggles for your billing plans with easy to use hooks. Connect Flagsmith, or other remote config services once you're ready.",
+            "Charge clients using fixed price model or add fixed price expenses to time and materials invoices",
           variant: 'inline',
         },
         {
-          title: 'Upselling.',
-          icon: FiTrendingUp,
-          description:
-            'Components and hooks for upgrade flows designed to make upgrading inside your app frictionless.',
-          variant: 'inline',
-        },
-        {
-          title: 'Themes.',
-          icon: FiToggleLeft,
-          description:
-            'Includes multiple themes with darkmode support, always have the perfect starting point for your next project.',
-          variant: 'inline',
-        },
-        {
-          title: 'Generators.',
-          icon: FiTerminal,
-          description:
-            'Extend your design system while maintaininig code quality and consistency with built-in generators.',
-          variant: 'inline',
-        },
-        {
-          title: 'Monorepo.',
+          title: 'Retainers.',
           icon: FiCode,
           description: (
             <>
-              All code is available as packages in a high-performance{' '}
-              <Link href="https://turborepo.com">Turborepo</Link>, you have full
-              control to modify and adjust it to your workflow.
+              Just add fixed price item with negative amount to take into account a retainer from a client
             </>
           ),
           variant: 'inline',
@@ -466,7 +422,7 @@ export async function getStaticProps() {
   return {
     props: {
       announcement: {
-        title: 'Get 50% off Saas UI Pro while in beta.',
+        title: 'Get 50% off Billpilot Pro while in beta.',
         href: 'https://appulse.gumroad.com/l/saas-ui-pro-pre-order',
       },
     },
