@@ -2,21 +2,15 @@
 
 ## Iteration 1: Funktionalitet
 
-- [Carl] Erstat bell icon, symbol etc i headeren med en "log in" knap når der ikke er en bruger logget ind.
-- [Carl] lav simple stat cards til forsiden, der viser samme statistics som dem fra helloclerk.
-- [Carl] implementer inimplemented funktioner i filen lib/invoices.ts
+### VIGTIGE
+- Indsæt time og total amount i carded i time items. useEffect?
 
+- [Carl] Erstat bell icon, symbol etc i headeren med en "log in" knap når der ikke er en bruger logget ind.
 - Udfyld dashboard index siden med data (cards fra dashboard)
 - Når en bruger signer up, skal der komme en fejlbesked med at brugeren allerede findes, hvis brugeren allerede findes. (måske done?)
 
 ### Xero
 - Invalid redirect url når man connecter, når der er deployet på vercel
-
-### Jira
-- [Andreas] Kopier alle helloclerk features
-- Når employees bliver fethcet, skal alle bots ikke også med som users
-- Fiks søgning på jira items under create invoice. 
-(skriv viser x ud af antal items, hvis der er flere pages, og der ikke er et søgeord)
 
 ## Iteration 2: Design
 - Hvis bruger er logget ind og er på landing page, så fjerne login og signup knapper, og vis "go to dashboard" istedet.

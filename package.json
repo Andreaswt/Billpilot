@@ -42,6 +42,7 @@
     "crypto-js": "^4.1.1",
     "formik": "^2.2.9",
     "framer-motion": "^6.5.1",
+    "immer": "^9.0.15",
     "jira.js": "^2.15.3",
     "lodash": "^4.17.21",
     "loglevel": "^1.8.0",
@@ -58,7 +59,8 @@
     "superjson": "^1.9.1",
     "xero-node": "^4.22.0",
     "yup": "^0.32.11",
-    "zod": "^3.17.3"
+    "zod": "^3.17.3",
+    "zustand": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.18.9",

@@ -10,6 +10,7 @@ import { trpc } from '../../../utils/trpc'
 import { useRowSelect } from 'react-table'
 import { useEffect } from 'react'
 import { Project } from 'jira.js/out/agile'
+import { CheckedTimeItems } from '../../../../store/jiraItems'
 
 interface Data {
     type: string
@@ -83,16 +84,6 @@ function computeItemsForShow(checkedItems: ICheckedItems) {
         })
     }
 
-    // for (const [key, value] of Object.entries(checkedItems)) {
-    //     for (const item of value) {
-    //         items.push({
-    //             type: key,
-    //             name: item,
-    //             displayName: item.displayName,
-    //         })
-    //     }
-    // }
-
     return items
 }
 
@@ -107,7 +98,7 @@ interface IPagination {
 
 interface ITimeItemsTableProps {
     timeItemIndex: number
-    jiraTimeImported: (timeItemIndex: number, hours: number) => void
+    jiraTimeImported: (timeItemIndex: number, importedHoursTotal: number, checkedItems: CheckedTimeItems) => void
 }
 
 export const TimeItemsTable = (props: ITimeItemsTableProps) => {
@@ -198,7 +189,7 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
         {
             enabled: false,
             onSuccess(importJiraTimeData) {
-                jiraTimeImported(timeItemIndex, importJiraTimeData)
+                jiraTimeImported(timeItemIndex, importJiraTimeData, checkedItems)
             }
         });
 
@@ -250,7 +241,6 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
                     })
                 }
                 break;
-
         }
     }
 
