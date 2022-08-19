@@ -1,5 +1,6 @@
 import { extendTheme } from '@chakra-ui/react'
 import { theme } from '@saas-ui/pro'
+import Colors from './colors'
 
 import components from './components'
 import { fontSizes } from './foundations/typography'
@@ -18,11 +19,25 @@ const styles = {
   }),
 }
 
+
 const landingPageTheme = extendTheme(
   {
     config: {
       initialColorMode: 'dark',
       useSystemColorMode: false,
+    },
+    colors: {
+      primary: {
+        400: Colors.indigodye,
+      },
+      secondary: {
+        400: '#ff0000'
+      },
+      hero: {
+        'left': Colors.indigodye,
+        'right': Colors.mintcream
+      },
+      button: Colors.mintcream,
     },
     styles,
     fontSizes,
