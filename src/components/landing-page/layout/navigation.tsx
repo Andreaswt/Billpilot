@@ -1,6 +1,6 @@
 import * as React from 'react'
-import { HStack } from '@chakra-ui/react'
-
+import { HStack, Flex, Spacer} from '@chakra-ui/react'
+import { ButtonLink } from '../../landing-page/button-link/button-link'
 import { useRouter } from 'next/router'
 
 import siteConfig from '../../../data/config'
@@ -14,6 +14,8 @@ import { MobileNavContent } from '../mobile-nav/mobile-nav'
 import { useDisclosure, useUpdateEffect } from '@chakra-ui/react'
 
 import ThemeToggle from './theme-toggle'
+import Colors from '../../../styles/colors'
+
 
 const Navigation: React.FC = () => {
   const mobileNav = useDisclosure()
@@ -34,34 +36,90 @@ const Navigation: React.FC = () => {
   }, [mobileNav.isOpen])
 
   return (
-    <HStack spacing="2" flexShrink={0}>
-      {siteConfig.header.links.map(({ href, id, ...props }, i) => {
-        return (
-          <NavLink
-            display={['none', null, 'block']}
-            href={href || `/#${id}`}
-            key={i}
-            isActive={
-              !!(
-                (id && activeId === id) ||
-                (href && !!router.asPath.match(new RegExp(href)))
-              )
-            }
-            {...props}
-          />
-        )
-      })}
+  <>
+  <Flex w="100%" justify="space-between">
+    <HStack>
+      <NavLink
+          label = {"Solution"}
+          display={['none', null, 'block']}
+          href={"#features"}
+          isActive={
+            !!(
+              ("#features" && !!router.asPath.match(new RegExp("dfsf")))
+            )
+          }
+        />
+      <NavLink
+          label = {"Pricing"}
+          display={['none', null, 'block']}
+          href={"#pricing"}
+          isActive={
+            !!(
+              ("#pricing" && !!router.asPath.match(new RegExp("Pricing")))
+            )
+          }
+        />
+      <NavLink
+          label = {"Resources"}
+          display={['none', null, 'block']}
+          href={"dfsf"}
+          isActive={
+            !!(
+              ("#dfsf" && !!router.asPath.match(new RegExp("dfsf")))
+            )
+          }
+        />
+        <NavLink
+          label = {"Contact"}
+          display={['none', null, 'block']}
+          href={"dfsf"}
+          isActive={
+            !!(
+              ("#dfsf" && !!router.asPath.match(new RegExp("dfsf")))
+            )
+          }
+        />
+        </HStack>
+        <Spacer />
+        <HStack>
+        <NavLink
+          label = {"Login"}
+          display={['none', null, 'block']}
+          href={"/login"}
+          isActive={
+            !!(
+              ("/login" && !!router.asPath.match(new RegExp("Login")))
+            )
+          }
+        />
+        <ButtonLink colorScheme= "primary" size="sm" href="/signup">
+                  Sign Up
+        </ButtonLink>
+        {/* <NavLink
+          label = {"Try It Free"}
+          display={['none', null, 'block']}
+          href={"dfsf"}
+          isActive={
+            !!(
+              ("#dfsf" && !!router.asPath.match(new RegExp("dfsf")))
+            )
+          }
+        /> */}
+      </HStack>
+  <ThemeToggle />
 
-      <ThemeToggle />
+  <MobileNavButton
+    ref={mobileNavBtnRef}
+    aria-label="Open Menu"
+    onClick={mobileNav.onOpen}
+  />
 
-      <MobileNavButton
-        ref={mobileNavBtnRef}
-        aria-label="Open Menu"
-        onClick={mobileNav.onOpen}
-      />
+  <MobileNavContent isOpen={mobileNav.isOpen} onClose={mobileNav.onClose} />
 
-      <MobileNavContent isOpen={mobileNav.isOpen} onClose={mobileNav.onClose} />
-    </HStack>
+</Flex>
+
+  </>
+
   )
 }
 

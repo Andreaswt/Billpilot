@@ -126,7 +126,7 @@ const LoginPage: NextPage = () => {
                           <Button
                             isLoading={isSubmitting}
                             loadingText="Signing in..."
-                            colorScheme="purple"
+                            colorScheme="primary"
                             color={"white"}
                             type="submit"
                           >

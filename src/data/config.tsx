@@ -25,7 +25,7 @@ const siteConfig = {
       },
       {
         id: 'faq',
-        label: 'About Us',
+        label: 'Resources',
       },
       {
         label: 'Login',

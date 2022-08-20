@@ -123,7 +123,7 @@ const SignupPage: NextPage = () => {
               <Stack pt={6}>
                 <Text align={"center"}>
                   Already a user?{" "}
-                  <NextLink color={"blue.400"} href="login">
+                  <NextLink color={"primary.400"} href="login">
                     Sign in
                   </NextLink>
                 </Text>

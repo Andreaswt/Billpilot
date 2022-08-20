@@ -32,7 +32,7 @@ export const Header = (props: HeaderProps) => {
       top="0"
       w="full"
       position="fixed"
-      backdropFilter="blur(5px)"
+      backdropFilter="blur(40px)"
       zIndex="sticky"
       borderColor="whiteAlpha.100"
       transitionProperty="common"

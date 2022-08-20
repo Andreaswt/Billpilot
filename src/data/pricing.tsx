@@ -6,38 +6,6 @@ const pricing = {
     'When you grow, we grow',
   plans: [
     {
-      id: 'oss',
-      title: 'Open Source',
-      description: 'Basic compoents, perfect to get started.',
-      price: 'Free',
-      features: [
-        {
-          title: 'MIT License',
-        },
-        {
-          title: 'Authentication (Clerk/Supabase/Magic)',
-        },
-        {
-          title: 'Form (react-hook-form)',
-        },
-        {
-          title: 'Modals manager',
-        },
-        {
-          title: 'Hotkeys',
-        },
-        {
-          title: 'Web3 components',
-        },
-        {
-          title: 'And much more...',
-        },
-      ],
-      action: {
-        href: '#',
-      },
-    },
-    {
       id: 'bootstrap',
       title: 'Bootstrap',
       description: 'Complete frontend stack for bootstrappers and small teams.',

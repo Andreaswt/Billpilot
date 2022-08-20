@@ -44,7 +44,7 @@ export const AnnouncementBanner: React.FC<AnnouncementBannerProps> = (
             bg={bg}
             fontSize="sm"
             justifyContent="center"
-            colorScheme="purple"
+            colorScheme="primary"
             backgroundClip="padding-box"
             borderRadius="full"
             maxW="400px"
@@ -67,7 +67,7 @@ export const AnnouncementBanner: React.FC<AnnouncementBannerProps> = (
               left: 0,
               borderRadius: 'inherit',
               margin: '-2px',
-              bgGradient: 'linear(to-r, purple.500, cyan.500)',
+              bgGradient: 'linear(to-r, primary.500, cyan.500)',
             }}
             _hover={{
               '& .chakra-icon': {
