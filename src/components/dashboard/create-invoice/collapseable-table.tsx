@@ -11,6 +11,7 @@ import { useRowSelect } from 'react-table'
 import { useEffect } from 'react'
 import { Project } from 'jira.js/out/agile'
 import { CheckedTimeItems } from '../../../../store/jiraItems'
+import { useFormikContext } from 'formik';
 
 interface Data {
     type: string
@@ -98,11 +99,11 @@ interface IPagination {
 
 interface ITimeItemsTableProps {
     timeItemIndex: number
-    jiraTimeImported: (timeItemIndex: number, importedHoursTotal: number, checkedItems: CheckedTimeItems) => void
+    updateTime: (index: number, value: any) => void
 }
 
 export const TimeItemsTable = (props: ITimeItemsTableProps) => {
-    const { timeItemIndex, jiraTimeImported } = props
+    const { timeItemIndex, updateTime } = props
 
     const { onToggle, isOpen, getCollapseProps } = useCollapse()
     const [searchTerm, setSearchTerm] = React.useState('')
@@ -189,7 +190,7 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
         {
             enabled: false,
             onSuccess(importJiraTimeData) {
-                jiraTimeImported(timeItemIndex, importJiraTimeData, checkedItems)
+                updateTime(timeItemIndex, { name: "Imported Jira Time", time: importJiraTimeData, rate: 100 })
             }
         });
 
@@ -274,23 +275,25 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
     }
 
     return (
-        <>
-            <Wrap>
+        <Flex flexDirection="column">
+            <Wrap mb={itemsForShow.length > 0 ? 4 : 0}>
                 {itemsForShow.map((item, i) => (
                     <RemoveableJiraItem key={i} handleDelete={() => {removeCheckedItem(item.type, item.name)}} type={item.type} name={item.name} displayName={item.displayName} />
                 ))}
             </Wrap>
-            <Button isLoading={importJiraTimeRefetching || importJiraTimeLoading} colorScheme={isOpen ? "purple" : undefined} my={4} onClick={() => {
-                if (!isOpen) {
-                    searchProjectsRefetch()
-                    onToggle()
-                }
-                else {
-                    importJiraTimeRefetch()
-                    onToggle()
-                }
-            }}>{isOpen ? "Import from Jira" : "Add Jira Items"}</Button>
-            {isOpen ? <Button ml={4} onClick={() => onToggle()}>Cancel</Button> : <></>}
+            <Flex gap={4}>
+                <Button isLoading={importJiraTimeRefetching || importJiraTimeLoading} colorScheme="purple" onClick={() => {
+                    if (!isOpen) {
+                        searchProjectsRefetch()
+                        onToggle()
+                    }
+                    else {
+                        importJiraTimeRefetch()
+                        onToggle()
+                    }
+                }}>{isOpen ? "Import from Jira" : "Add Jira Items"}</Button>
+                {isOpen ? <Button onClick={() => onToggle()}>Cancel</Button> : <></>}
+            </Flex>
             <Collapse {...getCollapseProps()}>
                 <Stack mb={4}>
                     <HStack my={4} spacing={4}>
@@ -323,6 +326,6 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
                             </DataGrid>)
                 }
             </Collapse>
-        </>
+        </Flex>
     )
 }

@@ -20,6 +20,8 @@ import { TimeItemsTable } from '../../components/dashboard/create-invoice/collap
 
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import useJiraItemsStore, { CheckedTimeItems } from '../../../store/jiraItems';
+import TimeItemsForm from '../../components/dashboard/create-invoice/forms/TimeItemsForm';
+import FixedPriceTimeItemsForm from '../../components/dashboard/create-invoice/forms/FixedPriceTimeItemsForm';
 
 export const getServerSideProps = requireAuth(async (ctx) => {
     return { props: {} };
@@ -239,124 +241,27 @@ const CreateInvoice: NextPage = () => {
                         </Flex>}>
                         <CardBody py={timeItemsOpen ? 4 : 0}>
                             <Collapse {...timeItemsCollapseProps()}>
-                                <Form<TimeItemsForm>
-                                    onChange={() => setTimeItemsChanged(true)}
-                                    defaultValues={{
-                                        timeItems: [
-                                            {
-                                            },
-                                        ],
-                                    }}
-                                    resolver={yupResolver(timeItemsSchema)}
-                                    onSubmit={(fields) => submitTimeItems(fields)}>
-                                    <ArrayFieldContainer
-                                        ref={timeItemsRef}
-                                        name="timeItems"
-                                        defaultValue={{}}
-                                        keyName="key">
-                                        <ArrayFieldRows>
-                                            {(fields) => (
-                                                <>
-                                                    {fields.map((field, i) => {
-                                                        return (
-                                                            <React.Fragment key={i}>
-                                                                <ArrayFieldRowContainer key={field.id} index={i}>
-                                                                    <ArrayFieldRowFields columns={3} spacing={10}>
-                                                                        <Field label="Name" name="name" placeholder="Enter Time Item Name" />
-                                                                        <Field onChange={updateTotal()} isDisabled={disabledTimeItemIndexes.has(i)} label="Time" type="number" name="time" />
-                                                                        <Field onChange={updateTotal()} label="Rate" type="number" name="rate" />
-                                                                    </ArrayFieldRowFields>
-                                                                    <ArrayFieldRemoveButton onClickCapture={() => jiraItemsStore.removeJiraTable(i)} />
-                                                                </ArrayFieldRowContainer>
-                                                                <TimeItemsTable timeItemIndex={i} jiraTimeImported={jiraTimeImported} />
-                                                                <Divider my={4} />
-                                                            </React.Fragment>
-                                                        )
-                                                    })}
-                                                </>
-                                            )}
-                                        </ArrayFieldRows>
-                                        <Flex gap={4} justifyContent="space-between">
-                                            <SubmitButton label="Save" />
-                                            <Flex align="center" gap={4}>
-                                                <Text as="i" fontWeight="bold" fontSize="xs">New Item</Text>
-                                                <ArrayFieldAddButton />
-                                            </Flex>
-                                        </Flex>
-                                    </ArrayFieldContainer>
-                                </Form>
-                                <Flex mt={6} gap={10} justifyContent="end">
-                                    <Card >
-                                        <CardBody>
-                                            <Flex gap={10} flexDirection="row">
-                                                <Flex flexDirection="column">
-                                                    <Heading size="sm">Time</Heading>
-                                                    <Text fontSize="sm">10 Hours</Text>
-                                                </Flex>
-                                                {/* <Divider /> */}
-                                                <Flex flexDirection="column">
-                                                    <Heading size="sm">{jiraItemsStore.getAllJiraTableHours()} Hours</Heading>
-                                                    <Text fontSize="sm"> USD</Text>
-                                                </Flex>
-                                            </Flex>
-                                        </CardBody>
-                                    </Card>
-                                </Flex>
+                                <TimeItemsForm />
                             </Collapse>
                         </CardBody>
                     </Card>
 
                     <Card title={
                         <Flex>
-                            <Heading>Fixed Price</Heading>
+                            <Heading>Fixed Price Time Items</Heading>
                             <Spacer />
                             <Flex gap={4} alignItems="center">
-                                {fixedPriceTimeItemsChanged ? <Text as="i" fontSize="xs">Unsaved Changes</Text> : <></>}
-                                <IconButton aria-label='Search database' onClick={() => fixedPriceTimeItemsToggle()} icon={fixedPriceTimeItemsOpen ? <ChevronUpIcon /> : <ChevronDownIcon />} />
+                                {timeItemsChanged ? <Text as="i" fontSize="xs">Unsaved Changes</Text> : <></>}
+                                <IconButton aria-label='Open' onClick={() => fixedPriceTimeItemsToggle()} icon={fixedPriceTimeItemsOpen ? <ChevronUpIcon /> : <ChevronDownIcon />} />
                             </Flex>
                         </Flex>}>
                         <CardBody py={fixedPriceTimeItemsOpen ? 4 : 0}>
                             <Collapse {...fixedPriceTimeItemsCollapseProps()}>
-                                <Form<FixedPriceTimeItemsForm>
-                                    onChange={() => setFixedPriceTimeItemsChanged(true)}
-                                    resolver={yupResolver(fixedPriceTimeItemsSchema)}
-                                    onSubmit={(fields) => submitFixedPriceTimeItems(fields)}>
-                                    <ArrayFieldContainer
-                                        name="fixedPriceTimeItems"
-                                        defaultValue={{}}
-                                        keyName="key">
-                                        <ArrayFieldRows>
-                                            {(fields) => (
-                                                <>
-                                                    {fields.map((field, i) => {
-                                                        return (
-                                                            <React.Fragment key={i}>
-                                                                <ArrayFieldRowContainer key={field.id} index={i}>
-                                                                    <ArrayFieldRowFields columns={2} spacing={10}>
-                                                                        <Field label="Name" name="name" placeholder="Enter Fixed Price Time Item Name" />
-                                                                        <Field label="Amount" type="number" name="amount" />
-                                                                    </ArrayFieldRowFields>
-                                                                    <ArrayFieldRemoveButton />
-                                                                </ArrayFieldRowContainer>
-                                                                <Divider mt={8} mb={4} />
-                                                            </React.Fragment>
-                                                        )
-                                                    })}
-                                                </>
-                                            )}
-                                        </ArrayFieldRows>
-                                        <Flex gap={4} justifyContent="space-between">
-                                            <SubmitButton label="Save" />
-                                            <Flex align="center" gap={4}>
-                                                <Text as="i" fontWeight="bold" fontSize="xs">New Item</Text>
-                                                <ArrayFieldAddButton />
-                                            </Flex>
-                                        </Flex>
-                                    </ArrayFieldContainer>
-                                </Form>
+                                <FixedPriceTimeItemsForm />
                             </Collapse>
                         </CardBody>
                     </Card>
+
                     <Card title={
                         <Flex>
                             <Heading>Taxes</Heading>
