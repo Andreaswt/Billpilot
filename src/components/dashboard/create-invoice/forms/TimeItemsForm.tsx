@@ -1,25 +1,25 @@
 import { AddIcon, MinusIcon } from "@chakra-ui/icons";
-import { Button, Flex, FormControl, FormLabel, Heading, IconButton, Input, InputGroup, InputRightAddon, Stack, Text, Tooltip } from "@chakra-ui/react";
+import { Button, Flex, FormControl, FormLabel, Heading, IconButton, Input, InputGroup, InputRightAddon, Stack, Text, Tooltip, FormErrorMessage } from "@chakra-ui/react";
 import { Card, CardBody, Divider } from "@saas-ui/react";
-import { Field, FieldArray, Form, Formik, useFormikContext } from "formik";
+import { Field, FieldArray, Form, Formik, getIn, useFormikContext } from "formik";
 import React, { Fragment } from "react";
 import { TbDiscount, TbReceipt } from "react-icons/tb";
 import * as Yup from 'yup';
 import useJiraItemsStore, { CheckedTimeItems } from "../../../../../store/jiraItems";
 import { TimeItemsTable } from "../collapseable-table";
-import TimeItemsStats from "./timeItemsStats"
+import TimeItemsStats from "./TimeItemsStats"
 
 const TimeItemsForm = () => {
     const jiraItemsStore = useJiraItemsStore();
 
-    const TimeItemSchema = Yup.object().shape({
-        name: Yup.string().required('Required'),
-        time: Yup.number().min(0).required('Required'),
-        rate: Yup.number().min(0).required('Required'),
-    });
-
     const TimeItemsSchema = Yup.object().shape({
-        timeItems: Yup.array().of(TimeItemSchema),
+        timeItems: Yup.array().of(
+            Yup.object().shape({
+                name: Yup.string().required('Required'),
+                time: Yup.number().min(0).required('Required'),
+                rate: Yup.number().min(0).required('Required'),
+            })
+        )
     })
 
     const initialValues = {
@@ -31,6 +31,12 @@ const TimeItemsForm = () => {
             },
         ],
     };
+
+    interface ITimeItems {
+        name: string,
+        time: number,
+        rate: number
+    }
 
     return (
         <>
@@ -51,9 +57,10 @@ const TimeItemsForm = () => {
                                                     <Stack gap={2}>
                                                         <Flex alignItems="end" gap={4}>
                                                         <IconButton mb={0.5} aria-label='Create Time Item' icon={<MinusIcon />} onClick={() => arrayHelpers.remove(index)} />
-                                                            <FormControl>
+                                                            <FormControl isInvalid={errors.timeItems != null && touched.timeItems != null}>
                                                             <FormLabel htmlFor="timeItems[${index}].name">Name</FormLabel>
                                                                     <Field as={Input} placeholder="Time Item Name" variant="filled" name={`timeItems[${index}].name`} />
+                                                                    {errors.timeItems && touched.timeItems ? <FormErrorMessage>{errors.timeItems.toString()}</FormErrorMessage>: null}
                                                             </FormControl>
 
                                                             <FormControl>
@@ -68,7 +75,7 @@ const TimeItemsForm = () => {
                                                             <FormLabel htmlFor="timeItems[${index}].rate">Rate</FormLabel>
                                                                 <InputGroup>
                                                                     <Field as={Input} type="number" placeholder="USD 0" variant="filled" name={`timeItems[${index}].rate`} />
-                                                                        <InputRightAddon children='Hours' />
+                                                                        <InputRightAddon children='USD' />
                                                                 </InputGroup>
                                                             </FormControl>
 
@@ -92,13 +99,19 @@ const TimeItemsForm = () => {
                                             Add a Time Item
                                         </button>
                                     )}
-                                    <Flex mt={6} gap={10} justifyContent="space-between">
-                                        <Flex gap={4} flexDirection="row">
-                                        <IconButton aria-label='Create Time Item' icon={<AddIcon />} onClick={() => arrayHelpers.push({ name: "", time: 0, rate: 0 })} />
-                                        <Button colorScheme="purple" type="submit">Save</Button>
+
+                                    {/* {typeof errors.timeItems === 'string' ? <div>{errors.timeItems}</div>: null} */}
+
+                                    <Flex gap={4} justifyContent="space-between">
+                                            <Button colorScheme="purple" type="submit">Save</Button>
+                                            <Flex align="center" gap={4}>
+                                                <Text as="i" fontWeight="bold" fontSize="xs">New Item</Text>
+                                                <IconButton aria-label='Create Time Item' icon={<AddIcon />} onClick={() => arrayHelpers.push({ name: "", time: 0, rate: 0 })} />
+                                            </Flex>
                                         </Flex>
-                                        
-                                        <TimeItemsStats />
+
+                                    <Flex mt={6} gap={10} justifyContent="end">
+                                    <TimeItemsStats />
                                     </Flex>
                                 </div>
                             )}

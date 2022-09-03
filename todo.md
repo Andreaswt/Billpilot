@@ -5,8 +5,8 @@
 ### VIGTIGE
 - Lav Taxes og discounts forms
 - Prøv at samle alt til en enkelt form
-
-
+- Fix fejl det gør den ikke kan builde
+- Lav form validation
 
 
 - [Carl] Erstat bell icon, symbol etc i headeren med en "log in" knap når der ikke er en bruger logget ind.

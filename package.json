@@ -47,6 +47,7 @@
     "lodash": "^4.17.21",
     "loglevel": "^1.8.0",
     "loglevel-plugin-prefix": "^0.8.4",
+    "moment": "^2.29.4",
     "next": "^12.2.3",
     "next-auth": "^4.9.0",
     "next-seo": "^5.5.0",

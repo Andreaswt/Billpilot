@@ -1,27 +1,24 @@
-import { Collapse, Flex, Heading, IconButton, Spacer, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Divider, Stepper, StepperStep, useCollapse } from '@saas-ui/react';
+import { Button, Collapse, Flex, FormControl, FormErrorMessage, FormLabel, Heading, IconButton, Input, Select, Spacer, Stack, Text, Textarea } from '@chakra-ui/react';
+import { Stepper, StepperStep, useCollapse } from '@saas-ui/react';
 import { NextPage } from "next";
-import React, { useEffect, useCallback, useState } from 'react';
+import React from 'react';
+import * as Yup from 'yup';
 import useCreateInvoiceStore, { FixedPriceTimeItemsState, InvoiceState, TaxesState, TimeItemsState } from '../../../store/invoice';
 import { requireAuth } from "../../common/requireAuth";
-import { fixedPriceTimeItemsSchema, invoiceSchema, taxesSchema, timeItemsSchema } from '../../common/validation/createInvoice';
 
-import {
-    ArrayFieldAddButton, ArrayFieldContainer, ArrayFieldRemoveButton, ArrayFieldRowContainer,
-    ArrayFieldRowFields, ArrayFieldRows, SubmitButton
-} from '@saas-ui/react';
 
 import {
     Page, PageBody
 } from '@saas-ui/pro';
-import { Card, CardBody, Field, Form, FormLayout } from "@saas-ui/react";
-import { TimeItemsTable } from '../../components/dashboard/create-invoice/collapseable-table';
+import { Card, CardBody, FormLayout } from "@saas-ui/react";
+import { Field, Form, Formik } from "formik";
 
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import useJiraItemsStore, { CheckedTimeItems } from '../../../store/jiraItems';
-import TimeItemsForm from '../../components/dashboard/create-invoice/forms/TimeItemsForm';
 import FixedPriceTimeItemsForm from '../../components/dashboard/create-invoice/forms/FixedPriceTimeItemsForm';
+import TaxesForm from '../../components/dashboard/create-invoice/forms/TaxesForm';
+import TimeItemsForm from '../../components/dashboard/create-invoice/forms/TimeItemsForm';
+import moment from 'moment';
 
 export const getServerSideProps = requireAuth(async (ctx) => {
     return { props: {} };
@@ -144,11 +141,20 @@ const CreateInvoice: NextPage = () => {
         taxesToggle()
     }
 
-    // TODO: ide: Lav hvert kort collapsable, og lav en saveknap på hvert kort. Når man har gemt et kort lukker kortet, og scroller ned til næste kort
-    // Det er en step progress viser ude i siden der viser progress
-    // Hvis man ændrer en form kommer der en tekst frem, hvor der står "unsaved changes"
-    // Når man submitter en form bliver der sendt til zustand.
-    // Evt en side til at se alt data igennem inden man vælger at lave invoicen
+    const InvoiceSchema = Yup.object().shape({
+        title: Yup.string().required().label('Title'),
+        status: Yup.string().required().label('Status'),
+        invoiceNumber: Yup.string().required().label('Invoice Number'),
+        currency: Yup.string().required().label('Currency'),
+        invoicedDatesFrom: Yup.date().required().label('Invoiced from'),
+        invoicedDatesTo: Yup.date().required().label('Invoiced to'),
+        issueDate: Yup.date().required().label('Issue Date'),
+        dueDate: Yup.date().required().label('Due Date'),
+        roundingScheme: Yup.string().required().label('Rounding Scheme'),
+        client: Yup.string().required().label('Client'),
+        invoiceLayout: Yup.string().required().label('Invoice Layout for Clients'),
+        notesForClient: Yup.string().required().label('Notes for Client'),
+    })
 
     return (
         <Page title={"Create invoice"}>
@@ -177,55 +183,107 @@ const CreateInvoice: NextPage = () => {
                         </Flex>}>
                         <CardBody py={invoiceOpen ? 4 : 0}>
                             <Collapse {...invoiceCollapseProps()}>
-                                <Form<InvoiceState>
-                                    onChange={() => setInvoiceChanged(true)}
-                                    defaultValues={{ title: store.title, status: store.status, invoiceNumber: store.invoiceNumber, currency: store.currency, invoicedDatesFrom: store.invoicedDatesFrom, invoicedDatesTo: store.invoicedDatesTo, issueDate: store.issueDate, dueDate: store.dueDate, roundingScheme: store.roundingScheme, client: store.client, invoiceLayout: store.invoiceLayout, notesForClient: store.notesForClient }}
-                                    resolver={yupResolver(invoiceSchema)}
-                                    onSubmit={submitInvoice}>
-                                    <FormLayout>
-                                        <FormLayout>
-                                            <Field name="title" label="Title" />
-                                        </FormLayout>
-                                        <FormLayout columns={3}>
-                                            <Field name="status"
-                                                options={[{ value: 'Draft' }, { value: 'No Charge' }]}
-                                                type="select"
-                                                label="Status"
-                                                defaultValue="Draft" />
-                                            <Field name="invoiceNumber" label="Invoice Number" />
-                                            <Field name="currency"
-                                                options={[{ value: 'USD' }, { value: 'EUR' }, { value: 'DKK' }]}
-                                                type="select"
-                                                label="Currency" />
-                                        </FormLayout>
-                                        <FormLayout columns={3}>
-                                            <FormLayout columns={2}>
-                                                <Field type="datetime-local" name="invoicedDatesFrom" label="Invoiced from" />
-                                                <Field type="datetime-local" name="invoicedDatesTo" label="Invoiced to" />
+                                <Formik
+                                    validateOnChange={false}
+                                    initialValues={{ title: store.title, status: store.status, invoiceNumber: store.invoiceNumber, currency: store.currency, invoicedDatesFrom: moment(store.invoicedDatesFrom).format("YYYY-MM-DD"), invoicedDatesTo: moment(store.invoicedDatesTo).format("YYYY-MM-DD"), issueDate:  moment(store.issueDate).format("YYYY-MM-DD"), dueDate: moment(store.dueDate).format("YYYY-MM-DD"), roundingScheme: store.roundingScheme, client: store.client, invoiceLayout: store.invoiceLayout, notesForClient: store.notesForClient }}
+                                    validationSchema={InvoiceSchema}
+                                    onSubmit={(values) => console.log(values)}>
+                                    {({ values, errors, touched }) => (
+                                        <Form onChange={() => console.log("hs")}>
+                                            <FormLayout>
+                                                <FormLayout>
+                                                    <FormControl isInvalid={errors.title != null && touched.title != null}>
+                                                        <FormLabel htmlFor="title">Title</FormLabel>
+                                                        <Field as={Input} placeholder="Title" variant="filled" name={`title`} />
+                                                        {errors.title && touched.title ? <FormErrorMessage>{errors.title}</FormErrorMessage>: null}
+                                                    </FormControl>
+                                                </FormLayout>
+                                                <FormLayout columns={3}>
+                                                    <FormControl isInvalid={errors.title != null && touched.title != null}>
+                                                        <FormLabel htmlFor="status">Status</FormLabel>
+                                                        <Field as={Select} variant="filled" name={`status`}>
+                                                            <option value="draft">Draft</option>
+                                                            <option value="noCharge">No Charge</option>
+                                                        </Field>
+                                                        {errors.status && touched.status ? <FormErrorMessage>{errors.status}</FormErrorMessage>: null}
+                                                    </FormControl>
+                                                    <FormControl isInvalid={errors.invoiceNumber != null && touched.invoiceNumber != null}>
+                                                        <FormLabel htmlFor="invoiceNumber">Invoice Number</FormLabel>
+                                                        <Field as={Input} placeholder="Invoice Number" variant="filled" name={`invoiceNumber`} />
+                                                        {errors.invoiceNumber && touched.invoiceNumber ? <FormErrorMessage>{errors.invoiceNumber}</FormErrorMessage>: null}
+                                                    </FormControl>
+                                                    <FormControl isInvalid={errors.currency != null && touched.currency != null}>
+                                                        <FormLabel htmlFor="status">Currency</FormLabel>
+                                                        <Field as={Select} variant="filled" name={`currency`}>
+                                                            <option value="usd">USD</option>
+                                                            <option value="eur">EUR</option>
+                                                            <option value="dkk">DKK</option>
+                                                        </Field>
+                                                        {errors.currency && touched.currency ? <FormErrorMessage>{errors.currency}</FormErrorMessage>: null}
+                                                    </FormControl>
+                                                </FormLayout>
+                                                <FormLayout columns={3}>
+                                                    <FormLayout columns={2}>
+                                                    <FormControl isInvalid={errors.invoicedDatesFrom != null && touched.invoicedDatesFrom != null}>
+                                                        <FormLabel htmlFor="invoicedDatesFrom">Invoiced from</FormLabel>
+                                                        <Field as={Input} type="date" placeholder="Invoiced from" variant="filled" name={`invoicedDatesFrom`} />
+                                                        {errors.invoicedDatesFrom && touched.invoicedDatesFrom ? <FormErrorMessage>Invoiced from must be set</FormErrorMessage>: null}
+                                                    </FormControl>
+                                                    <FormControl isInvalid={errors.invoicedDatesTo != null && touched.invoicedDatesTo != null}>
+                                                        <FormLabel htmlFor="invoicedDatesTo">Invoiced to</FormLabel>
+                                                        <Field as={Input} type="date" placeholder="Invoiced to" variant="filled" name={`invoicedDatesTo`} />
+                                                        {errors.invoicedDatesTo && touched.invoicedDatesTo ? <FormErrorMessage>Invoiced to must be set</FormErrorMessage>: null}
+                                                    </FormControl>
+                                                    </FormLayout>
+                                                    <FormControl isInvalid={errors.issueDate != null && touched.issueDate != null}>
+                                                        <FormLabel htmlFor="issueDate">Issue Date</FormLabel>
+                                                        <Field as={Input} type="date" placeholder="Issue Date" variant="filled" name={`issueDate`} />
+                                                        {errors.issueDate && touched.issueDate ? <FormErrorMessage>Issue Date must be set</FormErrorMessage>: null}
+                                                    </FormControl>
+                                                    <FormControl isInvalid={errors.dueDate != null && touched.dueDate != null}>
+                                                        <FormLabel htmlFor="dueDate">Due Date</FormLabel>
+                                                        <Field as={Input} type="date" placeholder="Due Date" variant="filled" name={`dueDate`} />
+                                                        {errors.dueDate && touched.dueDate ? <FormErrorMessage>Due Date must be set</FormErrorMessage>: null}
+                                                    </FormControl>
+                                                </FormLayout>
+                                                <FormLayout columns={3}>
+                                                    <FormControl isInvalid={errors.roundingScheme != null && touched.roundingScheme != null}>
+                                                        <FormLabel htmlFor="roundingScheme">Rounding Scheme</FormLabel>
+                                                        <Field as={Select} variant="filled" name={`roundingScheme`}>
+                                                            <option value="Værdi 1">Værdi 1</option>
+                                                            <option value="Værdi 2">Værdi 2</option>
+                                                        </Field>
+                                                        {errors.roundingScheme && touched.roundingScheme ? <FormErrorMessage>{errors.roundingScheme}</FormErrorMessage>: null}
+                                                    </FormControl>
+                                                        <FormControl isInvalid={errors.client != null && touched?.client != null}>
+                                                        <FormLabel htmlFor="client">Client</FormLabel>
+                                                        <Field as={Select} variant="filled" name={`client`}>
+                                                            <option value="Client 1">Client 1</option>
+                                                            <option value="Client 2">Client 2</option>
+                                                        </Field>
+                                                        {errors.client && touched.client ? <FormErrorMessage>{errors.client}</FormErrorMessage>: null}
+                                                    </FormControl>
+                                                        <FormControl isInvalid={errors.invoiceLayout != null && touched.invoiceLayout != null}>
+                                                        <FormLabel htmlFor="invoiceLayout">Invoice Layout for Clients</FormLabel>
+                                                        <Field as={Select} variant="filled" name={`invoiceLayout`}>
+                                                            <option value="Layout 1">Layout 1</option>
+                                                            <option value="Layout 2">Layout 2</option>
+                                                        </Field>
+                                                        {errors.invoiceLayout && touched.invoiceLayout ? <FormErrorMessage>{errors.invoiceLayout}</FormErrorMessage>: null}
+                                                    </FormControl>
+                                                </FormLayout>
+                                                <FormLayout>
+                                                    <FormControl isInvalid={errors.notesForClient != null && touched.notesForClient != null}>
+                                                        <FormLabel htmlFor="notesForClient">Notes for Client</FormLabel>
+                                                        <Field as={Textarea} placeholder="Notes for Client" variant="filled" name={`notesForClient`} />
+                                                        {errors.notesForClient && touched.notesForClient ? <FormErrorMessage>{errors.notesForClient}</FormErrorMessage>: null}
+                                                    </FormControl>
+                                                </FormLayout>
                                             </FormLayout>
-                                            <Field type="datetime-local" name="issueDate" label="Issue Date" />
-                                            <Field type="datetime-local" name="dueDate" label="Due Date" />
-                                        </FormLayout>
-                                        <FormLayout columns={3}>
-                                            <Field name="roundingScheme"
-                                                options={[{ value: 'Værdi 1' }, { value: 'Værdi 2' }]}
-                                                type="select"
-                                                label="Rounding Scheme" />
-                                            <Field name="client"
-                                                options={[{ value: 'Client 1' }, { value: 'Client 2' }]}
-                                                type="select"
-                                                label="Client" />
-                                            <Field name="invoiceLayout"
-                                                options={[{ value: 'Layout 1' }, { value: 'Layout 2' }]}
-                                                type="select"
-                                                label="Invoice Layout for Clients" />
-                                        </FormLayout>
-                                        <FormLayout>
-                                            <Field type="textarea" name="notesForClient" label="Notes for Client" />
-                                        </FormLayout>
-                                    </FormLayout>
-                                    <SubmitButton mt={6} label="Save" />
-                                </Form>
+                                            <Button mt={6} colorScheme="purple" type="submit">Save</Button>
+                                        </Form>
+                                    )}
+                                </Formik>
                             </Collapse>
                         </CardBody>
                     </Card>
@@ -241,7 +299,7 @@ const CreateInvoice: NextPage = () => {
                         </Flex>}>
                         <CardBody py={timeItemsOpen ? 4 : 0}>
                             <Collapse {...timeItemsCollapseProps()}>
-                                <TimeItemsForm />
+                                {/* <TimeItemsForm /> */}
                             </Collapse>
                         </CardBody>
                     </Card>
@@ -268,89 +326,12 @@ const CreateInvoice: NextPage = () => {
                             <Spacer />
                             <Flex gap={4} alignItems="center">
                                 {taxesChanged ? <Text as="i" fontSize="xs">Unsaved Changes</Text> : <></>}
-                                <IconButton aria-label='Search database' onClick={() => taxesToggle()} icon={taxesOpen ? <ChevronUpIcon /> : <ChevronDownIcon />} />
+                                <IconButton aria-label='Open' onClick={() => taxesToggle()} icon={taxesOpen ? <ChevronUpIcon /> : <ChevronDownIcon />} />
                             </Flex>
                         </Flex>}>
                         <CardBody py={taxesOpen ? 4 : 0}>
                             <Collapse {...taxesCollapseProps()}>
-                                <Form<TaxesState>
-                                    onChange={() => setTaxesChanged(true)}
-                                    resolver={yupResolver(taxesSchema)}
-                                    onSubmit={(fields) => submitTaxes(fields)}>
-                                    <ArrayFieldContainer
-                                        name="taxItems"
-                                        defaultValue={{}}
-                                        keyName="key">
-                                        <ArrayFieldRows>
-                                            {(fields) => (
-                                                <>
-                                                    {fields.map((field, i) => {
-                                                        return (
-                                                            <React.Fragment key={i}>
-                                                                <ArrayFieldRowContainer key={field.id} index={i}>
-                                                                    <ArrayFieldRowFields columns={2} spacing={10}>
-                                                                        <Field label="Name" name="name" placeholder="Enter Tax Name" />
-                                                                        <Field label="Percentage" type="number" defaultValue={0} name="percentage" />
-                                                                        {/* <Field label="Amount" isDisabled={true} defaultValue="0 USD" type="text" name="amount" /> */}
-                                                                    </ArrayFieldRowFields>
-                                                                    <ArrayFieldRemoveButton />
-                                                                </ArrayFieldRowContainer>
-                                                                <Flex flexDirection="column" gap={4}>
-                                                                    <Heading size='sm'>
-                                                                        Apply to Time Items
-                                                                    </Heading>
-                                                                    <Wrap w="100%" spacing={4} mb={6}>
-                                                                        {store.timeItems.map((item) => {
-                                                                            return (
-                                                                                <WrapItem>
-
-                                                                                    <Field
-                                                                                        type="switch"
-                                                                                        name="applies"
-                                                                                        help={item.name}
-                                                                                    />
-                                                                                </WrapItem>
-                                                                            )
-                                                                        })}
-                                                                    </Wrap>
-                                                                </Flex>
-                                                                <Flex flexDirection="column" gap={4}>
-                                                                    <Heading size='sm'>
-                                                                        Apply to Fixed Price Time Items
-                                                                    </Heading>
-                                                                    <Wrap w="100%" spacing={4} mb={6}>
-                                                                        {store.fixedPriceTimeItems.map((item) => {
-                                                                            return (
-                                                                                <WrapItem>
-
-                                                                                    <Field
-                                                                                        type="switch"
-                                                                                        name="applies"
-                                                                                        help={item.name}
-                                                                                    />
-                                                                                </WrapItem>
-                                                                            )
-                                                                        })}
-                                                                    </Wrap>
-                                                                </Flex>
-                                                                <Divider mt={8} mb={4} />
-                                                            </React.Fragment>
-                                                        )
-                                                    })}
-                                                </>
-                                            )}
-                                        </ArrayFieldRows>
-                                        <Flex gap={4} justifyContent="space-between">
-                                            <SubmitButton label="Save" />
-                                            <Flex align="center" gap={4}>
-                                                <Text as="i" fontWeight="bold" fontSize="xs">New Tax</Text>
-                                                <ArrayFieldAddButton />
-                                            </Flex>
-                                        </Flex>
-
-                                    </ArrayFieldContainer>
-
-                                </Form>
+                                <TaxesForm />
                             </Collapse>
                         </CardBody>
                     </Card>

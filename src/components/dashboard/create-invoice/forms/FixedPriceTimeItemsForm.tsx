@@ -81,12 +81,15 @@ const FixedPriceTimeItemsForm = () => {
                                             Add a Time Item
                                         </button>
                                     )}
-                                    <Flex mt={6} gap={10} justifyContent="space-between">
-                                        <Flex gap={4} flexDirection="row">
-                                            <IconButton aria-label='Create Time Item' icon={<AddIcon />} onClick={() => arrayHelpers.push({ name: "", amount: 0 })} />
+                                    <Flex gap={4} justifyContent="space-between">
                                             <Button colorScheme="purple" type="submit">Save</Button>
+                                            <Flex align="center" gap={4}>
+                                                <Text as="i" fontWeight="bold" fontSize="xs">New Item</Text>
+                                                <IconButton aria-label='Create Time Item' icon={<AddIcon />} onClick={() => arrayHelpers.push({ name: "", amount: 0 })} />
+                                            </Flex>
                                         </Flex>
 
+                                    <Flex mt={6} gap={10} justifyContent="end">
                                         <FixedPriceTimeItemsStats />
                                     </Flex>
                                 </div>
