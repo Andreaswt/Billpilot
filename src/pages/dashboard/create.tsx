@@ -299,7 +299,7 @@ const CreateInvoice: NextPage = () => {
                         </Flex>}>
                         <CardBody py={timeItemsOpen ? 4 : 0}>
                             <Collapse {...timeItemsCollapseProps()}>
-                                {/* <TimeItemsForm /> */}
+                                <TimeItemsForm />
                             </Collapse>
                         </CardBody>
                     </Card>

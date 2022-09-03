@@ -7,6 +7,7 @@ import { TbDiscount, TbReceipt } from "react-icons/tb";
 import * as Yup from 'yup';
 import useJiraItemsStore, { CheckedTimeItems } from "../../../../../store/jiraItems";
 import { TimeItemsTable } from "../collapseable-table";
+import ErrorMessage from "./ErrorMessage";
 import TimeItemsStats from "./TimeItemsStats"
 
 const TimeItemsForm = () => {
@@ -54,43 +55,47 @@ const TimeItemsForm = () => {
                                     {values.timeItems && values.timeItems.length > 0 ? (
                                         values.timeItems.map((timeItem, index) => (
                                             <React.Fragment key={index}>
-                                                    <Stack gap={2}>
-                                                        <Flex alignItems="end" gap={4}>
-                                                        <IconButton mb={0.5} aria-label='Create Time Item' icon={<MinusIcon />} onClick={() => arrayHelpers.remove(index)} />
-                                                            <FormControl isInvalid={errors.timeItems != null && touched.timeItems != null}>
+                                                <Stack gap={2}>
+                                                    <Flex gap={4}>
+                                                        <IconButton mt={8} aria-label='Create Time Item' icon={<MinusIcon />} onClick={() => arrayHelpers.remove(index)} />
+                                                        <FormControl isInvalid={errors.timeItems != null && touched.timeItems != null}>
                                                             <FormLabel htmlFor="timeItems[${index}].name">Name</FormLabel>
-                                                                    <Field as={Input} placeholder="Time Item Name" variant="filled" name={`timeItems[${index}].name`} />
-                                                                    {errors.timeItems && touched.timeItems ? <FormErrorMessage>{errors.timeItems.toString()}</FormErrorMessage>: null}
-                                                            </FormControl>
+                                                            <Flex flexDirection="column">
+                                                                <Field as={Input} placeholder="Time Item Name" variant="filled" name={`timeItems[${index}].name`} />
+                                                                <ErrorMessage name={`timeItems[${index}].name`} />
+                                                            </Flex>
+                                                        </FormControl>
 
-                                                            <FormControl>
+                                                        <FormControl isInvalid={errors.timeItems != null && touched.timeItems != null}>
                                                             <FormLabel htmlFor="timeItems[${index}].time">Time</FormLabel>
                                                             <InputGroup>
                                                                 <Field as={Input} type="number" placeholder="0 Hours" variant="filled" name={`timeItems[${index}].time`} />
-                                                                    <InputRightAddon children='Hours' />
-                                                                </InputGroup>
-                                                            </FormControl>
+                                                                <InputRightAddon children='Hours' />
+                                                                <ErrorMessage name={`timeItems[${index}].time`} />
+                                                            </InputGroup>
+                                                        </FormControl>
 
-                                                            <FormControl>
+                                                        <FormControl isInvalid={errors.timeItems != null && touched.timeItems != null}>
                                                             <FormLabel htmlFor="timeItems[${index}].rate">Rate</FormLabel>
-                                                                <InputGroup>
-                                                                    <Field as={Input} type="number" placeholder="USD 0" variant="filled" name={`timeItems[${index}].rate`} />
-                                                                        <InputRightAddon children='USD' />
-                                                                </InputGroup>
-                                                            </FormControl>
+                                                            <InputGroup>
+                                                                <Field as={Input} type="number" placeholder="USD 0" variant="filled" name={`timeItems[${index}].rate`} />
+                                                                <InputRightAddon children='USD' />
+                                                                <ErrorMessage name={`timeItems[${index}].rate`} />
+                                                            </InputGroup>
+                                                        </FormControl>
 
-                                                            <Flex flexShrink="0" gap={3} direction="column">
-                                                                <Heading fontWeight="normal" size="sm">Apply Taxes & Discounts</Heading>
-                                                                <Flex mb={0.5} gap={4}>
+                                                        <Flex flexShrink="0" gap={3} direction="column">
+                                                            <Heading fontWeight="normal" size="sm">Apply Taxes & Discounts</Heading>
+                                                            <Flex mb={0.5} gap={4}>
                                                                 <Tooltip label='Tax 1' fontSize='sm'>
                                                                     <IconButton variant={true ? 'solid' : 'outline'} aria-label='Tax' icon={<TbReceipt />} />
                                                                 </Tooltip>
-                                                                    <IconButton variant='outline' aria-label='Discount' icon={<TbDiscount />} onClick={() => arrayHelpers.insert(index, { name: "", time: 0, rate: 0 })} />
-                                                                </Flex>
+                                                                <IconButton variant='outline' aria-label='Discount' icon={<TbDiscount />} onClick={() => arrayHelpers.insert(index, { name: "", time: 0, rate: 0 })} />
                                                             </Flex>
                                                         </Flex>
-                                                        <TimeItemsTable timeItemIndex={index} updateTime={arrayHelpers.replace} />
-                                                    </Stack>
+                                                    </Flex>
+                                                    <TimeItemsTable timeItemIndex={index} updateTime={arrayHelpers.replace} />
+                                                </Stack>
                                                 <Divider my={4} />
                                             </React.Fragment>
                                         ))
@@ -103,15 +108,15 @@ const TimeItemsForm = () => {
                                     {/* {typeof errors.timeItems === 'string' ? <div>{errors.timeItems}</div>: null} */}
 
                                     <Flex gap={4} justifyContent="space-between">
-                                            <Button colorScheme="purple" type="submit">Save</Button>
-                                            <Flex align="center" gap={4}>
-                                                <Text as="i" fontWeight="bold" fontSize="xs">New Item</Text>
-                                                <IconButton aria-label='Create Time Item' icon={<AddIcon />} onClick={() => arrayHelpers.push({ name: "", time: 0, rate: 0 })} />
-                                            </Flex>
+                                        <Button colorScheme="purple" type="submit">Save</Button>
+                                        <Flex align="center" gap={4}>
+                                            <Text as="i" fontWeight="bold" fontSize="xs">New Item</Text>
+                                            <IconButton aria-label='Create Time Item' icon={<AddIcon />} onClick={() => arrayHelpers.push({ name: "", time: 0, rate: 0 })} />
                                         </Flex>
+                                    </Flex>
 
                                     <Flex mt={6} gap={10} justifyContent="end">
-                                    <TimeItemsStats />
+                                        <TimeItemsStats />
                                     </Flex>
                                 </div>
                             )}
