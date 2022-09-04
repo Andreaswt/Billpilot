@@ -59,7 +59,7 @@ const TimeItemsForm = () => {
                                                     <Flex gap={4}>
                                                         <IconButton mt={8} aria-label='Create Time Item' icon={<MinusIcon />} onClick={() => arrayHelpers.remove(index)} />
                                                         <FormControl isInvalid={errors.timeItems != null && touched.timeItems != null}>
-                                                            <FormLabel htmlFor="timeItems[${index}].name">Name</FormLabel>
+                                                            <FormLabel htmlFor={`timeItems[${index}].name`}>Name</FormLabel>
                                                             <Flex flexDirection="column">
                                                                 <Field as={Input} placeholder="Time Item Name" variant="filled" name={`timeItems[${index}].name`} />
                                                                 <ErrorMessage name={`timeItems[${index}].name`} />
@@ -67,21 +67,25 @@ const TimeItemsForm = () => {
                                                         </FormControl>
 
                                                         <FormControl isInvalid={errors.timeItems != null && touched.timeItems != null}>
-                                                            <FormLabel htmlFor="timeItems[${index}].time">Time</FormLabel>
-                                                            <InputGroup>
-                                                                <Field as={Input} type="number" placeholder="0 Hours" variant="filled" name={`timeItems[${index}].time`} />
-                                                                <InputRightAddon children='Hours' />
+                                                            <FormLabel htmlFor={`timeItems[${index}].time`}>Time</FormLabel>
+                                                            <Flex flexDirection="column">
+                                                                <InputGroup>
+                                                                    <Field as={Input} type="number" placeholder="0 Hours" variant="filled" name={`timeItems[${index}].time`} />
+                                                                    <InputRightAddon children='Hours' />
+                                                                </InputGroup>
                                                                 <ErrorMessage name={`timeItems[${index}].time`} />
-                                                            </InputGroup>
+                                                            </Flex>
                                                         </FormControl>
 
                                                         <FormControl isInvalid={errors.timeItems != null && touched.timeItems != null}>
-                                                            <FormLabel htmlFor="timeItems[${index}].rate">Rate</FormLabel>
-                                                            <InputGroup>
-                                                                <Field as={Input} type="number" placeholder="USD 0" variant="filled" name={`timeItems[${index}].rate`} />
-                                                                <InputRightAddon children='USD' />
+                                                            <FormLabel htmlFor={`timeItems[${index}].rate`}>Rate</FormLabel>
+                                                            <Flex flexDirection="column">
+                                                                <InputGroup>
+                                                                    <Field as={Input} type="number" placeholder="USD 0" variant="filled" name={`timeItems[${index}].rate`} />
+                                                                    <InputRightAddon children='USD' />
+                                                                </InputGroup>
                                                                 <ErrorMessage name={`timeItems[${index}].rate`} />
-                                                            </InputGroup>
+                                                            </Flex>
                                                         </FormControl>
 
                                                         <Flex flexShrink="0" gap={3} direction="column">

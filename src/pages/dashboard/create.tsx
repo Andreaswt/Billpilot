@@ -199,11 +199,11 @@ const CreateInvoice: NextPage = () => {
                                                     </FormControl>
                                                 </FormLayout>
                                                 <FormLayout columns={3}>
-                                                    <FormControl isInvalid={errors.title != null && touched.title != null}>
+                                                    <FormControl isInvalid={errors.status != null && touched.status != null}>
                                                         <FormLabel htmlFor="status">Status</FormLabel>
-                                                        <Field as={Select} variant="filled" name={`status`}>
-                                                            <option value="draft">Draft</option>
-                                                            <option value="noCharge">No Charge</option>
+                                                        <Field as={Select} variant="filled" placeholder="Select option" name="status">
+                                                            <option value="Draft">Draft</option>
+                                                            <option value="No Charge">No Charge</option>
                                                         </Field>
                                                         {errors.status && touched.status ? <FormErrorMessage>{errors.status}</FormErrorMessage>: null}
                                                     </FormControl>
@@ -214,7 +214,7 @@ const CreateInvoice: NextPage = () => {
                                                     </FormControl>
                                                     <FormControl isInvalid={errors.currency != null && touched.currency != null}>
                                                         <FormLabel htmlFor="status">Currency</FormLabel>
-                                                        <Field as={Select} variant="filled" name={`currency`}>
+                                                        <Field as={Select} placeholder="Select option" variant="filled" name="currency">
                                                             <option value="usd">USD</option>
                                                             <option value="eur">EUR</option>
                                                             <option value="dkk">DKK</option>
@@ -249,7 +249,7 @@ const CreateInvoice: NextPage = () => {
                                                 <FormLayout columns={3}>
                                                     <FormControl isInvalid={errors.roundingScheme != null && touched.roundingScheme != null}>
                                                         <FormLabel htmlFor="roundingScheme">Rounding Scheme</FormLabel>
-                                                        <Field as={Select} variant="filled" name={`roundingScheme`}>
+                                                        <Field as={Select} variant="filled" placeholder="Select option" name={`roundingScheme`}>
                                                             <option value="Værdi 1">Værdi 1</option>
                                                             <option value="Værdi 2">Værdi 2</option>
                                                         </Field>
@@ -257,7 +257,7 @@ const CreateInvoice: NextPage = () => {
                                                     </FormControl>
                                                         <FormControl isInvalid={errors.client != null && touched?.client != null}>
                                                         <FormLabel htmlFor="client">Client</FormLabel>
-                                                        <Field as={Select} variant="filled" name={`client`}>
+                                                        <Field as={Select} variant="filled" placeholder="Select option" name={`client`}>
                                                             <option value="Client 1">Client 1</option>
                                                             <option value="Client 2">Client 2</option>
                                                         </Field>
@@ -265,7 +265,7 @@ const CreateInvoice: NextPage = () => {
                                                     </FormControl>
                                                         <FormControl isInvalid={errors.invoiceLayout != null && touched.invoiceLayout != null}>
                                                         <FormLabel htmlFor="invoiceLayout">Invoice Layout for Clients</FormLabel>
-                                                        <Field as={Select} variant="filled" name={`invoiceLayout`}>
+                                                        <Field as={Select} variant="filled" placeholder="Select option" name={`invoiceLayout`}>
                                                             <option value="Layout 1">Layout 1</option>
                                                             <option value="Layout 2">Layout 2</option>
                                                         </Field>

@@ -76,7 +76,7 @@ interface CreateInvoiceState extends InvoiceState, TimeItemsState, FixedPriceTim
 }
 
 const useCreateInvoiceStore = create<CreateInvoiceState>((set) => ({
-    title: "hej",
+    title: "",
     status: "",
     invoiceNumber: "",
     currency: "",
