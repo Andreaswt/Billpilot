@@ -6,18 +6,18 @@ import React from "react";
 import * as Yup from 'yup';
 import ErrorMessage from "./ErrorMessage";
 
-const TaxesForm = () => {
-    const TaxesSchema = Yup.object().shape({
-        taxes: Yup.array().of(
+const DiscountsForm = () => {
+    const DiscountsSchema = Yup.object().shape({
+        discounts: Yup.array().of(
             Yup.object().shape({
                 name: Yup.string().required('Required'),
-        percentage: Yup.number().min(0).max(100).required('Required'),
-            })
+                percentage: Yup.number().min(0).max(100).required('Required'),
+                    })
         ),
     })
 
     const initialValues = {
-        taxes: [
+        discounts: [
             {
                 name: '',
                 percentage: 0,
@@ -30,35 +30,35 @@ const TaxesForm = () => {
             <Formik
                 validateOnChange={false}
                 initialValues={initialValues}
-                validationSchema={TaxesSchema}
+                validationSchema={DiscountsSchema}
                 onSubmit={(values) => console.log(values)}>
                 {({ values, errors, touched }) => (
                     <Form onChange={() => console.log("hs")}>
                         <FieldArray
-                            name="taxes"
+                            name="discounts"
                             render={arrayHelpers => (
                                 <div>
-                                    {values.taxes.map((tax, index) => (
+                                    {values.discounts.map((discount, index) => (
                                         <React.Fragment key={index}>
                                             <Stack gap={2}>
                                                 <Flex gap={4}>
-                                                    <IconButton mt={8} mb={0.5} aria-label='Create Tax' icon={<MinusIcon />} onClick={() => arrayHelpers.remove(index)} />
-                                                    <FormControl isInvalid={errors.taxes != null && touched.taxes != null}>
-                                                        <FormLabel htmlFor={`taxes[${index}].name`}>Name</FormLabel>
+                                                    <IconButton mt={8} mb={0.5} aria-label='Create Discount' icon={<MinusIcon />} onClick={() => arrayHelpers.remove(index)} />
+                                                    <FormControl isInvalid={errors.discounts != null && touched.discounts != null}>
+                                                        <FormLabel htmlFor={`discounts[${index}].name`}>Name</FormLabel>
                                                         <Flex flexDirection="column">
-                                                        <Field as={Input} placeholder="Enter Tax Name" variant="filled" name={`taxes[${index}].name`} />
-                                                        <ErrorMessage name={`taxes[${index}].name`} />
+                                                        <Field as={Input} placeholder="Enter Discount Name" variant="filled" name={`discounts[${index}].name`} />
+                                                        <ErrorMessage name={`discounts[${index}].name`} />
                                                         </Flex>
                                                     </FormControl>
 
-                                                    <FormControl isInvalid={errors.taxes != null && touched.taxes != null}>
-                                                        <FormLabel htmlFor={`taxes[${index}].percentage`}>Percentage</FormLabel>
+                                                    <FormControl isInvalid={errors.discounts != null && touched.discounts != null}>
+                                                        <FormLabel htmlFor={`discounts[${index}].percentage`}>Percentage</FormLabel>
                                                         <Flex flexDirection="column">
                                                         <InputGroup>
-                                                            <Field as={Input} type="number" placeholder="0 USD" variant="filled" name={`taxes[${index}].percentage`} />
+                                                            <Field as={Input} type="number" placeholder="0 USD" variant="filled" name={`discounts[${index}].percentage`} />
                                                             <InputRightAddon>%</InputRightAddon>
                                                         </InputGroup>
-                                                        <ErrorMessage name={`taxes[${index}].percentage`} />
+                                                        <ErrorMessage name={`discounts[${index}].percentage`} />
                                                         </Flex>
                                                     </FormControl>
                                                 </Flex>
@@ -69,8 +69,8 @@ const TaxesForm = () => {
                                     <Flex gap={4} justifyContent="space-between">
                                         <Button colorScheme="purple" type="submit">Save</Button>
                                         <Flex align="center" gap={4}>
-                                            <Text as="i" fontWeight="bold" fontSize="xs">New Tax</Text>
-                                            <IconButton aria-label='Create tax' icon={<AddIcon />} onClick={() => arrayHelpers.push({ name: "", percentage: 0 })} />
+                                            <Text as="i" fontWeight="bold" fontSize="xs">New Discount</Text>
+                                            <IconButton aria-label='Create discount' icon={<AddIcon />} onClick={() => arrayHelpers.push({ name: "", percentage: 0 })} />
                                         </Flex>
                                     </Flex>
                                 </div>
@@ -83,4 +83,4 @@ const TaxesForm = () => {
     )
 }
 
-export default TaxesForm;
+export default DiscountsForm;

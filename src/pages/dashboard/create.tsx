@@ -19,6 +19,7 @@ import FixedPriceTimeItemsForm from '../../components/dashboard/create-invoice/f
 import TaxesForm from '../../components/dashboard/create-invoice/forms/TaxesForm';
 import TimeItemsForm from '../../components/dashboard/create-invoice/forms/TimeItemsForm';
 import moment from 'moment';
+import DiscountsForm from '../../components/dashboard/create-invoice/forms/DiscountsForm';
 
 export const getServerSideProps = requireAuth(async (ctx) => {
     return { props: {} };
@@ -66,6 +67,7 @@ const CreateInvoice: NextPage = () => {
     const { isOpen: timeItemsOpen, onToggle: timeItemsToggle, getCollapseProps: timeItemsCollapseProps } = useCollapse()
     const { isOpen: fixedPriceTimeItemsOpen, onToggle: fixedPriceTimeItemsToggle, getCollapseProps: fixedPriceTimeItemsCollapseProps } = useCollapse()
     const { isOpen: taxesOpen, onToggle: taxesToggle, getCollapseProps: taxesCollapseProps } = useCollapse()
+    const { isOpen: discountsOpen, onToggle: discountsToggle, getCollapseProps: discountsCollapseProps } = useCollapse()
     const { isOpen: economicOpen, onToggle: economicToggle, getCollapseProps: economicCollapseProps } = useCollapse()
 
     // Keep track of which forms are changed
@@ -73,6 +75,7 @@ const CreateInvoice: NextPage = () => {
     const [timeItemsChanged, setTimeItemsChanged] = React.useState(false);
     const [fixedPriceTimeItemsChanged, setFixedPriceTimeItemsChanged] = React.useState(false);
     const [taxesChanged, setTaxesChanged] = React.useState(false);
+    const [discountsChanged, setDiscountsChanged] = React.useState(false);
 
     // Submit to store
     // Some forms like InvoiceState from the store is identical to the form, so is can be used directly
@@ -332,6 +335,22 @@ const CreateInvoice: NextPage = () => {
                         <CardBody py={taxesOpen ? 4 : 0}>
                             <Collapse {...taxesCollapseProps()}>
                                 <TaxesForm />
+                            </Collapse>
+                        </CardBody>
+                    </Card>
+
+                    <Card title={
+                        <Flex>
+                            <Heading>Discounts</Heading>
+                            <Spacer />
+                            <Flex gap={4} alignItems="center">
+                                {discountsChanged ? <Text as="i" fontSize="xs">Unsaved Changes</Text> : <></>}
+                                <IconButton aria-label='Open' onClick={() => discountsToggle()} icon={discountsOpen ? <ChevronUpIcon /> : <ChevronDownIcon />} />
+                            </Flex>
+                        </Flex>}>
+                        <CardBody py={discountsOpen ? 4 : 0}>
+                            <Collapse {...discountsCollapseProps()}>
+                                <DiscountsForm />
                             </Collapse>
                         </CardBody>
                     </Card>

@@ -3,8 +3,8 @@
 ## Iteration 1: Funktionalitet
 
 ### VIGTIGE
-- Lav Taxes og discounts forms
 - Når man tilføjer et tax eller time item felt, så tilføj det til time items formen
+- Fixed discount form
 - Prøv at samle alt til en enkelt form
 - Hvis der ikke er connected til jira med api keys skal der ikke fetches
 
