@@ -2,7 +2,7 @@ import { Button, Card, CardBody, useCollapse } from '@saas-ui/react'
 import { DataGrid, ColumnDef, DataGridPagination } from '@saas-ui/pro'
 import { Badge, ButtonGroup, Collapse, Text, Stack, Wrap, Flex, HStack, VStack, StackDivider, Spinner, Center } from '@chakra-ui/react'
 import { SearchInput } from '@saas-ui/react'
-import React, { useRef } from 'react'
+import React, { useCallback, useRef } from 'react'
 import { CloseIcon } from '@chakra-ui/icons'
 import { IconButton } from '@chakra-ui/react'
 import RemoveableJiraItem from './removeable-jira-item'
@@ -179,14 +179,14 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
                 setCurrentType('Epic');
             }
         });
-    
+
     const { data: importJiraTimeData, isLoading: importJiraTimeLoading, isRefetching: importJiraTimeRefetching, refetch: importJiraTimeRefetch } = trpc.useQuery([
         "jira.importJiraTime",
         {
             accountIds: getCheckedEmployees(),
             issueIds: getCheckedIssues(),
             projectKeys: getCheckedProjects(),
-         }],
+        }],
         {
             enabled: false,
             onSuccess(importJiraTimeData) {
@@ -194,7 +194,7 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
             }
         });
 
-    useEffect(() => {
+    const refetchSelected = useCallback(() => {
         switch (currentType) {
             case 'Project':
                 searchProjectsRefetch()
@@ -209,7 +209,11 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
                 searchEpicsRefetch()
                 break;
         }
-    }, [searchTerm])
+    }, [currentType, searchProjectsRefetch, searchIssuesRefetch, getEmployeesRefetch, searchEpicsRefetch])
+
+    useEffect(() => {
+        refetchSelected()
+    }, [searchTerm, refetchSelected])
 
     // If any of the queries are loading, show the loading indicator
     const isTableLoading =
@@ -278,7 +282,7 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
         <Flex flexDirection="column">
             <Wrap mb={itemsForShow.length > 0 ? 4 : 0}>
                 {itemsForShow.map((item, i) => (
-                    <RemoveableJiraItem key={i} handleDelete={() => {removeCheckedItem(item.type, item.name)}} type={item.type} name={item.name} displayName={item.displayName} />
+                    <RemoveableJiraItem key={i} handleDelete={() => { removeCheckedItem(item.type, item.name) }} type={item.type} name={item.name} displayName={item.displayName} />
                 ))}
             </Wrap>
             <Flex gap={4}>
@@ -299,10 +303,10 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
                     <HStack my={4} spacing={4}>
                         <Text>Filter by</Text>
                         <ButtonGroup isAttached variant="outline">
-                            <Button onClick={() => searchProjectsRefetch()}>Projects</Button>
-                            <Button onClick={() => getEmployeesRefetch()}>Employees</Button>
-                            <Button onClick={() => searchIssuesRefetch()}>Issues</Button>
-                            <Button onClick={() => searchEpicsRefetch()}>Epics</Button>
+                            <Button onClick={() => setCurrentType('Project')}>Projects</Button>
+                            <Button onClick={() => setCurrentType('Employee')}>Employees</Button>
+                            <Button onClick={() => setCurrentType('Issue')}>Issues</Button>
+                            <Button onClick={() => setCurrentType('Epic')}>Epics</Button>
                         </ButtonGroup>
                     </HStack>
                     <SearchInput

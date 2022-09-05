@@ -57,7 +57,7 @@ const TaxesForm = () => {
                                                         <FormLabel htmlFor="taxes[${index}].percentage">Percentage</FormLabel>
                                                         <InputGroup>
                                                             <Field as={Input} type="number" placeholder="0 USD" variant="filled" name={`taxes[${index}].percentage`} />
-                                                            <InputRightAddon children='%' />
+                                                            <InputRightAddon>%</InputRightAddon>
                                                         </InputGroup>
                                                     </FormControl>
                                                 </Flex>

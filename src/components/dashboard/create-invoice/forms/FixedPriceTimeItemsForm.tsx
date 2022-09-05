@@ -44,61 +44,58 @@ const FixedPriceTimeItemsForm = () => {
                             name="fixedPriceTimeItems"
                             render={arrayHelpers => (
                                 <div>
-                                    {values.fixedPriceTimeItems && values.fixedPriceTimeItems.length > 0 ? (
-                                        values.fixedPriceTimeItems.map((timeItem, index) => (
-                                            <React.Fragment key={index}>
-                                                <Stack gap={2}>
-                                                    <Flex gap={4}>
-                                                        <IconButton mt={8} aria-label='Create Time Item' icon={<MinusIcon />} onClick={() => arrayHelpers.remove(index)} />
-                                                        <FormControl isInvalid={errors.fixedPriceTimeItems != null && touched.fixedPriceTimeItems != null}>
-                                                            <FormLabel htmlFor={`fixedPriceTimeItems[${index}].name`}>Name</FormLabel>
-                                                            <Flex flexDirection="column">
-                                                                <Field as={Input} placeholder="Time Item Name" variant="filled" name={`fixedPriceTimeItems[${index}].name`} />
-                                                                <ErrorMessage name={`fixedPriceTimeItems[${index}].name`} />
-                                                            </Flex>
-                                                        </FormControl>
+                                    {values.fixedPriceTimeItems.map((timeItem, index) => (
+                                        <React.Fragment key={index}>
+                                            <Stack gap={2}>
+                                                <Flex gap={4}>
+                                                    <IconButton mt={8} aria-label='Create Time Item' icon={<MinusIcon />} onClick={() => arrayHelpers.remove(index)} />
+                                                    <FormControl isInvalid={errors.fixedPriceTimeItems != null && touched.fixedPriceTimeItems != null}>
+                                                        <FormLabel htmlFor={`fixedPriceTimeItems[${index}].name`}>Name</FormLabel>
+                                                        <Flex flexDirection="column">
+                                                            <Field as={Input} placeholder="Time Item Name" variant="filled" name={`fixedPriceTimeItems[${index}].name`} />
+                                                            <ErrorMessage name={`fixedPriceTimeItems[${index}].name`} />
+                                                        </Flex>
+                                                    </FormControl>
 
-                                                        <FormControl isInvalid={errors.fixedPriceTimeItems != null && touched.fixedPriceTimeItems != null}>
-                                                            <FormLabel htmlFor={`fixedPriceTimeItems[${index}].amount`}>Amount</FormLabel>
-                                                            <Flex flexDirection="column">
-                                                                <InputGroup>
-                                                                    <Field as={Input} type="number" placeholder="0 USD" variant="filled" name={`fixedPriceTimeItems[${index}].amount`} />
-                                                                    <InputRightAddon children='USD' />
-                                                                </InputGroup>
-                                                                <ErrorMessage name={`fixedPriceTimeItems[${index}].amount`} />
-                                                            </Flex>
-                                                        </FormControl>
+                                                    <FormControl isInvalid={errors.fixedPriceTimeItems != null && touched.fixedPriceTimeItems != null}>
+                                                        <FormLabel htmlFor={`fixedPriceTimeItems[${index}].amount`}>Amount</FormLabel>
+                                                        <Flex flexDirection="column">
+                                                            <InputGroup>
+                                                                <Field as={Input} type="number" placeholder="0 USD" variant="filled" name={`fixedPriceTimeItems[${index}].amount`} />
+                                                                <InputRightAddon>USD</InputRightAddon>
+                                                            </InputGroup>
+                                                            <ErrorMessage name={`fixedPriceTimeItems[${index}].amount`} />
+                                                        </Flex>
+                                                    </FormControl>
 
-                                                        <Flex flexShrink="0" gap={3} direction="column">
-                                                            <Heading fontWeight="normal" size="sm">Apply Taxes & Discounts</Heading>
-                                                            <Flex mb={0.5} gap={4}>
-                                                                <Tooltip label='Tax 1' fontSize='sm'>
-                                                                    <IconButton variant={true ? 'solid' : 'outline'} aria-label='Tax' icon={<TbReceipt />} />
-                                                                </Tooltip>
-                                                                <IconButton variant='outline' aria-label='Discount' icon={<TbDiscount />} onClick={() => arrayHelpers.insert(index, { name: "", amount: 0 })} />
-                                                            </Flex>
+                                                    <Flex flexShrink="0" gap={3} direction="column">
+                                                        <Heading fontWeight="normal" size="sm">Apply Taxes & Discounts</Heading>
+                                                        <Flex mb={0.5} gap={4}>
+                                                            <Tooltip label='Tax 1' fontSize='sm'>
+                                                                <IconButton variant={true ? 'solid' : 'outline'} aria-label='Tax' icon={<TbReceipt />} />
+                                                            </Tooltip>
+                                                            <IconButton variant='outline' aria-label='Discount' icon={<TbDiscount />} onClick={() => arrayHelpers.insert(index, { name: "", amount: 0 })} />
                                                         </Flex>
                                                     </Flex>
-                                                </Stack>
-                                                <Divider my={4} />
-                                            </React.Fragment>
-                                        ))
-                                    ) : (
-                                        <button type="button" onClick={() => arrayHelpers.push({ name: "", amount: 0 })}>
-                                            Add a Time Item
-                                        </button>
-                                    )}
-                                    <Flex gap={4} justifyContent="space-between">
-                                        <Button colorScheme="purple" type="submit">Save</Button>
+                                                </Flex>
+                                            </Stack>
+                                            <Divider my={4} />
+                                        </React.Fragment>
+                                    ))}
+                                    <Flex gap={4} justifyContent="end">
                                         <Flex align="center" gap={4}>
                                             <Text as="i" fontWeight="bold" fontSize="xs">New Item</Text>
                                             <IconButton aria-label='Create Time Item' icon={<AddIcon />} onClick={() => arrayHelpers.push({ name: "", amount: 0 })} />
                                         </Flex>
                                     </Flex>
 
-                                    <Flex mt={6} gap={10} justifyContent="end">
-                                        <FixedPriceTimeItemsStats />
-                                    </Flex>
+                                    {values.fixedPriceTimeItems && values.fixedPriceTimeItems.length > 0 ?
+                                        <Flex mt={6} gap={10} alignItems="end" justifyContent="space-between">
+                                            <Button colorScheme="purple" type="submit">Save</Button>
+                                            <FixedPriceTimeItemsStats />
+                                        </Flex>
+                                        : null}
+
                                 </div>
                             )}
                         />

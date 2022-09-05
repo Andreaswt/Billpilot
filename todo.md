@@ -3,10 +3,8 @@
 ## Iteration 1: Funktionalitet
 
 ### VIGTIGE
-- Fix fejl det gør den ikke kan builde
 - Lav Taxes og discounts forms
-    - Når man tilføjer et tax eller time item felt, så tilføj det til time items formen
-
+- Når man tilføjer et tax eller time item felt, så tilføj det til time items formen
 - Prøv at samle alt til en enkelt form
 
 
