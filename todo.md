@@ -6,7 +6,7 @@
 - Lav Taxes og discounts forms
 - Når man tilføjer et tax eller time item felt, så tilføj det til time items formen
 - Prøv at samle alt til en enkelt form
-
+- Hvis der ikke er connected til jira med api keys skal der ikke fetches
 
 - [Carl] Erstat bell icon, symbol etc i headeren med en "log in" knap når der ikke er en bruger logget ind.
 - Udfyld dashboard index siden med data (cards fra dashboard)

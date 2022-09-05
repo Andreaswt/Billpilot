@@ -1,24 +1,19 @@
 import { AddIcon, MinusIcon } from "@chakra-ui/icons";
-import { Button, Flex, FormControl, FormLabel, Heading, IconButton, Input, InputGroup, InputRightAddon, Stack, Text, Tooltip } from "@chakra-ui/react";
-import { Card, CardBody, Divider } from "@saas-ui/react";
-import { Field, FieldArray, Form, Formik, useFormikContext } from "formik";
-import React, { Fragment } from "react";
-import { TbDiscount, TbReceipt } from "react-icons/tb";
+import { Button, Flex, FormControl, FormLabel, IconButton, Input, InputGroup, InputRightAddon, Stack, Text } from "@chakra-ui/react";
+import { Divider } from "@saas-ui/react";
+import { Field, FieldArray, Form, Formik } from "formik";
+import React from "react";
 import * as Yup from 'yup';
-import useJiraItemsStore, { CheckedTimeItems } from "../../../../../store/jiraItems";
-import { TimeItemsTable } from "../collapseable-table";
-import FixedPriceTimeItemsStats from "./FixedPriceTimeItemsStats";
+import ErrorMessage from "./ErrorMessage";
 
 const TaxesForm = () => {
-    // const jiraItemsStore = useJiraItemsStore();
-
-    const TaxSchema = Yup.object().shape({
-        name: Yup.string().required('Required'),
-        percentage: Yup.number().min(0).max(100).required('Required'),
-    })
-
     const TaxesSchema = Yup.object().shape({
-        fixedPriceTimeItems: Yup.array().of(TaxSchema),
+        taxes: Yup.array().of(
+            Yup.object().shape({
+                name: Yup.string().required('Required'),
+        percentage: Yup.number().min(0).max(100).required('Required'),
+            })
+        ),
     })
 
     const initialValues = {
@@ -46,19 +41,25 @@ const TaxesForm = () => {
                                     {values.taxes.map((timeItem, index) => (
                                         <React.Fragment key={index}>
                                             <Stack gap={2}>
-                                                <Flex alignItems="end" gap={4}>
-                                                    <IconButton mb={0.5} aria-label='Create Time Item' icon={<MinusIcon />} onClick={() => arrayHelpers.remove(index)} />
-                                                    <FormControl>
-                                                        <FormLabel htmlFor="taxes[${index}].name">Name</FormLabel>
+                                                <Flex gap={4}>
+                                                    <IconButton mt={8} mb={0.5} aria-label='Create Time Item' icon={<MinusIcon />} onClick={() => arrayHelpers.remove(index)} />
+                                                    <FormControl isInvalid={errors.taxes != null && touched.taxes != null}>
+                                                        <FormLabel htmlFor={`taxes[${index}].name`}>Name</FormLabel>
+                                                        <Flex flexDirection="column">
                                                         <Field as={Input} placeholder="Time Item Name" variant="filled" name={`taxes[${index}].name`} />
+                                                        <ErrorMessage name={`taxes[${index}].name`} />
+                                                        </Flex>
                                                     </FormControl>
 
-                                                    <FormControl>
-                                                        <FormLabel htmlFor="taxes[${index}].percentage">Percentage</FormLabel>
+                                                    <FormControl isInvalid={errors.taxes != null && touched.taxes != null}>
+                                                        <FormLabel htmlFor={`taxes[${index}].percentage`}>Percentage</FormLabel>
+                                                        <Flex flexDirection="column">
                                                         <InputGroup>
                                                             <Field as={Input} type="number" placeholder="0 USD" variant="filled" name={`taxes[${index}].percentage`} />
                                                             <InputRightAddon>%</InputRightAddon>
                                                         </InputGroup>
+                                                        <ErrorMessage name={`taxes[${index}].percentage`} />
+                                                        </Flex>
                                                     </FormControl>
                                                 </Flex>
                                             </Stack>
