@@ -33,12 +33,6 @@ const TimeItemsForm = () => {
         ],
     };
 
-    interface ITimeItems {
-        name: string,
-        time: number,
-        rate: number
-    }
-
     return (
         <>
             <Formik
