@@ -3,9 +3,8 @@
 ## Iteration 1: Funktionalitet
 
 ### VIGTIGE
-- Når man tilføjer et tax eller time item felt, så tilføj det til time items formen
-- Fixed discount form
-- Prøv at samle alt til en enkelt form
+- Store jira items time table i store, hvor de identificeres med unique id fra react hook form
+
 - Hvis der ikke er connected til jira med api keys skal der ikke fetches
 
 - [Carl] Erstat bell icon, symbol etc i headeren med en "log in" knap når der ikke er en bruger logget ind.

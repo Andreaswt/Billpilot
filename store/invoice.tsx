@@ -1,6 +1,7 @@
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 import { difference } from 'lodash';
+import produce from 'immer';
 
 export interface InvoiceState {
     title: string,
@@ -50,6 +51,11 @@ export interface TaxesState {
     }[],
 }
 
+export interface AddTax {
+    name: string,
+    percentage: number,
+}
+
 export interface DiscountsState {
     discounts: {
         name: string,
@@ -64,6 +70,7 @@ interface CreateInvoiceState extends InvoiceState, TimeItemsState, FixedPriceTim
     setTimeItems: (timeItems: TimeItemsState) => void,
     setFixedPriceTimeItems: (timeItems: FixedPriceTimeItemsState) => void,
     setTaxes: (taxes: TaxesState) => void,
+    addTax: (tax: AddTax, index: number) => void,
     setDiscounts: (discounts: DiscountsState) => void,
     addDiscountToTimeItem: (timeItemName: string, discountName: string[]) => void,
     addTaxToTimeItem: (timeItemName: string, taxName: string[]) => void,
@@ -96,6 +103,11 @@ const useCreateInvoiceStore = create<CreateInvoiceState>((set) => ({
     setTimeItems: (timeItems: TimeItemsState) => set(timeItems),
     setFixedPriceTimeItems: (timeItems: FixedPriceTimeItemsState) => set(timeItems),
     setTaxes: (taxes: TaxesState) => set(taxes),
+    addTax: (tax: AddTax, index: number) => set(
+        produce<TaxesState>((draft) => {
+            draft.taxes.splice(index, 0, {...tax, appliesToTimeItems: [], appliesToFixedPriceTimeItems: []})
+        })
+    ),
     setDiscounts: (discounts: DiscountsState) => set(discounts),
     addDiscountToTimeItem: (discountName: string, itemNames: string[]) => {
         set((state) => ({

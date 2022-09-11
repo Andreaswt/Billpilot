@@ -1,17 +1,12 @@
-import { Button, Card, CardBody, useCollapse } from '@saas-ui/react'
-import { DataGrid, ColumnDef, DataGridPagination } from '@saas-ui/pro'
-import { Badge, ButtonGroup, Collapse, Text, Stack, Wrap, Flex, HStack, VStack, StackDivider, Spinner, Center } from '@chakra-ui/react'
-import { SearchInput } from '@saas-ui/react'
-import React, { useCallback, useRef } from 'react'
-import { CloseIcon } from '@chakra-ui/icons'
-import { IconButton } from '@chakra-ui/react'
-import RemoveableJiraItem from './removeable-jira-item'
+import { AddIcon, CloseIcon } from '@chakra-ui/icons'
+import { ButtonGroup, Center, Collapse, Flex, HStack, Spinner, Stack, Text, Wrap } from '@chakra-ui/react'
+import { ColumnDef, DataGrid, DataGridPagination } from '@saas-ui/pro'
+import { Button, SearchInput, useCollapse } from '@saas-ui/react'
+import React, { useCallback, useEffect } from 'react'
+import { UseFormSetValue } from 'react-hook-form'
+import useJiraTableStore from '../../../../store/jiraTable'
 import { trpc } from '../../../utils/trpc'
-import { useRowSelect } from 'react-table'
-import { useEffect } from 'react'
-import { Project } from 'jira.js/out/agile'
-import { CheckedTimeItems } from '../../../../store/jiraItems'
-import { useFormikContext } from 'formik';
+import RemoveableJiraItem from './removeable-jira-item'
 
 interface Data {
     type: string
@@ -89,7 +84,7 @@ function computeItemsForShow(checkedItems: ICheckedItems) {
 }
 
 function tableDataWithoutCheckedItems(checkedItemsKey: string[], data: Data[]) {
-    return data.filter(item => !checkedItemsKey.includes(item.key))
+    return data.filter(item => !checkedItemsKey.includes(item.key) )
 }
 
 interface IPagination {
@@ -99,38 +94,57 @@ interface IPagination {
 
 interface ITimeItemsTableProps {
     timeItemIndex: number
-    updateTime: (index: number, value: any) => void
+    updateTime: UseFormSetValue<{
+        timeItems: {
+            name: string;
+            time: number;
+            rate: number;
+            tax: number;
+            discount: number;
+        }[]
+    }>
+    rowId: string
 }
 
 export const TimeItemsTable = (props: ITimeItemsTableProps) => {
-    const { timeItemIndex, updateTime } = props
+    const { timeItemIndex, updateTime, rowId } = props
+    const store = useJiraTableStore()
 
     const { onToggle, isOpen, getCollapseProps } = useCollapse()
     const [searchTerm, setSearchTerm] = React.useState('')
     const [currentType, setCurrentType] = React.useState('Project')
-    const [checkedItems, setCheckedItems] = React.useState<ICheckedItems>(
-        {
-            project: [],
-            issue: [],
-            employee: [],
-        }
-    );
+    // const [checkedItems, setCheckedItems] = React.useState<ICheckedItems>(
+    //     {
+    //         project: [],
+    //         issue: [],
+    //         employee: [],
+    //     }
+    // );
 
     function getCheckedProjects() {
-        return checkedItems.project.map(item => item.key)
+        return store.project.filter(x => x.id === rowId).map(item => item.key)
+        // return checkedItems.project.map(item => item.key)
     }
 
     function getCheckedIssues() {
-        return checkedItems.issue.map(item => item.key)
+        return store.issue.filter(x => x.id === rowId).map(item => item.key)
+        // return checkedItems.issue.map(item => item.key)
     }
 
     function getCheckedEmployees() {
-        return checkedItems.employee.map(item => item.key)
+        return store.employee.filter(x => x.id === rowId).map(item => item.key)
+        // return checkedItems.employee.map(item => item.key)
     }
 
     let [pagination, setPagination] = React.useState<IPagination>({ amount: 0, total: 0 })
 
-    const itemsForShow = React.useMemo(() => computeItemsForShow(checkedItems), [checkedItems]);
+    const itemsForShow = React.useMemo(() => computeItemsForShow(
+        { 
+            project: store.project.filter(x => x.id === rowId), 
+            issue: store.issue.filter(x => x.id === rowId), 
+            employee: store.employee.filter(x => x.id === rowId)
+        }
+        ), [store]);
 
     const { data: searchProjectsData, isLoading: searchProjectsLoading, isRefetching: searchProjectsRefetching, refetch: searchProjectsRefetch } = trpc.useQuery([
         "jira.searchProjects",
@@ -190,7 +204,7 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
         {
             enabled: false,
             onSuccess(importJiraTimeData) {
-                updateTime(timeItemIndex, { name: "Imported Jira Time", time: importJiraTimeData, rate: 100 })
+                updateTime(`timeItems.${timeItemIndex}`, { name: "Imported Jira Time", time: importJiraTimeData, rate: 100, tax: 0, discount: 0 })
             }
         });
 
@@ -220,57 +234,81 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
         searchProjectsLoading || getEmployeesLoading || searchIssuesLoading || searchEpicsLoading
         || searchProjectsRefetching || getEmployeesRefetching || searchIssuesRefetching || searchEpicsRefetching;
 
-    function checkItem(type: string, id: string, displayName: string) {
+    function checkItem(type: string, key: string, displayName: string) {
         switch (type) {
             case 'Project':
-                if (!getCheckedProjects().includes(id)) {
-                    setCheckedItems({
-                        ...checkedItems,
-                        project: [...checkedItems.project, { key: id, displayName: displayName }]
-                    })
+                // if (!getCheckedProjects().includes(id)) {
+                //     setCheckedItems({
+                //         ...checkedItems,
+                //         project: [...checkedItems.project, { key: id, displayName: displayName }]
+                //     })
+                // }
+                if (!store.project.filter(x => x.id === rowId).find(x => x.key === key)) {
+                    store.checkProject({ id: rowId, key: key, displayName: displayName })
                 }
+
                 break;
             case 'Issue':
-                if (!getCheckedIssues().includes(id)) {
-                    setCheckedItems({
-                        ...checkedItems,
-                        issue: [...checkedItems.issue, { key: id, displayName: displayName }]
-                    })
+                // if (!getCheckedIssues().includes(id)) {
+                //     setCheckedItems({
+                //         ...checkedItems,
+                //         issue: [...checkedItems.issue, { key: id, displayName: displayName }]
+                //     })
+                // }
+
+                if (!store.issue.filter(x => x.id === rowId).find(x => x.key === key)) {
+                    store.checkIssue({ id: rowId, key: key, displayName: displayName })
                 }
+
                 break;
             case 'Employee':
-                if (!getCheckedEmployees().includes(id)) {
-                    setCheckedItems({
-                        ...checkedItems,
-                        employee: [...checkedItems.employee, { key: id, displayName: displayName }]
-                    })
+                // if (!getCheckedEmployees().includes(id)) {
+                //     setCheckedItems({
+                //         ...checkedItems,
+                //         employee: [...checkedItems.employee, { key: id, displayName: displayName }]
+                //     })
+                // }
+
+                if (!store.employee.filter(x => x.id === rowId).find(x => x.key === key)) {
+                    store.checkEmployee({ id: rowId, key: key, displayName: displayName })
                 }
+
                 break;
         }
     }
 
     // e.g. "type: project, id: test-1"
-    function removeCheckedItem(type: string, id: string) {
+    function removeCheckedItem(type: string, key: string) {
         switch (type) {
             case "project":
-                setCheckedItems({
-                    ...checkedItems,
-                    project: checkedItems.project.filter(item => item.key !== id)
-                })
+                // setCheckedItems({
+                //     ...checkedItems,
+                //     project: checkedItems.project.filter(item => item.key !== id)
+                // })
+
+                if (store.project.filter(x => x.id === rowId).find(x => x.key === key)) {
+                    store.uncheckProject({ id: rowId, key: key })
+                }
                 searchProjectsRefetch()
                 break;
             case "issue":
-                setCheckedItems({
-                    ...checkedItems,
-                    issue: checkedItems.issue.filter(item => item.key !== id)
-                })
+                // setCheckedItems({
+                //     ...checkedItems,
+                //     issue: checkedItems.issue.filter(item => item.key !== id)
+                // })
+                if (store.issue.filter(x => x.id === rowId).find(x => x.key === key)) {
+                    store.uncheckIssue({ id: rowId, key: key })
+                }
                 searchIssuesRefetch()
                 break;
             case "employee":
-                setCheckedItems({
-                    ...checkedItems,
-                    employee: checkedItems.employee.filter(item => item.key !== id)
-                })
+                // setCheckedItems({
+                //     ...checkedItems,
+                //     employee: checkedItems.employee.filter(item => item.key !== id)
+                // })
+                if (store.employee.filter(x => x.id === rowId).find(x => x.key === key)) {
+                    store.uncheckEmployee({ id: rowId, key: key })
+                }
                 getEmployeesRefetch()
                 break;
             default:
@@ -286,7 +324,7 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
                 ))}
             </Wrap>
             <Flex gap={4}>
-                <Button isLoading={importJiraTimeRefetching || importJiraTimeLoading} colorScheme="purple" onClick={() => {
+                <Button isLoading={importJiraTimeRefetching || importJiraTimeLoading} colorScheme={isOpen ? "purple" : "gray"} size="xs" rightIcon={<AddIcon />} variant='outline' onClick={() => {
                     if (!isOpen) {
                         searchProjectsRefetch()
                         onToggle()
@@ -295,8 +333,8 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
                         importJiraTimeRefetch()
                         onToggle()
                     }
-                }}>{isOpen ? "Import from Jira" : "Add Jira Items"}</Button>
-                {isOpen ? <Button onClick={() => onToggle()}>Cancel</Button> : <></>}
+                }}>{isOpen ? "Import Selected" : "Import from Jira"}</Button>
+                {isOpen ? <Button size="xs" rightIcon={<CloseIcon />} variant='outline' onClick={() => onToggle()}>Cancel</Button> : <></>}
             </Flex>
             <Collapse {...getCollapseProps()}>
                 <Stack mb={4}>

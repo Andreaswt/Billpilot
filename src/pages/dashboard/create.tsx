@@ -1,7 +1,7 @@
 import { Button, Collapse, Flex, FormControl, FormErrorMessage, FormLabel, Heading, IconButton, Input, Select, Spacer, Stack, Text, Textarea } from '@chakra-ui/react';
 import { Stepper, StepperStep, useCollapse } from '@saas-ui/react';
 import { NextPage } from "next";
-import React from 'react';
+import React, { useEffect } from 'react';
 import * as Yup from 'yup';
 import useCreateInvoiceStore, { FixedPriceTimeItemsState, InvoiceState, TaxesState, TimeItemsState } from '../../../store/invoice';
 import { requireAuth } from "../../common/requireAuth";
@@ -20,6 +20,10 @@ import TaxesForm from '../../components/dashboard/create-invoice/forms/TaxesForm
 import TimeItemsForm from '../../components/dashboard/create-invoice/forms/TimeItemsForm';
 import moment from 'moment';
 import DiscountsForm from '../../components/dashboard/create-invoice/forms/DiscountsForm';
+import TimeItemsFormHook from '../../components/dashboard/create-invoice/forms/TimeItemsForm';
+import { useForm, useWatch } from 'react-hook-form';
+import TaxesFormHook from '../../components/dashboard/create-invoice/forms/TaxesForm';
+import useTaxDiscountStore from '../../../store/taxDiscount';
 
 export const getServerSideProps = requireAuth(async (ctx) => {
     return { props: {} };
@@ -159,6 +163,13 @@ const CreateInvoice: NextPage = () => {
         notesForClient: Yup.string().required().label('Notes for Client'),
     })
 
+    // const taxesForm = useForm({
+    //     reValidateMode: "onSubmit",
+    //     defaultValues: {
+    //         taxes: [{ name: '', percentage: 0 }],
+    //     },
+    // });
+
     return (
         <Page title={"Create invoice"}>
             <PageBody pt="8">
@@ -291,21 +302,7 @@ const CreateInvoice: NextPage = () => {
                         </CardBody>
                     </Card>
 
-                    <Card title={
-                        <Flex>
-                            <Heading>Time Items</Heading>
-                            <Spacer />
-                            <Flex gap={4} alignItems="center">
-                                {timeItemsChanged ? <Text as="i" fontSize="xs">Unsaved Changes</Text> : <></>}
-                                <IconButton aria-label='Search database' onClick={() => timeItemsToggle()} icon={timeItemsOpen ? <ChevronUpIcon /> : <ChevronDownIcon />} />
-                            </Flex>
-                        </Flex>}>
-                        <CardBody py={timeItemsOpen ? 4 : 0}>
-                            <Collapse {...timeItemsCollapseProps()}>
-                                <TimeItemsForm />
-                            </Collapse>
-                        </CardBody>
-                    </Card>
+                    <TimeItemsFormHook />
 
                     <Card title={
                         <Flex>
@@ -319,22 +316,6 @@ const CreateInvoice: NextPage = () => {
                         <CardBody py={fixedPriceTimeItemsOpen ? 4 : 0}>
                             <Collapse {...fixedPriceTimeItemsCollapseProps()}>
                                 <FixedPriceTimeItemsForm />
-                            </Collapse>
-                        </CardBody>
-                    </Card>
-
-                    <Card title={
-                        <Flex>
-                            <Heading>Taxes</Heading>
-                            <Spacer />
-                            <Flex gap={4} alignItems="center">
-                                {taxesChanged ? <Text as="i" fontSize="xs">Unsaved Changes</Text> : <></>}
-                                <IconButton aria-label='Open' onClick={() => taxesToggle()} icon={taxesOpen ? <ChevronUpIcon /> : <ChevronDownIcon />} />
-                            </Flex>
-                        </Flex>}>
-                        <CardBody py={taxesOpen ? 4 : 0}>
-                            <Collapse {...taxesCollapseProps()}>
-                                <TaxesForm />
                             </Collapse>
                         </CardBody>
                     </Card>
