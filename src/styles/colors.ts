@@ -5,6 +5,7 @@ const Colors = {
     indigodye: '#134074',
     prussianblue: '#13315C',
     mintcream: '#EEF4ED',
+    goldengate: '#BB4430',
     // ...
 }
 

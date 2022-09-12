@@ -9,7 +9,7 @@ const siteConfig = {
   logo: Logo,
   seo: {
     title: 'Saas UI',
-    description: 'The React component library for startups',
+    description: 'The Fully Integrated Solution for Houly Billing',
   } as NextSeoProps,
   termsUrl: '#',
   privacyUrl: '#',
@@ -24,7 +24,7 @@ const siteConfig = {
         label: 'Pricing',
       },
       {
-        id: 'faq',
+        id: 'resources',
         label: 'Resources',
       },
       {
@@ -41,7 +41,7 @@ const siteConfig = {
   footer: {
     copyright: (
       <>
-        Billing-app
+        BillPilot LLC
       </>
     ),
     links: [

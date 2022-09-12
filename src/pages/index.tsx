@@ -88,18 +88,30 @@ const Home: NextPage = () => {
 
 const HeroSection: React.FC = () => {
   return (
-    <Box position="relative" overflow="hidden">
+    <Box position="relative">
       <BackgroundGradient height="100%" />
-      <Container pt={{ base: 40, lg: 60 }} pb="40">
+      <Container pt={{ base: 40, lg: 60 }} pb="20">
         <Stack direction={{ base: 'column', lg: 'row' }} alignItems="center">
           <Hero
             id="home"
-            justifyContent="flex-start"
+            justifyContent="center"
             px="0"
-            title={
-              <FallInPlace>
-                Bill your customers
-                <Br /> at scale.
+            title1={ 
+              <FallInPlace
+                bgGradient='linear(to-l, #68affb, #FFFFFF)'
+                bgClip='text'
+                fontSize='8xl'
+                fontWeight='extrabold'>
+                Bill your customers.
+              </FallInPlace>
+            }
+            title2={ 
+              <FallInPlace
+                bgGradient='linear(to-l, #68affb, #FFFFFF)'
+                bgClip='text'
+                fontSize='8xl'
+                fontWeight='extrabold'>
+                <Br /> At scale.
               </FallInPlace>
             }
             description={
@@ -108,13 +120,14 @@ const HeroSection: React.FC = () => {
                 <Br /> creates invoices from time reports and <Br />
                 sends them to your accounting app in minutes.
               </FallInPlace>
-            }
-          >
-            <FallInPlace delay={0.8}>
-              <HStack pt="4" pb="12" spacing="8">
-              </HStack>
 
-              <ButtonGroup spacing={4} alignItems="center">
+            }
+            >
+            <FallInPlace delay={0.8}>
+              <HStack pt="4" pb="12" spacing="5">
+              </HStack>
+              <ButtonGroup w='100%'>
+              <Flex w='100%'  justifyContent="center" gap ={4} >
                 <ButtonLink colorScheme="primary" size="lg" href="/signup">
                   Sign Up
                 </ButtonLink>
@@ -137,12 +150,21 @@ const HeroSection: React.FC = () => {
                 >
                   Schedule Demo
                 </ButtonLink>
+                </Flex>
               </ButtonGroup>
+              
             </FallInPlace>
           </Hero>
         </Stack>
       </Container>
-
+      <Flex justifyContent='center'>
+        <Image
+          src="static/screenshots/list.png"
+          alt="Picture of the author"
+          width={1200}
+          height={800}
+        />
+      </Flex>
       <Features
         id="benefits"
         columns={[1, 2, 4]}
@@ -153,9 +175,25 @@ const HeroSection: React.FC = () => {
           {
             title: 'Modular',
             icon: FiSmile,
-            description: 'All components strictly follow WAI-ARIA standards.',
+            description: "We take pride in our ever evolving integrations and we're not scared of adding more",
             iconPosition: 'left',
             delay: 0.6,
+          },
+          {
+            title: 'Composable',
+            icon: FiGrid,
+            description:
+              'Compose invoice items to fit your needs and mix them together to create fully customizable bills.',
+            iconPosition: 'left',
+            delay: 1,
+          },
+          {
+            title: 'Productive',
+            icon: FiThumbsUp,
+            description:
+              "Designed to save time, servicing your customers is your top priority we'll take care of the billing.",
+            iconPosition: 'left',
+            delay: 1.1,
           },
           {
             title: 'Flexible',
@@ -165,22 +203,7 @@ const HeroSection: React.FC = () => {
             iconPosition: 'left',
             delay: 0.8,
           },
-          {
-            title: 'Composable',
-            icon: FiGrid,
-            description:
-              'Compose components to fit your needs and mix them together to create new ones.',
-            iconPosition: 'left',
-            delay: 1,
-          },
-          {
-            title: 'Productive',
-            icon: FiThumbsUp,
-            description:
-              'Designed to reduce boilerplate and fully typed, build your product at speed.',
-            iconPosition: 'left',
-            delay: 1.1,
-          },
+          
         ]}
         reveal={FallInPlace}
       />
@@ -189,55 +212,23 @@ const HeroSection: React.FC = () => {
 }
 
 const HighlightsSection = () => {
-  const { value, onCopy, hasCopied } = useClipboard('yarn add @saas-ui/react')
+  
 
   return (
     <Highlights>
-      <HighlightsItem colSpan={[1, null, 2]} title="Core components">
+      <HighlightsItem colSpan={[1, null, 2]} title="A Quality Product that Speaks for Itself ">
         <VStack alignItems="flex-start" spacing="8">
           <Text color="muted" fontSize="xl">
-            Get started for free with <Em>30+ open source components</Em>.
+            Get started for <Em> free </Em> with any of our integrations.
             Including authentication screens with Clerk, Supabase and Magic.
             Fully functional forms with React Hook Form. Data tables with React
             Table.
           </Text>
-
-          <Flex
-            rounded="full"
-            borderWidth="1px"
-            flexDirection="row"
-            alignItems="center"
-            py="1"
-            ps="8"
-            pe="2"
-            bg="primary.900"
-            _dark={{ bg: 'gray.900' }}
-          >
-            <Box>
-              <Text color="yellow.400" display="inline">
-                yarn add
-              </Text>{' '}
-              <Text color="cyan.300" display="inline">
-                @saas-ui/react
-              </Text>
-            </Box>
-            <IconButton
-              icon={hasCopied ? <FiCheck /> : <FiCopy />}
-              aria-label="Copy install command"
-              onClick={onCopy}
-              variant="ghost"
-              ms="4"
-              isRound
-              color="white"
-            />
-          </Flex>
         </VStack>
       </HighlightsItem>
-      <HighlightsItem title="Solid foundations">
+      <HighlightsItem title="Seamless Setup">
         <Text color="muted" fontSize="lg">
-          We don&apos;t like to re-invent the wheel, neither should you. We
-          selected the most productive and established tools in the scene and
-          build Billpilot on top of it.
+        Connect BillPilot with your project mangement platform and start billing projects and hours right away. No manual project setup required.
         </Text>
       </HighlightsItem>
       <HighlightsItem title="Solid foundations">
@@ -249,31 +240,21 @@ const HighlightsSection = () => {
       </HighlightsItem>
       <HighlightsItem
         colSpan={[1, null, 2]}
-        title="Start your next idea two steps ahead"
+        title="Our Continually Expanding List of Integrations"
       >
         <Text color="muted" fontSize="lg">
-          We took care of all your basic frontend needs, so you can start
-          building functionality that makes your product unique.
+          We took care of all the integrations, so all you need to do is start billing your customers.
         </Text>
         <Wrap mt="8">
           {[
-            'authentication',
-            'navigation',
-            'crud',
-            'settings',
-            'multi-tenancy',
-            'layouts',
-            'billing',
-            'a11y testing',
-            'server-side rendering',
-            'documentation',
-            'onboarding',
-            'storybooks',
-            'theming',
-            'upselling',
-            'unit testing',
-            'feature flags',
-            'responsiveness',
+            'Jira',
+            'Economic',
+            'Xero',
+            'Asana',
+            'Trello (Coming Soon)',
+            'Click Up (Coming Soon)',
+            'Monday (Coming Soon)',
+            'Notion (Coming Soon)',
           ].map((value) => (
             <Tag
               key={value}
@@ -309,7 +290,7 @@ const FeaturesSection = () => {
           as="p"
         >
           Features
-          <Br /> 
+          <Br />
         </Heading>
       }
       description={

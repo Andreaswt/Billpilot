@@ -62,10 +62,10 @@ const Navigation: React.FC = () => {
       <NavLink
           label = {"Resources"}
           display={['none', null, 'block']}
-          href={"dfsf"}
+          href={"#resources"}
           isActive={
             !!(
-              ("#dfsf" && !!router.asPath.match(new RegExp("dfsf")))
+              ("#resources" && !!router.asPath.match(new RegExp("Resources")))
             )
           }
         />

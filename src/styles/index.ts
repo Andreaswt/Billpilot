@@ -34,8 +34,8 @@ const landingPageTheme = extendTheme(
         400: '#ff0000'
       },
       hero: {
-        'left': Colors.indigodye,
-        'right': Colors.mintcream
+        'left': Colors.goldengate,
+        'right': Colors.indigodye,
       },
       button: Colors.mintcream,
     },
