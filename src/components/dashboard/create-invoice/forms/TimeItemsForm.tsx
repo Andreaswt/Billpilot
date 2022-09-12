@@ -5,7 +5,7 @@ import React, { useEffect } from "react";
 import { FormProvider, useFieldArray, useForm, UseFormReturn, useWatch } from "react-hook-form";
 import { TbAd2, TbPercentage, TbReceipt } from "react-icons/tb";
 import useTaxDiscountStore from "../../../../../store/taxDiscount";
-import { TimeItemsTable } from "../collapseable-table";
+import { TimeItemsTable } from "../CollapseableTable";
 import TimeItemsStats from "./TimeItemsStats";
 
 const TimeItemsFormHook = () => {
@@ -35,6 +35,13 @@ const TimeItemsFormHook = () => {
         // display form data on success
         alert('SUCCESS!! :-)\n\n' + JSON.stringify(data, null, 4));
     }
+
+    // const watch2 = useWatch({
+    //     control,
+    //     name: "timeItems"
+    // })
+
+    // console.log(watch2)
 
     return (
         <>
@@ -171,7 +178,6 @@ const TimeItemsFormHook = () => {
                                                 </Flex>
                                             </FormControl>
                                         </Flex>
-                                        <p>{item.id}</p>
                                         <TimeItemsTable rowId={item.id} timeItemIndex={index} updateTime={setValue} />
                                     </Stack>
                                     <Divider my={4} />
@@ -189,7 +195,9 @@ const TimeItemsFormHook = () => {
 
                         {fields.length > 0
                             ? <Flex mt={6} gap={10} alignItems="end" justifyContent="end">
-                                {/* <TimeItemsStats /> */}
+                                {/* <FormProvider {...timeItemsForm}>
+                                    <TimeItemsStats />
+                                </FormProvider> */}
                             </Flex>
                             : null}
 

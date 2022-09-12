@@ -113,27 +113,17 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
     const { onToggle, isOpen, getCollapseProps } = useCollapse()
     const [searchTerm, setSearchTerm] = React.useState('')
     const [currentType, setCurrentType] = React.useState('Project')
-    // const [checkedItems, setCheckedItems] = React.useState<ICheckedItems>(
-    //     {
-    //         project: [],
-    //         issue: [],
-    //         employee: [],
-    //     }
-    // );
 
     function getCheckedProjects() {
         return store.project.filter(x => x.id === rowId).map(item => item.key)
-        // return checkedItems.project.map(item => item.key)
     }
 
     function getCheckedIssues() {
         return store.issue.filter(x => x.id === rowId).map(item => item.key)
-        // return checkedItems.issue.map(item => item.key)
     }
 
     function getCheckedEmployees() {
         return store.employee.filter(x => x.id === rowId).map(item => item.key)
-        // return checkedItems.employee.map(item => item.key)
     }
 
     let [pagination, setPagination] = React.useState<IPagination>({ amount: 0, total: 0 })
@@ -144,7 +134,7 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
             issue: store.issue.filter(x => x.id === rowId), 
             employee: store.employee.filter(x => x.id === rowId)
         }
-        ), [store]);
+        ), [store.project, store.issue, store.employee]);
 
     const { data: searchProjectsData, isLoading: searchProjectsLoading, isRefetching: searchProjectsRefetching, refetch: searchProjectsRefetch } = trpc.useQuery([
         "jira.searchProjects",
@@ -237,42 +227,19 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
     function checkItem(type: string, key: string, displayName: string) {
         switch (type) {
             case 'Project':
-                // if (!getCheckedProjects().includes(id)) {
-                //     setCheckedItems({
-                //         ...checkedItems,
-                //         project: [...checkedItems.project, { key: id, displayName: displayName }]
-                //     })
-                // }
                 if (!store.project.filter(x => x.id === rowId).find(x => x.key === key)) {
                     store.checkProject({ id: rowId, key: key, displayName: displayName })
                 }
-
                 break;
             case 'Issue':
-                // if (!getCheckedIssues().includes(id)) {
-                //     setCheckedItems({
-                //         ...checkedItems,
-                //         issue: [...checkedItems.issue, { key: id, displayName: displayName }]
-                //     })
-                // }
-
                 if (!store.issue.filter(x => x.id === rowId).find(x => x.key === key)) {
                     store.checkIssue({ id: rowId, key: key, displayName: displayName })
                 }
-
                 break;
             case 'Employee':
-                // if (!getCheckedEmployees().includes(id)) {
-                //     setCheckedItems({
-                //         ...checkedItems,
-                //         employee: [...checkedItems.employee, { key: id, displayName: displayName }]
-                //     })
-                // }
-
                 if (!store.employee.filter(x => x.id === rowId).find(x => x.key === key)) {
                     store.checkEmployee({ id: rowId, key: key, displayName: displayName })
                 }
-
                 break;
         }
     }
@@ -281,31 +248,18 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
     function removeCheckedItem(type: string, key: string) {
         switch (type) {
             case "project":
-                // setCheckedItems({
-                //     ...checkedItems,
-                //     project: checkedItems.project.filter(item => item.key !== id)
-                // })
-
                 if (store.project.filter(x => x.id === rowId).find(x => x.key === key)) {
                     store.uncheckProject({ id: rowId, key: key })
                 }
                 searchProjectsRefetch()
                 break;
             case "issue":
-                // setCheckedItems({
-                //     ...checkedItems,
-                //     issue: checkedItems.issue.filter(item => item.key !== id)
-                // })
                 if (store.issue.filter(x => x.id === rowId).find(x => x.key === key)) {
                     store.uncheckIssue({ id: rowId, key: key })
                 }
                 searchIssuesRefetch()
                 break;
             case "employee":
-                // setCheckedItems({
-                //     ...checkedItems,
-                //     employee: checkedItems.employee.filter(item => item.key !== id)
-                // })
                 if (store.employee.filter(x => x.id === rowId).find(x => x.key === key)) {
                     store.uncheckEmployee({ id: rowId, key: key })
                 }

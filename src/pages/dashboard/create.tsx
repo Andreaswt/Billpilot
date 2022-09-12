@@ -24,6 +24,7 @@ import TimeItemsFormHook from '../../components/dashboard/create-invoice/forms/T
 import { useForm, useWatch } from 'react-hook-form';
 import TaxesFormHook from '../../components/dashboard/create-invoice/forms/TaxesForm';
 import useTaxDiscountStore from '../../../store/taxDiscount';
+import FixedPriceTimeItemsFormHook from '../../components/dashboard/create-invoice/forms/FixedPriceTimeItemsFormHook';
 
 export const getServerSideProps = requireAuth(async (ctx) => {
     return { props: {} };
@@ -185,7 +186,6 @@ const CreateInvoice: NextPage = () => {
                         </CardBody>
                     </Card>
 
-
                     <Card title={
                         <Flex>
                             <Heading>Create Invoice</Heading>
@@ -304,37 +304,7 @@ const CreateInvoice: NextPage = () => {
 
                     <TimeItemsFormHook />
 
-                    <Card title={
-                        <Flex>
-                            <Heading>Fixed Price Time Items</Heading>
-                            <Spacer />
-                            <Flex gap={4} alignItems="center">
-                                {timeItemsChanged ? <Text as="i" fontSize="xs">Unsaved Changes</Text> : <></>}
-                                <IconButton aria-label='Open' onClick={() => fixedPriceTimeItemsToggle()} icon={fixedPriceTimeItemsOpen ? <ChevronUpIcon /> : <ChevronDownIcon />} />
-                            </Flex>
-                        </Flex>}>
-                        <CardBody py={fixedPriceTimeItemsOpen ? 4 : 0}>
-                            <Collapse {...fixedPriceTimeItemsCollapseProps()}>
-                                <FixedPriceTimeItemsForm />
-                            </Collapse>
-                        </CardBody>
-                    </Card>
-
-                    <Card title={
-                        <Flex>
-                            <Heading>Discounts</Heading>
-                            <Spacer />
-                            <Flex gap={4} alignItems="center">
-                                {discountsChanged ? <Text as="i" fontSize="xs">Unsaved Changes</Text> : <></>}
-                                <IconButton aria-label='Open' onClick={() => discountsToggle()} icon={discountsOpen ? <ChevronUpIcon /> : <ChevronDownIcon />} />
-                            </Flex>
-                        </Flex>}>
-                        <CardBody py={discountsOpen ? 4 : 0}>
-                            <Collapse {...discountsCollapseProps()}>
-                                <DiscountsForm />
-                            </Collapse>
-                        </CardBody>
-                    </Card>
+                    <FixedPriceTimeItemsFormHook />
 
                     <Card title={
                         <Flex>
