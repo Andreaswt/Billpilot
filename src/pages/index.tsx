@@ -1,69 +1,49 @@
-import * as React from 'react'
+import {
+  Box, ButtonGroup, Center, Container, Flex, Heading, HStack, Icon, Stack, Tag, Text, useColorMode, VStack, Wrap
+} from '@chakra-ui/react'
 import type { NextPage } from 'next'
 import Image from 'next/image'
-import {
-  Container,
-  Box,
-  Stack,
-  HStack,
-  ButtonGroup,
-  Button,
-  Icon,
-  Heading,
-  Text,
-  Wrap,
-  Tag,
-  useClipboard,
-  IconButton,
-  VStack,
-  Flex,
-} from '@chakra-ui/react'
+import * as React from 'react'
 import { SEO } from '../components/landing-page/seo/seo'
 
-import { FallInPlace } from '../components/landing-page/motion/fall-in-place'
-import { Hero } from '../components/landing-page/hero/hero'
-import { Link, Br } from '@saas-ui/react'
-import { Em } from '../components/landing-page/typography'
-import { NextjsLogo } from '../components/landing-page/logos/next'
-import { ChakraLogo } from '../components/landing-page/logos/chakra'
+import { Br } from '@saas-ui/react'
 import {
   FiArrowRight,
-  FiBox,
-  FiCheck,
-  FiCode,
-  FiCopy,
-  FiFlag,
+  FiBox, FiCode, FiFlag,
   FiGrid,
   FiLock,
   FiSearch,
   FiSliders,
-  FiSmile,
-  FiTerminal,
-  FiThumbsUp,
-  FiToggleLeft,
-  FiTrendingUp,
-  FiUserPlus,
+  FiSmile, FiThumbsUp, FiUserPlus
 } from 'react-icons/fi'
+import { Faq } from '../components/landing-page/faq/faq'
 import { Features } from '../components/landing-page/features/features'
 import { BackgroundGradient } from '../components/landing-page/gradients/background-gradient'
-import { Faq } from '../components/landing-page/faq/faq'
+import { Hero } from '../components/landing-page/hero/hero'
+import { FallInPlace } from '../components/landing-page/motion/fall-in-place'
 import { Pricing } from '../components/landing-page/pricing/pricing'
+import { Em } from '../components/landing-page/typography'
 
 import { ButtonLink } from '../components/landing-page/button-link/button-link'
 import { Testimonial } from '../components/landing-page/testimonials/testimonial'
 import { Testimonials } from '../components/landing-page/testimonials/testimonials'
 
 import faq from '../data/faq'
-import testimonials from '../data/testimonials'
 import pricing from '../data/pricing'
+import testimonials from '../data/testimonials'
 
-import { Highlights, HighlightsItem, HighlightsTestimonialItem } from '../components/landing-page/highlights/highlights'
+import { Highlights, HighlightsItem } from '../components/landing-page/highlights/highlights'
+import Colors from '../styles/colors'
+import { ContactForm } from '../components/landing-page/ContactForm'
+
+
 
 const Home: NextPage = () => {
+
   return (
     <Box>
       <SEO
-        title="Saas UI Landingspage"
+        title="Billpilot Landingspage"
         description="Free SaaS landingspage starter kit"
       />
       <Box>
@@ -73,97 +53,165 @@ const Home: NextPage = () => {
 
         <FeaturesSection />
 
-        <TestimonialsSection />
+        {/* <TestimonialsSection /> */}
 
         <PricingSection />
 
         <FaqSection />
+
+        <ContactFormSection />
+
       </Box>
     </Box>
   )
 }
 
+
 const HeroSection: React.FC = () => {
+  const { toggleColorMode, colorMode } = useColorMode()
   return (
-    <Box position="relative" overflow="hidden">
+    <Box position="relative">
       <BackgroundGradient height="100%" />
-      <Container maxW="container.xl" pt={{ base: 40, lg: 60 }} pb="40">
-        <Stack direction={{ base: 'column', lg: 'row' }} alignItems="center">
-          <Hero
-            id="home"
-            justifyContent="flex-start"
-            px="0"
-            title={
-              <FallInPlace>
-                Build beautiful
-                <Br /> software faster
-              </FallInPlace>
-            }
-            description={
-              <FallInPlace delay={0.4} fontWeight="medium">
-                Saas UI is a <Em>React component library</Em>
-                <Br /> that doesn&apos;t get in your way and helps you <Br />{' '}
-                build intuitive SaaS products with speed.
-              </FallInPlace>
-            }
-          >
-            <FallInPlace delay={0.8}>
-              <HStack pt="4" pb="12" spacing="8">
-                <NextjsLogo height="28px" /> <ChakraLogo height="20px" />
-              </HStack>
-
-              <ButtonGroup spacing={4} alignItems="center">
-                <ButtonLink colorScheme="primary" size="lg" href="/signup">
-                  Sign Up
-                </ButtonLink>
-                <ButtonLink
-                  size="lg"
-                  href="https://demo.saas-ui.dev"
-                  variant="outline"
-                  rightIcon={
-                    <Icon
-                      as={FiArrowRight}
-                      sx={{
-                        transitionProperty: 'common',
-                        transitionDuration: 'normal',
-                        '.chakra-button:hover &': {
-                          transform: 'translate(5px)',
-                        },
-                      }}
-                    />
-                  }
+      <Container pt={{ base: 40, lg: 60 }} pb="20" maxWidth='90w' alignItems="center">
+        <Center>
+          <Stack direction={{ base: 'column', lg: 'row' }} alignItems="center" maxWidth='90vw'>
+            <Hero
+              id="home"
+              justifyContent="center"
+              px="0"
+              maxWidth='90vw'
+              title1={
+                <FallInPlace
+                  bgGradient={colorMode === 'dark' ? 'linear(to-l, #68affb, #FFFFFF)' : 'linear(to-l, #68affb, #000)'}
+                  bgClip='text'
+                  letterSpacing='2px'
+                  fontSize={{ base: '48px', lg: '8xl' }}
+                  fontWeight='400'>
+                  Bill your clients.
+                </FallInPlace>
+              }
+              title2={
+                <FallInPlace
+                  bgGradient={colorMode === 'dark' ? 'linear(to-l, #68affb, #FFFFFF)' : 'linear(to-l, #68affb, #000)'}
+                  bgClip='text'
+                  letterSpacing='2px'
+                  fontSize={{ base: '48px', lg: '8xl' }}
+                  fontWeight='400'
                 >
-                  View demo
-                </ButtonLink>
-              </ButtonGroup>
-            </FallInPlace>
-          </Hero>
-          <Box
-            height="600px"
-            position="absolute"
-            display={{ base: 'none', lg: 'block' }}
-            left={{ lg: '60%', xl: '55%' }}
-            width="80vw"
-            maxW="1100px"
-            margin="0 auto"
-          >
-            <FallInPlace delay={1}>
-              <Box overflow="hidden" height="100%">
-                <Image
-                  src="/static/screenshots/list.png"
-                  layout="fixed"
-                  width="1200px"
-                  height="762px"
-                  alt="Screenshot of a ListPage in Saas UI Pro"
-                  quality="75"
-                  priority
-                />
-              </Box>
-            </FallInPlace>
-          </Box>
-        </Stack>
-      </Container>
+                  <Text as='i'>
+                    At scale.
+                  </Text>
 
+                </FallInPlace>
+              }
+              description={
+                <FallInPlace delay={0.4} fontWeight="400" fontSize={{ base: '1xl', lg: '2xl' }}>
+                  Billpilot imports <Em>project mangement data</Em>,
+                  <Br /> creates invoices from time reports and <Br />
+                  sends them to your accounting app in minutes.
+                </FallInPlace>
+
+              }
+            >
+              <FallInPlace delay={0.8} >
+                <HStack pt={{ base: '4', lg: '4' }} pb={{ base: '4', lg: '12' }} spacing="5">
+                </HStack>
+                <ButtonGroup w='100%'>
+                  <Flex w='100%' justifyContent="center" gap={4} flexDir='column'  >
+                    <Center alignItems='center' flexDir={{ base: 'column', lg: 'row' }}>
+                      <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+                        <picture>
+                          {/* eslint-disable @next/next/no-img-element */}
+                          <img
+                            src="static/images/integrationlogos/asana.png"
+                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                            alt='xero logo'
+                          />
+                        </picture>
+                      </Box>
+                      <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+                        <picture>
+                          {/* eslint-disable @next/next/no-img-element */}
+                          <img
+                            src="static/images/integrationlogos/economic.png"
+                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                            alt='xero logo'
+                          />
+                        </picture>
+                      </Box>
+                      <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+                        <picture>
+                          {/* eslint-disable @next/next/no-img-element */}
+                          <img
+                            src="static/images/integrationlogos/jira.png"
+                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                            alt='xero logo'
+                          />
+                        </picture>
+                      </Box>
+                      <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+                        <picture>
+                          {/* eslint-disable @next/next/no-img-element */}
+                          <img
+                            src="static/images/integrationlogos/quickbooks.png"
+                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                            alt='xero logo'
+                          />
+                        </picture>
+                      </Box>
+                      <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+                        <picture>
+                          {/* eslint-disable @next/next/no-img-element */}
+                          <img
+                            src="static/images/integrationlogos/xero.png"
+                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                            alt='xero logo'
+                          />
+                        </picture>
+                      </Box>
+                    </Center>
+
+                    <Flex justifyContent="center" gap='5'>
+                      <ButtonLink colorScheme="primary" color='white' size="lg" href="/signup">
+                        Sign Up
+                      </ButtonLink>
+                      <ButtonLink
+                        size="lg"
+                        href="https://demo.saas-ui.dev"
+                        variant="outline"
+                        rightIcon={
+                          <Icon
+                            as={FiArrowRight}
+                            sx={{
+                              transitionProperty: 'common',
+                              transitionDuration: 'normal',
+                              '.chakra-button:hover &': {
+                                transform: 'translate(5px)',
+                              },
+                            }}
+                          />
+                        }
+                      >
+                        Schedule Demo
+                      </ButtonLink>
+                    </Flex>
+
+                  </Flex>
+                </ButtonGroup>
+
+              </FallInPlace>
+            </Hero>
+          </Stack>
+        </Center>
+      </Container>
+      <Flex justifyContent='center'>
+        <Image
+          src="static/screenshots/list.png"
+          alt="Picture of the author"
+          width={1200}
+          height={800}
+        />
+      </Flex>
       <Features
         id="benefits"
         columns={[1, 2, 4]}
@@ -172,25 +220,17 @@ const HeroSection: React.FC = () => {
         pt="20"
         features={[
           {
-            title: 'Accessible',
+            title: 'Modular',
             icon: FiSmile,
-            description: 'All components strictly follow WAI-ARIA standards.',
+            description: "We take pride in our ever evolving integrations and we're not scared of adding more",
             iconPosition: 'left',
             delay: 0.6,
-          },
-          {
-            title: 'Themable',
-            icon: FiSliders,
-            description:
-              'Fully customize all components to your brand with theme support and style props.',
-            iconPosition: 'left',
-            delay: 0.8,
           },
           {
             title: 'Composable',
             icon: FiGrid,
             description:
-              'Compose components to fit your needs and mix them together to create new ones.',
+              'Compose invoice items to fit your needs and mix them together to create fully customizable bills.',
             iconPosition: 'left',
             delay: 1,
           },
@@ -198,10 +238,19 @@ const HeroSection: React.FC = () => {
             title: 'Productive',
             icon: FiThumbsUp,
             description:
-              'Designed to reduce boilerplate and fully typed, build your product at speed.',
+              "Designed to save time, servicing your customers is your top priority we'll take care of the billing.",
             iconPosition: 'left',
             delay: 1.1,
           },
+          {
+            title: 'Flexible',
+            icon: FiSliders,
+            description:
+              'Fully customize all components to your brand with theme support and style props.',
+            iconPosition: 'left',
+            delay: 0.8,
+          },
+
         ]}
         reveal={FallInPlace}
       />
@@ -210,99 +259,54 @@ const HeroSection: React.FC = () => {
 }
 
 const HighlightsSection = () => {
-  const { value, onCopy, hasCopied } = useClipboard('yarn add @saas-ui/react')
+
 
   return (
     <Highlights>
-      <HighlightsItem colSpan={[1, null, 2]} title="Core components">
+      <HighlightsItem colSpan={[1, null, 2]} title="A Quality Product that Speaks for Itself ">
         <VStack alignItems="flex-start" spacing="8">
           <Text color="muted" fontSize="xl">
-            Get started for free with <Em>30+ open source components</Em>.
+            Get started for <Em> free </Em> with any of our integrations.
             Including authentication screens with Clerk, Supabase and Magic.
             Fully functional forms with React Hook Form. Data tables with React
             Table.
           </Text>
-
-          <Flex
-            rounded="full"
-            borderWidth="1px"
-            flexDirection="row"
-            alignItems="center"
-            py="1"
-            ps="8"
-            pe="2"
-            bg="primary.900"
-            _dark={{ bg: 'gray.900' }}
-          >
-            <Box>
-              <Text color="yellow.400" display="inline">
-                yarn add
-              </Text>{' '}
-              <Text color="cyan.300" display="inline">
-                @saas-ui/react
-              </Text>
-            </Box>
-            <IconButton
-              icon={hasCopied ? <FiCheck /> : <FiCopy />}
-              aria-label="Copy install command"
-              onClick={onCopy}
-              variant="ghost"
-              ms="4"
-              isRound
-              color="white"
-            />
-          </Flex>
         </VStack>
+      </HighlightsItem>
+      <HighlightsItem title="Seamless Setup">
+        <Text color="muted" fontSize="lg">
+          Connect BillPilot with your project mangement platform and start billing projects and hours right away. No manual project setup required.
+        </Text>
       </HighlightsItem>
       <HighlightsItem title="Solid foundations">
         <Text color="muted" fontSize="lg">
           We don&apos;t like to re-invent the wheel, neither should you. We
           selected the most productive and established tools in the scene and
-          build Saas UI on top of it.
+          built Billpilot on top of it.
         </Text>
       </HighlightsItem>
-      <HighlightsTestimonialItem
-        name="Renata Alink"
-        description="Founder"
-        avatar="/static/images/avatar.jpg"
-        gradient={['pink.200', 'purple.500']}
-      >
-        “Saas UI helped us set up a beautiful modern UI in no time. It saved us
-        hundreds of hours in development time and allowed us to focus on
-        business logic for our specific use-case from the start.”
-      </HighlightsTestimonialItem>
       <HighlightsItem
         colSpan={[1, null, 2]}
-        title="Start your next idea two steps ahead"
+        title="Our Continually Expanding List of Integrations"
       >
         <Text color="muted" fontSize="lg">
-          We took care of all your basic frontend needs, so you can start
-          building functionality that makes your product unique.
+          We took care of all the integrations, so all you need to do is start billing your clients.
         </Text>
         <Wrap mt="8">
           {[
-            'authentication',
-            'navigation',
-            'crud',
-            'settings',
-            'multi-tenancy',
-            'layouts',
-            'billing',
-            'a11y testing',
-            'server-side rendering',
-            'documentation',
-            'onboarding',
-            'storybooks',
-            'theming',
-            'upselling',
-            'unit testing',
-            'feature flags',
-            'responsiveness',
+            'Jira',
+            'Economic',
+            'Xero',
+            'Asana',
+            'Trello (Coming Soon)',
+            'Click Up (Coming Soon)',
+            'Monday (Coming Soon)',
+            'Notion (Coming Soon)',
           ].map((value) => (
             <Tag
               key={value}
               variant="subtle"
-              colorScheme="purple"
+              colorScheme="primary"
               rounded="full"
               px="3"
             >
@@ -315,6 +319,12 @@ const HighlightsSection = () => {
   )
 }
 
+// const IntegrationsSection = () => {
+//   return (
+
+//   ) 
+// }
+
 const FeaturesSection = () => {
   return (
     <Features
@@ -326,16 +336,15 @@ const FeaturesSection = () => {
           textAlign="left"
           as="p"
         >
-          Not your standard
-          <Br /> dashboard template.
+          Features
+          <Br />
         </Heading>
       }
       description={
         <>
-          Saas UI Pro includes everything you need to build modern frontends.
+          We love hearing from our clients.
           <Br />
-          Use it as a template for your next product or foundation for your
-          design system.
+          Let us know if you think we&apos;re missing something.
         </>
       }
       align="left"
@@ -343,69 +352,46 @@ const FeaturesSection = () => {
       iconSize={4}
       features={[
         {
-          title: 'Components.',
+          title: 'Flexible Time Filters.',
           icon: FiBox,
           description:
-            'All premium components are available on a private NPM registery, no more copy pasting and always up-to-date.',
+            'Filter imported invoice time from Jira by employee, project, issue type and other parameters',
           variant: 'inline',
         },
         {
-          title: 'Starterkits.',
+          title: 'JQL Time Filters.',
           icon: FiLock,
           description:
-            'Example apps in Next.JS, Electron. Including authentication, billing, example pages, everything you need to get started FAST.',
+            'Filter invoice time by JQL that may have any filtration logic and can operate any Jira issue field',
           variant: 'inline',
         },
         {
-          title: 'Documentation.',
+          title: 'Taxing.',
           icon: FiSearch,
           description:
-            'Extensively documented, including storybooks, best practices, use-cases and examples.',
+            'Apply multiple taxes to invoices. Enable or disable taxes for any invoice item individually',
           variant: 'inline',
         },
         {
-          title: 'Onboarding.',
+          title: 'Discounting.',
           icon: FiUserPlus,
           description:
-            'Add user onboarding flows, like tours, hints and inline documentation without breaking a sweat.',
+            'Add discount to invoices. Easily enable or disable discount for any invoice item individually',
           variant: 'inline',
         },
         {
-          title: 'Feature flags.',
+          title: 'Fixed Price.',
           icon: FiFlag,
           description:
-            "Implement feature toggles for your billing plans with easy to use hooks. Connect Flagsmith, or other remote config services once you're ready.",
+            "Charge clients using fixed price model or add fixed price expenses to time and materials invoices",
           variant: 'inline',
         },
         {
-          title: 'Upselling.',
-          icon: FiTrendingUp,
-          description:
-            'Components and hooks for upgrade flows designed to make upgrading inside your app frictionless.',
-          variant: 'inline',
-        },
-        {
-          title: 'Themes.',
-          icon: FiToggleLeft,
-          description:
-            'Includes multiple themes with darkmode support, always have the perfect starting point for your next project.',
-          variant: 'inline',
-        },
-        {
-          title: 'Generators.',
-          icon: FiTerminal,
-          description:
-            'Extend your design system while maintaininig code quality and consistency with built-in generators.',
-          variant: 'inline',
-        },
-        {
-          title: 'Monorepo.',
+          title: 'Retainers.',
           icon: FiCode,
           description: (
             <>
-              All code is available as packages in a high-performance{' '}
-              <Link href="https://turborepo.com">Turborepo</Link>, you have full
-              control to modify and adjust it to your workflow.
+              Just add fixed price item with negative amount to take into account a retainer from a client
             </>
           ),
           variant: 'inline',
@@ -460,13 +446,17 @@ const FaqSection = () => {
   return <Faq {...faq} />
 }
 
+const ContactFormSection = () => {
+  return <ContactForm />
+}
+
 export default Home
 
 export async function getStaticProps() {
   return {
     props: {
       announcement: {
-        title: 'Get 50% off Saas UI Pro while in beta.',
+        title: 'Get 50% off Billpilot Pro while in beta.',
         href: 'https://appulse.gumroad.com/l/saas-ui-pro-pre-order',
       },
     },

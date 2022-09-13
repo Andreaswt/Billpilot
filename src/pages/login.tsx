@@ -64,7 +64,7 @@ const LoginPage: NextPage = () => {
               >
                 <Container>
                   <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
-                    <Heading textAlign="center" color={useColorModeValue('gray.800', 'white')} fontSize="3xl">
+                    <Heading textAlign="center" color={useColorModeValue('gray.800', 'white')} fontSize="3xl" zIndex='9999'>
                       Welcome back
                     </Heading>
                     <form onSubmit={handleSubmit(onSubmit)}>
@@ -126,7 +126,7 @@ const LoginPage: NextPage = () => {
                           <Button
                             isLoading={isSubmitting}
                             loadingText="Signing in..."
-                            colorScheme="purple"
+                            colorScheme="primary"
                             color={"white"}
                             type="submit"
                           >

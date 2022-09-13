@@ -15,7 +15,7 @@ export const Faq: React.FC<FaqProps> = (props) => {
     items = [],
   } = props
   return (
-    <Section id="faq">
+    <Section id="resources">
       <SectionTitle title={title} description={description} />
 
       <SimpleGrid columns={[1, null, 2]} spacingY={10} spacingX="20">

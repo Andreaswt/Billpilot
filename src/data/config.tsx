@@ -1,15 +1,16 @@
 import { Button } from '@chakra-ui/react'
 import { Link } from '@saas-ui/react'
 import { NextSeoProps } from 'next-seo'
-import { FaGithub, FaTwitter } from 'react-icons/fa'
+import { FaGithub, FaTwitter, FaLinkedin } from 'react-icons/fa'
 import { FiCheck } from 'react-icons/fi'
 import { Logo } from './logo'
 
 const siteConfig = {
   logo: Logo,
+  
   seo: {
     title: 'Saas UI',
-    description: 'The React component library for startups',
+    description: 'The Fully Integrated Solution for Hourly Billing',
   } as NextSeoProps,
   termsUrl: '#',
   privacyUrl: '#',
@@ -24,15 +25,15 @@ const siteConfig = {
         label: 'Pricing',
       },
       {
-        id: 'faq',
-        label: 'FAQ',
+        id: 'resources',
+        label: 'Resources',
       },
       {
         label: 'Login',
         href: '/login',
       },
       {
-        label: 'Sign Up',
+        label: 'Try It Free',
         href: '/signup',
         variant: 'primary',
       },
@@ -41,7 +42,7 @@ const siteConfig = {
   footer: {
     copyright: (
       <>
-        Billing-app
+        Billpilot LLC
       </>
     ),
     links: [
@@ -55,7 +56,7 @@ const siteConfig = {
       },
       {
         href: 'https://github.com/saas-js/saas-ui',
-        label: <FaGithub size="14" />,
+        label: <FaLinkedin size="14" />,
       },
     ],
   },
