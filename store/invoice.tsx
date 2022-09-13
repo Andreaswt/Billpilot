@@ -18,6 +18,20 @@ export interface InvoiceState {
     notesForClient: string,
 }
 
+export interface PickedIssue {
+    key: string,
+    id: string,
+    name: string,
+    hoursSpent: number
+    updatedHoursSpent: number | null,
+    discountPercentage: number | null
+}
+
+interface BillIssuesState {
+    pickedProject: string,
+    pickedIssues: PickedIssue[]
+}
+
 // Jira Item 
 interface JiraItem {
     key: string,
@@ -65,8 +79,10 @@ export interface DiscountsState {
     }[],
 }
 
-interface CreateInvoiceState extends InvoiceState, TimeItemsState, FixedPriceTimeItemsState, TaxesState, DiscountsState {
+interface CreateInvoiceState extends InvoiceState, TimeItemsState, FixedPriceTimeItemsState, TaxesState, DiscountsState, BillIssuesState {
     setInvoice: (newInvoice: InvoiceState) => void,
+    pickProject: (projectKey: string) => void,
+    pickIssues: (pickedIssues: PickedIssue[]) => void,
     setTimeItems: (timeItems: TimeItemsState) => void,
     setFixedPriceTimeItems: (timeItems: FixedPriceTimeItemsState) => void,
     setTaxes: (taxes: TaxesState) => void,
@@ -95,11 +111,15 @@ const useCreateInvoiceStore = create<CreateInvoiceState>((set) => ({
     client: "",
     invoiceLayout: "",
     notesForClient: "",
+    pickedProject: "",
+    pickedIssues: [],
     timeItems: [],
     fixedPriceTimeItems: [],
     taxes: [],
     discounts: [],
     setInvoice: (newInvoice: InvoiceState) => set(newInvoice),
+    pickProject: (projectKey: string) => set((state) => ({ ...state, pickedProject: projectKey })),
+    pickIssues: (pickedIssues: PickedIssue[]) => set((state) => ({...state, pickedIssues: pickedIssues})),
     setTimeItems: (timeItems: TimeItemsState) => set(timeItems),
     setFixedPriceTimeItems: (timeItems: FixedPriceTimeItemsState) => set(timeItems),
     setTaxes: (taxes: TaxesState) => set(taxes),

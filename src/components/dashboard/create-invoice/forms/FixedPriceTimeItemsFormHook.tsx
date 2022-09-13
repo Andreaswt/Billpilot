@@ -73,7 +73,7 @@ const TimeItemsFormHook = () => {
                                                 <FormLabel htmlFor={`timeItems.${index}.amount`}>Amount</FormLabel>
                                                 <Flex flexDirection="column">
                                                     <InputGroup>
-                                                        <InputLeftAddon children='USD' />
+                                                        <InputLeftAddon>USD</InputLeftAddon>
                                                         <NumberInput
                                                             id='amount'
                                                             placeholder="Enter Amount"

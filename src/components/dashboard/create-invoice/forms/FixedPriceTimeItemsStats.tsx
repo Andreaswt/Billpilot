@@ -20,8 +20,8 @@ const FixedPriceTimeItemsStats = () => {
         })
 
         return totalAmount
-    },
-        [watch],
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [watch],
     )
 
     return (

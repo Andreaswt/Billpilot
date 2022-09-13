@@ -21,10 +21,29 @@ export async function getIssue(id: string, organizationId: string) {
     }
 }
 
-export async function searchIssues(searchTerm: string, organizationId: string, issueType?: string,) {
+export async function searchProjectIssues(searchTerm: string, organizationId: string, projectKey: string) {
     let client = await getClient(organizationId);
 
-    // TODO: make prettier
+    try {
+        if (searchTerm === "") {
+            return await client.issueSearch.searchForIssuesUsingJql({ jql: 'project = ' + '"' + projectKey + '"' });
+        }
+        else {
+            if (searchTerm.includes(" ")) {
+                return await client.issueSearch.searchForIssuesUsingJql({ jql: 'project = "' + projectKey + '" AND text ~ "' + searchTerm + '"'});
+            }
+            else {
+                return await client.issueSearch.searchForIssuesUsingJql({ jql: 'project = "' + projectKey + '" AND text ~ "' + searchTerm + '"' + ' OR issueKey = ' + searchTerm + ''});
+            }
+        }
+    } catch (error) {
+        logger.error(error);
+    }
+}
+
+export async function searchIssues(searchTerm: string, organizationId: string, issueType?: string, projectKey?: string) {
+    let client = await getClient(organizationId);
+
     try {
         if (!issueType) {
             if (searchTerm === "") {

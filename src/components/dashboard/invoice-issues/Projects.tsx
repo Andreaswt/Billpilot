@@ -1,65 +1,98 @@
-import { Button, Flex, Heading } from '@chakra-ui/react';
-import React from 'react';
+import { Button, Center, Flex, Heading, Input, Spinner, Text } from '@chakra-ui/react';
+import { Dispatch, SetStateAction, useState } from 'react';
 
-import { Card, CardBody } from "@saas-ui/react";
+import { ColumnDef, DataGrid, DataGridPagination } from '@saas-ui/pro';
+import { Card, CardBody, SearchInput } from "@saas-ui/react";
+import useCreateInvoiceStore from '../../../../store/invoice';
+import { trpc } from '../../../utils/trpc';
 
-import { DataGrid, DataGridPagination } from '@saas-ui/pro';
+interface IProps {
+    setStep: Dispatch<SetStateAction<number>>
+}
 
-const Projects = () => {
-    // const columns = React.useMemo(() => {
-    //     return [
-    //         {
-    //             accessor: 'name',
-    //             Header: 'Name',
-    //             width: '200px',
-    //         },
-    //         {
-    //             accessor: 'email',
-    //             Header: 'Email',
-    //         },
-    //         {
-    //             accessor: 'company',
-    //             Header: 'Company',
-    //         },
-    //         {
-    //             accessor: 'country',
-    //             Header: 'Country',
-    //         },
-    //         {
-    //             accessor: 'employees',
-    //             Header: 'Employees',
-    //             isNumeric: true,
-    //         },
-    //         {
-    //             id: 'action',
-    //             disableSortBy: true,
-    //             disableGlobaFilter: true,
-    //             Header: '',
-    //             Cell: () => (
-    //                 <>
-    //                     <Button size="xs">Edit</Button>
-    //                 </>
-    //             ),
-    //             width: '100px',
-    //         },
-    //     ]
-    // }, [])
+interface TableProject {
+    name: string
+    type: string
+    key: string
+    id: string
+}
+
+interface IPagination {
+    amount: number
+    total: number
+}
+
+const Projects = (props: IProps) => {
+    const { setStep } = props
+    const store = useCreateInvoiceStore();
+
+    const [searchTerm, setSearchTerm] = useState<string>("")
+    const [pagination, setPagination] = useState<IPagination>({ amount: 0, total: 0 })
+    const [projects, setProjects] = useState<TableProject[]>([])
+
+    const { isLoading, isRefetching } = trpc.useQuery(["jira.searchProjectsForIssueInvoicing", { searchTerm: searchTerm }], {
+        onSuccess(data) {
+            setPagination({ amount: data.amount, total: data.total })
+            setProjects(data.projects)
+        }
+    });
+
+    function pickProject(key: string) {
+        store.pickProject(key)
+        setStep((step) => step + 1)
+    }
+
+    const columns: ColumnDef<TableProject>[] = [
+        {
+            id: 'name',
+            header: 'Name',
+        },
+        {
+            id: 'type',
+            header: 'Type',
+        },
+        {
+            id: 'key',
+            header: 'Key',
+        },
+        {
+            id: 'percentDiscount',
+            header: '',
+            cell: (data) => (
+                <>
+                    <Flex justifyContent="end">
+                        <Button colorScheme={"purple"} onClick={() => pickProject(data.row.original.name)} size="sm">Select</Button>
+                    </Flex>
+                </>
+            )
+        },
+    ]
 
     return (
         <Card title={
             <Flex>
-                <Heading>Create Invoice</Heading>
+                <Heading>Pick Project</Heading>
             </Flex>}>
-             <CardBody>
-                {/*<DataGrid
-                    columns={columns}
-                    data={dataTable.data}
-                    isSortable
-                    isSelectable
-                    isHoverable
-                >
-                    <DataGridPagination />
-                </DataGrid> */}
+            <CardBody>
+                <Flex gap={4} flexDir="column">
+                    <SearchInput
+                        placeholder="Search"
+                        value={searchTerm}
+                        onChange={(e: any) => setSearchTerm(e.target.value)}
+                        onReset={() => setSearchTerm('')}
+                    />
+                    {
+                        isLoading || isRefetching
+                            ? <Center><Spinner /></Center>
+                            : <DataGrid
+                                columns={columns}
+                                data={projects}
+                                isSortable>
+                                <DataGridPagination mt={2} pl={0} />
+                                <Text fontSize='xs' as='i'>Loaded {pagination.amount} of {pagination.total} results total. Search to narrow results.</Text>
+                            </DataGrid>
+                    }
+                </Flex>
             </CardBody>
         </Card>
     )

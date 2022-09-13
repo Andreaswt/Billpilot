@@ -6,7 +6,6 @@ import React, { Fragment } from "react";
 import { TbDiscount, TbReceipt } from "react-icons/tb";
 import * as Yup from 'yup';
 import useJiraItemsStore, { CheckedTimeItems } from "../../../../../store/jiraItems";
-import { TimeItemsTable } from "../collapseable-table";
 import ErrorMessage from "./ErrorMessage";
 import FixedPriceTimeItemsStats from "./FixedPriceTimeItemsStats";
 

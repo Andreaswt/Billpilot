@@ -1,5 +1,5 @@
 import { Button, Flex, FormControl, FormErrorMessage, FormLabel, Heading, Input, Select, Textarea } from '@chakra-ui/react';
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import * as Yup from 'yup';
 
 import { Card, CardBody, Field, Form, FormLayout } from "@saas-ui/react";
@@ -9,15 +9,13 @@ import useCreateInvoiceStore from '../../../../store/invoice';
 import useJiraItemsStore from '../../../../store/jiraItems';
 import moment from 'moment';
 
-const InvoiceInformation = () => {
+interface IProps {
+    setStep: Dispatch<SetStateAction<number>>
+}
+
+const InvoiceInformation = (props: IProps) => {
+    const { setStep } = props
     const store = useCreateInvoiceStore();
-    const jiraItemsStore = useJiraItemsStore();
-    const [step, setStep] = React.useState(0);
-    const [invoiceSaved, setInvoiceSaved] = React.useState(false);
-    const [timeItemsSaved, setTimeItemsSaved] = React.useState(false);
-    const [fixedTimeItemsSaved, setFixedTimeItemsSaved] = React.useState(false);
-    const [taxesSaved, setTaxesSaved] = React.useState(false);
-    const [economicSaved, setEconomicSaved] = React.useState(false);
 
     const invoiceInformationForm = useForm({
         reValidateMode: "onSubmit",
@@ -51,7 +49,7 @@ const InvoiceInformation = () => {
 
         }
         store.setInvoice({ ...data.invoiceInformation, ...dateFields })
-        setInvoiceSaved(true)
+        setStep((step) => step + 1)
     }
 
     interface FormInvoiceState {
@@ -293,7 +291,8 @@ const InvoiceInformation = () => {
                             </FormControl>
                         </FormLayout>
                     </FormLayout>
-                    <Flex justifyContent="end">
+                    <Flex justifyContent="space-between">
+                        <Button mt={6} colorScheme="purple" onClick={() => setStep((step) => step - 1)}>Previous</Button>
                         <Button mt={6} colorScheme="purple" type="submit">Next</Button>
                     </Flex>
                 </form>

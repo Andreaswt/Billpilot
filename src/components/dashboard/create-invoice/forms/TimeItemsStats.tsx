@@ -12,22 +12,22 @@ const TimeItemsStats = () => {
         let totalTime = 0
 
         form.getValues().timeItems.forEach((item: { time: number }) => {
-            if (item.time < 0) return 
+            if (item.time < 0) return
             totalTime += item.time
         })
 
         return totalTime
-    },
-        [watch],
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [watch],
     )
 
     const totalAmount = useMemo(() => {
         let totalAmount = 0
 
         form.getValues().timeItems.forEach((item: { time: number, rate: number, discount: number, tax: number }) => {
-            if (item.rate < 0 || item.time < 0) return 
+            if (item.rate < 0 || item.time < 0) return
             let amount = item.rate * item.time
-        
+
             if (item.discount > 0 && item.discount < 100) {
                 const discountFactor = (100 - item.discount) / 100
                 amount *= discountFactor
@@ -42,8 +42,8 @@ const TimeItemsStats = () => {
         })
 
         return totalAmount
-    },
-        [watch],
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [watch],
     )
 
     return (

@@ -77,7 +77,7 @@ const TimeItemsFormHook = () => {
                                                 <FormLabel htmlFor={`timeItems.${index}.time`}>Time</FormLabel>
                                                 <Flex flexDirection="column">
                                                     <InputGroup>
-                                                        <InputLeftAddon children='Hours' />
+                                                        <InputLeftAddon>Hours</InputLeftAddon>
                                                         <NumberInput
                                                             id='time'
                                                             placeholder="Enter Time"
@@ -103,7 +103,7 @@ const TimeItemsFormHook = () => {
                                                 <FormLabel htmlFor={`timeItems.${index}.rate`}>Rate</FormLabel>
                                                 <Flex flexDirection="column">
                                                     <InputGroup>
-                                                        <InputLeftAddon children='USD' />
+                                                        <InputLeftAddon>USD</InputLeftAddon>
                                                         <NumberInput
                                                             id='rate'
                                                             placeholder="Enter Rate"
@@ -129,7 +129,7 @@ const TimeItemsFormHook = () => {
                                                 <FormLabel htmlFor={`timeItems.${index}.discount`}>Discount</FormLabel>
                                                 <Flex flexDirection="column">
                                                     <InputGroup>
-                                                        <InputLeftAddon children='%' />
+                                                        <InputLeftAddon>%</InputLeftAddon>
                                                         <NumberInput
                                                             id='discount'
                                                             placeholder="Time Item Name"
@@ -155,7 +155,7 @@ const TimeItemsFormHook = () => {
                                                 <FormLabel htmlFor={`timeItems.${index}.tax`}>Tax</FormLabel>
                                                 <Flex flexDirection="column">
                                                     <InputGroup>
-                                                        <InputLeftAddon children='%' />
+                                                        <InputLeftAddon>%</InputLeftAddon>
                                                         <NumberInput
                                                             id='tax'
                                                             placeholder="Time Item Name"

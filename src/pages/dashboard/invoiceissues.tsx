@@ -10,6 +10,8 @@ import {
 } from '@saas-ui/pro';
 import { Card, CardBody } from "@saas-ui/react";
 import InvoiceInformation from '../../components/dashboard/invoice-issues/InvoiceInformation';
+import Projects from '../../components/dashboard/invoice-issues/Projects';
+import Issues from '../../components/dashboard/invoice-issues/Issues';
 
 export const getServerSideProps = requireAuth(async (ctx) => {
     return { props: {} };
@@ -26,17 +28,16 @@ const InvoiceIssues: NextPage = () => {
                     <Card>
                         <CardBody>
                             <Stepper step={step}>
+                                <StepperStep title="Pick Project" />
+                                <StepperStep title="Pick Issues" />
                                 <StepperStep title="Invoice Information" />
-                                <StepperStep title="Time Items" />
-                                <StepperStep title="Fixed Price Time Items" />
-                                <StepperStep title="Discounts & Taxes" />
+                                <StepperStep title="Confirm" />
                             </Stepper>
                         </CardBody>
                     </Card>
-                    {step == 0 ? <InvoiceInformation /> : null}
-                    {step == 1 ? <InvoiceInformation /> : null}
-                    {step == 2 ? <InvoiceInformation /> : null}
-                    {step == 3 ? <InvoiceInformation /> : null}
+                    {step == 0 ? <Projects setStep={setStep} /> : null}
+                    {step == 1 ? <Issues setStep={setStep} /> : null}
+                    {step == 2 ? <InvoiceInformation setStep={setStep} /> : null}
                 </Stack>
             </PageBody>
         </Page >

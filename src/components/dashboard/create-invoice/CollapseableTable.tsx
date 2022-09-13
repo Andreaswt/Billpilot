@@ -134,7 +134,7 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
             issue: store.issue.filter(x => x.id === rowId), 
             employee: store.employee.filter(x => x.id === rowId)
         }
-        ), [store.project, store.issue, store.employee]);
+        ), [store.project, store.issue, store.employee, rowId]);
 
     const { data: searchProjectsData, isLoading: searchProjectsLoading, isRefetching: searchProjectsRefetching, refetch: searchProjectsRefetch } = trpc.useQuery([
         "jira.searchProjects",

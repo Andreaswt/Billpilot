@@ -31,6 +31,7 @@ const TimeItemsFormHook = (props: IProps) => {
             store.setTaxes(values)
         });
         return () => subscription.unsubscribe();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [watch]);
 
     const {
