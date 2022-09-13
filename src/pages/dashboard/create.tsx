@@ -294,7 +294,7 @@ const CreateInvoice: NextPage = () => {
                                                     </FormControl>
                                                 </FormLayout>
                                             </FormLayout>
-                                            <Button mt={6} colorScheme="purple" type="submit">Save</Button>
+                                            <Button colorScheme="primary" mt={6} type="submit">Save</Button>
                                         </Form>
                                     )}
                                 </Formik>

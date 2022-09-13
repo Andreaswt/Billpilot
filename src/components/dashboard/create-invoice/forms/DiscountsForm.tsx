@@ -67,7 +67,7 @@ const DiscountsForm = () => {
                                         </React.Fragment>
                                     ))}
                                     <Flex gap={4} justifyContent="space-between">
-                                        <Button colorScheme="purple" type="submit">Save</Button>
+                                        <Button colorScheme="primary" type="submit">Save</Button>
                                         <Flex align="center" gap={4}>
                                             <Text as="i" fontWeight="bold" fontSize="xs">New Discount</Text>
                                             <IconButton aria-label='Create discount' icon={<AddIcon />} onClick={() => arrayHelpers.push({ name: "", percentage: 0 })} />

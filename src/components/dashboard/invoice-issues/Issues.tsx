@@ -253,8 +253,8 @@ const Issues = (props: IProps) => {
                             </DataGrid>
                     }
                     <Flex justifyContent="space-between">
-                        <Button mt={6} colorScheme="purple" onClick={() => setStep((step) => step - 1)}>Previous</Button>
-                        <Button mt={6} colorScheme="purple" onClick={() => pickIssues()}>Confirm selected</Button>
+                        <Button mt={6} colorScheme="primary" onClick={() => setStep((step) => step - 1)}>Previous</Button>
+                        <Button mt={6} colorScheme="primary" onClick={() => pickIssues()}>Confirm selected</Button>
                     </Flex>
                 </Flex>
             </CardBody>

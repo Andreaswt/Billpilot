@@ -40,7 +40,7 @@ const columns: ColumnDef<Data>[] = [
         header: '',
         cell: () => (
             <>
-                <Button colorScheme={"purple"} size="sm">Add Item</Button>
+                <Button colorScheme="primary" size="sm">Add Item</Button>
             </>
         )
     },
@@ -278,7 +278,7 @@ export const TimeItemsTable = (props: ITimeItemsTableProps) => {
                 ))}
             </Wrap>
             <Flex gap={4}>
-                <Button isLoading={importJiraTimeRefetching || importJiraTimeLoading} colorScheme={isOpen ? "purple" : "gray"} size="xs" rightIcon={<AddIcon />} variant='outline' onClick={() => {
+                <Button isLoading={importJiraTimeRefetching || importJiraTimeLoading} colorScheme={isOpen ? "primary" : "gray"} size="xs" rightIcon={<AddIcon />} variant='outline' onClick={() => {
                     if (!isOpen) {
                         searchProjectsRefetch()
                         onToggle()

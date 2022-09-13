@@ -113,7 +113,7 @@ const TimeItemsFormHook = (props: IProps) => {
                             })}
 
                             <Flex gap={4} justifyContent="space-between">
-                                <Button colorScheme="purple" onClick={() => console.log(store.taxes)}>Save</Button>
+                                <Button colorScheme="primary" onClick={() => console.log(store.taxes)}>Save</Button>
                                 <Flex align="center" gap={4}>
                                     <Text as="i" fontWeight="bold" fontSize="xs">New Item</Text>
                                     <IconButton aria-label='Create Time Item' icon={<AddIcon />} onClick={() => append({ name: '', percentage: 0 })} />
@@ -178,7 +178,7 @@ const TimeItemsFormHook = (props: IProps) => {
                             })}
 
                             <Flex gap={4} justifyContent="space-between">
-                                <Button colorScheme="purple" type="submit">Save</Button>
+                                <Button colorScheme="primary" type="submit">Save</Button>
                                 <Flex align="center" gap={4}>
                                     <Text as="i" fontWeight="bold" fontSize="xs">New Item</Text>
                                     <IconButton aria-label='Create Time Item' icon={<AddIcon />} onClick={() => append({ name: '', percentage: 0 )} />

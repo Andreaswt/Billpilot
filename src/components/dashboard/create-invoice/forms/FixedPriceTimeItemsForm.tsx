@@ -90,7 +90,7 @@ const FixedPriceTimeItemsForm = () => {
 
                                     {values.fixedPriceTimeItems && values.fixedPriceTimeItems.length > 0 ?
                                         <Flex mt={6} gap={10} alignItems="end" justifyContent="space-between">
-                                            <Button colorScheme="purple" type="submit">Save</Button>
+                                            <Button colorScheme="primary" type="submit">Save</Button>
                                             <FixedPriceTimeItemsStats />
                                         </Flex>
                                         : null}

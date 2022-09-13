@@ -61,7 +61,7 @@ const Projects = (props: IProps) => {
             cell: (data) => (
                 <>
                     <Flex justifyContent="end">
-                        <Button colorScheme={"purple"} onClick={() => pickProject(data.row.original.name)} size="sm">Select</Button>
+                        <Button colorScheme="primary" onClick={() => pickProject(data.row.original.name)} size="sm">Select</Button>
                     </Flex>
                 </>
             )

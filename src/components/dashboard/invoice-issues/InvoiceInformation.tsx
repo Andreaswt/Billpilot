@@ -292,8 +292,8 @@ const InvoiceInformation = (props: IProps) => {
                         </FormLayout>
                     </FormLayout>
                     <Flex justifyContent="space-between">
-                        <Button mt={6} colorScheme="purple" onClick={() => setStep((step) => step - 1)}>Previous</Button>
-                        <Button mt={6} colorScheme="purple" type="submit">Next</Button>
+                        <Button mt={6} colorScheme="primary" onClick={() => setStep((step) => step - 1)}>Previous</Button>
+                        <Button mt={6} colorScheme="primary" type="submit">Next</Button>
                     </Flex>
                 </form>
             </CardBody>
