@@ -1,12 +1,11 @@
-import { Button, Center, Flex, Heading, Input, InputGroup, InputLeftAddon, InputLeftElement, InputRightAddon, InputRightElement, Spinner, Text, Tooltip, Wrap } from '@chakra-ui/react';
-import React, { Dispatch, SetStateAction, useMemo, useRef, useState } from 'react';
+import { Button, Center, cookieStorageManager, Flex, Heading, Input, InputGroup, InputRightElement, Spinner, Text, Tooltip } from '@chakra-ui/react';
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 
 import { ColumnDef, DataGrid, DataGridPagination } from '@saas-ui/pro';
 import { Card, CardBody, SearchInput } from "@saas-ui/react";
+import { TbPercentage } from "react-icons/tb";
 import useCreateInvoiceStore, { PickedIssue } from '../../../../store/invoice';
 import { trpc } from '../../../utils/trpc';
-import { TbAd2, TbPercentage, TbReceipt } from "react-icons/tb";
-import { ImSortNumbericDesc } from "react-icons/im";
 
 
 interface IProps {
@@ -32,16 +31,45 @@ const Issues = (props: IProps) => {
     const [searchTerm, setSearchTerm] = useState<string>("")
     const [pagination, setPagination] = useState<IPagination>({ amount: 0, total: 0 })
     const [issues, setIssues] = useState<TableIssue[]>([])
-    const [updatedHoursSpent, setUpdatedHoursSpent] = useState<{ [issueKey: string]: { updatedTimeSpent: number } }>({})
-    const [discountPercentage, setDiscountPercentage] = useState<{ [issueKey: string]: { discountPercentage: number } }>({})
-    let isInitialized = false;
 
-    console.log("hehessas")
+    const [updatedHoursSpent, setUpdatedHoursSpent] = useState<{ [issueKey: string]: { updatedTimeSpent: number } }>(() => {
+        let updatedHoursSpent: { [issueKey: string]: { updatedTimeSpent: number } } = {}
+
+        store.pickedIssues.forEach(issue => {
+            if (!issue.key || !issue.updatedHoursSpent) return
+            updatedHoursSpent[issue.key] = { updatedTimeSpent: issue.updatedHoursSpent }
+        })
+
+        return updatedHoursSpent
+    })
+
+    const [discountPercentage, setDiscountPercentage] = useState<{ [issueKey: string]: { discountPercentage: number } }>(() => {
+        let discountPercentage: { [issueKey: string]: { discountPercentage: number } } = {}
+
+        store.pickedIssues.forEach(issue => {
+            if (!issue.key || !issue.discountPercentage) return
+            discountPercentage[issue.key] = { discountPercentage: issue.discountPercentage }
+        })
+
+        return discountPercentage
+    })
+    let isInitialized = false;
 
     const { data, isLoading, isRefetching } = trpc.useQuery(["jira.searchIssuesForIssueInvoicing", { searchTerm: searchTerm, projectKey: store.pickedProject }], {
         onSuccess(data) {
             setPagination({ amount: data.amount, total: data.total })
             setIssues(data.issues)
+
+            // Selected issues from zustand are used to restore state in selected
+            let storeSelected: string[] = []
+            store.pickedIssues.forEach(item => {
+                const issueIndex = data.issues.findIndex(x => x.key === item.key && x.id === item.id)
+                if (!issueIndex) return
+
+                storeSelected.push(issueIndex.toString())
+            })
+            
+            setSelected(storeSelected)
         }
     });
 
@@ -53,7 +81,7 @@ const Issues = (props: IProps) => {
             const updatedHoursSpentForIssue = updatedHoursSpent[rowIssue.key]?.updatedTimeSpent
             const discountPercentageForIssue = discountPercentage[rowIssue.key]?.discountPercentage
 
-            const issueWithEdits = {...rowIssue, updatedHoursSpent: updatedHoursSpentForIssue ?? null, discountPercentage: discountPercentageForIssue ?? null }
+            const issueWithEdits = { ...rowIssue, updatedHoursSpent: updatedHoursSpentForIssue ?? null, discountPercentage: discountPercentageForIssue ?? null }
             selectedData.push(issueWithEdits)
         })
 
@@ -95,8 +123,8 @@ const Issues = (props: IProps) => {
             cell: (data) => (
                 <Flex>
                     <Tooltip label={data.row.original.name}>
-                    <Text>{data.row.original.name}</Text>
-                </Tooltip>
+                        <Text>{data.row.original.name}</Text>
+                    </Tooltip>
                 </Flex>
             )
         },
@@ -112,7 +140,7 @@ const Issues = (props: IProps) => {
                     <InputGroup size='sm'>
                         <Input defaultValue={store.pickedIssues.find(x => x.key === data.row.original.key)?.updatedHoursSpent ?? 0} onChange={(e: any) => {
                             // Update state by creating a copy and assigning it again
-                            let copy = updatedHoursSpent
+                            const copy = JSON.parse(JSON.stringify(updatedHoursSpent))
                             copy[data.row.original.key.toString()] = { updatedTimeSpent: parseInt(e.target.value) }
                             setUpdatedHoursSpent(copy)
                         }} min={0} type="number"></Input>
@@ -130,7 +158,7 @@ const Issues = (props: IProps) => {
                 <>
                     <InputGroup size='sm'>
                         <Input defaultValue={store.pickedIssues.find(x => x.key === data.row.original.key)?.discountPercentage ?? 0} onChange={(e: any) => {
-                            let copy = discountPercentage
+                            const copy = JSON.parse(JSON.stringify(discountPercentage))
                             copy[data.row.original.key.toString()] = { discountPercentage: parseInt(e.target.value) }
                             setDiscountPercentage(copy)
                         }} min={0} max={100} type="number"></Input>
@@ -143,18 +171,46 @@ const Issues = (props: IProps) => {
         },
     ]
 
-    const totalTime: number = useMemo(() => {
+    const totalTime = useMemo(() => {
         let total = 0
 
-        console.log(selected)
+        // TODO: load from store if none are selected
+        // if (selected.length === 0) {
+        //     store.pickedIssues.forEach(item => {
+        //         let rowTotal = item.hoursSpent
+        //         if (item.updatedHoursSpent && item.updatedHoursSpent > 0) {
+        //             rowTotal = item.updatedHoursSpent
+        //         }
+
+        //         if (item.discountPercentage && item.discountPercentage > 0) {
+        //             rowTotal = ((100 - item.discountPercentage) / 100) * rowTotal
+        //         }
+
+        //         total += rowTotal
+        //     })
+
+        //     return total
+        // }
+
         selected.forEach(item => {
-            const issue = issues.find(x => x.key === item)
-            if (!issue) return
-            total += issue.hoursSpent
+            const rowIssue = issues[parseInt(item)]
+            const updatedHoursSpentForIssue = updatedHoursSpent[rowIssue.key]?.updatedTimeSpent
+            const discountPercentageForIssue = discountPercentage[rowIssue.key]?.discountPercentage
+
+            let rowTotal = rowIssue.hoursSpent
+            if (updatedHoursSpentForIssue && updatedHoursSpentForIssue > 0) {
+                rowTotal = updatedHoursSpentForIssue
+            }
+
+            if (discountPercentageForIssue && discountPercentageForIssue > 0) {
+                rowTotal = ((100 - discountPercentageForIssue) / 100) * rowTotal
+            }
+
+            total += rowTotal
         })
 
         return total
-    }, [selected, issues])
+    }, [selected, issues, updatedHoursSpent, discountPercentage])
 
     const handleSelectedRows = (indexes: string[]) => {
         if (indexes.length === selected.length) {
@@ -166,12 +222,11 @@ const Issues = (props: IProps) => {
         }
     }
 
-
     return (
         <Card title={
             <Flex justifyContent="space-between">
                 <Heading>Pick Issues for Invoicing</Heading>
-                <Text>Total: {totalTime}</Text>
+                <Text>Total: {totalTime} Hours</Text>
             </Flex>}>
             <CardBody>
 
@@ -186,16 +241,16 @@ const Issues = (props: IProps) => {
                         isLoading || isRefetching
                             ? <Center><Spinner /></Center>
                             : <DataGrid
-                            columns={columns}
-                            data={issues}
-                            initialState={{ rowSelection: selectedRowIds }}
-                            onSelectedRowsChange={(indexes) => handleSelectedRows(indexes)}
-                            isSortable
-                            isSelectable
-                            isHoverable>
-                            <DataGridPagination mt={2} pl={0} />
-                            <Text fontSize='xs' as='i'>Loaded {pagination.amount} of {pagination.total} results total. Search to narrow results.</Text>
-                        </DataGrid>
+                                columns={columns}
+                                data={issues}
+                                initialState={{ rowSelection: selectedRowIds }}
+                                onSelectedRowsChange={(indexes) => handleSelectedRows(indexes)}
+                                isSortable
+                                isSelectable
+                                isHoverable>
+                                <DataGridPagination mt={2} pl={0} />
+                                <Text fontSize='xs' as='i'>Loaded {pagination.amount} of {pagination.total} results total. Search to narrow results.</Text>
+                            </DataGrid>
                     }
                     <Flex justifyContent="space-between">
                         <Button mt={6} colorScheme="purple" onClick={() => setStep((step) => step - 1)}>Previous</Button>
