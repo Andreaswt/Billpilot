@@ -29,7 +29,7 @@ const testimonials = {
     {
       name: 'Alberto Vazquez',
       description: 'Frontend Engineer',
-      avatar: '/static/images/avatar3.jpg',
+      avatar: '/static/images/billpilotlogotext.svg',
       children: (
         <>
           “Saas UI gave us a perfect starting point for our project, having the

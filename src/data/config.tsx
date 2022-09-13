@@ -1,12 +1,13 @@
 import { Button } from '@chakra-ui/react'
 import { Link } from '@saas-ui/react'
 import { NextSeoProps } from 'next-seo'
-import { FaGithub, FaTwitter } from 'react-icons/fa'
+import { FaGithub, FaTwitter, FaLinkedin } from 'react-icons/fa'
 import { FiCheck } from 'react-icons/fi'
 import { Logo } from './logo'
 
 const siteConfig = {
   logo: Logo,
+  
   seo: {
     title: 'Saas UI',
     description: 'The Fully Integrated Solution for Houly Billing',
@@ -41,7 +42,7 @@ const siteConfig = {
   footer: {
     copyright: (
       <>
-        BillPilot LLC
+        Billpilot LLC
       </>
     ),
     links: [
@@ -55,7 +56,7 @@ const siteConfig = {
       },
       {
         href: 'https://github.com/saas-js/saas-ui',
-        label: <FaGithub size="14" />,
+        label: <FaLinkedin size="14" />,
       },
     ],
   },

@@ -1,68 +1,44 @@
-import * as React from 'react'
+import {
+  Box, ButtonGroup, Center, Container, Flex, Heading, HStack, Icon, Stack, Tag, Text, useColorMode, VStack, Wrap
+} from '@chakra-ui/react'
 import type { NextPage } from 'next'
 import Image from 'next/image'
-import {
-  Container,
-  Box,
-  Stack,
-  HStack,
-  ButtonGroup,
-  Button,
-  Icon,
-  Heading,
-  Text,
-  Wrap,
-  Tag,
-  useClipboard,
-  IconButton,
-  VStack,
-  Flex,
-} from '@chakra-ui/react'
+import * as React from 'react'
 import { SEO } from '../components/landing-page/seo/seo'
 
-import { FallInPlace } from '../components/landing-page/motion/fall-in-place'
-import { Hero } from '../components/landing-page/hero/hero'
-import { Link, Br } from '@saas-ui/react'
-import { Em } from '../components/landing-page/typography'
-import { NextjsLogo } from '../components/landing-page/logos/next'
-import { ChakraLogo } from '../components/landing-page/logos/chakra'
+import { Br } from '@saas-ui/react'
 import {
   FiArrowRight,
-  FiBox,
-  FiCheck,
-  FiCode,
-  FiCopy,
-  FiFlag,
+  FiBox, FiCode, FiFlag,
   FiGrid,
   FiLock,
   FiSearch,
   FiSliders,
-  FiSmile,
-  FiTerminal,
-  FiThumbsUp,
-  FiToggleLeft,
-  FiTrendingUp,
-  FiUserPlus,
+  FiSmile, FiThumbsUp, FiUserPlus
 } from 'react-icons/fi'
+import { Faq } from '../components/landing-page/faq/faq'
 import { Features } from '../components/landing-page/features/features'
 import { BackgroundGradient } from '../components/landing-page/gradients/background-gradient'
-import { Faq } from '../components/landing-page/faq/faq'
+import { Hero } from '../components/landing-page/hero/hero'
+import { FallInPlace } from '../components/landing-page/motion/fall-in-place'
 import { Pricing } from '../components/landing-page/pricing/pricing'
+import { Em } from '../components/landing-page/typography'
 
 import { ButtonLink } from '../components/landing-page/button-link/button-link'
 import { Testimonial } from '../components/landing-page/testimonials/testimonial'
 import { Testimonials } from '../components/landing-page/testimonials/testimonials'
 
 import faq from '../data/faq'
-import testimonials from '../data/testimonials'
 import pricing from '../data/pricing'
+import testimonials from '../data/testimonials'
 
-import { Highlights, HighlightsItem, HighlightsTestimonialItem } from '../components/landing-page/highlights/highlights'
+import { Highlights, HighlightsItem } from '../components/landing-page/highlights/highlights'
 import Colors from '../styles/colors'
 
 
 
 const Home: NextPage = () => {
+
   return (
     <Box>
       <SEO
@@ -76,7 +52,7 @@ const Home: NextPage = () => {
 
         <FeaturesSection />
 
-        <TestimonialsSection />
+        {/* <TestimonialsSection /> */}
 
         <PricingSection />
 
@@ -86,76 +62,123 @@ const Home: NextPage = () => {
   )
 }
 
+
 const HeroSection: React.FC = () => {
+  const { toggleColorMode, colorMode } = useColorMode()
   return (
     <Box position="relative">
       <BackgroundGradient height="100%" />
-      <Container pt={{ base: 40, lg: 60 }} pb="20">
-        <Stack direction={{ base: 'column', lg: 'row' }} alignItems="center">
-          <Hero
-            id="home"
-            justifyContent="center"
-            px="0"
-            title1={ 
-              <FallInPlace
-                bgGradient='linear(to-l, #68affb, #FFFFFF)'
-                bgClip='text'
-                fontSize='8xl'
-                fontWeight='extrabold'>
-                Bill your customers.
-              </FallInPlace>
-            }
-            title2={ 
-              <FallInPlace
-                bgGradient='linear(to-l, #68affb, #FFFFFF)'
-                bgClip='text'
-                fontSize='8xl'
-                fontWeight='extrabold'>
-                <Br /> At scale.
-              </FallInPlace>
-            }
-            description={
-              <FallInPlace delay={0.4} fontWeight="medium">
-                Billpilot imports <Em>project mangement data</Em>,
-                <Br /> creates invoices from time reports and <Br />
-                sends them to your accounting app in minutes.
-              </FallInPlace>
-
-            }
-            >
-            <FallInPlace delay={0.8}>
-              <HStack pt="4" pb="12" spacing="5">
-              </HStack>
-              <ButtonGroup w='100%'>
-              <Flex w='100%'  justifyContent="center" gap ={4} >
-                <ButtonLink colorScheme="primary" size="lg" href="/signup">
-                  Sign Up
-                </ButtonLink>
-                <ButtonLink
-                  size="lg"
-                  href="https://demo.saas-ui.dev"
-                  variant="outline"
-                  rightIcon={
-                    <Icon
-                      as={FiArrowRight}
-                      sx={{
-                        transitionProperty: 'common',
-                        transitionDuration: 'normal',
-                        '.chakra-button:hover &': {
-                          transform: 'translate(5px)',
-                        },
-                      }}
-                    />
-                  }
+      <Container pt={{ base: 40, lg: 60 }} pb="20" maxWidth='90w' alignItems="center">
+        <Center>
+          <Stack direction={{ base: 'column', lg: 'row' }} alignItems="center" maxWidth='90vw'>
+            <Hero
+              id="home"
+              justifyContent="center"
+              px="0"
+              maxWidth='90vw'
+              title1={
+                <FallInPlace
+                  bgGradient={colorMode === 'dark' ? 'linear(to-l, #68affb, #FFFFFF)' : 'linear(to-l, #68affb, #000)'}
+                  bgClip='text'
+                  letterSpacing='2px'
+                  fontSize={{ base: '48px', lg: '8xl' }}
+                  fontWeight='400'>
+                  Bill your clients.
+                </FallInPlace>
+              }
+              title2={
+                <FallInPlace
+                  bgGradient={colorMode === 'dark' ? 'linear(to-l, #68affb, #FFFFFF)' : 'linear(to-l, #68affb, #000)'}
+                  bgClip='text'
+                  letterSpacing='2px'
+                  fontSize={{ base: '48px', lg: '8xl' }}
+                  fontWeight='400'
                 >
-                  Schedule Demo
-                </ButtonLink>
-                </Flex>
-              </ButtonGroup>
-              
-            </FallInPlace>
-          </Hero>
-        </Stack>
+                  <Text as='i'>
+                    At scale.
+                  </Text>
+
+                </FallInPlace>
+              }
+              description={
+                <FallInPlace delay={0.4} fontWeight="400" fontSize={{ base: '1xl', lg: '2xl' }}>
+                  Billpilot imports <Em>project mangement data</Em>,
+                  <Br /> creates invoices from time reports and <Br />
+                  sends them to your accounting app in minutes.
+                </FallInPlace>
+
+              }
+            >
+              <FallInPlace delay={0.8} >
+                <HStack pt={{ base: '4', lg: '4' }} pb={{ base: '4', lg: '12' }} spacing="5">
+                </HStack>
+                <ButtonGroup w='100%'>
+                  <Flex w='100%' justifyContent="center" gap={4} flexDir='column'  >
+                    <Center alignItems='center' flexDir={{ base: 'column', lg: 'row' }}>
+                      <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+                        <img
+                          src="static/images/integrationlogos/asana.png"
+                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                        />
+                      </Box>
+                      <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+                        <img
+                          src="static/images/integrationlogos/economic.png"
+                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                        />
+                      </Box>
+                      <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+                        <img
+                          src="static/images/integrationlogos/jira.png"
+                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                        />
+                      </Box>
+                      <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+                        <img
+                          src="static/images/integrationlogos/quickbooks.png"
+                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                        />
+                      </Box>
+                      <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+                        <img
+                          src="static/images/integrationlogos/xero.png"
+                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                        />
+                      </Box>
+                    </Center>
+
+                    <Flex justifyContent="center" gap='5'>
+                      <ButtonLink colorScheme="primary" color= 'white' size="lg" href="/signup">
+                        Sign Up
+                      </ButtonLink>
+                      <ButtonLink
+                        size="lg"
+                        href="https://demo.saas-ui.dev"
+                        variant="outline"
+                        rightIcon={
+                          <Icon
+                            as={FiArrowRight}
+                            sx={{
+                              transitionProperty: 'common',
+                              transitionDuration: 'normal',
+                              '.chakra-button:hover &': {
+                                transform: 'translate(5px)',
+                              },
+                            }}
+                          />
+                        }
+                      >
+                        Schedule Demo
+                      </ButtonLink>
+                    </Flex>
+
+                  </Flex>
+                </ButtonGroup>
+
+              </FallInPlace>
+            </Hero>
+          </Stack>
+        </Center>
       </Container>
       <Flex justifyContent='center'>
         <Image
@@ -203,7 +226,7 @@ const HeroSection: React.FC = () => {
             iconPosition: 'left',
             delay: 0.8,
           },
-          
+
         ]}
         reveal={FallInPlace}
       />
@@ -212,7 +235,7 @@ const HeroSection: React.FC = () => {
 }
 
 const HighlightsSection = () => {
-  
+
 
   return (
     <Highlights>
@@ -228,14 +251,14 @@ const HighlightsSection = () => {
       </HighlightsItem>
       <HighlightsItem title="Seamless Setup">
         <Text color="muted" fontSize="lg">
-        Connect BillPilot with your project mangement platform and start billing projects and hours right away. No manual project setup required.
+          Connect BillPilot with your project mangement platform and start billing projects and hours right away. No manual project setup required.
         </Text>
       </HighlightsItem>
       <HighlightsItem title="Solid foundations">
         <Text color="muted" fontSize="lg">
           We don&apos;t like to re-invent the wheel, neither should you. We
           selected the most productive and established tools in the scene and
-          build Billpilot on top of it.
+          built Billpilot on top of it.
         </Text>
       </HighlightsItem>
       <HighlightsItem
@@ -243,7 +266,7 @@ const HighlightsSection = () => {
         title="Our Continually Expanding List of Integrations"
       >
         <Text color="muted" fontSize="lg">
-          We took care of all the integrations, so all you need to do is start billing your customers.
+          We took care of all the integrations, so all you need to do is start billing your clients.
         </Text>
         <Wrap mt="8">
           {[
@@ -295,7 +318,7 @@ const FeaturesSection = () => {
       }
       description={
         <>
-          We love hearing from our customers.
+          We love hearing from our clients.
           <Br />
           Let us know if you think we're missing something.
         </>

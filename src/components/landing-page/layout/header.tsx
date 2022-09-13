@@ -5,13 +5,17 @@ import {
   BoxProps,
   Container,
   Flex,
+  Heading,
+  Text,
+  useColorMode,
   useColorModeValue,
 } from '@chakra-ui/react'
 import Navigation from './navigation'
 import { Logo } from './logo'
 import { useViewportScroll } from 'framer-motion'
+import Link from 'next/link'
 
-export interface HeaderProps extends Omit<BoxProps, 'children'> {}
+export interface HeaderProps extends Omit<BoxProps, 'children'> { }
 
 export const Header = (props: HeaderProps) => {
   const ref = React.useRef<HTMLHeadingElement>(null)
@@ -24,7 +28,7 @@ export const Header = (props: HeaderProps) => {
   }, [scrollY])
 
   const bg = useColorModeValue('whiteAlpha.700', 'rgba(29, 32, 37, 0.7)')
-
+  const { toggleColorMode, colorMode } = useColorMode()
   return (
     <Box
       ref={ref}
@@ -56,6 +60,14 @@ export const Header = (props: HeaderProps) => {
               }
             }}
           />
+          {/* style = {colorMode === 'dark' ? {color = '#2479DB'} : {color = '#FFFFFF'} */}
+          <Link href='/'>
+            <a>
+            <Text letterSpacing='2px' textColor={colorMode === 'dark' ? '#FFFFFF' : '#2479DB'} as='em'>
+              Billpilot
+            </Text>
+            </a>
+          </Link>
           <Navigation />
         </Flex>
       </Container>

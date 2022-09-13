@@ -23,19 +23,28 @@ const styles = {
 const landingPageTheme = extendTheme(
   {
     config: {
-      initialColorMode: 'dark',
+      initialColorMode: 'light',
       useSystemColorMode: false,
     },
     colors: {
       primary: {
-        400: Colors.indigodye,
+        "50": "#E9F2FB",
+        "100": "#C2DAF5",
+        "200": "#9AC1EE",
+        "300": "#73A9E8",
+        "400": "#4C91E1",
+        "500": "#2479DB",
+        "600": "#1D61AF",
+        "700": "#164983",
+        "800": "#0F3058",
+        "900": "#07182C"
       },
       secondary: {
         400: '#ff0000'
       },
       hero: {
         'left': Colors.goldengate,
-        'right': Colors.indigodye,
+        'right': Colors.primaryblue,
       },
       button: Colors.mintcream,
     },

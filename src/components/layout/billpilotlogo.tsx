@@ -1,13 +1,14 @@
+import { useColorMode } from '@chakra-ui/react'
 import Image from 'next/image'
 
 
+
 export const BillPilotLogo = () => {
+  const { toggleColorMode, colorMode } = useColorMode()
   return (
-    <Image
-      src="../../../public/static/images/avatar3.jpg'"
-      alt="Picture of the author"
-      width={500}
-      height={500}
+    <img
+      style={colorMode === 'dark' ? { filter: 'brightness(0) invert(75%)'} : { filter: 'brightness(0)'}}
+      src="../../../public/static/images/billpilotlogo.svg"
     />
   )
 }

@@ -5,18 +5,16 @@ const faq = {
   // description: '',
   items: [
     {
-      q: 'How many products can I use Saas UI Pro for?',
+      q: 'What if I am using a different accounting or project management software?',
       a: (
         <>
-          The single license can be used for one commercial application or SaaS
-          product and unlimited internal tools. You can buy as many licenses as
-          you need. <br /> The unlimited license does not have any restrictions.
+         We're always looking to expand our lineup of integrations, contact the sales team for enterprise services and we'll find a solution for you.
         </>
       ),
     },
     {
-      q: 'Can I use Saas UI Pro for client work?',
-      a: "Yes, that's totally up to you, as long as it fits the license you purchase.",
+      q: 'Can I use Billpilot to track non-billable hours?',
+      a: "Yes, internal projects can be set to non-billable to show billable and non-billable time in reports.",
     },
     {
       q: 'Can I use Saas UI Pro for Open Source projects?',

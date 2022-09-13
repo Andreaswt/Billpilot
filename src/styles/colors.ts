@@ -6,6 +6,8 @@ const Colors = {
     prussianblue: '#13315C',
     mintcream: '#EEF4ED',
     goldengate: '#BB4430',
+    lightblue: '#68affb',
+    primaryblue: '#418bf5'
     // ...
 }
 

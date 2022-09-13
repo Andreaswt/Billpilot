@@ -6,37 +6,17 @@ const pricing = {
     'When you grow, we grow',
   plans: [
     {
-      id: 'bootstrap',
-      title: 'Bootstrap',
-      description: 'Complete frontend stack for bootstrappers and small teams.',
+      id: 'New Users',
+      title: 'New Users',
+      description: 'Get the first 14 days free of charge, cancel at any time',
       price: 'Free',
       isRecommended: true,
       features: [
         {
-          title: 'One project',
+          title: 'All other features',
         },
         {
-          title: 'One developer',
-        },
-        {
-          title: 'Advanced components',
-        },
-        {
-          title: 'Multiple themes',
-        },
-        {
-          title: 'Next.js and Electron boilerplates',
-        },
-        {
-          title: 'Private discord community',
-        },
-        {
-          title: '1 year of updates',
-        },
-        null,
-        {
-          title: 'Private beta access',
-          iconColor: 'green.500',
+          title: 'Onboarding meetings',
         },
       ],
       action: {
@@ -44,33 +24,90 @@ const pricing = {
       },
     },
     {
-      id: 'startup',
-      title: 'Startup',
-      description: 'Unlimited license for growing teams.',
+      id: 'startups',
+      title: 'Startups',
+      description: 'Unlimited license for growing startups.',
       price: (
         <HStack>
           <Text textDecoration="line-through" fontSize="sm" color="gray.400">
-            €999,-
+            $7,-
           </Text>
-          <Text>€499,-</Text>
+          <Text>$5.7</Text>
+          <Text fontSize="sm">
+            / month / user
+          </Text>
         </HStack>
       ),
+      isRecommended: true,
       features: [
+        {
+          title: 'Unlimited invoicing',
+        },
         {
           title: 'Unlimited projects',
         },
         {
-          title: 'Unlimited developers',
+          title: 'Billable rates, costs, profit',
         },
         {
-          title: '1 year of updates',
+          title: 'Unlimited users',
         },
         {
-          title: 'Everything from Bootstrap',
+          title: 'Secured data',
         },
         null,
         {
-          title: 'Private beta access',
+          title: 'New functionality per request',
+          iconColor: 'green.500',
+        },
+        {
+          title: 'Feedback fulfilment',
+          iconColor: 'green.500',
+        },
+      ],
+      action: {
+        href: 'https://appulse.gumroad.com/l/saas-ui-pro-pre-order?variant=Unlimited%20license',
+      },
+    },
+    {
+      id: 'teams',
+      title: 'Teams',
+      description: 'Unlimited license for growing teams.',
+      isRecommended: true,
+      price: (
+        <HStack>
+          <Text textDecoration="line-through" fontSize="sm" color="gray.400">
+            $12
+          </Text>
+          <Text>$9.3</Text>
+          <Text fontSize="sm">
+            / month / user
+          </Text>
+        </HStack>
+      ),
+      features: [
+        {
+          title: 'Unlimited invoicing',
+        },
+        {
+          title: 'Unlimited projects',
+        },
+        {
+          title: 'Billable rates, costs, profit',
+        },
+        {
+          title: 'Unlimited users',
+        },
+        {
+          title: 'Secured data',
+        },
+        null,
+        {
+          title: 'New functionality per request',
+          iconColor: 'green.500',
+        },
+        {
+          title: 'Feedback fulfilment',
           iconColor: 'green.500',
         },
       ],

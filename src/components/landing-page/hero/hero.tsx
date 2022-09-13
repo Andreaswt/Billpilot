@@ -9,7 +9,7 @@ interface HeroProps extends Omit<FlexProps, 'title'> {
 export const Hero = ({ title1, title2, description, children, ...rest }: HeroProps) => {
   return (
     <Flex py="0" alignItems="center" {...rest}>
-      <Container>
+      <Container maxWidth='90vw'>
         <VStack spacing={[4, null, 8]} alignItems="left">
           <Flex flexDirection = 'column'>
             <Text as="h1" textStyle="h1" textAlign="center">
@@ -21,6 +21,7 @@ export const Hero = ({ title1, title2, description, children, ...rest }: HeroPro
           </Flex>
           <Text
             as="div"
+            width= '100%'
             textStyle="subtitle"
             align="center"
             color="gray.500"

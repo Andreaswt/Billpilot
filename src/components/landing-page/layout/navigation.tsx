@@ -38,34 +38,34 @@ const Navigation: React.FC = () => {
   return (
   <>
   <Flex w="100%" justify="space-between">
-    <HStack>
+    <HStack marginLeft = '2rem'>
       <NavLink
           label = {"Solution"}
           display={['none', null, 'block']}
-          href={"#features"}
+          href={"/#features"}
           isActive={
             !!(
-              ("#features" && !!router.asPath.match(new RegExp("dfsf")))
+              ("/#features" && !!router.asPath.match(new RegExp("dfsf")))
             )
           }
         />
       <NavLink
           label = {"Pricing"}
           display={['none', null, 'block']}
-          href={"#pricing"}
+          href={"/#pricing"}
           isActive={
             !!(
-              ("#pricing" && !!router.asPath.match(new RegExp("Pricing")))
+              ("/#pricing" && !!router.asPath.match(new RegExp("Pricing")))
             )
           }
         />
       <NavLink
           label = {"Resources"}
           display={['none', null, 'block']}
-          href={"#resources"}
+          href={"/#resources"}
           isActive={
             !!(
-              ("#resources" && !!router.asPath.match(new RegExp("Resources")))
+              ("/#resources" && !!router.asPath.match(new RegExp("Resources")))
             )
           }
         />
@@ -92,7 +92,7 @@ const Navigation: React.FC = () => {
             )
           }
         />
-        <ButtonLink colorScheme= "primary" size="sm" href="/signup">
+        <ButtonLink colorScheme="primary" size="sm" href="/signup">
                   Sign Up
         </ButtonLink>
         {/* <NavLink
