@@ -30,7 +30,7 @@ const pricing = {
       price: (
         <HStack>
           <Text textDecoration="line-through" fontSize="sm" color="gray.400">
-            $7,-
+            $7
           </Text>
           <Text>$5.7</Text>
           <Text fontSize="sm">
