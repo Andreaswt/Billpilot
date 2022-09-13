@@ -6,8 +6,8 @@ const pricing = {
     'When you grow, we grow',
   plans: [
     {
-      id: 'New Users',
-      title: 'New Users',
+      id: 'freetrial',
+      title: 'Free Trial',
       description: 'Get the first 14 days free of charge, cancel at any time',
       price: 'Free',
       isRecommended: true,

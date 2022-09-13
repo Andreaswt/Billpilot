@@ -34,6 +34,7 @@ import testimonials from '../data/testimonials'
 
 import { Highlights, HighlightsItem } from '../components/landing-page/highlights/highlights'
 import Colors from '../styles/colors'
+import { ContactForm } from '../components/landing-page/ContactForm'
 
 
 
@@ -57,6 +58,9 @@ const Home: NextPage = () => {
         <PricingSection />
 
         <FaqSection />
+
+        <ContactFormSection />
+
       </Box>
     </Box>
   )
@@ -420,6 +424,10 @@ const PricingSection = () => {
 
 const FaqSection = () => {
   return <Faq {...faq} />
+}
+
+const ContactFormSection = () => {
+  return <ContactForm/>
 }
 
 export default Home

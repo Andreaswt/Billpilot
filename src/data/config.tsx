@@ -10,7 +10,7 @@ const siteConfig = {
   
   seo: {
     title: 'Saas UI',
-    description: 'The Fully Integrated Solution for Houly Billing',
+    description: 'The Fully Integrated Solution for Hourly Billing',
   } as NextSeoProps,
   termsUrl: '#',
   privacyUrl: '#',
