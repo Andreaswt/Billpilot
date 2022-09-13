@@ -449,7 +449,7 @@ const FaqSection = () => {
 }
 
 const ContactFormSection = () => {
-  return <ContactForm />
+  return <ContactForm id="contact"/>
 }
 
 export default Home

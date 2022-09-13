@@ -2,8 +2,7 @@ import { HStack, Text } from '@chakra-ui/react'
 
 const pricing = {
   title: 'Pricing for every stage',
-  description:
-    'When you grow, we grow',
+  description: 'When you grow, we grow',
   plans: [
     {
       id: 'freetrial',

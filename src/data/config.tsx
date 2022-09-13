@@ -18,15 +18,22 @@ const siteConfig = {
     links: [
       {
         id: 'features',
-        label: 'Features',
+        href: '/#features',
+        label: 'Solution',
       },
       {
         id: 'pricing',
+        href: '/#pricing',
         label: 'Pricing',
       },
       {
         id: 'resources',
+        href: '/#resources',
         label: 'Resources',
+      },
+      {
+        label: 'Contact',
+        href: '/#contact',
       },
       {
         label: 'Login',
