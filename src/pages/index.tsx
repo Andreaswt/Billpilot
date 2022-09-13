@@ -120,39 +120,59 @@ const HeroSection: React.FC = () => {
                   <Flex w='100%' justifyContent="center" gap={4} flexDir='column'  >
                     <Center alignItems='center' flexDir={{ base: 'column', lg: 'row' }}>
                       <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                        <img
-                          src="static/images/integrationlogos/asana.png"
-                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                        />
+                        <picture>
+                          {/* eslint-disable @next/next/no-img-element */}
+                          <img
+                            src="static/images/integrationlogos/asana.png"
+                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                            alt='xero logo'
+                          />
+                        </picture>
                       </Box>
                       <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                        <img
-                          src="static/images/integrationlogos/economic.png"
-                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                        />
+                        <picture>
+                          {/* eslint-disable @next/next/no-img-element */}
+                          <img
+                            src="static/images/integrationlogos/economic.png"
+                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                            alt='xero logo'
+                          />
+                        </picture>
                       </Box>
                       <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                        <img
-                          src="static/images/integrationlogos/jira.png"
-                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                        />
+                        <picture>
+                          {/* eslint-disable @next/next/no-img-element */}
+                          <img
+                            src="static/images/integrationlogos/jira.png"
+                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                            alt='xero logo'
+                          />
+                        </picture>
                       </Box>
                       <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                        <img
-                          src="static/images/integrationlogos/quickbooks.png"
-                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                        />
+                        <picture>
+                          {/* eslint-disable @next/next/no-img-element */}
+                          <img
+                            src="static/images/integrationlogos/quickbooks.png"
+                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                            alt='xero logo'
+                          />
+                        </picture>
                       </Box>
                       <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                        <img
-                          src="static/images/integrationlogos/xero.png"
-                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                        />
+                        <picture>
+                          {/* eslint-disable @next/next/no-img-element */}
+                          <img
+                            src="static/images/integrationlogos/xero.png"
+                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                            alt='xero logo'
+                          />
+                        </picture>
                       </Box>
                     </Center>
 
                     <Flex justifyContent="center" gap='5'>
-                      <ButtonLink colorScheme="primary" color= 'white' size="lg" href="/signup">
+                      <ButtonLink colorScheme="primary" color='white' size="lg" href="/signup">
                         Sign Up
                       </ButtonLink>
                       <ButtonLink
@@ -324,7 +344,7 @@ const FeaturesSection = () => {
         <>
           We love hearing from our clients.
           <Br />
-          Let us know if you think we're missing something.
+          Let us know if you think we&apos;re missing something.
         </>
       }
       align="left"
@@ -427,7 +447,7 @@ const FaqSection = () => {
 }
 
 const ContactFormSection = () => {
-  return <ContactForm/>
+  return <ContactForm />
 }
 
 export default Home

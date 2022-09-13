@@ -8,7 +8,7 @@ const faq = {
       q: 'What if I am using a different accounting or project management software?',
       a: (
         <>
-         We're always looking to expand our lineup of integrations, contact the sales team for enterprise services and we'll find a solution for you.
+         We&apos;re always looking to expand our lineup of integrations, contact the sales team for enterprise services and we&apos;pmll find a solution for you.
         </>
       ),
     },
