@@ -98,6 +98,7 @@ export const Highlights: React.FC<SectionProps> = (props) => {
       innerWidth="container.xl"
       position="relative"
       overflow="hidden"
+      py={{base:'0', md:'0', sm:'0'}}
       {...rest}
     >
       <Grid

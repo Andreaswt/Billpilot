@@ -262,7 +262,6 @@ const HeroSection: React.FC = () => {
 
 const HighlightsSection = () => {
 
-
   return (
     <Highlights>
       <HighlightsItem colSpan={[1, null, 2]} title="A Quality Product that Speaks for Itself ">
