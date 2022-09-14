@@ -32,10 +32,11 @@ import faq from '../data/faq'
 import pricing from '../data/pricing'
 import testimonials from '../data/testimonials'
 
+
 import { Highlights, HighlightsItem } from '../components/landing-page/highlights/highlights'
 import Colors from '../styles/colors'
 import { ContactForm } from '../components/landing-page/ContactForm'
-
+import {BackendShowcase} from '../components/landing-page/BackendShowcase'
 
 
 const Home: NextPage = () => {
@@ -49,8 +50,10 @@ const Home: NextPage = () => {
       <Box>
         <HeroSection />
 
-        <HighlightsSection />
+        <BackendShowcaseSection />
 
+        <HighlightsSection />
+        
         <FeaturesSection />
 
         {/* <TestimonialsSection /> */}
@@ -258,6 +261,10 @@ const HeroSection: React.FC = () => {
       />
     </Box>
   )
+}
+
+const BackendShowcaseSection = () => {
+  return <BackendShowcase id="backendshowcase"/>
 }
 
 const HighlightsSection = () => {
