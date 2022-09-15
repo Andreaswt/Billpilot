@@ -5,6 +5,7 @@ import { ColumnDef, DataGrid, DataGridPagination } from '@saas-ui/pro';
 import { Card, CardBody, SearchInput } from "@saas-ui/react";
 import useCreateInvoiceStore from '../../../../store/invoice';
 import { trpc } from '../../../utils/trpc';
+import useInvoiceIssuesStore from '../../../../store/invoiceIssues';
 
 interface IProps {
     setStep: Dispatch<SetStateAction<number>>
@@ -24,7 +25,7 @@ interface IPagination {
 
 const Projects = (props: IProps) => {
     const { setStep } = props
-    const store = useCreateInvoiceStore();
+    const store = useInvoiceIssuesStore();
 
     const [searchTerm, setSearchTerm] = useState<string>("")
     const [pagination, setPagination] = useState<IPagination>({ amount: 0, total: 0 })

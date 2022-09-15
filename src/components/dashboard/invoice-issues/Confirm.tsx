@@ -7,6 +7,7 @@ import moment from 'moment';
 import { useForm } from 'react-hook-form';
 import useCreateInvoiceStore from '../../../../store/invoice';
 import { PickedIssue } from '../../../../store/invoice';
+import { trpc } from '../../../utils/trpc';
 
 interface IProps {
     setStep: Dispatch<SetStateAction<number>>
@@ -48,13 +49,17 @@ const columns: Column<PickedIssue>[] = [
     },
 ]
 
-function submitInvoice() {
-    console.log("submit invoice")
-}
-
 const ConfirmInvoiceIssues = (props: IProps) => {
     const { setStep } = props
     const store = useCreateInvoiceStore();
+
+    const utils = trpc.useContext();
+    const createIssueInvoice = trpc.useMutation('invoices.createIssueInvoice', {
+    });
+
+    function submitInvoice() {
+
+    }
 
     return (
         <Card title={
@@ -129,15 +134,25 @@ const ConfirmInvoiceIssues = (props: IProps) => {
                             <SimpleGrid columns={4}>
                                 <Flex flexDirection="column">
                                     <Text fontSize="md" as="b">Text 1</Text>
-                                    <Text>{store.text1 == "" ? <Text as="i">Not set</Text> : store.text1}</Text>
+                                    <Text>{store.text1 === "" ? <Text as="i">Not set</Text> : store.text1}</Text>
                                 </Flex>
                                 <Flex flexDirection="column">
                                     <Text fontSize="md" as="b">Our Reference</Text>
-                                    <Text>{store.ourReference == "" ? <Text as="i">Not set</Text> : store.ourReference}</Text>
+                                    <Text>{store.ourReference === "" ? <Text as="i">Not set</Text> : store.ourReference}</Text>
                                 </Flex>
                                 <Flex flexDirection="column">
                                     <Text fontSize="md" as="b">Customer Contact</Text>
-                                    <Text>{store.customerContact == "" ? <Text as="i">Not set</Text> : store.customerContact}</Text>
+                                    <Text>{store.customerContact === "" ? <Text as="i">Not set</Text> : store.customerContact}</Text>
+                                </Flex>
+                                <Flex flexDirection="column">
+                                    <Text fontSize="md" as="b">Customer</Text>
+                                    <Text>{store.customer === "" ? <Text as="i">Not set</Text> : store.customer}</Text>
+                                </Flex>
+                            </SimpleGrid>
+                            <SimpleGrid columns={4}>
+                                <Flex flexDirection="column">
+                                    <Text fontSize="md" as="b">Customer Price</Text>
+                                    <Text>{!store.customerPrice ? <Text as="i">Not set</Text> : store.customerPrice}</Text>
                                 </Flex>
                             </SimpleGrid>
                         </SimpleGrid>

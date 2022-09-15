@@ -18,6 +18,8 @@ interface ICreateInvoiceInput {
             name: string
             time: number
             hourlyWage: number
+            updatedTimeSpent: number
+            discountPercentage: number
             discountsAppliedByName: string[]
             fixedPriceDiscountsAppliedByName: string[]
             taxesAppliedByName: string[]
@@ -46,25 +48,52 @@ interface ICreateInvoiceInput {
     }
 }
 
+export interface ICreateIssueInvoice {
+    title: string,
+    currency: string,
+    dueDate: Date,
+    roundingScheme: string,
+    economicCustomer: string,
+    economicCustomerPrice: number,
+    economicText1: string,
+    economicOurReference: string,
+    economicCustomerContact: string
+
+    issueTimeItems: {
+        jiraId: string,
+        jiraKey: string,
+        name: string,
+        hours: number
+        updatedHoursSpent: number | null,
+        discountPercentage: number | null
+    }[]
+}
+
 export async function createInvoice(invoice: ICreateInvoiceInput, organizationId: string) {
     // Insert into invoice
     await prisma.invoice.create({
         data: {
             ...invoice.invoice,
             organizationId: organizationId,
-
         },
     })
 
-    // Insert into time items
+}
 
-    // Insert into fixed price time items
+export async function createIssueInvoice(invoice: ICreateIssueInvoice, organizationId: string) {
+    const issueTimeItems = invoice.issueTimeItems.map(item => ({
+        jiraId: item.jiraId, 
+        jiraKey: item.jiraKey, 
+        name: item.name, 
+        hours: item.hours, 
+        updatedHoursSpent: item.updatedHoursSpent ?? 0,
+        discountPercentage: item.discountPercentage ?? 0,
+        organizationId: organizationId
+    }))
 
-    // Insert into discounts
-
-    // Insert into fixed price discounts
-
-    // Insert into taxes
+    await prisma.issueTimeItem.createMany({
+        data: issueTimeItems
+    })
 }
 
 export async function getInvoiceForExportToIntegration(invoiceId: string, organizationId: string) {
@@ -126,11 +155,6 @@ export async function getInvoiceForExportToIntegration(invoiceId: string, organi
                     },
                 }
             },
-            currency: {
-                select: {
-                    abbreviation: true
-                }
-            }
         }
     })
 

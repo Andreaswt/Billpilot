@@ -31,6 +31,8 @@ model Organization {
     teamSchemes TeamScheme[]
     jiraEmployees JiraEmployee[]
     invoices Invoice[]
+    issueInvoices IssueInvoice[]
+    issueTimeItems IssueTimeItem[]
     timeItems TimeItem[]
     fixedPriceTimeItem FixedPriceTimeItem[]
     clients Client[]
@@ -40,8 +42,8 @@ model Organization {
     invoiceLayouts InvoiceLayout[]
     xeroAuthenticationKeyId String?
     xeroAuthenticationKey XeroAuthenticationKey? @relation(fields: [xeroAuthenticationKeyId], references: [id])
-    currencyName String?
-    currency Currency? @relation(fields: [currencyName], references: [currency])
+    currency Currency @default(USD)
+    roundingScheme RoundingScheme @default(POINTPOINT)
 }
 
 model ApiKey {
@@ -91,13 +93,6 @@ model RolesOnPricelists {
   pricelistName String
   hourlyRate Decimal
   @@id([roleName, pricelistName])
-}
-
-model Currency {
-  currency String @id @unique
-  abbreviation String
-  organization Organization[]
-  invoice Invoice[]
 }
 
 model Project {
@@ -209,6 +204,11 @@ model FixedPriceDiscount {
   appliesToFixedPriceTimeItems FixedPriceTimeItem[]
 }
 
+enum Currency {
+  USD
+  DKK
+}
+
 enum Language {
   DANISH
   ENGLISH
@@ -241,13 +241,19 @@ enum InvoiceStatus {
   NOCHARGE
 }
 
+enum RoundingScheme {
+  POINT
+  POINTPOINT
+  POINTPOINTPOINT
+}
+
 model Invoice {
   id String @id @default(cuid())
   name String
   status InvoiceStatus @default(DRAFT)
   invoiceNumber Int
-  currencyName String?
-  currency Currency? @relation(fields: [currencyName], references: [currency])
+  currency Currency @default(USD)
+  roundingScheme RoundingScheme @default(POINTPOINT)
   invoicedFrom DateTime
   invoicedTo DateTime
   issueDate DateTime
@@ -262,8 +268,40 @@ model Invoice {
   notesForClient String
   organizationId String
   organization Organization @relation(fields: [organizationId], references: [id])
-  // TODO: add rounding scheme
   @@unique ([id, organizationId], name: "organizationsInvoice")
+}
+
+// Issue Invoice
+model IssueTimeItem {
+  id String @id @default(cuid())
+  jiraId String
+  jiraKey String
+  name String
+  hours Decimal
+  updatedHoursSpent Decimal
+  discountPercentage Decimal
+  issueInvoiceId IssueInvoice @relation(fields: [id], references: [id])
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id])
+}
+
+model IssueInvoice {
+  id String @id @default(cuid())
+  name String
+  currency Currency @default(USD)
+  roundingScheme RoundingScheme @default(POINTPOINT)
+  issueDate DateTime
+  dueDate DateTime
+  clientName String
+  economicCustomer String
+  economicCustomerPrice Decimal
+  economicText1 String
+  economicOurReference String
+  economicCustomerContact String
+  issueTimeItems IssueTimeItem[]
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id])
+  @@unique ([id, organizationId], name: "organizationsIssueInvoice")
 }
 
 // Xero

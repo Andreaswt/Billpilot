@@ -6,6 +6,7 @@ import { Card, CardBody, SearchInput } from "@saas-ui/react";
 import { TbPercentage } from "react-icons/tb";
 import useCreateInvoiceStore, { PickedIssue } from '../../../../store/invoice';
 import { trpc } from '../../../utils/trpc';
+import useInvoiceIssuesStore from '../../../../store/invoiceIssues';
 
 
 interface IProps {
@@ -26,7 +27,7 @@ interface IPagination {
 
 const Issues = (props: IProps) => {
     const { setStep } = props
-    const store = useCreateInvoiceStore();
+    const store = useInvoiceIssuesStore();
     const [selected, setSelected] = useState<string[]>([])
     const [searchTerm, setSearchTerm] = useState<string>("")
     const [pagination, setPagination] = useState<IPagination>({ amount: 0, total: 0 })

@@ -80,6 +80,8 @@ export interface DiscountsState {
 }
 
 interface EconomicOptions {
+    customer: string,
+    customerPrice: number,
     text1: string,
     ourReference: string,
     customerContact: string
@@ -123,6 +125,8 @@ const useCreateInvoiceStore = create<CreateInvoiceState>((set) => ({
     fixedPriceTimeItems: [],
     taxes: [],
     discounts: [],
+    customer: "",
+    customerPrice: 0,
     text1: "",
     ourReference: "",
     customerContact: "",

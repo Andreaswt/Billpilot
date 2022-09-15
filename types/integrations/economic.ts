@@ -98,3 +98,9 @@ export interface Note {
     // textLine1: string;
     // textLine2: string;
 }
+
+export interface Contact {
+    customer: Customer,
+    name: string,
+    customerContactNumber: number
+}
