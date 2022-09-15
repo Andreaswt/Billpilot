@@ -36,8 +36,9 @@ import testimonials from '../data/testimonials'
 import { Highlights, HighlightsItem } from '../components/landing-page/highlights/highlights'
 import Colors from '../styles/colors'
 import { ContactForm } from '../components/landing-page/ContactForm'
-import {BackendShowcase} from '../components/landing-page/BackendShowcase'
-
+import { BackendShowcase } from '../components/landing-page/BackendShowcase'
+import { BeforeBillpilot } from '../components/landing-page/BeforeBillpilot'
+import { ProjectToInvoice } from '../components/landing-page/ProjectToInvoice'
 
 const Home: NextPage = () => {
 
@@ -52,8 +53,12 @@ const Home: NextPage = () => {
 
         <BackendShowcaseSection />
 
+        <BeforeBillpilotSection />
+
+        {/* <ProjectToInvoiceSection/> */}
+
         <HighlightsSection />
-        
+
         <FeaturesSection />
 
         {/* <TestimonialsSection /> */}
@@ -210,12 +215,14 @@ const HeroSection: React.FC = () => {
         </Center>
       </Container>
       <Flex justifyContent='center'>
+      <div style={{borderRadius: '10px', overflow: 'hidden'}}>
         <Image
           src="static/screenshots/list.png"
           alt="Picture of the author"
           width={1200}
           height={800}
         />
+      </div>
       </Flex>
       <Features
         id="benefits"
@@ -264,13 +271,21 @@ const HeroSection: React.FC = () => {
 }
 
 const BackendShowcaseSection = () => {
-  return <BackendShowcase id="backendshowcase"/>
+  return <BackendShowcase id="backendshowcase" />
+}
+
+const BeforeBillpilotSection = () => {
+  return <BeforeBillpilot/>
+}
+
+const ProjectToInvoiceSection = () => {
+  return <ProjectToInvoice/>
 }
 
 const HighlightsSection = () => {
 
   return (
-    <Highlights>
+    <Highlights >
       <HighlightsItem colSpan={[1, null, 2]} title="A Quality Product that Speaks for Itself ">
         <VStack alignItems="flex-start" spacing="8">
           <Text color="muted" fontSize="xl">
@@ -451,11 +466,11 @@ const PricingSection = () => {
 }
 
 const FaqSection = () => {
-  return <Faq {...faq} />
+  return <Faq id="resources" {...faq} />
 }
 
 const ContactFormSection = () => {
-  return <ContactForm id="contact"/>
+  return <ContactForm id="contact" />
 }
 
 export default Home

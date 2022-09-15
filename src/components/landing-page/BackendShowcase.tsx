@@ -15,7 +15,7 @@ export const BackendShowcase: React.FC<ContactFormProps> = (props) => {
                 <Center>
                     <Stack direction="row" height="full" align="flex-start">
                         <VStack flex="1" spacing={[4, null, 8]} alignItems="stretch">
-                            <SimpleGrid columns={{ base: 1, sm: 2 }} spacing='20'>
+                            <SimpleGrid columns={{ base: 1, sm: 2 }} spacing='10'>
                                 <Box >
                                     <Flex flexDirection={'column'}>
                                         <picture>
@@ -26,7 +26,7 @@ export const BackendShowcase: React.FC<ContactFormProps> = (props) => {
                                             />
                                         </picture>
                                         <Text px='10'>
-                                            Bruh
+                                            Invoice by project
                                         </Text>
                                     </Flex>
                                 </Box>
@@ -40,7 +40,7 @@ export const BackendShowcase: React.FC<ContactFormProps> = (props) => {
                                             />
                                         </picture>
                                         <Text px='10'>
-                                            Bruh
+                                            Invoice by issue
                                         </Text>
                                     </Flex>
                                 </Box>
@@ -54,7 +54,7 @@ export const BackendShowcase: React.FC<ContactFormProps> = (props) => {
                                         />
                                     </picture>
                                     <Text px='10'>
-                                            Bruh
+                                            Label Invoices
                                         </Text>
                                     </Flex>
                                 </Box>
@@ -68,7 +68,7 @@ export const BackendShowcase: React.FC<ContactFormProps> = (props) => {
                                         />
                                     </picture>
                                     <Text px='10'>
-                                            Bruh
+                                            Keep track of Invoices
                                         </Text>
                                     </Flex>
                                 </Box>
