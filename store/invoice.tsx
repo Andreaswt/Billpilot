@@ -79,7 +79,13 @@ export interface DiscountsState {
     }[],
 }
 
-interface CreateInvoiceState extends InvoiceState, TimeItemsState, FixedPriceTimeItemsState, TaxesState, DiscountsState, BillIssuesState {
+interface EconomicOptions {
+    text1: string,
+    ourReference: string,
+    customerContact: string
+}
+
+interface CreateInvoiceState extends InvoiceState, TimeItemsState, FixedPriceTimeItemsState, TaxesState, DiscountsState, BillIssuesState, EconomicOptions {
     setInvoice: (newInvoice: InvoiceState) => void,
     pickProject: (projectKey: string) => void,
     pickIssues: (pickedIssues: PickedIssue[]) => void,
@@ -117,6 +123,9 @@ const useCreateInvoiceStore = create<CreateInvoiceState>((set) => ({
     fixedPriceTimeItems: [],
     taxes: [],
     discounts: [],
+    text1: "",
+    ourReference: "",
+    customerContact: "",
     setInvoice: (newInvoice: InvoiceState) => set(newInvoice),
     pickProject: (projectKey: string) => set((state) => ({ ...state, pickedProject: projectKey })),
     pickIssues: (pickedIssues: PickedIssue[]) => set((state) => ({...state, pickedIssues: pickedIssues})),

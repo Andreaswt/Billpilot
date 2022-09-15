@@ -1,7 +1,7 @@
-import { Button, Flex, FormControl, FormErrorMessage, FormLabel, Heading, Input, Select, Textarea } from '@chakra-ui/react';
+import { Button, Flex, FormControl, FormErrorMessage, FormLabel, Heading, Input, Select, Textarea, Text } from '@chakra-ui/react';
 import { Dispatch, SetStateAction } from 'react';
 
-import { Card, CardBody, FormLayout } from "@saas-ui/react";
+import { Card, CardBody, Divider, FormLayout } from "@saas-ui/react";
 
 import moment from 'moment';
 import { useForm } from 'react-hook-form';
@@ -11,7 +11,7 @@ interface IProps {
     setStep: Dispatch<SetStateAction<number>>
 }
 
-const InvoiceInformation = (props: IProps) => {
+const EconomicOptions = (props: IProps) => {
     const { setStep } = props
     const store = useCreateInvoiceStore();
 
@@ -32,6 +32,11 @@ const InvoiceInformation = (props: IProps) => {
                 invoiceLayout: store.invoiceLayout,
                 notesForClient: store.notesForClient
             },
+            economicOptions: {
+                text1: store.text1,
+                ourReference: store.ourReference,
+                customerContact: store.customerContact
+            }
         },
     });
 
@@ -51,7 +56,7 @@ const InvoiceInformation = (props: IProps) => {
     }
 
     interface FormInvoiceState {
-        invoiceInformation: {        
+        invoiceInformation: {
             title: string,
             status: string,
             invoiceNumber: string,
@@ -64,6 +69,12 @@ const InvoiceInformation = (props: IProps) => {
             client: string,
             invoiceLayout: string,
             notesForClient: string,
+        },
+
+        economicOptions: {
+            text1: string
+            ourReference: string
+            customerContact: string
         }
     }
 
@@ -77,7 +88,12 @@ const InvoiceInformation = (props: IProps) => {
                     <FormLayout>
                         <FormLayout>
                             <FormControl isInvalid={!!errors.invoiceInformation?.title}>
-                                <FormLabel htmlFor={`invoiceInformation.title`}>Name</FormLabel>
+                                <FormLabel htmlFor={`invoiceInformation.title`}>
+                                    <Flex gap={1}>
+                                        Name
+                                        <Text color="red" size="sm">*</Text>
+                                    </Flex>
+                                </FormLabel>
                                 <Flex flexDirection="column">
                                     <Input
                                         id='title'
@@ -101,9 +117,7 @@ const InvoiceInformation = (props: IProps) => {
                                         id='status'
                                         variant="filled"
                                         placeholder="Select option"
-                                        {...register(`invoiceInformation.status`, {
-                                            required: 'Status is required',
-                                        })}>
+                                        {...register(`invoiceInformation.status`)}>
                                         <option value="Scheme 1">Scheme 1</option>
                                         <option value="Scheme 2">Scheme 2</option>
                                     </Select>
@@ -118,9 +132,7 @@ const InvoiceInformation = (props: IProps) => {
                                     <Input
                                         id='invoiceNumber'
                                         variant="filled"
-                                        {...register(`invoiceInformation.invoiceNumber`, {
-                                            required: 'Invoice number is required',
-                                        })}
+                                        {...register(`invoiceInformation.invoiceNumber`)}
                                     />
                                     <FormErrorMessage>
                                         {errors.invoiceInformation?.invoiceNumber?.message}
@@ -134,9 +146,7 @@ const InvoiceInformation = (props: IProps) => {
                                         id='currency'
                                         variant="filled"
                                         placeholder="Select option"
-                                        {...register(`invoiceInformation.currency`, {
-                                            required: 'Currency is required',
-                                        })}>
+                                        {...register(`invoiceInformation.currency`)}>
                                         <option value="Scheme 1">Scheme 1</option>
                                         <option value="Scheme 2">Scheme 2</option>
                                     </Select>
@@ -155,9 +165,7 @@ const InvoiceInformation = (props: IProps) => {
                                             id='invoicedDatesFrom'
                                             type="date"
                                             variant="filled"
-                                            {...register(`invoiceInformation.invoicedDatesFrom`, {
-                                                required: 'Invoice from is required',
-                                            })}
+                                            {...register(`invoiceInformation.invoicedDatesFrom`)}
                                         />
                                         <FormErrorMessage>
                                             {errors.invoiceInformation?.invoicedDatesFrom?.message}
@@ -171,9 +179,7 @@ const InvoiceInformation = (props: IProps) => {
                                             id='invoicedDatesTo'
                                             type="date"
                                             variant="filled"
-                                            {...register(`invoiceInformation.invoicedDatesTo`, {
-                                                required: 'Invoice to is required',
-                                            })}
+                                            {...register(`invoiceInformation.invoicedDatesTo`)}
                                         />
                                         <FormErrorMessage>
                                             {errors.invoiceInformation?.invoicedDatesTo?.message}
@@ -188,9 +194,7 @@ const InvoiceInformation = (props: IProps) => {
                                         id='issueDate'
                                         type="date"
                                         variant="filled"
-                                        {...register(`invoiceInformation.issueDate`, {
-                                            required: 'Issue date is required',
-                                        })}
+                                        {...register(`invoiceInformation.issueDate`)}
                                     />
                                     <FormErrorMessage>
                                         {errors.invoiceInformation?.issueDate?.message}
@@ -202,11 +206,9 @@ const InvoiceInformation = (props: IProps) => {
                                 <Flex flexDirection="column">
                                     <Input
                                         id='dueDate'
-                                        type="date" 
+                                        type="date"
                                         variant="filled"
-                                        {...register(`invoiceInformation.dueDate`, {
-                                            required: 'Due date is required',
-                                        })}
+                                        {...register(`invoiceInformation.dueDate`)}
                                     />
                                     <FormErrorMessage>
                                         {errors.invoiceInformation?.dueDate?.message}
@@ -222,12 +224,10 @@ const InvoiceInformation = (props: IProps) => {
                                         id='roundingScheme'
                                         variant="filled"
                                         placeholder="Select option"
-                                        {...register(`invoiceInformation.roundingScheme`, {
-                                            required: 'Rounding scheme is required',
-                                        })}>
-                                            <option value="Scheme 1">Scheme 1</option>
-                                            <option value="Scheme 2">Scheme 2</option>
-                                        </Select>
+                                        {...register(`invoiceInformation.roundingScheme`)}>
+                                        <option value="Scheme 1">Scheme 1</option>
+                                        <option value="Scheme 2">Scheme 2</option>
+                                    </Select>
                                     <FormErrorMessage>
                                         {errors.invoiceInformation?.roundingScheme?.message}
                                     </FormErrorMessage>
@@ -241,12 +241,10 @@ const InvoiceInformation = (props: IProps) => {
                                         id='client'
                                         variant="filled"
                                         placeholder="Select option"
-                                        {...register(`invoiceInformation.client`, {
-                                            required: 'Client is required',
-                                        })}>
-                                            <option value="Client 1">Client 1</option>
-                                            <option value="Client 2">Client 2</option>
-                                        </Select>
+                                        {...register(`invoiceInformation.client`)}>
+                                        <option value="Client 1">Client 1</option>
+                                        <option value="Client 2">Client 2</option>
+                                    </Select>
                                     <FormErrorMessage>
                                         {errors.invoiceInformation?.client?.message}
                                     </FormErrorMessage>
@@ -259,12 +257,10 @@ const InvoiceInformation = (props: IProps) => {
                                         id='invoiceLayout'
                                         variant="filled"
                                         placeholder="Select option"
-                                        {...register(`invoiceInformation.invoiceLayout`, {
-                                            required: 'Invoice layout is required',
-                                        })}>
-                                            <option value="Layout 1">Layout 1</option>
-                                            <option value="Layout 2">Layout 2</option>
-                                        </Select>
+                                        {...register(`invoiceInformation.invoiceLayout`)}>
+                                        <option value="Layout 1">Layout 1</option>
+                                        <option value="Layout 2">Layout 2</option>
+                                    </Select>
                                     <FormErrorMessage>
                                         {errors.invoiceInformation?.invoiceLayout?.message}
                                     </FormErrorMessage>
@@ -278,15 +274,70 @@ const InvoiceInformation = (props: IProps) => {
                                     <Textarea
                                         id='notesForClient'
                                         variant="filled"
-                                        {...register(`invoiceInformation.notesForClient`, {
-                                            required: 'Notes for client is required',
-                                        })}
+                                        {...register(`invoiceInformation.notesForClient`)}
                                     />
                                     <FormErrorMessage>
                                         {errors.invoiceInformation?.notesForClient?.message}
                                     </FormErrorMessage>
                                 </Flex>
                             </FormControl>
+                        </FormLayout>
+                    </FormLayout>
+                    <Divider mt={4} label='E-conomic options' />
+                    <FormLayout>
+                        <FormLayout>
+                            <FormControl isInvalid={!!errors.economicOptions?.text1}>
+                                <FormLabel htmlFor={`economicOptions.text1`}>Text 1</FormLabel>
+                                <Flex flexDirection="column">
+                                    <Textarea
+                                        id='text1'
+                                        placeholder="Enter Text 1"
+                                        variant="filled"
+                                        {...register(`economicOptions.text1`)}
+                                    />
+                                    <FormErrorMessage>
+                                        {errors.economicOptions?.text1?.message}
+                                    </FormErrorMessage>
+                                </Flex>
+                            </FormControl>
+                        </FormLayout>
+                        <FormLayout columns={2}>
+                            <FormLayout>
+                                <FormControl isInvalid={!!errors.economicOptions?.ourReference}>
+                                    <FormLabel htmlFor={`economicOptions.ourReference`}>Our Reference</FormLabel>
+                                    <Flex flexDirection="column">
+                                        <Select
+                                            id='status'
+                                            variant="filled"
+                                            placeholder="Select Our Reference"
+                                            {...register(`economicOptions.ourReference`)}>
+                                            <option value="Scheme 1">Scheme 1</option>
+                                            <option value="Scheme 2">Scheme 2</option>
+                                        </Select>
+                                        <FormErrorMessage>
+                                            {errors.economicOptions?.ourReference?.message}
+                                        </FormErrorMessage>
+                                    </Flex>
+                                </FormControl>
+                            </FormLayout>
+                            <FormLayout>
+                                <FormControl isInvalid={!!errors.economicOptions?.customerContact}>
+                                    <FormLabel htmlFor={`economicOptions.customerContact`}>Customer Contact</FormLabel>
+                                    <Flex flexDirection="column">
+                                        <Select
+                                            id='status'
+                                            variant="filled"
+                                            placeholder="Select Customer Contact"
+                                            {...register(`economicOptions.customerContact`)}>
+                                            <option value="Scheme 1">Scheme 1</option>
+                                            <option value="Scheme 2">Scheme 2</option>
+                                        </Select>
+                                        <FormErrorMessage>
+                                            {errors.economicOptions?.customerContact?.message}
+                                        </FormErrorMessage>
+                                    </Flex>
+                                </FormControl>
+                            </FormLayout>
                         </FormLayout>
                     </FormLayout>
                     <Flex justifyContent="space-between">
@@ -299,4 +350,4 @@ const InvoiceInformation = (props: IProps) => {
     )
 }
 
-export default InvoiceInformation;
+export default EconomicOptions;

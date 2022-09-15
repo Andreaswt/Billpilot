@@ -64,13 +64,14 @@ const Issues = (props: IProps) => {
             let storeSelected: string[] = []
             store.pickedIssues.forEach(item => {
                 const issueIndex = data.issues.findIndex(x => x.key === item.key && x.id === item.id)
-                if (!issueIndex) return
+                if (!issueIndex && issueIndex != 0) return
 
                 storeSelected.push(issueIndex.toString())
             })
             
             setSelected(storeSelected)
-        }
+        },
+        refetchOnWindowFocus: false
     });
 
     function pickIssues() {
@@ -139,10 +140,11 @@ const Issues = (props: IProps) => {
                 <>
                     <InputGroup size='sm'>
                         <Input defaultValue={store.pickedIssues.find(x => x.key === data.row.original.key)?.updatedHoursSpent ?? 0} onChange={(e: any) => {
-                            // Update state by creating a copy and assigning it again
-                            const copy = JSON.parse(JSON.stringify(updatedHoursSpent))
-                            copy[data.row.original.key.toString()] = { updatedTimeSpent: parseInt(e.target.value) }
-                            setUpdatedHoursSpent(copy)
+                            setUpdatedHoursSpent(prevState => {
+                                const newState = prevState;
+                                newState[data.row.original.key.toString()] = { updatedTimeSpent: parseInt(e.target.value) }
+                                return newState
+                            })
                         }} min={0} type="number"></Input>
                         <InputRightElement pointerEvents='none'>
                             <Text mr={6} color='gray.300'>Hours</Text>
@@ -158,9 +160,11 @@ const Issues = (props: IProps) => {
                 <>
                     <InputGroup size='sm'>
                         <Input defaultValue={store.pickedIssues.find(x => x.key === data.row.original.key)?.discountPercentage ?? 0} onChange={(e: any) => {
-                            const copy = JSON.parse(JSON.stringify(discountPercentage))
-                            copy[data.row.original.key.toString()] = { discountPercentage: parseInt(e.target.value) }
-                            setDiscountPercentage(copy)
+                            setDiscountPercentage(prevState => {
+                                const newState = prevState;
+                                newState[data.row.original.key.toString()] = { discountPercentage: parseInt(e.target.value) }
+                                return newState
+                            })
                         }} min={0} max={100} type="number"></Input>
                         <InputRightElement pointerEvents='none'>
                             <TbPercentage color='gray.300' />
@@ -174,36 +178,13 @@ const Issues = (props: IProps) => {
     const totalTime = useMemo(() => {
         let total = 0
 
-        // TODO: load from store if none are selected
-        // if (selected.length === 0) {
-        //     store.pickedIssues.forEach(item => {
-        //         let rowTotal = item.hoursSpent
-        //         if (item.updatedHoursSpent && item.updatedHoursSpent > 0) {
-        //             rowTotal = item.updatedHoursSpent
-        //         }
-
-        //         if (item.discountPercentage && item.discountPercentage > 0) {
-        //             rowTotal = ((100 - item.discountPercentage) / 100) * rowTotal
-        //         }
-
-        //         total += rowTotal
-        //     })
-
-        //     return total
-        // }
-
         selected.forEach(item => {
             const rowIssue = issues[parseInt(item)]
             const updatedHoursSpentForIssue = updatedHoursSpent[rowIssue.key]?.updatedTimeSpent
-            const discountPercentageForIssue = discountPercentage[rowIssue.key]?.discountPercentage
 
             let rowTotal = rowIssue.hoursSpent
             if (updatedHoursSpentForIssue && updatedHoursSpentForIssue > 0) {
                 rowTotal = updatedHoursSpentForIssue
-            }
-
-            if (discountPercentageForIssue && discountPercentageForIssue > 0) {
-                rowTotal = ((100 - discountPercentageForIssue) / 100) * rowTotal
             }
 
             total += rowTotal

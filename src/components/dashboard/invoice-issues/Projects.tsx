@@ -34,7 +34,8 @@ const Projects = (props: IProps) => {
         onSuccess(data) {
             setPagination({ amount: data.amount, total: data.total })
             setProjects(data.projects)
-        }
+        },
+        refetchOnWindowFocus: false
     });
 
     function pickProject(key: string) {
