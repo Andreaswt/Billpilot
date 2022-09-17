@@ -1,4 +1,5 @@
-import { FixedPriceTimeItem, InvoiceStatus, TimeItem } from "@prisma/client";
+import { Currency, FixedPriceTimeItem, InvoiceStatus, RoundingScheme, TimeItem } from "@prisma/client";
+import { withCoalescedInvoke } from "next/dist/lib/coalesced-function";
 import { prisma } from "../src/server/db/client";
 import { getAllCustomers, getAllLayouts, getAllPaymentTerms, getAllProducts, getAllUnits, getAllVatZones } from "./integrations/e-conomic";
 
@@ -18,6 +19,8 @@ interface ICreateInvoiceInput {
             name: string
             time: number
             hourlyWage: number
+            updatedTimeSpent: number
+            discountPercentage: number
             discountsAppliedByName: string[]
             fixedPriceDiscountsAppliedByName: string[]
             taxesAppliedByName: string[]
@@ -46,31 +49,73 @@ interface ICreateInvoiceInput {
     }
 }
 
+export interface ICreateIssueInvoice {
+    title: string,
+    currency: string,
+    dueDate: Date,
+    roundingScheme: string,
+    economicCustomer: string,
+    economicCustomerPrice: number,
+    economicText1: string,
+    economicOurReference: string,
+    economicCustomerContact: string
+
+    issueTimeItems: {
+        jiraId: string,
+        jiraKey: string,
+        name: string,
+        hoursSpent: number
+        updatedHoursSpent: number | null,
+        discountPercentage: number | null
+    }[]
+}
+
 export async function createInvoice(invoice: ICreateInvoiceInput, organizationId: string) {
     // Insert into invoice
     await prisma.invoice.create({
         data: {
             ...invoice.invoice,
             organizationId: organizationId,
-
         },
     })
 
-    // Insert into time items
+}
 
-    // Insert into fixed price time items
+export async function createIssueInvoice(invoice: ICreateIssueInvoice, organizationId: string) {
+    const { issueTimeItems, currency, roundingScheme, ...invoiceWithoutIssues } = invoice;
 
-    // Insert into discounts
+    const mappedIssueTimeItems = invoice.issueTimeItems.map(item => ({
+        jiraId: item.jiraId, 
+        jiraKey: item.jiraKey, 
+        name: item.name, 
+        hours: item.hoursSpent, 
+        updatedHoursSpent: item.updatedHoursSpent ?? 0,
+        discountPercentage: item.discountPercentage ?? 0,
+        organizationId: organizationId,
+    }))
 
-    // Insert into fixed price discounts
-
-    // Insert into taxes
+    await prisma.issueInvoice.create({
+        data: { 
+            ...invoiceWithoutIssues, 
+            currency: <Currency> currency, 
+            roundingScheme: <RoundingScheme> roundingScheme, 
+            organizationId: organizationId,
+            issueTimeItems: {
+                createMany: {
+                    data: mappedIssueTimeItems
+                }
+            }
+        }
+    })
 }
 
 export async function getInvoiceForExportToIntegration(invoiceId: string, organizationId: string) {
     let invoiceDb = await prisma.invoice.findUniqueOrThrow({
         where: {
-            id: invoiceId
+            organizationsInvoice: {
+                id: invoiceId,
+                organizationId: organizationId,
+            }
         },
         include: {
             timeItems: true,
@@ -123,11 +168,6 @@ export async function getInvoiceForExportToIntegration(invoiceId: string, organi
                     },
                 }
             },
-            currency: {
-                select: {
-                    abbreviation: true
-                }
-            }
         }
     })
 
@@ -248,7 +288,15 @@ export function calculateDiscountPercentage(fixedPriceDiscount: number | undefin
 
 export async function getInvoice(invoiceId: string, organizationId: string) {
     // TODO: implement
-    throw new Error("Not implemented");
+    let invoice = await prisma.invoice.findUnique({
+        where: {
+            organizationsInvoice: {
+                id: invoiceId,
+                organizationId: organizationId
+            }
+        }
+    })
+    // throw new Error("Not implemented");
 }
 
 export async function getTotalInvoiced(organizationId: String) {

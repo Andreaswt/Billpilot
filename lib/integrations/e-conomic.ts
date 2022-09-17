@@ -1,7 +1,7 @@
 import { logger } from "../logger";
 import { prisma } from "../../src/server/db/client";
 import { connect } from "http2";
-import { CreateInvoice, Customer, Layout, Line, PaymentTerms, Product, SalesPerson, Unit, VatZone } from "../../types/integrations/economic";
+import { Contact, CreateInvoice, Customer, Layout, Line, PaymentTerms, Product, SalesPerson, Unit, VatZone } from "../../types/integrations/economic";
 import { Invoice, Invoices, LineItem } from "xero-node";
 import { custom } from "zod";
 import { SuperFundProducts } from "xero-node/dist/gen/model/payroll-au/superFundProducts";
@@ -187,7 +187,7 @@ export async function createInvoice(invoiceId: string, organizationId: string) {
     let createInvoice: CreateInvoice = {
         date: invoiceDb.issueDate.toISOString().slice(0, 10),
         dueDate: invoiceDb.dueDate.toISOString().slice(0, 10),
-        currency: invoiceDb.currency?.abbreviation ?? "USD", // Default to USD
+        currency: invoiceDb.currency ?? "USD", // Default to USD
         paymentTerms: paymentTerms.collection[0]!,
         customer: customers.collection[0]!,
         recipient: {
@@ -202,6 +202,7 @@ export async function createInvoice(invoiceId: string, organizationId: string) {
         references: {
             salesPerson: {
                 employeeNumber: employees.collection[0]!.employeeNumber,
+                name: employees.collection[0]!.name,
             },
             other: "another person"
         }
@@ -321,4 +322,8 @@ export async function getAllUnits(organizationId: string) {
 
 export async function getAllEmployees(organizationId: string) {
     return await request<{ collection: SalesPerson[] }>("employees", httpMethod.get, organizationId);
+}
+
+export async function getCustomerContacts(organizationId: string, customerNumber: number) {
+    return await request<{ collection: Contact[] }>("customers/" + customerNumber + "/contacts", httpMethod.get, organizationId);
 }

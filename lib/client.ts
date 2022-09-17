@@ -38,10 +38,13 @@ export async function updateClient(client: Client) {
     })
 }
 
-export async function deleteClient(clientId: string) {
+export async function deleteClient(name: string, organizationId: string) {
     return await prisma.client.delete({
         where: {
-            id: clientId
+            organizationsClient: {
+                name: name,
+                organizationId: organizationId
+            }
         }
     })
 }

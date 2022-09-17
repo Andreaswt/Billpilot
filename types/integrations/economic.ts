@@ -91,10 +91,17 @@ export interface References {
 
 export interface SalesPerson {
     employeeNumber: number;
+    name: string;
 }
 
 export interface Note {
     heading: string;
     // textLine1: string;
     // textLine2: string;
+}
+
+export interface Contact {
+    customer: Customer,
+    name: string,
+    customerContactNumber: number
 }

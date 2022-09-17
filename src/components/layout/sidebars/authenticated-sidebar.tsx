@@ -94,6 +94,11 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
                 icon={<AiFillFileAdd />}
               />
               <AppSidebarLink
+                href={"/dashboard/invoiceissues"}
+                label="Invoice issues"
+                icon={<AiFillFileAdd />}
+              />
+              <AppSidebarLink
                 href={"/dashboard/invoices"}
                 label="Invoices"
                 icon={<IoIosPaper />}

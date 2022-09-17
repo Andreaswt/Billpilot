@@ -1,7 +1,8 @@
 import * as React from 'react'
 
-import { Flex, FlexProps } from '@chakra-ui/react'
+import { Flex, FlexProps, Center } from '@chakra-ui/react'
 import { AuthProps } from '@saas-ui/auth'
+import { Loading } from '@saas-ui/react'
 import { AppShell, Page } from '@saas-ui/pro'
 import { useLocation } from '@saas-ui/router'
 import { useSession } from 'next-auth/react'
@@ -97,14 +98,21 @@ export const PublicLayout: React.FC<LayoutProps> = ({
     )
 }
 
-// export const PublicLayout: React.FC<LayoutProps> = ({
-//     children,
-//     ...rest
-// }) => {
-//     return (
-//         <AppShell>{children}</AppShell>
-//     )
-// }
+/**
+ * Layout for loading
+ */
+ export const LoadingScreen: React.FC<LayoutProps> = ({
+    children,
+    ...rest
+}) => {
+    return (
+        <AppShell>
+            <Center h="100vh" as="main">
+                <Loading />
+            </Center>
+        </AppShell>
+    )
+}
 
 /**
  * Application layout
@@ -139,7 +147,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         LayoutComponent = AuthenticatedLayout
     }
     else {
-        LayoutComponent = PublicLayout
+        LayoutComponent = LoadingScreen
     }
 
     return (

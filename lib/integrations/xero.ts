@@ -15,6 +15,7 @@ export async function getXeroClient(organizationId?: string) {
         // If tokenset doesn't exist the client is returned, so that it can be used to get the tokenset
         // If tokenset doesn't exist, an error is throw.
         let tokenset: TokenSet;
+
         try {
             tokenset = await getXeroTokenset(organizationId);
         }
