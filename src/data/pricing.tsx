@@ -12,7 +12,7 @@ const pricing = {
       isRecommended: true,
       features: [
         {
-          title: 'All other features',
+          title: 'All features',
         },
         {
           title: 'Onboarding meetings',
@@ -24,7 +24,7 @@ const pricing = {
     },
     {
       id: 'startups',
-      title: 'Startups',
+      title: 'Startup',
       description: 'Unlimited license for growing startups.',
       price: (
         <HStack>
@@ -69,8 +69,8 @@ const pricing = {
       },
     },
     {
-      id: 'teams',
-      title: 'Teams',
+      id: 'team',
+      title: 'Team',
       description: 'Unlimited license for growing teams.',
       isRecommended: true,
       price: (
