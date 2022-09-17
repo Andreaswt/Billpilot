@@ -32,6 +32,7 @@ const Issues = (props: IProps) => {
     const [searchTerm, setSearchTerm] = useState<string>("")
     const [pagination, setPagination] = useState<IPagination>({ amount: 0, total: 0 })
     const [issues, setIssues] = useState<TableIssue[]>([])
+    const [pickAtLeastOneIssue, setPickAtLeastOneIssue] = useState(false)
 
     const [updatedHoursSpent, setUpdatedHoursSpent] = useState<{ [issueKey: string]: { updatedTimeSpent: number } }>(() => {
         let updatedHoursSpent: { [issueKey: string]: { updatedTimeSpent: number } } = {}
@@ -69,7 +70,7 @@ const Issues = (props: IProps) => {
 
                 storeSelected.push(issueIndex.toString())
             })
-            
+
             setSelected(storeSelected)
         },
         refetchOnWindowFocus: false
@@ -77,6 +78,11 @@ const Issues = (props: IProps) => {
 
     function pickIssues() {
         let selectedData: PickedIssue[] = []
+
+        if (selected.length === 0) {
+            setPickAtLeastOneIssue(true)
+            return
+        }
 
         selected.forEach((item) => {
             const rowIssue = issues[parseInt(item)]
@@ -236,7 +242,14 @@ const Issues = (props: IProps) => {
                     }
                     <Flex justifyContent="space-between">
                         <Button mt={6} colorScheme="primary" onClick={() => setStep((step) => step - 1)}>Previous</Button>
-                        <Button mt={6} colorScheme="primary" onClick={() => pickIssues()}>Confirm selected</Button>
+                        <Flex gap={2} flexDirection="column">
+                            <Button mt={6} colorScheme="primary" onClick={() => pickIssues()}>Confirm selected</Button>
+                            {
+                                pickAtLeastOneIssue
+                                    ? <Text color="red.400">Pick at least 1 issue.</Text>
+                                    : <></>
+                            }
+                        </Flex>
                     </Flex>
                 </Flex>
             </CardBody>
