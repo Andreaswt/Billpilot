@@ -202,6 +202,7 @@ export async function createInvoice(invoiceId: string, organizationId: string) {
         references: {
             salesPerson: {
                 employeeNumber: employees.collection[0]!.employeeNumber,
+                name: employees.collection[0]!.name,
             },
             other: "another person"
         }

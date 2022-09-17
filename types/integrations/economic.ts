@@ -91,6 +91,7 @@ export interface References {
 
 export interface SalesPerson {
     employeeNumber: number;
+    name: string;
 }
 
 export interface Note {

@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { createInvoice, createIssueInvoice, getInvoice, ICreateIssueInvoice } from "../../../lib/invoice";
 import { z } from "zod";
 import { Currency, Invoice, InvoiceStatus, RoundingScheme } from "@prisma/client";
-import { getAllCustomers, getCustomerContacts, test } from "../../../lib/integrations/e-conomic";
+import { getAllCustomers, getAllEmployees, getCustomerContacts, test } from "../../../lib/integrations/e-conomic";
 import { TbRuler2 } from "react-icons/tb";
 
 export const invoicesRouter = createRouter()
@@ -65,8 +65,8 @@ export const invoicesRouter = createRouter()
       }),
     async resolve({ ctx, input }) {
       // E-conomic options
-      const ourReferencesCollection = await getAllCustomers(ctx.organizationId)
-      const ourReferences: { customerNumber: number, name: string }[] = ourReferencesCollection.collection.map(x => ({ customerNumber: x.customerNumber, name: x.name }))
+      const ourReferencesCollection = await getAllEmployees(ctx.organizationId)
+      const ourReferences: { employeeNumber: number, name: string }[] = ourReferencesCollection.collection.map(x => ({ employeeNumber: x.employeeNumber, name: x.name }))
 
       const customerContactsCollection = await getCustomerContacts(ctx.organizationId, input.customerNumber)
       const customerContacts: { customerContactNumber: number, name: string }[] = customerContactsCollection.collection.map(x => ({ customerContactNumber: x.customerContactNumber, name: x.name }))

@@ -12,10 +12,13 @@ export interface InvoiceInformation {
     roundingScheme: string,
     economicOptions: {
         customer: string,
+        customerName: string,
         customerPrice: number,
         text1: string,
         ourReference: string,
+        ourReferenceName: string,
         customerContact: string
+        customerContactName: string
     },
 }
 
@@ -44,10 +47,13 @@ const useInvoiceIssuesStore = create<CreateInvoiceState>((set) => ({
     pickedIssues: [],
     economicOptions: {
         customer: "",
+        customerName: "",
         customerPrice: 0,
         text1: "",
         ourReference: "",
+        ourReferenceName: "",
         customerContact: "",
+        customerContactName: "",
     },
     setInvoiceInformation: (invoiceInformation: InvoiceInformation) => set((state) => ({ ...state, ...invoiceInformation })),
     pickProject: (projectKey: string) => set((state) => ({ ...state, pickedProject: projectKey })),

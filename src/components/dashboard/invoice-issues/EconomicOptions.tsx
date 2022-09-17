@@ -28,10 +28,13 @@ const EconomicOptions = (props: IProps) => {
             },
             economicOptions: {
                 customer: store.economicOptions.customer,
+                customerName: store.economicOptions.customer,
                 customerPrice: store.economicOptions.customerPrice,
                 text1: store.economicOptions.text1,
                 ourReference: store.economicOptions.ourReference,
-                customerContact: store.economicOptions.customerContact
+                ourReferenceName: store.economicOptions.ourReferenceName,
+                customerContact: store.economicOptions.customerContact,
+                customerContactName: store.economicOptions.customerContactName
             }
         },
     });
@@ -46,7 +49,23 @@ const EconomicOptions = (props: IProps) => {
         const dateFields = {
             dueDate: new Date(data.invoiceInformation.dueDate),
         }
-        store.setInvoiceInformation({ ...data.invoiceInformation, ...dateFields, economicOptions: { ...data.economicOptions } })
+
+        // We can't show customernumber, referencenumber etc in confirmation step, so the actual names are stores as well
+        const customerName = invoiceOptionsData?.economicCustomers.find(x => x.customerNumber === parseInt(data.economicOptions.customer))?.name ?? ""
+        const ourReferenceName = economicData?.ourReferences.find(x => x.employeeNumber === parseInt(data.economicOptions.ourReference))?.name ?? ""
+        const ourContactName = economicData?.customerContacts.find(x => x.customerContactNumber === parseInt(data.economicOptions.customerContact))?.name ?? ""
+
+        store.setInvoiceInformation({
+            ...data.invoiceInformation,
+            ...dateFields,
+            economicOptions: {
+                ...data.economicOptions,
+                customerName: customerName,
+                ourReferenceName: ourReferenceName,
+                customerContactName: ourContactName
+            }
+        })
+
         setStep((step) => step + 1)
     }
 
@@ -67,7 +86,7 @@ const EconomicOptions = (props: IProps) => {
         }
     }
 
-    const { data, isLoading, isRefetching } = trpc.useQuery(["invoices.getInvoiceOptions"], {
+    const { data: invoiceOptionsData, isLoading: invoiceOptionsIsLoading, isRefetching: invoiceOptionsIsRefetching } = trpc.useQuery(["invoices.getInvoiceOptions"], {
         refetchOnWindowFocus: false
     });
 
@@ -91,7 +110,7 @@ const EconomicOptions = (props: IProps) => {
             </Flex>}>
             <CardBody>
                 {
-                    isLoading || isRefetching || !data
+                    invoiceOptionsIsLoading || invoiceOptionsIsRefetching || !invoiceOptionsData
                         ? <Center><Spinner /></Center>
                         : <form onSubmit={handleSubmit(onSubmit)}>
                             <VStack divider={<StackDivider />} align="stretch" spacing={8} pb="16">
@@ -135,7 +154,7 @@ const EconomicOptions = (props: IProps) => {
                                                                 variant="filled"
                                                                 placeholder="Select option"
                                                                 {...register(`invoiceInformation.currency`)}>
-                                                                {data.currencies.map(item => {
+                                                                {invoiceOptionsData.currencies.map(item => {
                                                                     return (
                                                                         <option key={item} value={item}>{item}</option>
                                                                     )
@@ -168,7 +187,7 @@ const EconomicOptions = (props: IProps) => {
                                                                 variant="filled"
                                                                 placeholder="Select option"
                                                                 {...register(`invoiceInformation.roundingScheme`)}>
-                                                                {data.roundingScheme.map(item => {
+                                                                {invoiceOptionsData.roundingScheme.map(item => {
                                                                     return (
                                                                         <option key={item} value={item}>{item}</option>
                                                                     )
@@ -202,7 +221,7 @@ const EconomicOptions = (props: IProps) => {
                                                                 placeholder="Select Customer"
                                                                 {...register(`economicOptions.customer`)}>
                                                                 {
-                                                                    data?.economicCustomers.map(item => {
+                                                                    invoiceOptionsData?.economicCustomers.map(item => {
                                                                         return (<option key={item.customerNumber} value={item.customerNumber}>{item.name}</option>)
                                                                     })
                                                                 }
@@ -265,7 +284,7 @@ const EconomicOptions = (props: IProps) => {
                                                                             {
                                                                                 !economicIsRefetching || economicIsLoading || !economicData
                                                                                     ? economicData?.ourReferences.map(item => {
-                                                                                        return (<option key={item.customerNumber} value={item.customerNumber}>{item.name}</option>)
+                                                                                        return (<option key={item.employeeNumber} value={item.employeeNumber}>{item.name}</option>)
                                                                                     })
                                                                                     : null
                                                                             }
