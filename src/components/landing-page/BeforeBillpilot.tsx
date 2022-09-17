@@ -10,7 +10,7 @@ export const BeforeBillpilot: React.FC = (props) => {
     return (
         <Center id="backendshowcase" py={{ base: '50', md: '50', sm: '50' }}>
             <Flex maxWidth="container.xl" flexDirection = {{md: 'row', base: 'column'}} py={{ base: '0', md: '0', sm: '0'}} px={{ base: 10, lg: 8 }} id="backendshowcase" w="100%" justifyContent="space-evenly">
-                    <Flex px={{md: '20', base: '10'}} w="50%" justifyContent="start" w={{ base: "100%", md: '50%'}}>
+                    <Flex px={{md: '20', base: '10'}} justifyContent="start" w={{ base: "100%", md: '50%'}}>
                         <SectionTitle
                             title={'Before Billpilot'}
                             description={'Manually create every invoice. Copy-paste time from project management software into the invoice format. Manually export time reports and attach them to the invoice. '}

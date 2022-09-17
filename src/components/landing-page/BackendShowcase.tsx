@@ -45,29 +45,29 @@ export const BackendShowcase: React.FC<ContactFormProps> = (props) => {
                                     </Flex>
                                 </Box>
                                 <Box>
-                                <Flex flexDirection={'column'}>
-                                    <picture>
-                                        {/* eslint-disable @next/next/no-img-element */}
-                                        <img
-                                            src="static/screenshots/list.png"
-                                            alt='xero logo'
-                                        />
-                                    </picture>
-                                    <Text px='10'>
+                                    <Flex flexDirection={'column'}>
+                                        <picture>
+                                            {/* eslint-disable @next/next/no-img-element */}
+                                            <img
+                                                src="static/screenshots/list.png"
+                                                alt='xero logo'
+                                            />
+                                        </picture>
+                                        <Text px='10'>
                                             Label Invoices
                                         </Text>
                                     </Flex>
                                 </Box>
                                 <Box>
-                                <Flex flexDirection={'column'}>
-                                    <picture>
-                                        {/* eslint-disable @next/next/no-img-element */}
-                                        <img
-                                            src="static/screenshots/list.png"
-                                            alt='xero logo'
-                                        />
-                                    </picture>
-                                    <Text px='10'>
+                                    <Flex flexDirection={'column'}>
+                                        <picture>
+                                            {/* eslint-disable @next/next/no-img-element */}
+                                            <img
+                                                src="static/screenshots/list.png"
+                                                alt='xero logo'
+                                            />
+                                        </picture>
+                                        <Text px='10'>
                                             Keep track of Invoices
                                         </Text>
                                     </Flex>
