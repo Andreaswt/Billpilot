@@ -1,5 +1,5 @@
-import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, Heading, Input, Select, Spinner, StackDivider, Text, Textarea, VStack } from '@chakra-ui/react';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { Button, Center, Checkbox, Flex, FormControl, FormErrorMessage, FormLabel, Heading, Input, Select, Spinner, StackDivider, Text, Textarea, VStack } from '@chakra-ui/react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import { Card, CardBody, FormLayout } from "@saas-ui/react";
 
@@ -27,6 +27,7 @@ const EconomicOptions = (props: IProps) => {
                 roundingScheme: store.roundingScheme,
             },
             economicOptions: {
+                exportToEconomic: store.economicOptions.exportToEconomic,
                 customer: store.economicOptions.customer,
                 customerName: store.economicOptions.customer,
                 customerPrice: store.economicOptions.customerPrice,
@@ -39,6 +40,7 @@ const EconomicOptions = (props: IProps) => {
         },
     });
 
+    const exportToEconomicField = invoiceInformationForm.watch("economicOptions.exportToEconomic")
     const economicCustomer = invoiceInformationForm.watch("economicOptions.customer")
     const economicCustomerPrice = invoiceInformationForm.watch("economicOptions.customerPrice")
 
@@ -78,6 +80,7 @@ const EconomicOptions = (props: IProps) => {
         },
 
         economicOptions: {
+            exportToEconomic: boolean
             customer: string
             customerPrice: number
             text1: string
@@ -101,7 +104,7 @@ const EconomicOptions = (props: IProps) => {
         if (!isNaN(parseInt(economicCustomer))) {
             economicRefetch()
         }
-    }, [economicCustomer])
+    }, [economicCustomer, economicRefetch])
 
     return (
         <Card title={
@@ -205,9 +208,20 @@ const EconomicOptions = (props: IProps) => {
                                 </Section>
                                 <Section
                                     title="E-conomic"
-                                    description="Options when invoice is exported to Visma E-conomic."
-                                    variant="annotated"
-                                >
+                                    description={
+                                        <Flex flexDirection="column">
+                                            <p>Options when invoice is exported to Visma E-conomic.</p>
+                                            <Flex mt={2} gap={2}>
+                                                <Checkbox
+                                                    id='exportToEconomic'
+                                                    type="checkbox"
+                                                    variant="filled"
+                                                    {...register(`economicOptions.exportToEconomic`)}
+                                                />
+                                                <Text textColor="white">Export to E-conomic?</Text>
+                                            </Flex>
+                                        </Flex>}
+                                    variant="annotated">
                                     <Card>
                                         <CardBody>
                                             <FormLayout>
@@ -218,6 +232,7 @@ const EconomicOptions = (props: IProps) => {
                                                             <Select
                                                                 id='customer'
                                                                 variant="filled"
+                                                                isDisabled={!exportToEconomicField}
                                                                 placeholder="Select Customer"
                                                                 {...register(`economicOptions.customer`)}>
                                                                 {
@@ -241,9 +256,12 @@ const EconomicOptions = (props: IProps) => {
                                                                 <Input
                                                                     id='customerPrice'
                                                                     type="number"
+                                                                    isDisabled={!exportToEconomicField}
                                                                     placeholder="Enter Customer Price"
                                                                     variant="filled"
-                                                                    {...register(`economicOptions.customerPrice`)}
+                                                                    {...register(`economicOptions.customerPrice`, {
+                                                                        valueAsNumber: true
+                                                                    })}
                                                                 />
                                                                 <FormErrorMessage>
                                                                     {errors.economicOptions?.customerPrice?.message}
@@ -261,6 +279,7 @@ const EconomicOptions = (props: IProps) => {
                                                                 <Flex flexDirection="column">
                                                                     <Textarea
                                                                         id='text1'
+                                                                        isDisabled={!exportToEconomicField}
                                                                         placeholder="Enter Text 1"
                                                                         variant="filled"
                                                                         {...register(`economicOptions.text1`)}
@@ -278,6 +297,7 @@ const EconomicOptions = (props: IProps) => {
                                                                     <Flex flexDirection="column">
                                                                         <Select
                                                                             id='status'
+                                                                            isDisabled={!exportToEconomicField}
                                                                             variant="filled"
                                                                             placeholder="Select Our Reference"
                                                                             {...register(`economicOptions.ourReference`)}>
@@ -301,6 +321,7 @@ const EconomicOptions = (props: IProps) => {
                                                                     <Flex flexDirection="column">
                                                                         <Select
                                                                             id='status'
+                                                                            isDisabled={!exportToEconomicField}
                                                                             variant="filled"
                                                                             placeholder="Select Customer Contact"
                                                                             {...register(`economicOptions.customerContact`)}>

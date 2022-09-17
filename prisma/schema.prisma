@@ -287,12 +287,10 @@ model IssueTimeItem {
 
 model IssueInvoice {
   id String @id @default(cuid())
-  name String
+  title String
   currency Currency @default(USD)
   roundingScheme RoundingScheme @default(POINTPOINT)
-  issueDate DateTime
   dueDate DateTime
-  clientName String
   economicCustomer String
   economicCustomerPrice Decimal
   economicText1 String

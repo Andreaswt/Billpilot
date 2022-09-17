@@ -92,7 +92,6 @@ export const invoicesRouter = createRouter()
     input: z.object({
       invoiceInformation: z.object({
         title: z.string(),
-        status: z.string(),
         currency: z.string(),
         dueDate: z.string(),
         roundingScheme: z.string(),
@@ -101,11 +100,12 @@ export const invoicesRouter = createRouter()
         jiraId: z.string(),
         jiraKey: z.string(),
         name: z.string(),
-        hours: z.number(),
+        hoursSpent: z.number(),
         updatedHoursSpent: z.number(),
         discountPercentage: z.number(),
       }).array(),
       economicOptions: z.object({
+        exportToEconomic: z.boolean(),
         customer: z.string(),
         customerPrice: z.number(),
         text1: z.string(),
@@ -114,42 +114,17 @@ export const invoicesRouter = createRouter()
       })
     }),
     async resolve({ ctx, input }) {
-
-      const pickedIssues = input.pickedIssues.map(item => {
-        return {
-          jiraId: item.jiraId,
-          jiraKey: item.jiraKey,
-          name: item.name,
-          hours: item.hours,
-          updatedHoursSpent: item.updatedHoursSpent ?? 0,
-          discountPercentage: item.discountPercentage ?? 0,
-        }
-      })
-
-      let roundingScheme: RoundingScheme = RoundingScheme.POINT
-      switch (input.invoiceInformation.status) {
-        case "point":
-          roundingScheme = RoundingScheme.POINT
-          break;
-        case "pointpoint":
-          roundingScheme = RoundingScheme.POINTPOINT
-          break;
-        case "pointpointpoint":
-          roundingScheme = RoundingScheme.POINTPOINTPOINT
-          break;
-      }
-
       const createInvoiceInput: ICreateIssueInvoice = {
         title: input.invoiceInformation.title,
         currency: input.invoiceInformation.currency,
         dueDate: new Date(input.invoiceInformation.dueDate),
-        roundingScheme: input.invoiceInformation.roundingScheme,
+        roundingScheme: <RoundingScheme> input.invoiceInformation.roundingScheme,
         economicCustomer: input.economicOptions.customer,
         economicCustomerPrice: input.economicOptions.customerPrice,
         economicText1: input.economicOptions.text1,
         economicOurReference: input.economicOptions.ourReference,
         economicCustomerContact: input.economicOptions.customerContact,
-        issueTimeItems: pickedIssues
+        issueTimeItems: [ ...input.pickedIssues ]
       }
 
       return await createIssueInvoice(createInvoiceInput, ctx.organizationId)

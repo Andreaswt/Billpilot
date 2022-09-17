@@ -108,7 +108,7 @@ const Issues = (props: IProps) => {
         })
 
         return selected
-    }, [data])
+    }, [data, store.pickedIssues])
 
     const columns: ColumnDef<TableIssue>[] = [
         {
@@ -192,7 +192,7 @@ const Issues = (props: IProps) => {
         })
 
         return total
-    }, [selected, issues, updatedHoursSpent, discountPercentage])
+    }, [selected, issues, updatedHoursSpent])
 
     const handleSelectedRows = (indexes: string[]) => {
         if (indexes.length === selected.length) {

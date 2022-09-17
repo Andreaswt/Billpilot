@@ -11,6 +11,7 @@ export interface InvoiceInformation {
     dueDate: Date,
     roundingScheme: string,
     economicOptions: {
+        exportToEconomic: boolean,
         customer: string,
         customerName: string,
         customerPrice: number,
@@ -39,13 +40,14 @@ interface CreateInvoiceState extends PickedState, InvoiceInformation {
 
 const useInvoiceIssuesStore = create<CreateInvoiceState>((set) => ({
     title: "",
-    currency: "",
+    currency: "USD",
     dueDate: new Date(),
-    roundingScheme: "",
+    roundingScheme: "POINTPOINT",
     client: "",
     pickedProject: "",
     pickedIssues: [],
     economicOptions: {
+        exportToEconomic: false,
         customer: "",
         customerName: "",
         customerPrice: 0,

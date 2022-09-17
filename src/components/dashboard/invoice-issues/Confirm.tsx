@@ -50,13 +50,35 @@ const columns: ColumnDef<PickedIssue>[] = [
 const ConfirmInvoiceIssues = (props: IProps) => {
     const { setStep } = props
     const store = useInvoiceIssuesStore();
-
-    const utils = trpc.useContext();
     const createIssueInvoice = trpc.useMutation('invoices.createIssueInvoice', {
+        onSuccess: (data) => {
+            console.log("created")
+        }
     });
 
     function submitInvoice() {
-        console.log("submitting invoice")
+        const pickedIssues = store.pickedIssues.map(item =>  ({ 
+            jiraKey: item.key, 
+            jiraId: item.id, 
+            name: item.name,
+            hoursSpent: item.hoursSpent, 
+            updatedHoursSpent: item.updatedHoursSpent ?? 0,
+            discountPercentage: item.discountPercentage ?? 0 }))
+
+        createIssueInvoice.mutate({
+            invoiceInformation: {
+                currency: store.currency,
+                roundingScheme: store.roundingScheme,
+                title: store.title,
+                dueDate: store.dueDate.toString()
+            },
+            pickedIssues: pickedIssues,
+            economicOptions: { ...store.economicOptions }
+        })
+
+        if (createIssueInvoice.error) {
+            alert("fejl")
+        }
     }
 
     return (
@@ -113,7 +135,7 @@ const ConfirmInvoiceIssues = (props: IProps) => {
                 </VStack>
                 <Flex justifyContent="space-between">
                     <Button mt={6} colorScheme="primary" onClick={() => setStep((step) => step - 1)}>Previous</Button>
-                    <Button mt={6} colorScheme="primary" onClick={submitInvoice}>Submit Invoice</Button>
+                    <Button isLoading={createIssueInvoice.isLoading} mt={6} colorScheme="primary" onClick={submitInvoice}>Submit Invoice</Button>
                 </Flex>
             </CardBody>
         </Card >
