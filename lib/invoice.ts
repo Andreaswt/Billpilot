@@ -1,7 +1,7 @@
 import { Currency, FixedPriceTimeItem, InvoiceStatus, RoundingScheme, TimeItem } from "@prisma/client";
 import { withCoalescedInvoke } from "next/dist/lib/coalesced-function";
 import { prisma } from "../src/server/db/client";
-import { getAllCustomers, getAllLayouts, getAllPaymentTerms, getAllProducts, getAllUnits, getAllVatZones } from "./integrations/e-conomic";
+import { createJiraIssueInvoice, getAllCustomers, getAllLayouts, getAllPaymentTerms, getAllProducts, getAllUnits, getAllVatZones } from "./integrations/e-conomic";
 
 interface ICreateInvoiceInput {
     invoice: {
@@ -54,6 +54,7 @@ export interface ICreateIssueInvoice {
     currency: string,
     dueDate: Date,
     roundingScheme: string,
+    exportToEconomic: Boolean,
     economicCustomer: string,
     economicCustomerPrice: number,
     economicText1: string,
@@ -64,9 +65,9 @@ export interface ICreateIssueInvoice {
         jiraId: string,
         jiraKey: string,
         name: string,
-        hoursSpent: number
-        updatedHoursSpent: number | null,
-        discountPercentage: number | null
+        hours: number
+        updatedHoursSpent: number,
+        discountPercentage: number
     }[]
 }
 
@@ -82,17 +83,7 @@ export async function createInvoice(invoice: ICreateInvoiceInput, organizationId
 }
 
 export async function createIssueInvoice(invoice: ICreateIssueInvoice, organizationId: string) {
-    const { issueTimeItems, currency, roundingScheme, ...invoiceWithoutIssues } = invoice;
-
-    const mappedIssueTimeItems = invoice.issueTimeItems.map(item => ({
-        jiraId: item.jiraId, 
-        jiraKey: item.jiraKey, 
-        name: item.name, 
-        hours: item.hoursSpent, 
-        updatedHoursSpent: item.updatedHoursSpent ?? 0,
-        discountPercentage: item.discountPercentage ?? 0,
-        organizationId: organizationId,
-    }))
+    const { issueTimeItems, currency, roundingScheme, exportToEconomic, ...invoiceWithoutIssues } = invoice;
 
     await prisma.issueInvoice.create({
         data: { 
@@ -102,11 +93,15 @@ export async function createIssueInvoice(invoice: ICreateIssueInvoice, organizat
             organizationId: organizationId,
             issueTimeItems: {
                 createMany: {
-                    data: mappedIssueTimeItems
+                    data: invoice.issueTimeItems.map(item => ({ ...item, organizationId: organizationId, }))
                 }
             }
         }
     })
+
+    if (exportToEconomic) {
+        createJiraIssueInvoice(invoice, organizationId)
+    }
 }
 
 export async function getInvoiceForExportToIntegration(invoiceId: string, organizationId: string) {

@@ -12,13 +12,19 @@ export interface CreateInvoice {
     // roundingAmount:          number;
     // costPriceInBaseCurrency: number;
     paymentTerms:            PaymentTerms;
-    customer:                Customer;
+    customer:                CustomerForInvoice;
     recipient:               Recipient;
     // delivery:                Delivery;
     references:              References;
     layout:                  Layout;
     lines:                   Line[];
     notes:                   Note;
+}
+
+// Customer
+export interface CustomerForInvoice {
+    customerNumber: number;
+    // name:           string;
 }
 
 export interface Customer {
@@ -85,8 +91,19 @@ export interface VatZone {
 }
 
 export interface References {
-    salesPerson: SalesPerson | null;
-    other: string;
+    salesPerson: SalesPersonForInvoice | null;
+    customerContact: CustomerContact
+    // other: string;
+}
+
+// CustomerContact
+export interface CustomerContact {
+    customerContactNumber: number
+}
+
+// SalesPerson
+export interface SalesPersonForInvoice {
+    employeeNumber: number;
 }
 
 export interface SalesPerson {
@@ -96,7 +113,7 @@ export interface SalesPerson {
 
 export interface Note {
     heading: string;
-    // textLine1: string;
+    textLine1: string;
     // textLine2: string;
 }
 

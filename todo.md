@@ -5,6 +5,8 @@
 ### VIGTIGE
 - Hvis der ikke er connected til jira med api keys skal der ikke fetches
 
+- Lav sign in med Jira, Economic og Xero knapper
+
 - [Begge] Lav copywriting til landingpagen
 - Udfyld dashboard index siden med data (cards fra dashboard)
 - Når en bruger signer up, skal der komme en fejlbesked med at brugeren allerede findes, hvis brugeren allerede findes. (måske done?)

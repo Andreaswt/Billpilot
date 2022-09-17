@@ -107,6 +107,7 @@ export const invoicesRouter = createRouter()
       economicOptions: z.object({
         exportToEconomic: z.boolean(),
         customer: z.string(),
+        customerName: z.string(),
         customerPrice: z.number(),
         text1: z.string(),
         ourReference: z.string(),
@@ -118,13 +119,21 @@ export const invoicesRouter = createRouter()
         title: input.invoiceInformation.title,
         currency: input.invoiceInformation.currency,
         dueDate: new Date(input.invoiceInformation.dueDate),
-        roundingScheme: <RoundingScheme> input.invoiceInformation.roundingScheme,
+        roundingScheme: <RoundingScheme>input.invoiceInformation.roundingScheme,
+        exportToEconomic: input.economicOptions.exportToEconomic,
         economicCustomer: input.economicOptions.customer,
         economicCustomerPrice: input.economicOptions.customerPrice,
         economicText1: input.economicOptions.text1,
         economicOurReference: input.economicOptions.ourReference,
         economicCustomerContact: input.economicOptions.customerContact,
-        issueTimeItems: [ ...input.pickedIssues ]
+        issueTimeItems: input.pickedIssues.map(item => ({
+          jiraId: item.jiraId,
+          jiraKey: item.jiraKey,
+          name: item.name,
+          hours: item.hoursSpent,
+          updatedHoursSpent: item.updatedHoursSpent ?? 0,
+          discountPercentage: item.discountPercentage ?? 0,
+        }))
       }
 
       return await createIssueInvoice(createInvoiceInput, ctx.organizationId)

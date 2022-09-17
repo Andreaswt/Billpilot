@@ -1,13 +1,14 @@
 import { Button, Flex, Heading, StackDivider, Tooltip, VStack, Text } from '@chakra-ui/react';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useEffect } from 'react';
 
-import { Card, CardBody, Column, Property, PropertyList } from "@saas-ui/react";
+import { Card, CardBody, Column, Property, PropertyList, useSnackbar } from "@saas-ui/react";
 
 import { ColumnDef, DataGrid, DataGridPagination, Section } from '@saas-ui/pro';
 import moment from 'moment';
 import { PickedIssue } from '../../../../store/invoice';
 import useInvoiceIssuesStore from '../../../../store/invoiceIssues';
 import { trpc } from '../../../utils/trpc';
+import router from 'next/router';
 
 interface IProps {
     setStep: Dispatch<SetStateAction<number>>
@@ -51,10 +52,19 @@ const ConfirmInvoiceIssues = (props: IProps) => {
     const { setStep } = props
     const store = useInvoiceIssuesStore();
     const createIssueInvoice = trpc.useMutation('invoices.createIssueInvoice', {
-        onSuccess: (data) => {
-            console.log("created")
+        onSuccess: () => {
+            // router.push("/dashboard")
+        },
+        onError: () => {
+            snackbar({
+                title: 'Invoice could not be created',
+                status: 'error',
+                duration: 2000,
+                isClosable: true,
+              })
         }
     });
+    const snackbar = useSnackbar()
 
     function submitInvoice() {
         const pickedIssues = store.pickedIssues.map(item =>  ({ 
@@ -75,12 +85,7 @@ const ConfirmInvoiceIssues = (props: IProps) => {
             pickedIssues: pickedIssues,
             economicOptions: { ...store.economicOptions }
         })
-
-        if (createIssueInvoice.error) {
-            alert("fejl")
-        }
     }
-
     return (
         <Card title={
             <Flex>

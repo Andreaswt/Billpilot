@@ -280,7 +280,8 @@ model IssueTimeItem {
   hours Decimal
   updatedHoursSpent Decimal
   discountPercentage Decimal
-  issueInvoiceId IssueInvoice @relation(fields: [id], references: [id])
+  issueInvoiceId String
+  issueInvoice IssueInvoice @relation(fields: [issueInvoiceId], references: [id])
   organizationId String
   organization Organization @relation(fields: [organizationId], references: [id])
 }

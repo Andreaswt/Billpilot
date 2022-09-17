@@ -6,7 +6,7 @@ import { Invoice, Invoices, LineItem } from "xero-node";
 import { custom } from "zod";
 import { SuperFundProducts } from "xero-node/dist/gen/model/payroll-au/superFundProducts";
 import { ApplicationRoles } from "jira.js/out/version2";
-import { calculateDiscountPercentage, getInvoiceForExportToIntegration } from "../invoice";
+import { calculateDiscountPercentage, getInvoiceForExportToIntegration, ICreateIssueInvoice } from "../invoice";
 
 enum httpMethod {
     get = 'GET',
@@ -146,8 +146,6 @@ export async function createInvoice(invoiceId: string, organizationId: string) {
         let fixedPriceDiscount = fixedDiscountAppliesToTimeItems[item.id];
         let tax = taxAppliesToTimeItems[item.id];
 
-        // TODO: apply tax
-
         let lineAmount = item.time.toNumber() * item.hourlyWage.toNumber();
 
         return ({
@@ -191,20 +189,22 @@ export async function createInvoice(invoiceId: string, organizationId: string) {
         paymentTerms: paymentTerms.collection[0]!,
         customer: customers.collection[0]!,
         recipient: {
-            name: customers.collection[0]!.name,
+            name: "", // TODO: use real one
             vatZone: vatZones.collection[0]!,
         },
         layout: layouts.collection[0]!,
         lines: [...timeItems, ...fixedPriceItems],
         notes: {
-            heading: invoiceDb.name
+            heading: invoiceDb.name,
+            textLine1: invoiceDb.name
         },
         references: {
             salesPerson: {
                 employeeNumber: employees.collection[0]!.employeeNumber,
-                name: employees.collection[0]!.name,
             },
-            other: "another person"
+            customerContact: {
+                customerContactNumber: 0 // TODO: doesnt work
+            }
         }
     }
 
@@ -212,6 +212,76 @@ export async function createInvoice(invoiceId: string, organizationId: string) {
     return result;
 }
 
+export async function createJiraIssueInvoice(invoice: ICreateIssueInvoice, organizationId: string) {
+    let layouts = await getAllLayouts(organizationId)
+    // let customers = await getAllCustomers(organizationId)
+    let paymentTerms = await getAllPaymentTerms(organizationId)
+    let vatZones = await getAllVatZones(organizationId)
+    let products = await getAllProducts(organizationId)
+    let units = await getAllUnits(organizationId)
+    // let employees = await getAllEmployees(organizationId)
+
+    // All lines must have a linenumber
+    let lineNumber = 1;
+
+    // Add all time items
+    let timeItems: Line[] = invoice.issueTimeItems.map(item => {
+        let hours = item.hours
+
+        if (item.updatedHoursSpent && item.updatedHoursSpent > 0) {
+            hours = item.updatedHoursSpent
+        }
+
+        let lineAmount = hours * invoice.economicCustomerPrice;
+
+        // Apply discount
+        if (item.discountPercentage && item.discountPercentage > 0) {
+            lineAmount *= ((100 - item.discountPercentage) / 100)
+        }
+
+        return ({
+            lineNumber: lineNumber++,
+            unit: units.collection[0]!,
+            quantity: hours,
+            unitNetPrice: invoice.economicCustomerPrice,
+            discountPercentage: item.discountPercentage,
+            totalNetAmount: lineAmount,
+            description: item.name,
+            product: products.collection[0]!
+        })
+    })
+
+    let createInvoice: CreateInvoice = {
+        date: (new Date()).toISOString().slice(0, 10),
+        dueDate: invoice.dueDate.toISOString().slice(0, 10),
+        currency: invoice.currency,
+        paymentTerms: paymentTerms.collection[0]!,
+        customer: {
+            customerNumber: parseInt(invoice.economicCustomer),
+        },
+        recipient: {
+            name: invoice.economicCustomer,
+            vatZone: vatZones.collection[0]!,
+        },
+        layout: layouts.collection[0]!,
+        lines: [ ...timeItems ],
+        notes: {
+            heading: invoice.title,
+            textLine1: invoice.economicText1
+        },
+        references: {
+            salesPerson: {
+                employeeNumber: parseInt(invoice.economicOurReference)
+            },
+            customerContact: {
+                customerContactNumber: parseInt(invoice.economicCustomerContact)
+            }
+        }
+    }
+
+    let result = await request<any>("invoices/drafts", httpMethod.post, organizationId, createInvoice);
+    return result;
+}
 
 var hej = {
     draftInvoiceNumber: 30066,
