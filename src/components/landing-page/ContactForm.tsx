@@ -27,7 +27,7 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
     }
 
     return (
-        <Section px={10} id="contact">
+        <Section py={{base:'120', md:'120', sm:'120'}} px={10} id="contact">
             <SectionTitle title={title} />
             <Center>
                 <Flex justifyContent="center" w="100%">

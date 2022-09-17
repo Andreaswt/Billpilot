@@ -2,8 +2,7 @@ import { HStack, Text } from '@chakra-ui/react'
 
 const pricing = {
   title: 'Pricing for every stage',
-  description:
-    'When you grow, we grow',
+  description: 'When you grow, we grow',
   plans: [
     {
       id: 'freetrial',
@@ -30,7 +29,7 @@ const pricing = {
       price: (
         <HStack>
           <Text textDecoration="line-through" fontSize="sm" color="gray.400">
-            $7,-
+            $7
           </Text>
           <Text>$5.7</Text>
           <Text fontSize="sm">

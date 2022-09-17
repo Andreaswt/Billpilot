@@ -33,7 +33,7 @@ export interface PricingProps extends SectionProps {
 export const Pricing: React.FC<PricingProps> = (props) => {
   const { children, plans, title, description, ...rest } = props
   return (
-    <Section id="pricing" pos="relative" {...rest}>
+    <Section py={{base:'100', md:'100', sm:'100'}} id="pricing" pos="relative" {...rest}>
       <BackgroundGradient height="100%" />
       <Box zIndex="2" pos="relative">
         <SectionTitle title={title} description={description}></SectionTitle>

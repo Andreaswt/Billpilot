@@ -32,11 +32,13 @@ import faq from '../data/faq'
 import pricing from '../data/pricing'
 import testimonials from '../data/testimonials'
 
+
 import { Highlights, HighlightsItem } from '../components/landing-page/highlights/highlights'
 import Colors from '../styles/colors'
 import { ContactForm } from '../components/landing-page/ContactForm'
-
-
+import { BackendShowcase } from '../components/landing-page/BackendShowcase'
+import { BeforeBillpilot } from '../components/landing-page/BeforeBillpilot'
+import { ProjectToInvoice } from '../components/landing-page/ProjectToInvoice'
 
 const Home: NextPage = () => {
 
@@ -48,6 +50,12 @@ const Home: NextPage = () => {
       />
       <Box>
         <HeroSection />
+
+        <BackendShowcaseSection />
+
+        <BeforeBillpilotSection />
+
+        {/* <ProjectToInvoiceSection/> */}
 
         <HighlightsSection />
 
@@ -116,88 +124,90 @@ const HeroSection: React.FC = () => {
               <FallInPlace delay={0.8} >
                 <HStack pt={{ base: '4', lg: '4' }} pb={{ base: '4', lg: '12' }} spacing="5">
                 </HStack>
-                <ButtonGroup w='100%'>
-                  <Flex w='100%' justifyContent="center" gap={4} flexDir='column'  >
-                    <Center alignItems='center' flexDir={{ base: 'column', lg: 'row' }}>
-                      <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                        <picture>
-                          {/* eslint-disable @next/next/no-img-element */}
-                          <img
-                            src="static/images/integrationlogos/asana.png"
-                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                            alt='xero logo'
-                          />
-                        </picture>
-                      </Box>
-                      <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                        <picture>
-                          {/* eslint-disable @next/next/no-img-element */}
-                          <img
-                            src="static/images/integrationlogos/economic.png"
-                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                            alt='xero logo'
-                          />
-                        </picture>
-                      </Box>
-                      <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                        <picture>
-                          {/* eslint-disable @next/next/no-img-element */}
-                          <img
-                            src="static/images/integrationlogos/jira.png"
-                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                            alt='xero logo'
-                          />
-                        </picture>
-                      </Box>
-                      <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                        <picture>
-                          {/* eslint-disable @next/next/no-img-element */}
-                          <img
-                            src="static/images/integrationlogos/quickbooks.png"
-                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                            alt='xero logo'
-                          />
-                        </picture>
-                      </Box>
-                      <Box width={{ base: '30%', lg: '20%' }} mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                        <picture>
-                          {/* eslint-disable @next/next/no-img-element */}
-                          <img
-                            src="static/images/integrationlogos/xero.png"
-                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                            alt='xero logo'
-                          />
-                        </picture>
-                      </Box>
-                    </Center>
+                <Flex w='100%' justifyContent="center" gap={4} flexDir='column'  >
+                  <Center alignItems='center' flexDir={{ base: 'column', lg: 'row' }}>
+                    <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+                      <picture>
+                        {/* eslint-disable @next/next/no-img-element */}
+                        <img
+                          src="static/images/integrationlogos/asana.png"
+                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                          alt='xero logo'
+                        />
+                      </picture>
+                    </Box>
+                    <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+                      <picture>
+                        {/* eslint-disable @next/next/no-img-element */}
+                        <img
+                          src="static/images/integrationlogos/economic.png"
+                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                          alt='xero logo'
+                        />
+                      </picture>
+                    </Box>
+                    <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+                      <picture>
+                        {/* eslint-disable @next/next/no-img-element */}
+                        <img
+                          src="static/images/integrationlogos/jira.png"
+                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                          alt='xero logo'
+                        />
+                      </picture>
+                    </Box>
+                    <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+                      <picture>
+                        {/* eslint-disable @next/next/no-img-element */}
+                        <img
+                          src="static/images/integrationlogos/quickbooks.png"
+                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                          alt='xero logo'
+                        />
+                      </picture>
+                    </Box>
+                    <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+                      <picture>
 
-                    <Flex justifyContent="center" gap='5'>
-                      <ButtonLink colorScheme="primary" color='white' size="lg" href="/signup">
-                        Sign Up
-                      </ButtonLink>
-                      <ButtonLink
-                        size="lg"
-                        href="https://demo.saas-ui.dev"
-                        variant="outline"
-                        rightIcon={
-                          <Icon
-                            as={FiArrowRight}
-                            sx={{
-                              transitionProperty: 'common',
-                              transitionDuration: 'normal',
-                              '.chakra-button:hover &': {
-                                transform: 'translate(5px)',
-                              },
-                            }}
-                          />
-                        }
-                      >
-                        Schedule Demo
-                      </ButtonLink>
-                    </Flex>
+                        <img
+                          src="static/images/integrationlogos/xero.png"
+                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                          alt='xero logo'
+                        />
+                      </picture>
+                    </Box>
 
+                  </Center>
+                  <Flex justifyContent="center">
+                    <ButtonGroup>
+                      <Flex justifyContent="center" gap='5'>
+                        <ButtonLink colorScheme="primary" color='white' size="lg" href="/signup">
+                          Sign Up
+                        </ButtonLink>
+                        <ButtonLink
+                          size="lg"
+                          href="https://demo.saas-ui.dev"
+                          variant="outline"
+                          rightIcon={
+                            <Icon
+                              as={FiArrowRight}
+                              sx={{
+                                transitionProperty: 'common',
+                                transitionDuration: 'normal',
+                                '.chakra-button:hover &': {
+                                  transform: 'translate(5px)',
+                                },
+                              }}
+                            />
+                          }
+                        >
+                          Schedule Demo
+                        </ButtonLink>
+                      </Flex>
+                    </ButtonGroup>
                   </Flex>
-                </ButtonGroup>
+                </Flex>
+
 
               </FallInPlace>
             </Hero>
@@ -205,12 +215,14 @@ const HeroSection: React.FC = () => {
         </Center>
       </Container>
       <Flex justifyContent='center'>
+      <div style={{borderRadius: '10px', overflow: 'hidden'}}>
         <Image
           src="static/screenshots/list.png"
           alt="Picture of the author"
           width={1200}
           height={800}
         />
+      </div>
       </Flex>
       <Features
         id="benefits"
@@ -258,11 +270,22 @@ const HeroSection: React.FC = () => {
   )
 }
 
+const BackendShowcaseSection = () => {
+  return <BackendShowcase id="backendshowcase" />
+}
+
+const BeforeBillpilotSection = () => {
+  return <BeforeBillpilot/>
+}
+
+const ProjectToInvoiceSection = () => {
+  return <ProjectToInvoice/>
+}
+
 const HighlightsSection = () => {
 
-
   return (
-    <Highlights>
+    <Highlights >
       <HighlightsItem colSpan={[1, null, 2]} title="A Quality Product that Speaks for Itself ">
         <VStack alignItems="flex-start" spacing="8">
           <Text color="muted" fontSize="xl">
@@ -443,11 +466,11 @@ const PricingSection = () => {
 }
 
 const FaqSection = () => {
-  return <Faq {...faq} />
+  return <Faq id="resources" {...faq} />
 }
 
 const ContactFormSection = () => {
-  return <ContactForm />
+  return <ContactForm id="contact" />
 }
 
 export default Home
