@@ -232,33 +232,33 @@ const HeroSection: React.FC = () => {
         pt="20"
         features={[
           {
-            title: 'Modular',
+            title: "Invoice Overview",
             icon: FiSmile,
-            description: "We take pride in our ever evolving integrations and we're not scared of adding more",
+            description: 'Track billed time with a dashboard overview of total invoiced, total paid and total due',
             iconPosition: 'left',
             delay: 0.6,
           },
           {
-            title: 'Composable',
+            title: 'Flexible Invoicing',
             icon: FiGrid,
             description:
-              'Compose invoice items to fit your needs and mix them together to create fully customizable bills.',
+              'Bill individual or multiple tasks or projects from your project management software',
             iconPosition: 'left',
             delay: 1,
           },
           {
-            title: 'Productive',
+            title: 'Create Templates',
             icon: FiThumbsUp,
             description:
-              "Designed to save time, servicing your customers is your top priority we'll take care of the billing.",
+              "Create your our custom made invoicing templates to speed up billing to generate invoices from BillPilot",
             iconPosition: 'left',
             delay: 1.1,
           },
           {
-            title: 'Flexible',
+            title: 'Linked Invoices',
             icon: FiSliders,
             description:
-              'Fully customize all components to your brand with theme support and style props.',
+            "Generate custom links to give clients direct access to invoices from Billpilot, or email them directly",
             iconPosition: 'left',
             delay: 0.8,
           },
@@ -286,13 +286,10 @@ const HighlightsSection = () => {
 
   return (
     <Highlights >
-      <HighlightsItem colSpan={[1, null, 2]} title="A Quality Product that Speaks for Itself ">
+      <HighlightsItem colSpan={[1, null, 2]} title="Try It Free">
         <VStack alignItems="flex-start" spacing="8">
           <Text color="muted" fontSize="xl">
-            Get started for <Em> free </Em> with any of our integrations.
-            Including authentication screens with Clerk, Supabase and Magic.
-            Fully functional forms with React Hook Form. Data tables with React
-            Table.
+            Get started for <Em> free </Em> with any of our integrations. Test it out, see if it can help you and your team. If after 14 days you&apos;d like to continue using Billpilot to automatically generate invoices sign up for a startup or team account.
           </Text>
         </VStack>
       </HighlightsItem>
@@ -301,11 +298,9 @@ const HighlightsSection = () => {
           Connect BillPilot with your project mangement platform and start billing projects and hours right away. No manual project setup required.
         </Text>
       </HighlightsItem>
-      <HighlightsItem title="Solid foundations">
+      <HighlightsItem title="Secured Data">
         <Text color="muted" fontSize="lg">
-          We don&apos;t like to re-invent the wheel, neither should you. We
-          selected the most productive and established tools in the scene and
-          built Billpilot on top of it.
+          A PlanetScale based database utilizing SOC 2 type II compliant authentication,  user access management, and always on encryption
         </Text>
       </HighlightsItem>
       <HighlightsItem
@@ -320,7 +315,7 @@ const HighlightsSection = () => {
             'Jira',
             'Economic',
             'Xero',
-            'Asana',
+            'Asana (Coming Soon)',
             'Trello (Coming Soon)',
             'Click Up (Coming Soon)',
             'Monday (Coming Soon)',

@@ -54,7 +54,7 @@ export const BackendShowcase: React.FC<ContactFormProps> = (props) => {
                                             />
                                         </picture>
                                         <Text px='10'>
-                                            Label Invoices
+                                            Label invoices
                                         </Text>
                                     </Flex>
                                 </Box>
@@ -68,7 +68,7 @@ export const BackendShowcase: React.FC<ContactFormProps> = (props) => {
                                             />
                                         </picture>
                                         <Text px='10'>
-                                            Keep track of Invoices
+                                            Keep track of invoices
                                         </Text>
                                     </Flex>
                                 </Box>
