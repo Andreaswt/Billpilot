@@ -1,9 +1,7 @@
-import { createRouter } from "./context";
 import { TRPCError } from "@trpc/server";
-import { logger } from "../../../lib/logger";
-import { getEmployees, getHoursForEmployee, getHoursForIssues, getHoursForProject, getProjects, getTotalHoursThisMonth, getWorklogsThisMonth, importJiraTime, searchEpics, searchIssues, searchProjectIssues, searchProjects } from "../../../lib/integrations/jira";
 import { z } from "zod";
-import { Epic } from "jira.js/out/agile/models/epic";
+import { getEmployees, importJiraTime, searchEpics, searchIssues, searchProjectIssues, searchProjects } from "../../../lib/integrations/jira";
+import { createRouter } from "./context";
 
 export const jiraRouter = createRouter()
   .middleware(async ({ ctx, next }) => {
