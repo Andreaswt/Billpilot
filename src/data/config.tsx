@@ -54,15 +54,15 @@ const siteConfig = {
     ),
     links: [
       {
-        href: 'mailto:hello@saas-ui.dev',
+        href: 'mailto:contact@billpilot.io',
         label: 'Contact',
       },
       {
-        href: 'https://twitter.com/saas_js',
+        href: 'https://twitter.com/Billpilotsaas',
         label: <FaTwitter size="14" />,
       },
       {
-        href: 'https://github.com/saas-js/saas-ui',
+        href: 'https://www.linkedin.com/company/billpilot/',
         label: <FaLinkedin size="14" />,
       },
     ],
