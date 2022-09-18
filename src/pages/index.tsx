@@ -39,6 +39,7 @@ import { ContactForm } from '../components/landing-page/ContactForm'
 import { BackendShowcase } from '../components/landing-page/BackendShowcase'
 import { BeforeBillpilot } from '../components/landing-page/BeforeBillpilot'
 import { ProjectToInvoice } from '../components/landing-page/ProjectToInvoice'
+import { Slack } from '../components/landing-page/Slack'
 
 const Home: NextPage = () => {
 
@@ -66,6 +67,8 @@ const Home: NextPage = () => {
         <PricingSection />
 
         <FaqSection />
+
+        <SlackSection/>
 
         <ContactFormSection />
 
@@ -462,6 +465,10 @@ const PricingSection = () => {
 
 const FaqSection = () => {
   return <Faq id="resources" {...faq} />
+}
+
+const SlackSection = () => {
+  return <Slack id="slack" />
 }
 
 const ContactFormSection = () => {

@@ -3,11 +3,7 @@ import { Section, SectionProps } from '@saas-ui/pro'
 import { Form, Field, FormLayout, SubmitButton } from '@saas-ui/react'
 import { SectionTitle } from './section/section-title'
 
-interface ContactFormProps extends Omit<SectionProps, 'title' | 'children'> {
-
-}
-
-export const BackendShowcase: React.FC<ContactFormProps> = (props) => {
+export const BackendShowcase: React.FC = (props) => {
     const { toggleColorMode, colorMode } = useColorMode()
     return (
         <Center>
