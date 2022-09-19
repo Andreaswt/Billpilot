@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { ApiKeyName, ApiKeyProvider, Prisma } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime';
 import { AgileClient, Version3Client } from 'jira.js';
 import { Issues } from 'jira.js/out/version3';
@@ -395,8 +395,8 @@ async function getApiKeys(organizationId: string) {
     let apikeys = await prisma.apiKey.findMany({
         where: {
             organizationId: organizationId,
-            provider: "Jira",
-            key: { in: ["Your Jira Website Link", "Username", "Password"] }
+            provider: ApiKeyProvider.JIRA,
+            key: { in: [ApiKeyName.JIRAWEBSITELINK, ApiKeyName.JIRAUSERNAME, ApiKeyName.JIRAPASSWORD] }
         },
         select: {
             key: true,
@@ -404,23 +404,23 @@ async function getApiKeys(organizationId: string) {
         }
     })
 
-    if (!apikeys.find(x => x.key === "Your Jira Website Link")) {
-        throw new Error("No Jira website link found");
+    if (!apikeys.find(x => x.key === ApiKeyName.JIRAWEBSITELINK)) {
+        throw new Error("No Jira website link found")
     }
 
-    if (!apikeys.find(x => x.key === "Username")) {
-        throw new Error("No Jira username found");
+    if (!apikeys.find(x => x.key === ApiKeyName.JIRAUSERNAME)) {
+        throw new Error("No Jira username found")
     }
 
-    if (!apikeys.find(x => x.key === "Password")) {
-        throw new Error("No Jira password found");
+    if (!apikeys.find(x => x.key === ApiKeyName.JIRAPASSWORD)) {
+        throw new Error("No Jira password found")
     }
 
-    let jiraWebsiteLink = apikeys.find(x => x.key === "Your Jira Website Link")!.value;
-    let username = apikeys.find(x => x.key === "Username")!.value;
-    let password = apikeys.find(x => x.key === "Password")!.value;
+    let jiraWebsiteLink = apikeys.find(x => x.key === ApiKeyName.JIRAWEBSITELINK)!.value
+    let username = apikeys.find(x => x.key === ApiKeyName.JIRAUSERNAME)!.value
+    let password = apikeys.find(x => x.key === ApiKeyName.JIRAPASSWORD)!.value
 
-    return [jiraWebsiteLink, username, password];
+    return [jiraWebsiteLink, username, password]
 }
 
 async function getClient(organizationId: string) {

@@ -56,6 +56,9 @@ enum ApiKeyProvider {
 
 enum ApiKeyName {
   AGREEMENTGRANTTOKEN
+  JIRAWEBSITELINK
+  JIRAUSERNAME
+  JIRAPASSWORD
 }
 
 model ApiKey {
