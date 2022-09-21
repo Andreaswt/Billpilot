@@ -24,7 +24,7 @@ async function getAgreemenGrantToken(organizationId: string) {
             organizationsApiKey: {
                 organizationId: organizationId,
                 provider: ApiKeyProvider.ECONOMIC,
-                key: ApiKeyName.AGREEMENTGRANTTOKEN
+                key: ApiKeyName.ECONOMICAGREEMENTGRANTTOKEN
             }
         },
         select: {
@@ -72,7 +72,7 @@ export async function saveAgreementGrantToken(agreementGrantToken: string, organ
         where: {
             organizationsApiKey: {
                 provider: ApiKeyProvider.ECONOMIC,
-                key: ApiKeyName.AGREEMENTGRANTTOKEN,
+                key: ApiKeyName.ECONOMICAGREEMENTGRANTTOKEN,
                 organizationId: organizationId
             }
         },
@@ -81,7 +81,7 @@ export async function saveAgreementGrantToken(agreementGrantToken: string, organ
         },
         create: {
             provider: ApiKeyProvider.ECONOMIC,
-            key: ApiKeyName.AGREEMENTGRANTTOKEN,
+            key: ApiKeyName.ECONOMICAGREEMENTGRANTTOKEN,
             value: agreementGrantToken,
             organizationId: organizationId
         }

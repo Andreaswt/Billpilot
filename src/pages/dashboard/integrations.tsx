@@ -47,13 +47,13 @@ const Integrations: NextPage = () => {
                                                     data["JIRA"]
                                                         ?
                                                         <Flex alignItems="center" justifyContent="space-between" gap={2}>
-                                                            <Text as="i">Your account is integrated with Jira.</Text>
+                                                            <Text fontSize="sm" as="i">Your account is integrated with Jira.</Text>
                                                             <Button onClick={() => mutateAsync({ provider: "JIRA" })} colorScheme="red">
                                                                 Log out of Jira
                                                             </Button>
                                                         </Flex>
                                                         : <Flex justifyContent="start">
-                                                            <Button onClick={() => router.push("/hejsa")} colorScheme="primary">
+                                                            <Button onClick={() => router.push("/api/jira/redirect")} colorScheme="primary">
                                                                 Log in with Jira
                                                             </Button>
                                                         </Flex>

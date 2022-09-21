@@ -55,17 +55,17 @@ enum ApiKeyProvider {
 }
 
 enum ApiKeyName {
-  AGREEMENTGRANTTOKEN
-  JIRAWEBSITELINK
-  JIRAUSERNAME
-  JIRAPASSWORD
+  ECONOMICAGREEMENTGRANTTOKEN
+  JIRAACCESSTOKEN
+  JIRAREFRESHTOKEN
+  JIRAREQUESTURL
 }
 
 model ApiKey {
     id String @id @default(cuid())
     provider ApiKeyProvider
     key ApiKeyName
-    value String
+    value String @db.Text()
     organizationId String
     organization Organization @relation(fields: [organizationId], references: [id])
     @@unique(fields: [provider, key, organizationId], name: "organizationsApiKey")

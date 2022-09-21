@@ -30,10 +30,10 @@ export async function searchProjectIssues(searchTerm: string, organizationId: st
         }
         else {
             if (searchTerm.includes(" ")) {
-                return await client.issueSearch.searchForIssuesUsingJql({ jql: 'project = "' + projectKey + '" AND text ~ "' + searchTerm + '"'});
+                return await client.issueSearch.searchForIssuesUsingJql({ jql: 'project = "' + projectKey + '" AND text ~ "' + searchTerm + '"' });
             }
             else {
-                return await client.issueSearch.searchForIssuesUsingJql({ jql: 'project = "' + projectKey + '" AND text ~ "' + searchTerm + '"' + ' OR issueKey = ' + searchTerm + ''});
+                return await client.issueSearch.searchForIssuesUsingJql({ jql: 'project = "' + projectKey + '" AND text ~ "' + searchTerm + '"' + ' OR issueKey = ' + searchTerm + '' });
             }
         }
     } catch (error) {
@@ -301,7 +301,7 @@ export async function getHoursForProject(projectsKey: string, organizationId: st
         worklogs!.forEach(worklog => {
             hours += new Prisma.Decimal(worklog.timeSpentSeconds!).toNumber() / 3600;
         })
-        
+
         return hours;
     } catch (error) {
         logger.error(error);
@@ -332,7 +332,7 @@ export async function getHoursForEmployee(accountId: string, organizationId: str
                 hours += new Prisma.Decimal(worklog.timeSpentSeconds!).toNumber() / 3600;
             }
         })
-        
+
         return hours;
     } catch (error) {
         logger.error(error);
@@ -390,50 +390,120 @@ export async function importJiraTime(accountIds: string[], issueIds: string[], p
     return hours;
 }
 
-async function getApiKeys(organizationId: string) {
-    // Get api keys from database, and authenticate with them
-    let apikeys = await prisma.apiKey.findMany({
+async function getJiraAccessToken(organizationId: string) {
+    let refreshToken = await prisma.apiKey.findUniqueOrThrow({
         where: {
-            organizationId: organizationId,
-            provider: ApiKeyProvider.JIRA,
-            key: { in: [ApiKeyName.JIRAWEBSITELINK, ApiKeyName.JIRAUSERNAME, ApiKeyName.JIRAPASSWORD] }
+            organizationsApiKey: {
+                organizationId: organizationId,
+                provider: ApiKeyProvider.JIRA,
+                key: ApiKeyName.JIRAREFRESHTOKEN
+            }
         },
         select: {
-            key: true,
             value: true
         }
     })
 
-    if (!apikeys.find(x => x.key === ApiKeyName.JIRAWEBSITELINK)) {
-        throw new Error("No Jira website link found")
-    }
+    // Refresh access_token with refresh_token
+    const response = await fetch(`https://auth.atlassian.com/oauth/token`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        grant_type: 'refresh_token',
+        client_id: process.env.JIRA_CLIENT_ID,
+        client_secret: process.env.JIRA_CLIENT_SECRET,
+        refresh_token: refreshToken.value
+      })
+    });
+    
+    const json = await response.json();
+    if (!json.access_token || !json.refresh_token) throw new Error("Missing token during rotation")
+    
+    // Update access token
+    await prisma.apiKey.update({
+        where: {
+            organizationsApiKey: {
+                provider: ApiKeyProvider.JIRA,
+                key: ApiKeyName.JIRAACCESSTOKEN,
+                organizationId: organizationId
+            }
+        },
+        data: {
+            value: json.access_token,
+        },
+    })
 
-    if (!apikeys.find(x => x.key === ApiKeyName.JIRAUSERNAME)) {
-        throw new Error("No Jira username found")
-    }
+    // Update refresh token
+    await prisma.apiKey.update({
+        where: {
+            organizationsApiKey: {
+                provider: ApiKeyProvider.JIRA,
+                key: ApiKeyName.JIRAREFRESHTOKEN,
+                organizationId: organizationId
+            }
+        },
+        data: {
+            value: json.refresh_token,
+        },
+    })
 
-    if (!apikeys.find(x => x.key === ApiKeyName.JIRAPASSWORD)) {
-        throw new Error("No Jira password found")
-    }
+    let requestUrl = await prisma.apiKey.findUniqueOrThrow({
+        where: {
+            organizationsApiKey: {
+                organizationId: organizationId,
+                provider: ApiKeyProvider.JIRA,
+                key: ApiKeyName.JIRAREQUESTURL
+            }
+        },
+        select: {
+            value: true
+        }
+    })
 
-    let jiraWebsiteLink = apikeys.find(x => x.key === ApiKeyName.JIRAWEBSITELINK)!.value
-    let username = apikeys.find(x => x.key === ApiKeyName.JIRAUSERNAME)!.value
-    let password = apikeys.find(x => x.key === ApiKeyName.JIRAPASSWORD)!.value
+    return {access_token: json.access_token, request_url: requestUrl.value}
+}
 
-    return [jiraWebsiteLink, username, password]
+export interface JiraRotateTokenResponse {
+    access_token: string
+    refresh_token: string
+}
+
+export async function saveJiraTokens(tokens: JiraRotateTokenResponse, requestUrl: string, organizationId: string) {
+    await prisma.apiKey.createMany({
+        data: [{
+            provider: ApiKeyProvider.JIRA,
+            key: ApiKeyName.JIRAACCESSTOKEN,
+            value: tokens.access_token,
+            organizationId: organizationId
+        },
+        {
+            provider: ApiKeyProvider.JIRA,
+            key: ApiKeyName.JIRAREFRESHTOKEN,
+            value: tokens.refresh_token,
+            organizationId: organizationId
+        },
+        {
+            provider: ApiKeyProvider.JIRA,
+            key: ApiKeyName.JIRAREQUESTURL,
+            value: requestUrl,
+            organizationId: organizationId
+        },
+        ]
+    })
 }
 
 async function getClient(organizationId: string) {
-    let [jiraWebsiteLink, username, password] = await getApiKeys(organizationId);
+    let {access_token, request_url} = await getJiraAccessToken(organizationId);
 
     return new Version3Client({
         newErrorHandling: true,
-        host: jiraWebsiteLink,
+        host: request_url,
         authentication: {
-            basic: {
-                email: username,
-                apiToken: password,
-            },
+            oauth2: {
+                accessToken: access_token
+            }
         },
     })
 }

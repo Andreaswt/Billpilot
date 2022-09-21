@@ -53,7 +53,7 @@ const ConfirmInvoiceIssues = (props: IProps) => {
     const store = useInvoiceIssuesStore();
     const createIssueInvoice = trpc.useMutation('invoices.createIssueInvoice', {
         onSuccess: () => {
-            // router.push("/dashboard")
+            router.push("/dashboard")
         },
         onError: () => {
             snackbar({
