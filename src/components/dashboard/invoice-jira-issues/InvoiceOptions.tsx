@@ -13,15 +13,29 @@ interface IProps {
     setStep: Dispatch<SetStateAction<number>>
 }
 
+export interface FormInvoiceState {
+    invoiceInformation: {
+        title: string,
+        currency: string,
+        dueDate: string,
+        roundingScheme: string,
+    },
+
+    economicOptions: {
+        exportToEconomic: boolean
+        customer: string
+        customerPrice: number
+        text1: string
+        ourReference: string
+        customerContact: string
+    }
+}
+
 const EconomicOptions = (props: IProps) => {
     const { setStep } = props
-    const store = useInvoiceIssuesStore();
+    const store = useInvoiceIssuesStore()
 
-    // const { data, isLoading, isRefetching, refetch } = trpc.useQuery(["integrations.getActiveIntegrations"], {
-    //     refetchOnWindowFocus: false
-    // })
-
-    const invoiceInformationForm = useForm({
+    const invoiceInformationForm = useForm<FormInvoiceState>({
         reValidateMode: "onSubmit",
         defaultValues: {
             invoiceInformation: {
@@ -33,13 +47,10 @@ const EconomicOptions = (props: IProps) => {
             economicOptions: {
                 exportToEconomic: store.economicOptions.exportToEconomic,
                 customer: store.economicOptions.customer,
-                customerName: store.economicOptions.customer,
                 customerPrice: store.economicOptions.customerPrice,
                 text1: store.economicOptions.text1,
                 ourReference: store.economicOptions.ourReference,
-                ourReferenceName: store.economicOptions.ourReferenceName,
-                customerContact: store.economicOptions.customerContact,
-                customerContactName: store.economicOptions.customerContactName
+                customerContact: store.economicOptions.customerContact
             }
         },
     });
@@ -73,24 +84,6 @@ const EconomicOptions = (props: IProps) => {
         })
 
         setStep((step) => step + 1)
-    }
-
-    interface FormInvoiceState {
-        invoiceInformation: {
-            title: string,
-            currency: string,
-            dueDate: string,
-            roundingScheme: string,
-        },
-
-        economicOptions: {
-            exportToEconomic: boolean
-            customer: string
-            customerPrice: number
-            text1: string
-            ourReference: string
-            customerContact: string
-        }
     }
 
     const { data: invoiceOptionsData, isLoading: invoiceOptionsIsLoading, isRefetching: invoiceOptionsIsRefetching } = trpc.useQuery(["invoices.getInvoiceOptions"], {
@@ -133,7 +126,7 @@ const EconomicOptions = (props: IProps) => {
                                                     <FormControl isInvalid={!!errors.invoiceInformation?.title}>
                                                         <FormLabel htmlFor={`invoiceInformation.title`}>
                                                             <Flex gap={1}>
-                                                                Name
+                                                                Title
                                                                 <Text color="red" size="sm">*</Text>
                                                             </Flex>
                                                         </FormLabel>
@@ -211,7 +204,7 @@ const EconomicOptions = (props: IProps) => {
                                     </Card>
                                 </Section>
                                 {
-                                    true
+                                    invoiceOptionsData.activeIntegrations["ECONOMIC"]
                                         ? <Section
                                             title="E-conomic"
                                             description={

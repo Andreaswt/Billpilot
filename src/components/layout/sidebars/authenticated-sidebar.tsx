@@ -28,6 +28,7 @@ import { BillingStatus } from '../billing-status'
 import { GlobalSearchInput } from '../global-search-input'
 import { MembersInviteDialog } from '../members-invite-dialog'
 import { UserMenu } from '../user-menu'
+import { trpc } from '../../../utils/trpc'
 
 export interface AppSidebarProps extends SidebarProps { }
 
@@ -90,14 +91,14 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
             <SidebarNavGroup title="Create Invoice From" isCollapsible>
               <AppSidebarLink
                 href={"/dashboard/invoicejiraissues"}
-                label="Jira Issues"
+                label="Jira"
                 icon={<AiFillFileAdd />}
               />
-              <AppSidebarLink
+              {/* <AppSidebarLink
                 href={"/dashboard/create"}
                 label="Imported Jira Items"
                 icon={<AiFillFileAdd />}
-              />
+              /> */}
             </SidebarNavGroup>
 
             {!isCondensed && (

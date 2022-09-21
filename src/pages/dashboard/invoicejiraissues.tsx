@@ -12,7 +12,7 @@ import {
 import router from 'next/router';
 import { trpc } from '../../utils/trpc';
 import ConfirmInvoiceIssues from '../../components/dashboard/invoice-jira-issues/Confirm';
-import EconomicOptions from '../../components/dashboard/invoice-jira-issues/EconomicOptions';
+import EconomicOptions from '../../components/dashboard/invoice-jira-issues/InvoiceOptions';
 import Projects from '../../components/dashboard/invoice-jira-issues/Projects';
 import Issues from '../../components/dashboard/invoice-jira-issues/Issues';
 

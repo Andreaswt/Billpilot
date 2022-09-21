@@ -61,19 +61,20 @@ const ConfirmInvoiceIssues = (props: IProps) => {
                 status: 'error',
                 duration: 2000,
                 isClosable: true,
-              })
+            })
         }
     });
     const snackbar = useSnackbar()
 
     function submitInvoice() {
-        const pickedIssues = store.pickedIssues.map(item =>  ({ 
-            jiraKey: item.key, 
-            jiraId: item.id, 
+        const pickedIssues = store.pickedIssues.map(item => ({
+            jiraKey: item.key,
+            jiraId: item.id,
             name: item.name,
-            hoursSpent: item.hoursSpent, 
+            hoursSpent: item.hoursSpent,
             updatedHoursSpent: item.updatedHoursSpent ?? 0,
-            discountPercentage: item.discountPercentage ?? 0 }))
+            discountPercentage: item.discountPercentage ?? 0
+        }))
 
         createIssueInvoice.mutate({
             invoiceInformation: {
@@ -86,6 +87,11 @@ const ConfirmInvoiceIssues = (props: IProps) => {
             economicOptions: { ...store.economicOptions }
         })
     }
+
+    const { data } = trpc.useQuery(["invoices.getInvoiceOptions"], {
+        refetchOnWindowFocus: false
+    });
+
     return (
         <Card title={
             <Flex>
@@ -104,36 +110,40 @@ const ConfirmInvoiceIssues = (props: IProps) => {
                                     <Property label="Currency" value={store.currency} />
                                     <Property label="Due Date" value={moment(store.dueDate).format("YYYY-MM-DD")} />
                                     <Property label="Rounding Scheme" value={store.roundingScheme} />
-                                    <Property label="Price" value="€1250,-" />
                                 </PropertyList>
                             </CardBody>
                         </Card>
                     </Section>
-                    <Section
-                        title="E-conomic"
-                        description="Confirm your selections regarding export to e-conomic."
-                        variant="annotated">
-                        <Card>
-                            <CardBody>
-                                <PropertyList>
-                                <Property label="Customer" value={store.economicOptions.customerName} />
-                                <Property label="Customer Price" value={store.economicOptions.customerPrice} />
-                                <Property label="Text 1" value={store.economicOptions.text1} />
-                                <Property label="Our Reference" value={store.economicOptions.ourReferenceName} />
-                                <Property label="Customer Contact" value={store.economicOptions.customerContactName} />
-                                </PropertyList>
-                            </CardBody>
-                        </Card>
-                    </Section>
+                    {
+                        data?.activeIntegrations["ECONOMIC"]
+                            ? <Section
+                                title="E-conomic"
+                                description="Confirm your selections regarding export to e-conomic."
+                                variant="annotated">
+                                <Card>
+                                    <CardBody>
+                                        <PropertyList>
+                                            <Property label="Customer" value={store.economicOptions.customerName} />
+                                            <Property label="Customer Price" value={store.economicOptions.customerPrice} />
+                                            <Property label="Text 1" value={store.economicOptions.text1} />
+                                            <Property label="Our Reference" value={store.economicOptions.ourReferenceName} />
+                                            <Property label="Customer Contact" value={store.economicOptions.customerContactName} />
+                                        </PropertyList>
+                                    </CardBody>
+                                </Card>
+                            </Section>
+                            : null
+                    }
                     <Section
                         title="Issues"
                         description="Confirm your picked issues."
                         variant="annotated">
                         <Card>
                             <CardBody>
-                            <DataGrid<PickedIssue> columns={columns} data={store.pickedIssues} isSortable isHoverable>
-                                <DataGridPagination mt={2} pl={0} />
-                            </DataGrid>
+                                <DataGrid<PickedIssue> columns={columns} data={store.pickedIssues} isSortable isHoverable>
+                                    <Text fontSize='xs' as='i'>Scroll right to view all columns.</Text>
+                                    <DataGridPagination mt={2} pl={0} />
+                                </DataGrid>
                             </CardBody>
                         </Card>
                     </Section>
