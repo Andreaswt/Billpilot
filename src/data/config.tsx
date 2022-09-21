@@ -54,15 +54,15 @@ const siteConfig = {
     ),
     links: [
       {
-        href: 'mailto:hello@saas-ui.dev',
+        href: 'mailto:carl.larsen.dk@gmail.com',
         label: 'Contact',
       },
       {
-        href: 'https://twitter.com/saas_js',
+        href: '/',
         label: <FaTwitter size="14" />,
       },
       {
-        href: 'https://github.com/saas-js/saas-ui',
+        href: '/',
         label: <FaLinkedin size="14" />,
       },
     ],

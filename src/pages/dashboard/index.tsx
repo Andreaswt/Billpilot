@@ -47,7 +47,7 @@ const SimpleCard: NextPage = () => {
   )
 
   return (
-    <Page title={"Dashboard"} toolbar={toolbar} isLoading={isLoading}>
+    <Page title={"Dashboard"} isLoading={isLoading}>
       <PageBody pt="8">
         {/* <IntroTour /> */}
         <Grid
