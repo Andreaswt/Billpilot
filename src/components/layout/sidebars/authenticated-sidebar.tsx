@@ -103,6 +103,11 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
                 label="Invoices"
                 icon={<IoIosPaper />}
               />
+              <AppSidebarLink
+                href={"/dashboard/integrations"}
+                label="Integrations"
+                icon={<IoIosPaper />}
+              />
             </SidebarNavGroup>
 
             {!isCondensed && (

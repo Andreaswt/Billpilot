@@ -274,7 +274,8 @@ const HeroSection: React.FC = () => {
 }
 
 const BackendShowcaseSection = () => {
-  return <BackendShowcase id="backendshowcase" />
+  // return <BackendShowcase id="backendshowcase" />
+  return <BackendShowcase sectionId="backendshowcase" />
 }
 
 const BeforeBillpilotSection = () => {
@@ -468,11 +469,11 @@ const FaqSection = () => {
 }
 
 const SlackSection = () => {
-  return <Slack id="slack" />
+  return <Slack sectionId="slack" />
 }
 
 const ContactFormSection = () => {
-  return <ContactForm id="contact" />
+  return <ContactForm sectionId="contact" />
 }
 
 export default Home

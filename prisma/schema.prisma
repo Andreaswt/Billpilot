@@ -46,11 +46,26 @@ model Organization {
     roundingScheme RoundingScheme @default(POINTPOINT)
 }
 
+enum ApiKeyProvider {
+  JIRA
+  ECONOMIC
+  XERO
+  QUICKBOOKS
+  ASANA
+}
+
+enum ApiKeyName {
+  AGREEMENTGRANTTOKEN
+  JIRAWEBSITELINK
+  JIRAUSERNAME
+  JIRAPASSWORD
+}
+
 model ApiKey {
     id String @id @default(cuid())
-    provider String // e.g E-conomic
-    key String // e.g. economic-api-key
-    value String // e.g. jsj3hdo3eds0
+    provider ApiKeyProvider
+    key ApiKeyName
+    value String
     organizationId String
     organization Organization @relation(fields: [organizationId], references: [id])
     @@unique(fields: [provider, key, organizationId], name: "organizationsApiKey")

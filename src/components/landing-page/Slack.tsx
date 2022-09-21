@@ -3,11 +3,16 @@ import { Section, SectionProps } from '@saas-ui/pro'
 import { Form, Field, FormLayout, SubmitButton } from '@saas-ui/react'
 import { SectionTitle } from './section/section-title'
 
+interface IProps {
+  sectionId: string
+}
 
-export const Slack: React.FC = (props) => {
+export const Slack: React.FC<IProps> = (props) => {
+  const { sectionId } = props
     const { toggleColorMode, colorMode } = useColorMode()
+    
     return (
-            <Section>
+            <Section id={sectionId}>
                 <Center>
                 <Text>
                     Join our journey on

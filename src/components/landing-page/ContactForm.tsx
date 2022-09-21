@@ -1,16 +1,17 @@
-import { chakra, Center, Flex } from '@chakra-ui/react'
+import { Center, Flex } from '@chakra-ui/react'
 import { Section, SectionProps } from '@saas-ui/pro'
-import { Form, Field, FormLayout, SubmitButton } from '@saas-ui/react'
+import { Field, Form, FormLayout, SubmitButton } from '@saas-ui/react'
 import { SectionTitle } from './section/section-title'
 
 interface ContactFormProps extends Omit<SectionProps, 'title' | 'children'> {
     title?: React.ReactNode
+    sectionId?: string
 }
-
 
 export const ContactForm: React.FC<ContactFormProps> = (props) => {
     const {
         title = 'Contact us!',
+        sectionId
     } = props
 
     function submitHandler(fields: any) {
@@ -23,11 +24,10 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
         email: string
         phone: string
         message: string
-
     }
 
     return (
-        <Section py={{base:'120', md:'120', sm:'120'}} px={10} id="contact">
+        <Section id={sectionId} py={{base:'120', md:'120', sm:'120'}} px={10}>
             <SectionTitle title={title} />
             <Center>
                 <Flex justifyContent="center" w="100%">
