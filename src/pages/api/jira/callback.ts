@@ -27,7 +27,7 @@ const callback = async (req: NextApiRequest, res: NextApiResponse) => {
                     client_id: process.env.JIRA_CLIENT_ID,
                     client_secret: process.env.JIRA_CLIENT_SECRET,
                     code: code,
-                    redirect_uri: "http://localhost:3000/api/jira/callback"
+                    redirect_uri: process.env.JIRA_REDIRECT_URL
                 }
             )
         })
@@ -51,7 +51,7 @@ const callback = async (req: NextApiRequest, res: NextApiResponse) => {
                         if (!data.access_token && !data.refresh_token) throw new Error("Token missing")
 
                         const requestUrl = "https://api.atlassian.com/ex/jira/" + cloudIdResponse[0].id
-                        
+
                         // Finally save tokens
                         saveJiraTokens(data, requestUrl, organizationId)
                     })
