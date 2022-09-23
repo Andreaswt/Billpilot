@@ -36,7 +36,8 @@ export const MRR = () => {
   const data = React.useMemo(() => createData({}), [])
 
   return (
-    <Card title="Monthly recurring revenue">
+    <Card>
+      
       <CardBody>
         <LineChart
           data={data}
