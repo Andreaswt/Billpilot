@@ -8,6 +8,7 @@ import moment from 'moment';
 import { useForm } from 'react-hook-form';
 import useInvoiceIssuesStore from '../../../../store/invoiceIssues';
 import { trpc } from '../../../utils/trpc';
+import { Currency } from '@prisma/client';
 
 interface IProps {
     setStep: Dispatch<SetStateAction<number>>
@@ -34,6 +35,55 @@ export interface FormInvoiceState {
 const EconomicOptions = (props: IProps) => {
     const { setStep } = props
     const store = useInvoiceIssuesStore()
+
+    const [invoiceOptionsData, setInvoiceOptionsData] = useState({
+        statuses: [''],
+        currencies: ['USD', 'DKK', 'EUR'],
+        clients: [''],
+        defaultCurrency: Currency.DKK,
+        invoiceLayouts: [''],
+        roundingScheme: ['1 Dec.', '2 Dec.', '3 Dec.'],
+        economicCustomers: [
+            {
+                customerNumber: 10,
+                name: 'Real Estate Gurus LLC',
+            }
+        ],
+        activeIntegrations: {
+        }
+    });
+    const [invoiceOptionsIsLoading, setInvoiceOptionsIsLoading] = useState(false);
+    const [invoiceOptionsIsRefetching, setInvoiceOptionsIsRefetching] = useState(false);
+
+    const [economicData, setEconomicData] = useState({
+        ourReferences: [
+            {
+                employeeNumber: 1,
+                name: 'Harry Burgess',
+            },
+            {
+                employeeNumber: 2,
+                name: 'Jack Wyatt',
+            },
+            {
+                employeeNumber: 3,
+                name: 'Mauri Franco',
+            },
+            {
+                employeeNumber: 4,
+                name: 'Reed Neulight',
+            }
+        ],
+        customerContacts: [{
+            customerContactNumber: 15,
+            name: 'Joseph'
+        }]
+
+    });
+
+
+    const [economicIsLoading, setEconomicIsLoading] = useState(false);
+    const [economicIsRefetching, setEconomicIsRefetching] = useState(false);
 
     const invoiceInformationForm = useForm<FormInvoiceState>({
         reValidateMode: "onSubmit",
@@ -86,25 +136,24 @@ const EconomicOptions = (props: IProps) => {
         setStep((step) => step + 1)
     }
 
-    const { data: invoiceOptionsData, isLoading: invoiceOptionsIsLoading, isRefetching: invoiceOptionsIsRefetching } = trpc.useQuery(["invoices.getInvoiceOptions"], {
-        refetchOnWindowFocus: false
-    });
+    // const { data: invoiceOptionsData, isLoading: invoiceOptionsIsLoading, isRefetching: invoiceOptionsIsRefetching } = trpc.useQuery(["invoices.getInvoiceOptions"], {
+    //     refetchOnWindowFocus: false
+    // });
 
-    const { data: economicData, isLoading: economicIsLoading, isRefetching: economicIsRefetching, refetch: economicRefetch } = trpc.useQuery([
-        "invoices.getEconomicOptions",
-        { customerNumber: parseInt(economicCustomer) }],
-        {
-            enabled: false,
-        });
+    // const { data: economicData, isLoading: economicIsLoading, isRefetching: economicIsRefetching, refetch: economicRefetch } = trpc.useQuery([
+    //     "invoices.getEconomicOptions",
+    //     { customerNumber: parseInt(economicCustomer) }],
+    //     {
+    //         enabled: false,
+    //     });
 
-    useEffect(() => {
-        if (!isNaN(parseInt(economicCustomer))) {
-            economicRefetch()
-        }
-    }, [economicCustomer, economicRefetch])
+    // useEffect(() => {
+    //     if (!isNaN(parseInt(economicCustomer))) {
+    //         economicRefetch()
+    //     }
+    // }, [economicCustomer, economicRefetch])
     const { toggleColorMode, colorMode } = useColorMode()
     return (
-        
         <Card title={
             <Flex>
                 <Heading>Create Invoice</Heading>
@@ -204,151 +253,147 @@ const EconomicOptions = (props: IProps) => {
                                         </CardBody>
                                     </Card>
                                 </Section>
-                                {
-                                    invoiceOptionsData.activeIntegrations["ECONOMIC"]
-                                        ? <Section
-                                            title="E-conomic"
-                                            description={
-                                                <Flex flexDirection="column">
-                                                    <p>Options when invoice is exported to Visma E-conomic.</p>
-                                                    <Flex mt={2} gap={2}>
-                                                        <Checkbox
-                                                            id='exportToEconomic'
-                                                            type="checkbox"
-                                                            variant="filled"
-                                                            {...register(`economicOptions.exportToEconomic`)}
-                                                        />
-                                                        <Text textColor={colorMode === 'dark' ? 'white' : "black"}>Export to E-conomic?</Text>
-                                                    </Flex>
-                                                </Flex>}
-                                            variant="annotated">
-                                            <Card>
-                                                <CardBody>
+                                <Section
+                                    title="E-conomic"
+                                    description={
+                                        <Flex flexDirection="column">
+                                            <p>Options when invoice is exported to Visma E-conomic.</p>
+                                            <Flex mt={2} gap={2}>
+                                                <Checkbox
+                                                    id='exportToEconomic'
+                                                    type="checkbox"
+                                                    variant="filled"
+                                                    {...register(`economicOptions.exportToEconomic`)}
+                                                />
+                                                <Text textColor={colorMode === 'dark' ? 'white' : "black"}>Export to E-conomic?</Text>
+                                            </Flex>
+                                        </Flex>}
+                                    variant="annotated">
+                                    <Card>
+                                        <CardBody>
+                                            <FormLayout>
+                                                <FormLayout>
+                                                    <FormControl isInvalid={!!errors.economicOptions?.customer}>
+                                                        <FormLabel htmlFor={`economicOptions.customer`}>Pick E-conomic Customer</FormLabel>
+                                                        <Flex flexDirection="column">
+                                                            <Select
+                                                                id='customer'
+                                                                variant="filled"
+                                                                isDisabled={!exportToEconomicField}
+                                                                placeholder="Select Customer"
+                                                                {...register(`economicOptions.customer`)}>
+                                                                {
+                                                                    invoiceOptionsData?.economicCustomers.map(item => {
+                                                                        return (<option key={item.customerNumber} value={item.customerNumber}>{item.name}</option>)
+                                                                    })
+                                                                }
+                                                            </Select>
+                                                            <FormErrorMessage>
+                                                                {errors.economicOptions?.customer?.message}
+                                                            </FormErrorMessage>
+                                                        </Flex>
+                                                    </FormControl>
+                                                </FormLayout>
+
+                                                {economicCustomer
+                                                    ? <FormLayout>
+                                                        <FormControl isInvalid={!!errors.economicOptions?.customerPrice}>
+                                                            <FormLabel htmlFor={`economicOptions.customerPrice`}>Pick E-conomic Customer Price</FormLabel>
+                                                            <Flex flexDirection="column">
+                                                                <Input
+                                                                    id='customerPrice'
+                                                                    type="number"
+                                                                    isDisabled={!exportToEconomicField}
+                                                                    placeholder="Enter Customer Price"
+                                                                    variant="filled"
+                                                                    {...register(`economicOptions.customerPrice`, {
+                                                                        valueAsNumber: true
+                                                                    })}
+                                                                />
+                                                                <FormErrorMessage>
+                                                                    {errors.economicOptions?.customerPrice?.message}
+                                                                </FormErrorMessage>
+                                                            </Flex>
+                                                        </FormControl>
+                                                    </FormLayout>
+                                                    : null}
+
+                                                {economicCustomer && economicCustomerPrice ? <>
                                                     <FormLayout>
                                                         <FormLayout>
-                                                            <FormControl isInvalid={!!errors.economicOptions?.customer}>
-                                                                <FormLabel htmlFor={`economicOptions.customer`}>Pick E-conomic Customer</FormLabel>
+                                                            <FormControl isInvalid={!!errors.economicOptions?.text1}>
+                                                                <FormLabel htmlFor={`economicOptions.text1`}>Text 1</FormLabel>
                                                                 <Flex flexDirection="column">
-                                                                    <Select
-                                                                        id='customer'
-                                                                        variant="filled"
+                                                                    <Textarea
+                                                                        id='text1'
                                                                         isDisabled={!exportToEconomicField}
-                                                                        placeholder="Select Customer"
-                                                                        {...register(`economicOptions.customer`)}>
-                                                                        {
-                                                                            invoiceOptionsData?.economicCustomers.map(item => {
-                                                                                return (<option key={item.customerNumber} value={item.customerNumber}>{item.name}</option>)
-                                                                            })
-                                                                        }
-                                                                    </Select>
+                                                                        placeholder="Enter Text 1"
+                                                                        variant="filled"
+                                                                        {...register(`economicOptions.text1`)}
+                                                                    />
                                                                     <FormErrorMessage>
-                                                                        {errors.economicOptions?.customer?.message}
+                                                                        {errors.economicOptions?.text1?.message}
                                                                     </FormErrorMessage>
                                                                 </Flex>
                                                             </FormControl>
                                                         </FormLayout>
-
-                                                        {economicCustomer
-                                                            ? <FormLayout>
-                                                                <FormControl isInvalid={!!errors.economicOptions?.customerPrice}>
-                                                                    <FormLabel htmlFor={`economicOptions.customerPrice`}>Pick E-conomic Customer Price</FormLabel>
+                                                        <FormLayout columns={2}>
+                                                            <FormLayout>
+                                                                <FormControl isInvalid={!!errors.economicOptions?.ourReference}>
+                                                                    <FormLabel htmlFor={`economicOptions.ourReference`}>Our Reference</FormLabel>
                                                                     <Flex flexDirection="column">
-                                                                        <Input
-                                                                            id='customerPrice'
-                                                                            type="number"
+                                                                        <Select
+                                                                            id='status'
                                                                             isDisabled={!exportToEconomicField}
-                                                                            placeholder="Enter Customer Price"
                                                                             variant="filled"
-                                                                            {...register(`economicOptions.customerPrice`, {
-                                                                                valueAsNumber: true
-                                                                            })}
-                                                                        />
+                                                                            placeholder="Select Our Reference"
+                                                                            {...register(`economicOptions.ourReference`)}>
+                                                                            {
+                                                                                !economicIsRefetching || economicIsLoading || !economicData
+                                                                                    ? economicData?.ourReferences.map(item => {
+                                                                                        return (<option key={item.employeeNumber} value={item.employeeNumber}>{item.name}</option>)
+                                                                                    })
+                                                                                    : null
+                                                                            }
+                                                                        </Select>
                                                                         <FormErrorMessage>
-                                                                            {errors.economicOptions?.customerPrice?.message}
+                                                                            {errors.economicOptions?.ourReference?.message}
                                                                         </FormErrorMessage>
                                                                     </Flex>
                                                                 </FormControl>
                                                             </FormLayout>
-                                                            : null}
-
-                                                        {economicCustomer && economicCustomerPrice ? <>
                                                             <FormLayout>
-                                                                <FormLayout>
-                                                                    <FormControl isInvalid={!!errors.economicOptions?.text1}>
-                                                                        <FormLabel htmlFor={`economicOptions.text1`}>Text 1</FormLabel>
-                                                                        <Flex flexDirection="column">
-                                                                            <Textarea
-                                                                                id='text1'
-                                                                                isDisabled={!exportToEconomicField}
-                                                                                placeholder="Enter Text 1"
-                                                                                variant="filled"
-                                                                                {...register(`economicOptions.text1`)}
-                                                                            />
-                                                                            <FormErrorMessage>
-                                                                                {errors.economicOptions?.text1?.message}
-                                                                            </FormErrorMessage>
-                                                                        </Flex>
-                                                                    </FormControl>
-                                                                </FormLayout>
-                                                                <FormLayout columns={2}>
-                                                                    <FormLayout>
-                                                                        <FormControl isInvalid={!!errors.economicOptions?.ourReference}>
-                                                                            <FormLabel htmlFor={`economicOptions.ourReference`}>Our Reference</FormLabel>
-                                                                            <Flex flexDirection="column">
-                                                                                <Select
-                                                                                    id='status'
-                                                                                    isDisabled={!exportToEconomicField}
-                                                                                    variant="filled"
-                                                                                    placeholder="Select Our Reference"
-                                                                                    {...register(`economicOptions.ourReference`)}>
-                                                                                    {
-                                                                                        !economicIsRefetching || economicIsLoading || !economicData
-                                                                                            ? economicData?.ourReferences.map(item => {
-                                                                                                return (<option key={item.employeeNumber} value={item.employeeNumber}>{item.name}</option>)
-                                                                                            })
-                                                                                            : null
-                                                                                    }
-                                                                                </Select>
-                                                                                <FormErrorMessage>
-                                                                                    {errors.economicOptions?.ourReference?.message}
-                                                                                </FormErrorMessage>
-                                                                            </Flex>
-                                                                        </FormControl>
-                                                                    </FormLayout>
-                                                                    <FormLayout>
-                                                                        <FormControl isInvalid={!!errors.economicOptions?.customerContact}>
-                                                                            <FormLabel htmlFor={`economicOptions.customerContact`}>Customer Contact</FormLabel>
-                                                                            <Flex flexDirection="column">
-                                                                                <Select
-                                                                                    id='status'
-                                                                                    isDisabled={!exportToEconomicField}
-                                                                                    variant="filled"
-                                                                                    placeholder="Select Customer Contact"
-                                                                                    {...register(`economicOptions.customerContact`)}>
-                                                                                    {
-                                                                                        !economicIsRefetching || economicIsLoading || !economicData
-                                                                                            ? economicData?.customerContacts.map(item => {
-                                                                                                return (<option key={item.customerContactNumber} value={item.customerContactNumber}>{item.name}</option>)
-                                                                                            })
-                                                                                            : null
-                                                                                    }
-                                                                                </Select>
-                                                                                <FormErrorMessage>
-                                                                                    {errors.economicOptions?.customerContact?.message}
-                                                                                </FormErrorMessage>
-                                                                            </Flex>
-                                                                        </FormControl>
-                                                                    </FormLayout>
-                                                                </FormLayout>
+                                                                <FormControl isInvalid={!!errors.economicOptions?.customerContact}>
+                                                                    <FormLabel htmlFor={`economicOptions.customerContact`}>Customer Contact</FormLabel>
+                                                                    <Flex flexDirection="column">
+                                                                        <Select
+                                                                            id='status'
+                                                                            isDisabled={!exportToEconomicField}
+                                                                            variant="filled"
+                                                                            placeholder="Select Customer Contact"
+                                                                            {...register(`economicOptions.customerContact`)}>
+                                                                            {
+                                                                                !economicIsRefetching || economicIsLoading || !economicData
+                                                                                    ? economicData?.customerContacts.map(item => {
+                                                                                        return (<option key={item.customerContactNumber} value={item.customerContactNumber}>{item.name}</option>)
+                                                                                    })
+                                                                                    : null
+                                                                            }
+                                                                        </Select>
+                                                                        <FormErrorMessage>
+                                                                            {errors.economicOptions?.customerContact?.message}
+                                                                        </FormErrorMessage>
+                                                                    </Flex>
+                                                                </FormControl>
                                                             </FormLayout>
-                                                        </>
-                                                            : <></>}
+                                                        </FormLayout>
                                                     </FormLayout>
-                                                </CardBody>
-                                            </Card>
-                                        </Section>
-                                        : null
-                                }
+                                                </>
+                                                    : <></>}
+                                            </FormLayout>
+                                        </CardBody>
+                                    </Card>
+                                </Section>
                             </VStack>
                             <Flex justifyContent="space-between">
                                 <Button mt={6} colorScheme="primary" onClick={() => setStep((step) => step - 1)}>Previous</Button>
