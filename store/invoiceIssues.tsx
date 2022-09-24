@@ -42,7 +42,7 @@ const useInvoiceIssuesStore = create<CreateInvoiceState>((set) => ({
     title: "",
     currency: "USD",
     dueDate: new Date(),
-    roundingScheme: "POINTPOINT",
+    roundingScheme: "2. Decimals",
     client: "",
     pickedProject: "",
     pickedIssues: [],

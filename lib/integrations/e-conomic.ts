@@ -7,6 +7,7 @@ import { custom } from "zod";
 import { SuperFundProducts } from "xero-node/dist/gen/model/payroll-au/superFundProducts";
 import { ApplicationRoles } from "jira.js/out/version2";
 import { calculateDiscountPercentage, getInvoiceForExportToIntegration, ICreateIssueInvoice } from "../invoice";
+import { ApiKeyName, ApiKeyProvider } from "@prisma/client";
 
 enum httpMethod {
     get = 'GET',
@@ -22,12 +23,11 @@ async function getAgreemenGrantToken(organizationId: string) {
         where: {
             organizationsApiKey: {
                 organizationId: organizationId,
-                provider: "E-conomic",
-                key: "Agreement Grant Token"
+                provider: ApiKeyProvider.ECONOMIC,
+                key: ApiKeyName.ECONOMICAGREEMENTGRANTTOKEN
             }
         },
         select: {
-            key: true,
             value: true
         }
     })
@@ -65,6 +65,27 @@ export async function request<T>(endpoint: string, method: httpMethod, organizat
         .then(data => {
             return data
         })
+}
+
+export async function saveAgreementGrantToken(agreementGrantToken: string, organizationId: string) {
+    await prisma.apiKey.upsert({
+        where: {
+            organizationsApiKey: {
+                provider: ApiKeyProvider.ECONOMIC,
+                key: ApiKeyName.ECONOMICAGREEMENTGRANTTOKEN,
+                organizationId: organizationId
+            }
+        },
+        update: {
+            value: agreementGrantToken
+        },
+        create: {
+            provider: ApiKeyProvider.ECONOMIC,
+            key: ApiKeyName.ECONOMICAGREEMENTGRANTTOKEN,
+            value: agreementGrantToken,
+            organizationId: organizationId
+        }
+    })
 }
 
 export async function test(organizationId: string) {

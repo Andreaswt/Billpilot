@@ -20,5 +20,8 @@ declare namespace NodeJS {
         XERO_CLIENT_SECRET: string
         ECONOMIC_APP_SECRET_TOKEN: string
         ECONOMIC_REDIRECT_URL: string
+        JIRA_REDIRECT_URL: string
+        JIRA_CLIENT_ID: string
+        JIRA_CLIENT_SECRET: string
     }
   }

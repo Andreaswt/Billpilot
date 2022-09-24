@@ -3,45 +3,34 @@ import * as React from 'react'
 import { Box, Spacer } from '@chakra-ui/react'
 
 import {
-  FiHome,
-  FiPlus,
-  FiInbox,
-  FiHelpCircle,
-  FiHash,
-  FiUsers,
-  FiSearch
+  FiHash, FiHelpCircle,
+  FiPlus, FiSearch
 } from 'react-icons/fi'
 
-import { IoIosPaper } from 'react-icons/io'
+import { IoDocumentsSharp } from 'react-icons/io5'
 
-import { AiFillFileAdd } from 'react-icons/ai'
+import { AiFillFileAdd, AiFillHome } from 'react-icons/ai'
+import { BsPlugFill } from 'react-icons/bs'
 
 import {
-  Sidebar,
-  SidebarProps,
-  SidebarNav,
-  SidebarLink,
-  SidebarNavGroup,
-  SidebarOverflow,
-  ResizeHandler,
-  SidebarLinkProps,
+  ResizeHandler, Sidebar, SidebarLink, SidebarLinkProps, SidebarNav, SidebarNavGroup,
+  SidebarOverflow, SidebarProps
 } from '@saas-ui/pro'
 
-import { useActivePath, useNavigate } from '@saas-ui/router'
+import { useNavigate } from '@saas-ui/router'
 import NextLink from 'next/link'
 
 import {
-  IconButton,
-  useModals,
-  useLocalStorage,
+  IconButton, useLocalStorage, useModals
 } from '@saas-ui/react'
 
-import { UserMenu } from '../user-menu'
-import { MembersInviteDialog } from '../members-invite-dialog'
-import { GlobalSearchInput } from '../global-search-input'
 import { BillingStatus } from '../billing-status'
+import { GlobalSearchInput } from '../global-search-input'
+import { MembersInviteDialog } from '../members-invite-dialog'
+import { UserMenu } from '../user-menu'
+import { trpc } from '../../../utils/trpc'
 
-export interface AppSidebarProps extends SidebarProps {}
+export interface AppSidebarProps extends SidebarProps { }
 
 export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
   const modals = useModals()
@@ -86,47 +75,42 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
               <AppSidebarLink
                 href={"/dashboard"}
                 label="Dashboard"
-                icon={<FiHome />}
-              />
-              <AppSidebarLink
-                href={"/dashboard/create"}
-                label="Create invoice"
-                icon={<AiFillFileAdd />}
-              />
-              <AppSidebarLink
-                href={"/dashboard/invoiceissues"}
-                label="Invoice issues"
-                icon={<AiFillFileAdd />}
+                icon={<AiFillHome />}
               />
               <AppSidebarLink
                 href={"/dashboard/invoices"}
                 label="Invoices"
-                icon={<IoIosPaper />}
+                icon={<IoDocumentsSharp />}
               />
+              <AppSidebarLink
+                href={"/dashboard/integrations"}
+                label="Integrations"
+                icon={<BsPlugFill />}
+              />
+            </SidebarNavGroup>
+            <SidebarNavGroup title="Create Invoice From" isCollapsible>
+              <AppSidebarLink
+                href={"/dashboard/invoicejiraissues"}
+                label="Jira"
+                icon={<AiFillFileAdd />}
+              />
+              {/* <AppSidebarLink
+                href={"/dashboard/create"}
+                label="Imported Jira Items"
+                icon={<AiFillFileAdd />}
+              /> */}
             </SidebarNavGroup>
 
             {!isCondensed && (
-              <SidebarNavGroup title="Tags" isCollapsible>
+              <SidebarNavGroup title="Search Invoices" isCollapsible>
                 <SidebarLink
-                  href={"/dashboard/tags/design-system"}
-                  label="Design system"
+                  href={"/dashboard/invoices/design-system"}
+                  label="From this month"
                   icon={<FiHash />}
                 />
                 <SidebarLink
                   href={"/dashboard/tags/framework"}
-                  label="Framework"
-                  icon={<FiHash />}
-                />
-                <SidebarLink
-                  href={"/dashboard/tags/chakra-ui"}
-                  label="Chakra UI"
-                  inset={5}
-                  icon={<FiHash />}
-                />
-                <SidebarLink
-                  href={"/dashboard/tags/react"}
-                  label="React"
-                  inset={5}
+                  label="From this week"
                   icon={<FiHash />}
                 />
               </SidebarNavGroup>
@@ -146,12 +130,12 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
                 color="sidebar-muted"
                 icon={<FiPlus />}
               />
-              <SidebarLink
-                href="https://saas-ui.dev/docs"
+              {/* <SidebarLink
+                href="/"
                 label="Documentation"
                 color="sidebar-muted"
                 icon={<FiHelpCircle />}
-              />
+              /> */}
             </SidebarNavGroup>
           </SidebarNav>
         </SidebarOverflow>
@@ -178,10 +162,10 @@ const AppSidebarLink: React.FC<AppSidebarlink> = (props) => {
 
   return (
     <NextLink href={href} passHref>
-    <SidebarLink
-      label={label}
-      {...rest}
-    />
+      <SidebarLink
+        label={label}
+        {...rest}
+      />
     </NextLink>
   )
 }

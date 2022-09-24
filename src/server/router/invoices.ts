@@ -1,10 +1,9 @@
-import { createRouter } from "./context";
+import { ApiKeyProvider, RoundingScheme } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { createInvoice, createIssueInvoice, getInvoice, ICreateIssueInvoice } from "../../../lib/invoice";
 import { z } from "zod";
-import { Currency, Invoice, InvoiceStatus, RoundingScheme } from "@prisma/client";
-import { getAllCustomers, getAllEmployees, getCustomerContacts, test } from "../../../lib/integrations/e-conomic";
-import { TbRuler2 } from "react-icons/tb";
+import { getAllCustomers, getAllEmployees, getCustomerContacts } from "../../../lib/integrations/e-conomic";
+import { createIssueInvoice, getInvoice, ICreateIssueInvoice } from "../../../lib/invoice";
+import { createRouter } from "./context";
 
 export const invoicesRouter = createRouter()
   .middleware(async ({ ctx, next }) => {
@@ -39,11 +38,27 @@ export const invoicesRouter = createRouter()
       const clients = organisation.clients.map(x => x.name)
       const statuses = ["DRAFT", "SENT", "PAID", "NOCHARGE"]
       const currencies = ["USD", "DKK"]
-      const roundingSchemes = ["POINT", "POINTPOINT", "POINTPOINTPOINT"]
+      const roundingSchemes = ["1. Decimal", "2. Decimals", "3. Decimals"]
       const invoiceLayouts = organisation.invoiceLayouts.map(x => x.name)
 
+      // Get active integration, so only options for active integrations are shown
+      // Get optional data for integrations, if integrated
+      const activeIntegrationsResponse: { [provider: string]: boolean } = {}
+      let activeIntegrations = await ctx.prisma.apiKey.findMany({
+        select: {
+            provider: true,
+            key: true
+        }
+    })
+
+    // E-conomic
+    let economicCustomers: { customerNumber: number, name: string }[] = []
+    if (activeIntegrations.find(x => x.provider === ApiKeyProvider.ECONOMIC)) {
       const economicCustomersCollection = await getAllCustomers(ctx.organizationId)
-      const economicCustomers: { customerNumber: number, name: string }[] = economicCustomersCollection.collection.map(x => ({ customerNumber: x.customerNumber, name: x.name }))
+      economicCustomers = economicCustomersCollection.collection.map(x => ({ customerNumber: x.customerNumber, name: x.name }))
+
+      activeIntegrationsResponse[ApiKeyProvider.ECONOMIC.toString()] = true
+    }
 
       const response = {
         statuses: statuses,
@@ -52,7 +67,8 @@ export const invoicesRouter = createRouter()
         defaultCurrency: organisation.currency,
         invoiceLayouts: invoiceLayouts,
         roundingScheme: roundingSchemes,
-        economicCustomers: economicCustomers
+        economicCustomers: economicCustomers,
+        activeIntegrations: activeIntegrationsResponse
       }
 
       return response
@@ -115,11 +131,16 @@ export const invoicesRouter = createRouter()
       })
     }),
     async resolve({ ctx, input }) {
+      let roundingScheme: RoundingScheme = RoundingScheme.POINTPOINT
+      if (input.invoiceInformation.roundingScheme === "1. Decimal") roundingScheme = RoundingScheme.POINT
+      if (input.invoiceInformation.roundingScheme === "2. Decimals") roundingScheme = RoundingScheme.POINTPOINT
+      if (input.invoiceInformation.roundingScheme === "3. Decimals") roundingScheme = RoundingScheme.POINTPOINTPOINT
+
       const createInvoiceInput: ICreateIssueInvoice = {
         title: input.invoiceInformation.title,
         currency: input.invoiceInformation.currency,
         dueDate: new Date(input.invoiceInformation.dueDate),
-        roundingScheme: <RoundingScheme>input.invoiceInformation.roundingScheme,
+        roundingScheme: roundingScheme,
         exportToEconomic: input.economicOptions.exportToEconomic,
         economicCustomer: input.economicOptions.customer,
         economicCustomerPrice: input.economicOptions.customerPrice,

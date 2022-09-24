@@ -3,6 +3,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { useInputGroupStyles } from "@chakra-ui/react";
 import { logger } from "../../../lib/logger";
+import { ApiKeyName, ApiKeyProvider } from "@prisma/client";
 
 export const apiKeysRouter = createRouter()
   .middleware(async ({ ctx, next }) => {
@@ -35,8 +36,8 @@ export const apiKeysRouter = createRouter()
       await ctx.prisma.apiKey.create({
         data: {
           organizationId: ctx.organizationId,
-          provider: input.provider,
-          key: input.key,
+          provider: <ApiKeyProvider> input.provider,
+          key: <ApiKeyName> input.key,
           value: input.value,
         }
       });
@@ -56,8 +57,8 @@ export const apiKeysRouter = createRouter()
       const apiKeyResult = await ctx.prisma.apiKey.upsert({
         where: {
           organizationsApiKey: {
-            provider: input.provider,
-            key: input.key,
+            provider: <ApiKeyProvider> input.provider,
+            key: <ApiKeyName> input.key,
             organizationId: ctx.organizationId,
           }
         },
@@ -66,8 +67,8 @@ export const apiKeysRouter = createRouter()
         },
         create: {
           organizationId: ctx.organizationId,
-          provider: input.provider,
-          key: input.key,
+          provider: <ApiKeyProvider> input.provider,
+          key: <ApiKeyName> input.key,
           value: input.value,
         },
       })
