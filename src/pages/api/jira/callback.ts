@@ -27,7 +27,7 @@ const callback = async (req: NextApiRequest, res: NextApiResponse) => {
                     client_id: process.env.JIRA_CLIENT_ID,
                     client_secret: process.env.JIRA_CLIENT_SECRET,
                     code: code,
-                    redirect_uri: process.env.JIRA_REDIRECT_URL
+                    redirect_uri: process.env.JIRA_CALLBACK_URL
                 }
             )
         })

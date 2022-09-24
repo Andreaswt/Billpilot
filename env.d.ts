@@ -23,5 +23,6 @@ declare namespace NodeJS {
         JIRA_REDIRECT_URL: string
         JIRA_CLIENT_ID: string
         JIRA_CLIENT_SECRET: string
+        JIRA_CALLBACK_URL: string
     }
   }

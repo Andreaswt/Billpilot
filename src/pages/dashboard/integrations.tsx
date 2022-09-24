@@ -15,10 +15,7 @@ export const getServerSideProps = requireAuth(async (ctx) => {
 });
 
 const Integrations: NextPage = () => {
-
-    const { data, isLoading, isRefetching, refetch } = trpc.useQuery(["integrations.getActiveIntegrations"], {
-        refetchOnWindowFocus: false
-    })
+    const { data, isLoading, isRefetching, refetch } = trpc.useQuery(["integrations.getActiveIntegrations"])
 
     const { mutateAsync } = trpc.useMutation(["integrations.signout"], {
         onSuccess: () => {
