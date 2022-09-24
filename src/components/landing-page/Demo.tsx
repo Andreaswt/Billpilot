@@ -27,16 +27,18 @@ import { Card, CardBody } from '@saas-ui/react'
 import router from 'next/router'
 import { trpc } from '../../utils/trpc'
 
-// enum ProjectManagementIntegration {
-//     JIRA,
-//     ASANA
-// }
+enum ProjectManagementIntegration {
+    INITIALIZATION,
+    JIRA,
+    ASANA
+}
 
-// enum AccountingIntegration {
-//     ECONOMIC,
-//     XERO,
-//     QUICKBOOKS
-// }
+enum AccountingIntegration {
+    INITIALIZATION,
+    ECONOMIC,
+    XERO,
+    QUICKBOOKS
+}
 
 export const Demo: React.FC = (props) => {
     const { toggleColorMode, colorMode } = useColorMode()
@@ -44,6 +46,8 @@ export const Demo: React.FC = (props) => {
         refetchOnWindowFocus: false
 
     })
+
+    const [projectmanagementintegration, setProjectManagementIntegration] = React.useState(ProjectManagementIntegration.INITIALIZATION);
 
     const { mutateAsync } = trpc.useMutation(["integrations.signout"], {
         onSuccess: () => {
@@ -82,63 +86,122 @@ export const Demo: React.FC = (props) => {
                             bg: 'blackAlpha.300',
                             borderColor: 'primary.500',
                         }}>
-                        <Card title={
-                            <Flex>
-                                <Heading>Project Management Integrations</Heading>
-                            </Flex>}>
-                            <CardBody justifyContent='right'>
-                                <VStack divider={<StackDivider />} align="stretch" spacing={8} pb="0">
-                                    <Section
-                                        title="Jira"
-                                        description="Connect to Jira by clicking the button and logging in."
-                                        variant="annotated">
-                                        <Card w='48'>
-                                            <CardBody >
-                                                {
-                                                    (5 == 4)
-                                                        ?
-                                                        <Flex alignItems="center" justifyContent="space-between" gap={2}>
-                                                            <Text as="i">Your account is integrated with Jira.</Text>
-                                                            <Button onClick={() => mutateAsync({ provider: "JIRA" })} colorScheme="red">
-                                                                Log out of Jira
-                                                            </Button>
-                                                        </Flex>
-                                                        : <Flex justifyContent="center">
-                                                            <Button onClick={() => router.push("/hejsa")} colorScheme="primary">
-                                                                Log in with Jira
-                                                            </Button>
-                                                        </Flex>
-                                                }
-                                            </CardBody>
-                                        </Card>
-                                    </Section>
-                                    <Section
-                                        title="Asana"
-                                        description="Connect to Asana by clicking the button and logging in."
-                                        variant="annotated">
-                                        <Card w='48'>
-                                            <CardBody>
-                                                {
-                                                    (5 == 4)
-                                                        ?
-                                                        <Flex alignItems="center" justifyContent="space-between" gap={2}>
-                                                            <Text fontSize="sm" as="i">Your account is integrated with Asana.</Text>
-                                                            <Button onClick={() => mutateAsync({ provider: "ASANA" })} colorScheme="red">
-                                                                Log out of Asana
-                                                            </Button>
-                                                        </Flex>
-                                                        : <Flex justifyContent="center">
-                                                            <Button onClick={() => router.push("/hejsa")} colorScheme="primary">
-                                                                Log in with Asana
-                                                            </Button>
-                                                        </Flex>
-                                                }
-                                            </CardBody>
-                                        </Card>
-                                    </Section>
-                                </VStack>
-                            </CardBody>
-                        </Card>
+
+                        {
+                            (projectmanagementintegration === ProjectManagementIntegration.JIRA)
+                                ?
+                                <Card title={
+                                    <Flex>
+                                        <Heading>JIRA</Heading>
+                                    </Flex>}>
+
+                                    <CardBody justifyContent='right'>
+
+                                        <ButtonGroup  >
+                                            <Flex justifyContent="center" gap='5'>
+                                                <ButtonLink
+                                                    size="lg"
+                                                    href="https://demo.saas-ui.dev"
+                                                    variant="outline"
+                                                    justifyContent='center'
+                                                    rightIcon={
+                                                        <Icon
+                                                            as={FiArrowLeft}
+                                                            sx={{
+                                                                transitionProperty: 'common',
+                                                                transitionDuration: 'normal',
+                                                                '.chakra-button:hover &': {
+                                                                    transform: 'translate(5px)',
+                                                                },
+                                                            }}
+                                                        />
+                                                    }
+                                                >
+                                                </ButtonLink>
+                                                <ButtonLink
+                                                    size="lg"
+                                                    href="https://demo.saas-ui.dev"
+                                                    variant="outline"
+                                                    justifyContent='center'
+                                                    rightIcon={
+                                                        <Icon
+                                                            as={FiArrowRight}
+                                                            sx={{
+                                                                transitionProperty: 'common',
+                                                                transitionDuration: 'normal',
+                                                                '.chakra-button:hover &': {
+                                                                    transform: 'translate(5px)',
+                                                                },
+                                                            }}
+                                                        />
+                                                    }
+                                                >
+                                                </ButtonLink>
+                                            </Flex>
+                                        </ButtonGroup>
+                                    </CardBody>
+                                </Card>
+                                : <Card title={
+                                    <Flex>
+                                        <Heading>Project Management Integrations</Heading>
+                                    </Flex>}>
+                                    <CardBody justifyContent='right'>
+                                        <VStack divider={<StackDivider />} align="stretch" spacing={8} pb="0">
+                                            <Section
+                                                title="Jira"
+                                                description="Connect to Jira by clicking the button and logging in."
+                                                variant="annotated">
+                                                <Card w='48'>
+                                                    <CardBody >
+                                                        {
+                                                            (5 == 4)
+                                                                ?
+                                                                <Flex alignItems="center" justifyContent="space-between" gap={2}>
+                                                                    <Text as="i">Your account is integrated with Jira.</Text>
+                                                                    <Button onClick={() => mutateAsync({ provider: "JIRA" })} colorScheme="red">
+                                                                        Log out of Jira
+                                                                    </Button>
+                                                                </Flex>
+                                                                : <Flex justifyContent="center">
+                                                                    <Button onClick={() => setProjectManagementIntegration(ProjectManagementIntegration.JIRA)} colorScheme="primary">
+                                                                        Configure Jira
+                                                                    </Button>
+                                                                </Flex>
+                                                        }
+                                                    </CardBody>
+                                                </Card>
+                                            </Section>
+                                            <Section
+                                                title="Asana"
+                                                description="Connect to Asana by clicking the button and logging in."
+                                                variant="annotated">
+                                                <Card w='48'>
+                                                    <CardBody>
+                                                        {
+                                                            (5 == 4)
+                                                                ?
+                                                                <Flex alignItems="center" justifyContent="space-between" gap={2}>
+                                                                    <Text fontSize="sm" as="i">Your account is integrated with Asana.</Text>
+                                                                    <Button onClick={() => mutateAsync({ provider: "ASANA" })} colorScheme="red">
+                                                                        Log out of Asana
+                                                                    </Button>
+                                                                </Flex>
+                                                                : <Flex justifyContent="center">
+                                                                    <Button onClick={() => router.push("/hejsa")} colorScheme="primary">
+                                                                        Configure Asana
+                                                                    </Button>
+                                                                </Flex>
+                                                        }
+                                                    </CardBody>
+                                                </Card>
+                                            </Section>
+                                        </VStack>
+                                    </CardBody>
+                                </Card>
+
+                        }
+
+
                     </VStack>
                 </VStack>
                 <VStack
@@ -222,7 +285,7 @@ export const Demo: React.FC = (props) => {
                                                         </Flex>
                                                         : <Flex justifyContent="center">
                                                             <Button onClick={() => router.push("/api/economic/redirect")} colorScheme="primary">
-                                                                Log in with E-conomic
+                                                                Configure E-conomic
                                                             </Button>
                                                         </Flex>
                                                 }
@@ -246,7 +309,7 @@ export const Demo: React.FC = (props) => {
                                                         </Flex>
                                                         : <Flex justifyContent="center">
                                                             <Button onClick={() => router.push("/hejsa")} colorScheme="primary">
-                                                                Log in with Xero
+                                                                Configure Xero
                                                             </Button>
                                                         </Flex>
                                                 }
@@ -269,7 +332,7 @@ export const Demo: React.FC = (props) => {
                                                         </Flex>
                                                         : <Flex justifyContent="center">
                                                             <Button onClick={() => router.push("/hejsa")} colorScheme="primary">
-                                                                Log in with Quickbooks
+                                                                Configure Quickbooks
                                                             </Button>
                                                         </Flex>
                                                 }
@@ -277,52 +340,6 @@ export const Demo: React.FC = (props) => {
                                         </Card>
                                     </Section>
                                 </VStack>
-                            </CardBody>
-                        </Card>
-                        <Card>
-                            <CardBody>
-                                <ButtonGroup  >
-                                    <Flex justifyContent="center" gap='5'>
-                                        <ButtonLink
-                                            size="lg"
-                                            href="https://demo.saas-ui.dev"
-                                            variant="outline"
-                                            justifyContent='center'
-                                            rightIcon={
-                                                <Icon
-                                                    as={FiArrowLeft}
-                                                    sx={{
-                                                        transitionProperty: 'common',
-                                                        transitionDuration: 'normal',
-                                                        '.chakra-button:hover &': {
-                                                            transform: 'translate(5px)',
-                                                        },
-                                                    }}
-                                                />
-                                            }
-                                        >
-                                        </ButtonLink>
-                                        <ButtonLink
-                                            size="lg"
-                                            href="https://demo.saas-ui.dev"
-                                            variant="outline"
-                                            justifyContent='center'
-                                            rightIcon={
-                                                <Icon
-                                                    as={FiArrowRight}
-                                                    sx={{
-                                                        transitionProperty: 'common',
-                                                        transitionDuration: 'normal',
-                                                        '.chakra-button:hover &': {
-                                                            transform: 'translate(5px)',
-                                                        },
-                                                    }}
-                                                />
-                                            }
-                                        >
-                                        </ButtonLink>
-                                    </Flex>
-                                </ButtonGroup>
                             </CardBody>
                         </Card>
                     </VStack>
