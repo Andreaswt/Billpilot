@@ -1,17 +1,20 @@
 import { NextPage } from "next";
 import { requireAuth } from "../../common/requireAuth";
 
-import { Grid, GridItem } from '@chakra-ui/react';
+import { Grid, GridItem, Flex, Heading } from '@chakra-ui/react';
 
 import { FaGithub, FaTwitter } from 'react-icons/fa';
 import { MRR } from "../../components/dashboard/mrr";
 import { SalesByCountry } from "../../components/dashboard/sales-by-country";
 import { Today } from "../../components/dashboard/today";
 
+
+
 import {
   Page, PageBody, Toolbar,
   ToolbarButton
 } from '@saas-ui/pro';
+import RevenueChart from "../../components/dashboard/RevenueChart";
 
 export const getServerSideProps = requireAuth(async (ctx) => {
   return { props: {} };
@@ -56,12 +59,17 @@ const SimpleCard: NextPage = () => {
           gap="4"
           p="4"
         >
+          <Flex>
+            <Heading>Dashboard</Heading>
+          </Flex>
           <GridItem>
             <Today />
           </GridItem>
           <GridItem>
-            <MRR />
+            <RevenueChart/>
           </GridItem>
+
+
           <GridItem>
             <SalesByCountry />
           </GridItem>
