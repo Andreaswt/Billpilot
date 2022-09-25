@@ -23,7 +23,6 @@ export const integrationsRouter = createRouter()
 
             const response: { [provider: string]: boolean } = {}
 
-            // TODO: switch
             if (apiKeys.find(x => x.provider === ApiKeyProvider.JIRA)) {
                 response[ApiKeyProvider.JIRA.toString()] = true
             }

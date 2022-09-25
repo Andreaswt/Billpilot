@@ -1,5 +1,5 @@
 import { Center, Flex, Heading, Spinner, Stack, StackDivider, Text, VStack } from '@chakra-ui/react';
-import { Button } from '@saas-ui/react';
+import { Button, useSnackbar } from '@saas-ui/react';
 import { NextPage } from "next";
 import { requireAuth } from "../../common/requireAuth";
 
@@ -7,24 +7,55 @@ import {
     Page, PageBody, Section
 } from '@saas-ui/pro';
 import { Card, CardBody } from "@saas-ui/react";
-import router from 'next/router';
+import router, { useRouter } from 'next/router';
 import { trpc } from '../../utils/trpc';
+import { useEffect, useState } from 'react';
+import { EmployeeStatus } from 'xero-node/dist/gen/model/payroll-au/employeeStatus';
 
 export const getServerSideProps = requireAuth(async (ctx) => {
     return { props: {} };
 });
 
 const Integrations: NextPage = () => {
-
-    const { data, isLoading, isRefetching, refetch } = trpc.useQuery(["integrations.getActiveIntegrations"], {
-        refetchOnWindowFocus: false
-    })
+    const { data, isLoading, isRefetching, refetch } = trpc.useQuery(["integrations.getActiveIntegrations"])
 
     const { mutateAsync } = trpc.useMutation(["integrations.signout"], {
         onSuccess: () => {
             refetch()
         }
     });
+
+    const router = useRouter()
+    const snackbar = useSnackbar()
+
+    useEffect(() => {
+        const isError = Boolean(router.query["error"])
+        const isSuccess = Boolean(router.query["success"])
+
+        // No messages? Don't show anything
+        if (!isError && !isSuccess) return
+
+        // Show message
+        const message = router.query["message"]
+        if (!message) return
+
+        let status: 'info' | 'success' | 'error' = 'info'
+        if (isSuccess) status = 'success'
+        if (isError) status = 'error'
+
+        let title: string = 'Info'
+        if (isSuccess) title = 'Integration setup success.'
+        if (isError) title = 'Integration setup error.'
+
+        snackbar({
+            title: title,
+            description: message,
+            status: status,
+            duration: 4000,
+            isClosable: true,
+        })
+
+    }, [router.query, snackbar])
 
     return (
         <Page title={"Integrations"}>

@@ -117,11 +117,10 @@ const HeroSection: React.FC = () => {
               }
               description={
                 <FallInPlace delay={0.4} fontWeight="400" fontSize={{ base: '1xl', lg: '2xl' }}>
-                  Billpilot imports <Em>project mangement data</Em>,
-                  <Br /> creates invoices from time reports and <Br />
-                  sends them to your accounting app in minutes.
+                  Billpilot imports data from your <Em>project<Br /> mangement software</Em>,
+                   helps you create invoices, <Br />
+                  and sends them to your accounting app in minutes.
                 </FallInPlace>
-
               }
             >
               <FallInPlace delay={0.8} >
@@ -189,7 +188,7 @@ const HeroSection: React.FC = () => {
                         </ButtonLink>
                         <ButtonLink
                           size="lg"
-                          href="/dashboard"
+                          href="/#contact"
                           variant="outline"
                           rightIcon={
                             <Icon
@@ -245,7 +244,7 @@ const HeroSection: React.FC = () => {
             title: 'Flexible Invoicing',
             icon: FiGrid,
             description:
-              'Bill individual or multiple tasks or projects from your project management software',
+              'Bill individual tasks, projects or even employees time from your project management software',
             iconPosition: 'left',
             delay: 1,
           },
@@ -253,7 +252,7 @@ const HeroSection: React.FC = () => {
             title: 'Create Templates',
             icon: FiThumbsUp,
             description:
-              "Create your our custom made invoicing templates to speed up billing to generate invoices from BillPilot",
+              "Create invoice templates containg your usual settings to speed up generating invoices with BillPilot",
             iconPosition: 'left',
             delay: 1.1,
           },
@@ -293,18 +292,18 @@ const HighlightsSection = () => {
       <HighlightsItem colSpan={[1, null, 2]} title="Try It Free">
         <VStack alignItems="flex-start" spacing="8">
           <Text color="muted" fontSize="xl">
-            Get started for <Em> free </Em> with any of our integrations. Test it out, see if it can help you and your team. If after 14 days you&apos;d like to continue using Billpilot to automatically generate invoices sign up for a startup or team account.
+            Get started for <Em> free </Em> with any of our integrations. Test it out, see if it can help you and your company. If after 14 days you&apos;d like to continue using Billpilot to automatically generate invoices sign up for a business account.
           </Text>
         </VStack>
       </HighlightsItem>
       <HighlightsItem title="Seamless Setup">
         <Text color="muted" fontSize="lg">
-          Connect BillPilot with your project mangement platform and start billing projects and hours right away. No manual project setup required.
+          Integrate Billpilot with your project mangement and invocing software one click per integration.
         </Text>
       </HighlightsItem>
-      <HighlightsItem title="Secured Data">
+      <HighlightsItem title="Save Time">
         <Text color="muted" fontSize="lg">
-          A PlanetScale based database utilizing SOC 2 type II compliant authentication,  user access management, and always on encryption
+          Use Billpilot to automate away boring tasks, to save valueable time in the end. Invoice time items imported manually, or generate invoices based on previous templates generated.
         </Text>
       </HighlightsItem>
       <HighlightsItem
@@ -312,13 +311,15 @@ const HighlightsSection = () => {
         title="Our Continually Expanding List of Integrations"
       >
         <Text color="muted" fontSize="lg">
-          We took care of all the integrations, so all you need to do is start billing your clients.
+          Let us take care of the integrations, so all you need to do is start billing your clients.
+          <Br />
+          Contact us if an integration is missing and you would like to see it active.
         </Text>
         <Wrap mt="8">
           {[
             'Jira',
             'Economic',
-            'Xero',
+            'Xero (Coming Soon)',
             'Asana (Coming Soon)',
             'Trello (Coming Soon)',
             'Click Up (Coming Soon)',
@@ -374,48 +375,45 @@ const FeaturesSection = () => {
       iconSize={4}
       features={[
         {
-          title: 'Flexible Time Filters.',
+          title: 'Time Filters.',
           icon: FiBox,
           description:
-            'Filter imported invoice time from Jira by employee, project, issue type and other parameters',
+            'Filter imported invoice time from e.g. Jira by employee, project, issue type and other parameters',
           variant: 'inline',
         },
         {
-          title: 'JQL Time Filters.',
+          title: 'Update Hours Spent.',
           icon: FiLock,
           description:
-            'Filter invoice time by JQL that may have any filtration logic and can operate any Jira issue field',
+            "Override hours spent for imported time items, in cases where registered time shouldn't be the billed time",
           variant: 'inline',
         },
         {
-          title: 'Taxing.',
+          title: 'Overview.',
           icon: FiSearch,
           description:
-            'Apply multiple taxes to invoices. Enable or disable taxes for any invoice item individually',
+            'Keep track of invoiced items, to prevent you from invoicing the same time items multiple times',
           variant: 'inline',
         },
         {
-          title: 'Discounting.',
+          title: 'Discounts.',
           icon: FiUserPlus,
           description:
-            'Add discount to invoices. Easily enable or disable discount for any invoice item individually',
+            'Add discounts to your selected invoice items which will apply on the final invoice',
           variant: 'inline',
         },
         {
-          title: 'Fixed Price.',
+          title: 'Integrations.',
           icon: FiFlag,
           description:
-            "Charge clients using fixed price model or add fixed price expenses to time and materials invoices",
+            "Export generated invoice to multiple integrations, and apply integration specific options to the exported version",
           variant: 'inline',
         },
         {
-          title: 'Retainers.',
+          title: 'More Features On The Way.',
           icon: FiCode,
-          description: (
-            <>
-              Just add fixed price item with negative amount to take into account a retainer from a client
-            </>
-          ),
+          description:
+            "Contact us if you want specific features, and we will prioritize the development of that feature",
           variant: 'inline',
         },
       ]}
