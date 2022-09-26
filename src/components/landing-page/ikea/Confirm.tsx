@@ -115,9 +115,7 @@ const ConfirmInvoiceIssues = (props: IProps) => {
                             </CardBody>
                         </Card>
                     </Section>
-                    {
-                        data?.activeIntegrations["ECONOMIC"]
-                            ? <Section
+                     <Section
                                 title="E-conomic"
                                 description="Confirm your selections regarding export to e-conomic."
                                 variant="annotated">
@@ -133,8 +131,6 @@ const ConfirmInvoiceIssues = (props: IProps) => {
                                     </CardBody>
                                 </Card>
                             </Section>
-                            : null
-                    }
                     <Section
                         title="Issues"
                         description="Confirm your picked issues."
