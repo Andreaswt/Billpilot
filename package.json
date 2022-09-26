@@ -39,6 +39,7 @@
     "@trpc/next": "^9.25.3",
     "@trpc/react": "^9.25.3",
     "@trpc/server": "^9.25.3",
+    "asana": "^1.0.0",
     "apexcharts": "^3.35.5",
     "crypto-js": "^4.1.1",
     "formik": "^2.2.9",
