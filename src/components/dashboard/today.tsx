@@ -32,8 +32,8 @@ const data = [
 export const Today = () => {
   return (
     <SimpleGrid columns={[1, 2, 3]} gap="4">
-      {data.map((metric) => (
-        <Card title ={metric.label}>
+      {data.map((metric, index) => (
+        <Card key={index} title ={metric.label}>
           <CardBody>
             <Metric {...metric} color="primary" />
           </CardBody>

@@ -380,7 +380,7 @@ const FeaturesSection = () => {
           title: 'Time Filters.',
           icon: FiBox,
           description:
-            'Filter imported invoice time from e.g. Jira by employee, project, issue type and other parameters',
+            'Breakdown invoiced time by project, employee, issue type and other parameters',
           variant: 'inline',
         },
         {
