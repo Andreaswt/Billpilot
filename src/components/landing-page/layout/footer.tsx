@@ -35,8 +35,8 @@ export const Footer: React.FC<FooterProps> = (props) => {
             <Copyright>{siteConfig.footer.copyright}</Copyright>
           </Stack>
           <HStack justify="flex-end" spacing="4" alignSelf="flex-end">
-            {siteConfig.footer?.links?.map(({ href, label }) => (
-              <FooterLink key={href} href={href}>
+            {siteConfig.footer?.links?.map(({ href, label }, index) => (
+              <FooterLink key={index} href={href}>
                 {label}
               </FooterLink>
             ))}

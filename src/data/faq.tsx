@@ -18,11 +18,11 @@ const faq = {
     },
     {
       q: 'What is the purpose of the free trial?',
-      a: 'When you sign up, you get a fully-functional account showing you everything Billpilot has to offer. After 14 days, you will need to sign up for a plan. We’ll notify you before your trial expires.',
+      a: "When you sign up, you get a fully-functional account showing you everything Billpilot has to offer. After 14 days, you will need to sign up for the business plan. We'll notify you before your trial expires.",
     },
     {
-      q: 'Can I change the number of memebrs on my team?',
-      a: 'Billpilot is pay-as-you-go, and you can easily add or remove members from your account in less than a minute.',
+      q: 'How can I stay updated on the development of Billpilot?',
+      a: 'Join our slack group on the link above to receive regular updates of new features. There you can also let us know what features you are missing.',
     },
   ],
 }

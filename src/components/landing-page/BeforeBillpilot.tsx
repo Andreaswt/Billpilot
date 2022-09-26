@@ -4,7 +4,6 @@ import { Form, Field, FormLayout, SubmitButton, Divider } from '@saas-ui/react'
 import { SectionTitle } from './section/section-title'
 import { Em } from './typography'
 
-
 export const BeforeBillpilot: React.FC = (props) => {
     const { toggleColorMode, colorMode } = useColorMode()
     return (
@@ -20,7 +19,7 @@ export const BeforeBillpilot: React.FC = (props) => {
                     <Flex borderLeft={{md: '1px', base: '0px'}} borderTop={{md: '0px', base: '1px'}} py={{ base: "30pt", md: '0pt'}}  px={{md: '20', base: '10'}} w={{ base: "100%", md: '50%'}} justifyContent="end">
                         <SectionTitle
                             title={'With Billpilot'}
-                            description={<><Em>Instantly</Em> create invoiced based on worklogs. Time and cost <Em>reports</Em> are <Em>automatically attached to invoices</Em>. <Em>Track</Em> your <Em>uninvoiced hours</Em> effortlessly.</>}
+                            description={<><Em>Swiftly</Em> create invoiced based on time items imported. Time and cost <Em>reports</Em> are <Em>automatically attached to invoices</Em>. <Em>Track</Em> your <Em>uninvoiced hours</Em> effortlessly to avoid uninvoiced time.</>}
                             align={'left'}
                         />
                     </Flex>
