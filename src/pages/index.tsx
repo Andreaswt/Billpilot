@@ -52,11 +52,13 @@ const Home: NextPage = () => {
       <Box>
         <HeroSection />
 
+        <ProjectToInvoiceSection/>
+
         <BackendShowcaseSection />
 
         <BeforeBillpilotSection />
 
-        {/* <ProjectToInvoiceSection/> */}
+        
 
         <HighlightsSection />
 

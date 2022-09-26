@@ -51,47 +51,55 @@ const columns: ColumnDef<PickedIssue>[] = [
 const ConfirmInvoiceIssues = (props: IProps) => {
     const { setStep } = props
     const store = useInvoiceIssuesStore();
-    const createIssueInvoice = trpc.useMutation('invoices.createIssueInvoice', {
-        onSuccess: () => {
-            router.push("/dashboard")
-        },
-        onError: () => {
-            snackbar({
-                title: 'Invoice could not be created',
-                status: 'error',
-                duration: 2000,
-                isClosable: true,
-            })
-        }
-    });
+    // const createIssueInvoice = trpc.useMutation('invoices.createIssueInvoice', {
+    //     onError: () => {
+    //         snackbar({
+    //             title: 'Invoice could not be created',
+    //             status: 'error',
+    //             duration: 2000,
+    //             isClosable: true,
+    //         })
+    //     }
+    // });
+
+
     const snackbar = useSnackbar()
 
     function submitInvoice() {
-        const pickedIssues = store.pickedIssues.map(item => ({
-            jiraKey: item.key,
-            jiraId: item.id,
-            name: item.name,
-            hoursSpent: item.hoursSpent,
-            updatedHoursSpent: item.updatedHoursSpent ?? 0,
-            discountPercentage: item.discountPercentage ?? 0
-        }))
+        // const pickedIssues = store.pickedIssues.map(item => ({
+        //     jiraKey: item.key,
+        //     jiraId: item.id,
+        //     name: item.name,
+        //     hoursSpent: item.hoursSpent,
+        //     updatedHoursSpent: item.updatedHoursSpent ?? 0,
+        //     discountPercentage: item.discountPercentage ?? 0
+        // }))
 
-        createIssueInvoice.mutate({
-            invoiceInformation: {
-                currency: store.currency,
-                roundingScheme: store.roundingScheme,
-                title: store.title,
-                dueDate: store.dueDate.toString()
-            },
-            pickedIssues: pickedIssues,
-            economicOptions: { ...store.economicOptions }
+        snackbar({
+            title: 'Invoice successfully created',
+            status: 'success',
+            duration: 2000,
+            isClosable: true,
         })
+
+
+        // createIssueInvoice.mutate({
+        //     invoiceInformation: {
+        //         currency: store.currency,
+        //         roundingScheme: store.roundingScheme,
+        //         title: store.title,
+        //         dueDate: store.dueDate.toString()
+        //     },
+        //     pickedIssues: pickedIssues,
+        //     economicOptions: { ...store.economicOptions }
+        // })
+
     }
 
 
-    const { data } = trpc.useQuery(["invoices.getInvoiceOptions"], {
-        refetchOnWindowFocus: false
-    });
+    // const { data } = trpc.useQuery(["invoices.getInvoiceOptions"], {
+    //     refetchOnWindowFocus: false
+    // });
 
     return (
         <Card title={
@@ -131,7 +139,6 @@ const ConfirmInvoiceIssues = (props: IProps) => {
                             </CardBody>
                         </Card>
                     </Section>
-
                     <Section
                         title="Issues"
                         description="Confirm your picked issues."
@@ -148,7 +155,7 @@ const ConfirmInvoiceIssues = (props: IProps) => {
                 </VStack>
                 <Flex justifyContent="space-between">
                     <Button mt={6} colorScheme="primary" onClick={() => setStep((step) => step - 1)}>Previous</Button>
-                    <Button isLoading={createIssueInvoice.isLoading} mt={6} colorScheme="primary" onClick={submitInvoice}>Submit Invoice</Button>
+                    <Button mt={6} colorScheme="primary" onClick={submitInvoice}>Submit Invoice</Button>
                 </Flex>
             </CardBody>
         </Card >
