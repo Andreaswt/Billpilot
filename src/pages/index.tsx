@@ -40,7 +40,6 @@ import { BackendShowcase } from '../components/landing-page/BackendShowcase'
 import { BeforeBillpilot } from '../components/landing-page/BeforeBillpilot'
 import { ProjectToInvoice } from '../components/landing-page/ProjectToInvoice'
 import { Slack } from '../components/landing-page/Slack'
-import { Demo } from '../components/landing-page/Demo'
 
 const Home: NextPage = () => {
 
@@ -274,10 +273,6 @@ const HeroSection: React.FC = () => {
     </Box>
     
   )
-}
-
-const DemoSection = () => {
-  return <Demo/>
 }
 
 const BackendShowcaseSection = () => {
