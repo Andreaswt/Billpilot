@@ -109,7 +109,7 @@ const Issues = (props: IProps) => {
         amount: issues.length,
         total: issues.length,
         issues
-    }
+    } 
 
     useEffect(() => {
         setTimeout(() => {
