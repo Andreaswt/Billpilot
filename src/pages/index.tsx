@@ -54,8 +54,6 @@ const Home: NextPage = () => {
 
         <ProjectToInvoiceSection/>
 
-        <ProjectToInvoiceSection/>
-
         <BackendShowcaseSection />
 
         <BeforeBillpilotSection />
