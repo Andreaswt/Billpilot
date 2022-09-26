@@ -52,6 +52,7 @@ enum ApiKeyProvider {
   XERO
   QUICKBOOKS
   ASANA
+  HUBSPOT
 }
 
 enum ApiKeyName {
@@ -59,6 +60,8 @@ enum ApiKeyName {
   JIRAACCESSTOKEN
   JIRAREFRESHTOKEN
   JIRAREQUESTURL
+  HUBSPOTACCESSTOKEN
+  HUBSPOTREFRESHTOKEN
 }
 
 model ApiKey {
@@ -66,6 +69,7 @@ model ApiKey {
     provider ApiKeyProvider
     key ApiKeyName
     value String @db.Text()
+    expires DateTime?
     organizationId String
     organization Organization @relation(fields: [organizationId], references: [id])
     @@unique(fields: [provider, key, organizationId], name: "organizationsApiKey")
