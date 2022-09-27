@@ -126,7 +126,7 @@ const Projects = (props: IProps) => {
                                 data={projects}
                                 isSortable>
                                 <DataGridPagination mt={2} pl={0} />
-                                <Text fontSize='xs' as='i'>Loaded {pagination.amount} of {pagination.total} results total. Search to narrow results.</Text>
+                                <Text fontSize='xs' as='i'>Loaded 4 of 4 results total. Search to narrow results.</Text>
                             </DataGrid>
                     }
                 </Flex>

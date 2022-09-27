@@ -95,12 +95,6 @@ const Issues = (props: IProps) => {
                 name: 'Package UML Diagram',
                 hoursSpent: 0.5,
             },
-            {
-                key: 'G31-66',
-                id: '10066',
-                name: 'Diagrams for UML',
-                hoursSpent: 1.5,
-            },
 
         ]
     })
@@ -322,7 +316,7 @@ const Issues = (props: IProps) => {
                                 isSelectable
                                 isHoverable>
                                 <DataGridPagination mt={2} pl={0} />
-                                <Text fontSize='xs' as='i'>Loaded {pagination.amount} of {pagination.total} results total. Search to narrow results.</Text>
+                                <Text fontSize='xs' as='i'>Loaded 10 of 10 results total. Search to narrow results.</Text>
                             </DataGrid>
                     }
                     <Flex justifyContent="space-between">

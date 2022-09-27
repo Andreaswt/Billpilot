@@ -47,6 +47,18 @@ const EconomicOptions = (props: IProps) => {
             {
                 customerNumber: 10,
                 name: 'Real Estate Gurus LLC',
+            },
+            {
+                customerNumber: 10,
+                name: 'Digital Marketing Specialists APS',
+            },
+            {
+                customerNumber: 10,
+                name: 'Jacob Advertising APS',
+            },
+            {
+                customerNumber: 10,
+                name: 'Collective Co',
             }
         ],
         activeIntegrations: {
@@ -233,6 +245,7 @@ const EconomicOptions = (props: IProps) => {
                                                         <FormLabel htmlFor={`invoiceInformation.roundingScheme`}>Rounding scheme</FormLabel>
                                                         <Flex flexDirection="column">
                                                             <Select
+                                                                value='1 Dec.'
                                                                 id='roundingScheme'
                                                                 variant="filled"
                                                                 placeholder="Select option"
