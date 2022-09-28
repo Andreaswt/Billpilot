@@ -98,7 +98,7 @@ const columns: ColumnDef<Data>[] = [
 
 export const SalesByCountry = () => {
   return (
-    <Card title="Clients" overflowX="auto" border="1px solid #C0C0C0" boxShadow='lg'>
+    <Card title="Clients" overflowX="auto" border="1px solid #e0dede" boxShadow='md'>
       <DataGrid<Data> columns={columns} data={data} isSortable />
     </Card>
   )

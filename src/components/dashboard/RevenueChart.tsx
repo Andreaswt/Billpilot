@@ -88,7 +88,7 @@ const RevenueChart = () => {
   };
 
   return (
-    <Card title="Monthly Recurring Revenue" border="1px solid #C0C0C0" boxShadow='lg'>
+    <Card title="Monthly Recurring Revenue" border="1px solid #e0dede" boxShadow='md'>
       <ButtonGroup px = '15px' isAttached variant="outline">
         <Button onClick={() => setTimeCategory(TimeCategory.YEAR)}>Year</Button>
         <Button onClick={() => setTimeCategory(TimeCategory.MONTH)}>Month</Button>
