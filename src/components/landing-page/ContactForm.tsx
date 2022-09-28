@@ -1,7 +1,9 @@
 import { Center, Flex } from '@chakra-ui/react'
 import { Section, SectionProps } from '@saas-ui/pro'
 import { Field, Form, FormLayout, SubmitButton } from '@saas-ui/react'
+import { trpc } from '../../utils/trpc'
 import { SectionTitle } from './section/section-title'
+
 
 interface ContactFormProps extends Omit<SectionProps, 'title' | 'children'> {
     title?: React.ReactNode
@@ -13,9 +15,27 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
         title = 'Contact us!',
         sectionId
     } = props
+    
+    const mutation = trpc.useMutation("contact.sendmail")
 
-    function submitHandler(fields: any) {
+    function submitHandler(fields: PostInputs) {
         console.log(fields)
+        
+        const handleContact = async () => {
+            const name = fields.name;
+            const company = fields.company;
+            const email = fields.email;
+            const phone = fields.phone;
+            const message = fields.message;
+        };
+
+        mutation.mutate({
+            name: fields.name,
+            company: fields.company,
+            email: fields.email,
+            phone: fields.phone,
+            message: fields.message,
+        })
     }
 
     type PostInputs = {
@@ -27,12 +47,12 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
     }
 
     return (
-        <Section id={sectionId} py={{base:'120', md:'120', sm:'120'}} px={10}>
+        <Section id={sectionId} py={{ base: '120', md: '120', sm: '120' }} px={10}>
             <SectionTitle title={title} />
             <Center>
                 <Flex justifyContent="center" w="100%">
                     <Form<PostInputs>
-                        w={{lg: "50%", base: "100%"}}
+                        w={{ lg: "50%", base: "100%" }}
                         defaultValues={{
                             name: '',
                             company: '',
@@ -57,7 +77,7 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
                                 {/* or: <InputField name="title" type="email" label="Title" /> */}
 
 
-                                <Field<PostInputs> type="phone" name="phone" label="Phone" rules={{ required: true }} />
+                                <Field<PostInputs> type="phone" name="phone" label="Phone (Include Country Code)" rules={{ required: true }} />
                                 {/* or: <InputField name="title" type="email" label="Title" /> */}
                             </FormLayout>
                             <Field<PostInputs>

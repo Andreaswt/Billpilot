@@ -7,6 +7,7 @@ import { jiraRouter } from "./jira";
 import { invoicesRouter } from "./invoices";
 import { usersRouter } from "./users";
 import { integrationsRouter } from "./integrations";
+import { contactRouter} from "./contactrouter"
 
 export const appRouter = createRouter()
   .transformer(superjson)
@@ -14,7 +15,8 @@ export const appRouter = createRouter()
   .merge("invoices.", invoicesRouter)
   .merge("jira.", jiraRouter)
   .merge("users.", usersRouter)
-  .merge("integrations.", integrationsRouter);
-
+  .merge("integrations.", integrationsRouter)
+  .merge("contact.", contactRouter);
 // export type definition of API
+
 export type AppRouter = typeof appRouter;
