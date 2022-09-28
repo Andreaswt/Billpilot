@@ -1,6 +1,6 @@
 import { Center, Flex } from '@chakra-ui/react'
 import { Section, SectionProps } from '@saas-ui/pro'
-import { Field, Form, FormLayout, SubmitButton } from '@saas-ui/react'
+import { Field, Form, FormLayout, SubmitButton, useSnackbar } from '@saas-ui/react'
 import { trpc } from '../../utils/trpc'
 import { SectionTitle } from './section/section-title'
 
@@ -17,6 +17,7 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
     } = props
     
     const mutation = trpc.useMutation("contact.sendmail")
+    const snackbar = useSnackbar()
 
     function submitHandler(fields: PostInputs) {
         console.log(fields)
@@ -35,6 +36,13 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
             email: fields.email,
             phone: fields.phone,
             message: fields.message,
+        })
+
+        snackbar({
+            title: 'Invoice successfully created',
+            status: 'success',
+            duration: 2000,
+            isClosable: true,
         })
     }
 
