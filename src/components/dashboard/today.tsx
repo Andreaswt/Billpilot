@@ -31,7 +31,7 @@ export const Today = () => {
   return (
     <>
       <Box display="flex" flexDir="row" my="0rem">
-        <Box width="32%" p="1rem" display="flex" flexDir="column" borderRadius="8px" border="1px solid #999" boxShadow='lg'>
+        <Box width="32%" p="1rem" display="flex" flexDir="column" borderRadius="8px" border="1px solid #C0C0C0" boxShadow='lg'>
           <Text><b>Total Invoiced</b></Text>
           <Box display="flex" mt="2rem" flexDir="row">
             <Box display="flex" ml="0.5rem" flexDir="column">
@@ -50,7 +50,7 @@ export const Today = () => {
           </Box>
         </Box>
         <Box width="2%" />
-        <Box width="32%" p="1rem" display="flex" flexDir="column" borderRadius="8px" borderWidth="10px" border="1px solid #999" boxShadow='lg'>
+        <Box width="32%" p="1rem" display="flex" flexDir="column" borderRadius="8px" borderWidth="10px" border="1px solid #C0C0C0" boxShadow='lg'>
           <Text><b>Total Payout</b></Text>
           <Box display="flex" mt="2rem" flexDir="row">
           
@@ -70,7 +70,7 @@ export const Today = () => {
           </Box>
         </Box>
         <Box width="2%" />
-        <Box width="32%" p="1rem" display="flex" flexDir="column" borderRadius="8px" border="1px solid #999" boxShadow='lg'>
+        <Box width="32%" p="1rem" display="flex" flexDir="column" borderRadius="8px" border="1px solid #C0C0C0" boxShadow='lg'>
           <Text><b>Total Due</b></Text>
           <Box display="flex" mt="2rem" flexDir="row">
           

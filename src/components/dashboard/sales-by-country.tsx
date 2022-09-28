@@ -68,7 +68,8 @@ const columns: ColumnDef<Data>[] = [
     header: 'Company',
   },
   {
-    id: 'bar',
+    id: 'statusbar',
+    header: 'Status',
     cell: ProgressCell,
   },
   {
@@ -97,7 +98,7 @@ const columns: ColumnDef<Data>[] = [
 
 export const SalesByCountry = () => {
   return (
-    <Card title="Clients" overflowX="auto">
+    <Card title="Clients" overflowX="auto" border="1px solid #C0C0C0" boxShadow='lg'>
       <DataGrid<Data> columns={columns} data={data} isSortable />
     </Card>
   )
