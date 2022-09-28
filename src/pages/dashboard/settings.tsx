@@ -14,7 +14,7 @@ const SettingsPage: NextPage = () => {
   return (
     <Page title={"Settings"}>
       <PageBody fullWidth={true}>
-        <Tabs colorScheme="black">
+        {/* <Tabs colorScheme="black">
           <TabList>
             <Tab>
               <p>Profile</p>
@@ -32,7 +32,7 @@ const SettingsPage: NextPage = () => {
               <ApiKeyTab />
             </TabPanel>
           </TabPanels>
-        </Tabs>
+        </Tabs> */}
       </PageBody>
     </Page>
   );

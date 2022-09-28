@@ -94,6 +94,11 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
                 label="Jira"
                 icon={<AiFillFileAdd />}
               />
+              <AppSidebarLink
+                href={"/dashboard/invoicehubspot"}
+                label="Hubspot"
+                icon={<AiFillFileAdd />}
+              />
               {/* <AppSidebarLink
                 href={"/dashboard/create"}
                 label="Imported Jira Items"
