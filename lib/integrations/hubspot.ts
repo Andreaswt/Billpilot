@@ -110,7 +110,7 @@ const getClient = async (organizationId: string) => {
     if (!accessToken.expires) throw new Error("Expiry date not set for Hubspot access token")
     if (accessToken.expires < new Date()) {
         const refreshedToken = await refreshAccessToken(organizationId);
-        if (typeof (refreshedToken) !== 'string') throw new Error("Expiry date not set for Hubspot access token")
+        if (typeof (refreshedToken) !== 'string') throw new Error("Hubspot access token not string")
 
         return new Client({ accessToken: refreshedToken })
     }
