@@ -6,7 +6,8 @@ const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 enum TimeCategory {
   YEAR,
-  MONTH
+  MONTH,
+  WEEK
 }
 
 interface ExampleData {
@@ -15,7 +16,7 @@ interface ExampleData {
   email: string
 }
 
-const categoryMonth = [
+const categoryWeek = [
   'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
 ]
 
@@ -34,7 +35,7 @@ const yearlyPaid = [
 ]
 
 const yearlyDue = [
-  0, 120, 0, 0, 300, 0, 0, 0, 0, 0, 0, 500,
+  0, 120, 0, 0, 300, 0, 0, 150, 199, 0, 400, 500,
 ]
 
 const weeklyPaid = [
@@ -42,7 +43,7 @@ const weeklyPaid = [
 ]
 
 const weeklyDue = [
-  0, 120, 0, 0, 300, 0, 0,
+  0, 120, 0, 0, 300, 0, 170,
 ]
 
 const RevenueChart = () => {
@@ -51,42 +52,40 @@ const RevenueChart = () => {
   
   const chartData = {
     options: {
-      // colors: ['#2479DB'],
       plotOptions: {
-        bar: {
-          columnWidth: '50%',
-          borderRadius: 2,
-        }
-      },
-      fill: {
-        colors: ['#2479DB', '#0ea371'],
-        opacity: 0.95,
+
       },
       chart: {
-        stacked: true,
+        type: 'line',
       },
       dataLabels: {
         enabled: false
       },
       xaxis: {
-        categories: (timeCategory === TimeCategory.YEAR) ? categoryMonth : categoryDay
+        categories: (timeCategory === TimeCategory.YEAR) ? categoryWeek : categoryDay
+      },
+      dataLabels: {
+        enabled: true,
+        enabledOnSeries: [0]
       },
       legend: {
         show: true,
         showForSingleSeries: true,
-        markers: {
-          fillColors: ['#2479DB', '#0ea371']
-        }
+        colors: '[#4C91E1, #73A9E8]'
       }
     },
     series: [
       {
         name: "Paid",
+        type: 'line',
         data: (timeCategory === TimeCategory.YEAR) ? yearlyPaid : weeklyPaid,
+        color: '#73A9E8'
       },
       {
         name: 'Due',
+        type: 'column',
         data: (timeCategory === TimeCategory.YEAR) ? yearlyDue : weeklyDue,
+        color: '#4C91E1'
       },
     ],
 
@@ -151,16 +150,17 @@ const RevenueChart = () => {
         <Card title="Most Recent Invoices" width="33%" border="1px solid #e0dede" boxShadow='md'>
             <DataTable columns={columns} data={data} />
         </Card>
-        <Card title="Monthly Recurring Revenue" border="1px solid #e0dede" boxShadow='md' width="66%">
+        <Card title="Monthly Invoiced Hours" border="1px solid #e0dede" boxShadow='md' width="66%">
           <ButtonGroup px='15px' isAttached variant="outline">
             <Button onClick={() => setTimeCategory(TimeCategory.YEAR)}>Year</Button>
-            <Button onClick={() => setTimeCategory(TimeCategory.MONTH)}>Month</Button>
+            {/* <Button onClick={() => setTimeCategory(TimeCategory.MONTH)}>Month</Button> */}
+            <Button onClick={() => setTimeCategory(TimeCategory.WEEK)}>Week</Button>
           </ButtonGroup>
           <CardBody>
             <Chart
               options={chartData.options}
               series={chartData.series}
-              type="bar"
+              type="line"
               width="100%"
               height="300"
             />
