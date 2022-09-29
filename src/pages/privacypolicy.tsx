@@ -14,7 +14,7 @@ const TermsOfService: NextPage = () => {
       <Box position="relative" overflow="hidden">
         <Container maxW="container.md" pt={{ base: 20, lg: 40 }} pb={{ md: 0 }}>
           <Center>
-            <Stack flex="1" direction="row">
+            <Stack flex="1" direction="column">
               <Stack
                 flex="1"
                 alignItems="center"
@@ -24,7 +24,7 @@ const TermsOfService: NextPage = () => {
               >
                 <Heading size="lg">Privacy Notice</Heading>
                 <Text>Last updated September 28, 2022
-                  This privacy notice for Billpilot.io ("Company," "we," "us," or "our"), describes how and why we might collect, store, use, and/or share ("process") your information when you use our services ("Services"), such as when you:
+                  This privacy notice for Billpilot.io (&quot;Company,&quot; &quot;we,&quot; &quot;us,&quot; or &quot;our&quot;), describes how and why we might collect, store, use, and/or share (&quot;process&quot;) your information when you use our services (&quot;Services&quot;), such as when you:
                 </Text>
                 <Text>
                   Visit our website at https://billpilot.io, or any website of ours that links to this privacy notice
@@ -51,24 +51,34 @@ const TermsOfService: NextPage = () => {
                   Want to learn more about what Billpilot.io does with any information we collect? Click here to review the notice in full.
                 </Text>
 
-                <Heading size="md">TABLE OF CONTENTS</Heading>
-                <Heading size="md">1. WHAT INFORMATION DO WE COLLECT?</Heading>
-                <Heading size="md">2. HOW DO WE PROCESS YOUR INFORMATION?</Heading>
-                <Heading size="md">3. WHAT LEGAL BASES DO WE RELY ON TO PROCESS YOUR PERSONAL INFORMATION?</Heading>
-                <Heading size="md">4. WHEN AND WITH WHOM DO WE SHARE YOUR PERSONAL INFORMATION?</Heading>
-                <Heading size="md">5. DO WE USE COOKIES AND OTHER TRACKING TECHNOLOGIES?</Heading>
-                <Heading size="md">6. HOW DO WE HANDLE YOUR SOCIAL LOGINS?</Heading>
-                <Heading size="md">7. IS YOUR INFORMATION TRANSFERRED INTERNATIONALLY?</Heading>
-                <Heading size="md">8. HOW LONG DO WE KEEP YOUR INFORMATION?</Heading>
-                <Heading size="md">9. HOW DO WE KEEP YOUR INFORMATION SAFE?</Heading>
-                <Heading size="md">10. DO WE COLLECT INFORMATION FROM MINORS?</Heading>
-                <Heading size="md">11. WHAT ARE YOUR PRIVACY RIGHTS?</Heading>
-                <Heading size="md">12. CONTROLS FOR DO-NOT-TRACK FEATURES</Heading>
-                <Heading size="md">13. DO CALIFORNIA RESIDENTS HAVE SPECIFIC PRIVACY RIGHTS?</Heading>
-                <Heading size="md">14. DO WE MAKE UPDATES TO THIS NOTICE?</Heading>
-                <Heading size="md">15. HOW CAN YOU CONTACT US ABOUT THIS NOTICE?</Heading>
-                <Heading size="md">16. HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM YOU?</Heading>
 
+
+                <Heading size="md">TABLE OF CONTENTS</Heading>
+
+                <Stack
+                  flex="1"
+                  alignItems="left"
+                  justify="center"
+                  direction="column"
+                  spacing="8"
+                >
+                  <Heading size="md">1. WHAT INFORMATION DO WE COLLECT?</Heading>
+                  <Heading size="md">2. HOW DO WE PROCESS YOUR INFORMATION?</Heading>
+                  <Heading size="md">3. WHAT LEGAL BASES DO WE RELY ON TO PROCESS YOUR PERSONAL INFORMATION?</Heading>
+                  <Heading size="md">4. WHEN AND WITH WHOM DO WE SHARE YOUR PERSONAL INFORMATION?</Heading>
+                  <Heading size="md">5. DO WE USE COOKIES AND OTHER TRACKING TECHNOLOGIES?</Heading>
+                  <Heading size="md">6. HOW DO WE HANDLE YOUR SOCIAL LOGINS?</Heading>
+                  <Heading size="md">7. IS YOUR INFORMATION TRANSFERRED INTERNATIONALLY?</Heading>
+                  <Heading size="md">8. HOW LONG DO WE KEEP YOUR INFORMATION?</Heading>
+                  <Heading size="md">9. HOW DO WE KEEP YOUR INFORMATION SAFE?</Heading>
+                  <Heading size="md">10. DO WE COLLECT INFORMATION FROM MINORS?</Heading>
+                  <Heading size="md">11. WHAT ARE YOUR PRIVACY RIGHTS?</Heading>
+                  <Heading size="md">12. CONTROLS FOR DO-NOT-TRACK FEATURES</Heading>
+                  <Heading size="md">13. DO CALIFORNIA RESIDENTS HAVE SPECIFIC PRIVACY RIGHTS?</Heading>
+                  <Heading size="md">14. DO WE MAKE UPDATES TO THIS NOTICE?</Heading>
+                  <Heading size="md">15. HOW CAN YOU CONTACT US ABOUT THIS NOTICE?</Heading>
+                  <Heading size="md">16. HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM YOU?</Heading>
+                </Stack>
 
                 <Heading size="md">1. WHAT INFORMATION DO WE COLLECT?</Heading>
                 <Text>
@@ -95,7 +105,7 @@ const TermsOfService: NextPage = () => {
 
                   Social Media Login Data. We may provide you with the option to register with us using your existing social media account details, like your
                   Facebook, Twitter, or other social media account. If you choose to register in this way, we will collect the information described in the section called
-                  "HOW DO WE HANDLE YOUR SOCIAL LOGINS?" below.
+                  &quot;HOW DO WE HANDLE YOUR SOCIAL LOGINS?&quot; below.
                   All personal information that you provide to us must be true, complete, and accurate, and you must notify us of any changes to such personal information.
                   Information automatically collected
                   In Short: Some information â€” such as your Internet Protocol (IP) address and/or browser and device characteristics â€” is collected automatically when you visit our Services.
@@ -107,13 +117,13 @@ const TermsOfService: NextPage = () => {
                   collect when you access or use our Services and which we record in log files. Depending on how you interact with us, this log data may
                   include your IP address, device information, browser type, and settings and information about your activity in the Services (such as the
                   date/time stamps associated with your usage, pages and files viewed, searches, and other actions you take such as which features you use),
-                  device event information (such as system activity, error reports (sometimes called "crash dumps"), and hardware settings).
+                  device event information (such as system activity, error reports (sometimes called &quot;crash dumps&quot;), and hardware settings).
 
                   Device Data. We collect device data such as information about your computer, phone, tablet, or other device you use to access the Services. Depending on the device used, this device data may include information such as your IP address (or proxy server), device and application
                   identification numbers, location, browser type, hardware model, Internet service provider and/or mobile carrier, operating system, and system
                   configuration information.
 
-                  Location Data. We collect location data such as information about your device's location, which can be either precise or imprecise. How
+                  Location Data. We collect location data such as information about your device&apos;s location, which can be either precise or imprecise. How
                   much information we collect depends on the type and settings of the device you use to access the Services. For example, we may use GPS
                   and other technologies to collect geolocation data that tells us your current location (based on your IP address). You can opt out of allowing
                   us to collect this information either by refusing access to the information or by disabling your Location setting on your device. However, if you
@@ -143,7 +153,7 @@ const TermsOfService: NextPage = () => {
 
                   To send you marketing and promotional communications. We may process the personal information you send to us for our marketing
                   purposes, if this is in accordance with your marketing preferences. You can opt out of our marketing emails at any time. For more
-                  information, see "WHAT ARE YOUR PRIVACY RIGHTS?" below).
+                  information, see &quot;WHAT ARE YOUR PRIVACY RIGHTS?&quot; below).
 
                   To deliver targeted advertising to you. We may process your information to develop and display personalized content and advertising
                   tailored to your interests, location, and more.
@@ -157,7 +167,7 @@ const TermsOfService: NextPage = () => {
                   To determine the effectiveness of our marketing and promotional campaigns. We may process your information to better understand
                   how to provide marketing and promotional campaigns that are most relevant to you.
 
-                  To save or protect an individual's vital interest. We may process your information when necessary to save or protect an individualâ€™s
+                  To save or protect an individual&apos;s vital interest. We may process your information when necessary to save or protect an individualâ€™s
                   vital interest, such as to prevent harm.
                 </Text>
                 <Heading size="md">3. WHAT LEGAL BASES DO WE RELY ON TO PROCESS YOUR PERSONAL INFORMATION?</Heading>
@@ -212,7 +222,7 @@ const TermsOfService: NextPage = () => {
                   Business Transfers. We may share or transfer your information in connection with, or during negotiations of, any merger, sale of company
                   assets, financing, or acquisition of all or a portion of our business to another company.
 
-                  When we use Google Maps Platform APIs. We may share your information with certain Google Maps Platform APIs (e.g., Google Maps API, Places API). To find out more about Googleâ€™s Privacy Policy, please refer to this link. We obtain and store on your device ("cache")
+                  When we use Google Maps Platform APIs. We may share your information with certain Google Maps Platform APIs (e.g., Google Maps API, Places API). To find out more about Googleâ€™s Privacy Policy, please refer to this link. We obtain and store on your device (&quot;cache&quot;)
                   your location. You may revoke your consent anytime by contacting us at the contact details provided at the end of this document.
                 </Text>
                 <Heading size="md">5. DO WE USE COOKIES AND OTHER TRACKING TECHNOLOGIES?</Heading>
@@ -230,17 +240,17 @@ const TermsOfService: NextPage = () => {
                 <Text>
                   In Short: We may transfer, store, and process your information in countries other than your own.
                   Our servers are located in the United States. If you are accessing our Services from outside the United States, please be aware that your information may be transferred to, stored, and processed by us in our facilities and by those third parties with whom we may share your
-                  personal information (see "WHEN AND WITH WHOM DO WE SHARE YOUR PERSONAL INFORMATION?" above), in and other countries.
+                  personal information (see &quot;WHEN AND WITH WHOM DO WE SHARE YOUR PERSONAL INFORMATION?&quot; above), in and other countries.
                   If you are a resident in the European Economic Area (EEA) or United Kingdom (UK), then these countries may not necessarily have data protection laws or other similar laws as comprehensive as those in your country. However, we will take all necessary measures to protect your personal information in accordance with this privacy notice and applicable law.
-                  European Commission's Standard Contractual Clauses:
-                  We have implemented measures to protect your personal information, including by using the European Commission's Standard Contractual Clauses for transfers of personal information between our group companies and between us and our third-party providers. These clauses require all recipients to protect all personal information that they process originating from the EEA or UK in accordance with European data protection laws and regulations. Our Standard Contractual Clauses can be provided upon request. We have implemented similar appropriate safeguards with our third-party service providers and partners and further details can be provided upon request.
+                  European Commission&apos;s Standard Contractual Clauses:
+                  We have implemented measures to protect your personal information, including by using the European Commission&apos;s Standard Contractual Clauses for transfers of personal information between our group companies and between us and our third-party providers. These clauses require all recipients to protect all personal information that they process originating from the EEA or UK in accordance with European data protection laws and regulations. Our Standard Contractual Clauses can be provided upon request. We have implemented similar appropriate safeguards with our third-party service providers and partners and further details can be provided upon request.
 
                 </Text>
 
                 <Heading size="md">8. HOW LONG DO WE KEEP YOUR INFORMATION?</Heading>
                 <Text>
                   In Short: We keep your information for as long as necessary to fulfill the purposes outlined in this privacy notice unless otherwise required by law.
-                  We will only keep your personal information for as long as it is necessary for the purposes set out in this privacy notice, unless a longer retention period is required or permitted by law (such as tax, accounting, or other legal requirements). No purpose in this notice will require us keeping your personal information for longer than one (1) months past the termination of the user's account.
+                  We will only keep your personal information for as long as it is necessary for the purposes set out in this privacy notice, unless a longer retention period is required or permitted by law (such as tax, accounting, or other legal requirements). No purpose in this notice will require us keeping your personal information for longer than one (1) months past the termination of the user&apos;s account.
                   When we have no ongoing legitimate business need to process your personal information, we will either delete or anonymize such information, or, if this is not possible (for example, because your personal information has been stored in backup archives), then we will securely store your personal information and isolate it from any further processing until deletion is possible.
 
                 </Text>
@@ -258,12 +268,12 @@ const TermsOfService: NextPage = () => {
                 <Heading size="md">11. WHAT ARE YOUR PRIVACY RIGHTS?</Heading>
                 <Text>
                   In Short: In some regions, such as the European Economic Area (EEA), United Kingdom (UK), and Canada, you have rights that allow you greater access to and control over your personal information. You may review, change, or terminate your account at any time.
-                  In some regions (like the EEA, UK, and Canada), you have certain rights under applicable data protection laws. These may include the right (i) to request access and obtain a copy of your personal information, (ii) to request rectification or erasure; (iii) to restrict the processing of your personal information; and (iv) if applicable, to data portability. In certain circumstances, you may also have the right to object to the processing of your personal information. You can make such a request by contacting us by using the contact details provided in the section "HOW CAN YOU CONTACT US ABOUT THIS NOTICE?" below.
+                  In some regions (like the EEA, UK, and Canada), you have certain rights under applicable data protection laws. These may include the right (i) to request access and obtain a copy of your personal information, (ii) to request rectification or erasure; (iii) to restrict the processing of your personal information; and (iv) if applicable, to data portability. In certain circumstances, you may also have the right to object to the processing of your personal information. You can make such a request by contacting us by using the contact details provided in the section &quot;HOW CAN YOU CONTACT US ABOUT THIS NOTICE?&quot; below.
                   We will consider and act upon any request in accordance with applicable data protection laws.
 
                   If you are located in the EEA or UK and you believe we are unlawfully processing your personal information, you also have the right to complain to your local data protection supervisory authority. You can find their contact details here: https://ec.europa.eu/justice/dataprotection/bodies/authorities/index_en.htm.
                   If you are located in Switzerland, the contact details for the data protection authorities are available here: https://www.edoeb.admin.ch/edoeb/en/home.html.
-                  Withdrawing your consent: If we are relying on your consent to process your personal information, which may be express and/or implied consent depending on the applicable law, you have the right to withdraw your consent at any time. You can withdraw your consent at any time by contacting us by using the contact details provided in the section "HOW CAN YOU CONTACT US ABOUT THIS NOTICE?" below.
+                  Withdrawing your consent: If we are relying on your consent to process your personal information, which may be express and/or implied consent depending on the applicable law, you have the right to withdraw your consent at any time. You can withdraw your consent at any time by contacting us by using the contact details provided in the section &quot;HOW CAN YOU CONTACT US ABOUT THIS NOTICE?&quot; below.
                   However, please note that this will not affect the lawfulness of the processing before its withdrawal nor, when applicable law allows, will it affect the processing of your personal information conducted in reliance on lawful processing grounds other than consent.
                   Account Information
                   If you would at any time like to review or change the information in your account or terminate your account, you can:
@@ -276,15 +286,15 @@ const TermsOfService: NextPage = () => {
                 </Text>
                 <Heading size="md">12. CONTROLS FOR DO-NOT-TRACK FEATURES</Heading>
                 <Text>
-                  Most web browsers and some mobile operating systems and mobile applications include a Do-Not-Track ("DNT") feature or setting you can activate to signal your privacy preference not to have data about your online browsing activities monitored and collected. At this stage no uniform technology standard for recognizing and implementing DNT signals has been finalized. As such, we do not currently respond to DNT browser signals or any other mechanism that automatically communicates your choice not to be tracked online. If a standard for online tracking is adopted that we must follow in the future, we will inform you about that practice in a revised version of this privacy notice.
+                  Most web browsers and some mobile operating systems and mobile applications include a Do-Not-Track (&quot;DNT&quot;) feature or setting you can activate to signal your privacy preference not to have data about your online browsing activities monitored and collected. At this stage no uniform technology standard for recognizing and implementing DNT signals has been finalized. As such, we do not currently respond to DNT browser signals or any other mechanism that automatically communicates your choice not to be tracked online. If a standard for online tracking is adopted that we must follow in the future, we will inform you about that practice in a revised version of this privacy notice.
                 </Text>
                 <Heading size="md">13. DO CALIFORNIA RESIDENTS HAVE SPECIFIC PRIVACY RIGHTS?</Heading>
                 <Text>
                   In Short: Yes, if you are a resident of California, you are granted specific rights regarding access to your personal information.
-                  California Civil Code Section 1798.83, also known as the "Shine The Light" law, permits our users who are California residents to request and obtain from us, once a year and free of charge, information about categories of personal information (if any) we disclosed to third parties for direct marketing purposes and the names and addresses of all third parties with which we shared personal information in the immediately preceding calendar year. If you are a California resident and would like to make such a request, please submit your request in writing to us using the contact information provided below.
+                  California Civil Code Section 1798.83, also known as the &quot;Shine The Light&quot; law, permits our users who are California residents to request and obtain from us, once a year and free of charge, information about categories of personal information (if any) we disclosed to third parties for direct marketing purposes and the names and addresses of all third parties with which we shared personal information in the immediately preceding calendar year. If you are a California resident and would like to make such a request, please submit your request in writing to us using the contact information provided below.
                   If you are under 18 years of age, reside in California, and have a registered account with Services, you have the right to request removal of unwanted data that you publicly post on the Services. To request removal of such data, please contact us using the contact information provided below and include the email address associated with your account and a statement that you reside in California. We will make sure the data is not publicly displayed on the Services, but please be aware that the data may not be completely or comprehensively removed from all our systems (e.g., backups, etc.).
                   CCPA Privacy Notice
-                  The California Code of Regulations defines a "resident" as:
+                  The California Code of Regulations defines a &quot;resident&quot; as:
                   (1)	every individual who is in the State of California for other than a temporary or transitory purpose and
                   (2)	every individual who is domiciled in the State of California who is outside the State of California for a temporary or transitory purpose
                   How do we use and share your personal information?
@@ -293,7 +303,7 @@ const TermsOfService: NextPage = () => {
                   If you are using an authorized agent to exercise your right to opt out we may deny a request if the authorized agent does not submit proof that they have been validly authorized to act on your behalf.
                   Will your information be shared with anyone else?
                   We may disclose your personal information with our service providers pursuant to a written contract between us and each service provider. Each service provider is a for-profit entity that processes the information on our behalf.
-                  We may use your personal information for our own business purposes, such as for undertaking internal research for technological development and demonstration. This is not considered to be "selling" of your personal information.
+                  We may use your personal information for our own business purposes, such as for undertaking internal research for technological development and demonstration. This is not considered to be &quot;selling&quot; of your personal information.
                   Billpilot.io has not disclosed or sold any personal information to third parties for a business or commercial purpose in the preceding twelve (12) months. Billpilot.io will not sell personal information in the future belonging to website visitors, users, and other consumers. Your rights with respect to your personal data
                   Right to request deletion of the data â€” Request to delete
                   You can ask for the deletion of your personal information. If you ask us to delete your personal information, we will respect your request and delete your personal information, subject to certain exceptions provided by law, such as (but not limited to) the exercise by another consumer of his or her right to free speech, our compliance requirements resulting from a legal obligation, or any processing that may be required to protect against illegal activities.
@@ -325,7 +335,7 @@ const TermsOfService: NextPage = () => {
                 <Heading size="md">14. DO WE MAKE UPDATES TO THIS NOTICE?</Heading>
                 <Text>
                   In Short: Yes, we will update this notice as necessary to stay compliant with relevant laws.
-                  We may update this privacy notice from time to time. The updated version will be indicated by an updated "Revised" date and the updated version will be effective as soon as it is accessible. If we make material changes to this privacy notice, we may notify you either by prominently posting a notice of such changes or by directly sending you a notification. We encourage you to review this privacy notice frequently to be informed of how we are protecting your information.
+                  We may update this privacy notice from time to time. The updated version will be indicated by an updated &quot;Revised&quot; date and the updated version will be effective as soon as it is accessible. If we make material changes to this privacy notice, we may notify you either by prominently posting a notice of such changes or by directly sending you a notification. We encourage you to review this privacy notice frequently to be informed of how we are protecting your information.
 
                 </Text>
                 <Heading size="md">15. HOW CAN YOU CONTACT US ABOUT THIS NOTICE?</Heading>
