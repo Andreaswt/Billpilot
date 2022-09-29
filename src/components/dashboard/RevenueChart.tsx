@@ -55,11 +55,11 @@ const RevenueChart = () => {
       plotOptions: {
         bar: {
           columnWidth: '50%',
-          borderRadius: 5,
+          borderRadius: 2,
         }
       },
       fill: {
-        colors: ['#2479DB', '#13315C'],
+        colors: ['#2479DB', '#0ea371'],
         opacity: 0.95,
       },
       chart: {
@@ -75,7 +75,7 @@ const RevenueChart = () => {
         show: true,
         showForSingleSeries: true,
         markers: {
-          fillColors: ['#2479DB', '#13315C']
+          fillColors: ['#2479DB', '#0ea371']
         }
       }
     },
