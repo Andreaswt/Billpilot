@@ -18,7 +18,6 @@ export const appRouter = createRouter()
   .merge("users.", usersRouter)
   .merge("integrations.", integrationsRouter)
   .merge("account.", accountRouter)
-
   .merge("contact.", contactRouter);
 // export type definition of API
 
