@@ -36,10 +36,10 @@ export const SettingsSidebar = () => {
           </SidebarNav>
           <SidebarNav flex="1" spacing={6}>
             <SidebarNavGroup title="Account" icon={<FiUser />}>
-              <SettingsLink label="Profile" path={''} />
-              <SettingsLink label="Security" path={'security'} />
+              <SettingsLink label="Profile" path={'profile'} />
+              {/* <SettingsLink label="Security" path={'security'} />
               <SettingsLink label="Notifications" path={'notifications'} />
-              <SettingsLink label="Api" path={'api'} />
+              <SettingsLink label="Api" path={'api'} /> */}
             </SidebarNavGroup>
           </SidebarNav>
         </SidebarOverflow>

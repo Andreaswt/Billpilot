@@ -45,22 +45,15 @@ export const exchangeForTokens = async (organizationId: string, code: string, re
             await prisma.apiKey.createMany({
                 data: [{
                     provider: ApiKeyProvider.HUBSPOT,
-                    key: ApiKeyName.JIRAACCESSTOKEN,
-                    value: data.access_token,
-                    expires: null,
-                    organizationId: organizationId
-                },
-                {
-                    provider: ApiKeyProvider.HUBSPOT,
                     key: ApiKeyName.HUBSPOTACCESSTOKEN,
-                    value: data.refresh_token,
+                    value: data.access_token,
                     expires: accessTokenExpirationDate,
                     organizationId: organizationId
                 },
                 {
                     provider: ApiKeyProvider.HUBSPOT,
                     key: ApiKeyName.HUBSPOTREFRESHTOKEN,
-                    value: data.access_token,
+                    value: data.refresh_token,
                     expires: null,
                     organizationId: organizationId
                 },

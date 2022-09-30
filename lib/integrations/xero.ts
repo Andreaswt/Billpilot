@@ -129,44 +129,44 @@ export async function getAccounts(organizationId: string) {
 }
 
 async function getXeroTokenset(organizationId: string) {
-    let storedTokenset = await prisma.xeroAuthenticationKey.findUniqueOrThrow({
-        where: {
-            organizationId: organizationId
-        }
-    })
+    // let storedTokenset = await prisma.xeroAuthenticationKey.findUniqueOrThrow({
+    //     where: {
+    //         organizationId: organizationId
+    //     }
+    // })
 
     return new TokenSet({
-        id_token: storedTokenset.idToken,
-        access_token: storedTokenset.accessToken,
-        refresh_token: storedTokenset.refreshToken,
-        expires_in: storedTokenset.expiresIn,
-        scope: storedTokenset.scope
+        id_token: "",
+        access_token: "",
+        refresh_token: "",
+        expires_in: 0,
+        scope: ""
     });
 }
 
 export async function saveTokenset(tokenSet: TokenSet, organizationId: string) {
-    await prisma.xeroAuthenticationKey.upsert({
-        where: {
-            organizationId: organizationId
-        },
-        update: {
-            idToken: tokenSet.id_token!,
-            accessToken: tokenSet.access_token!,
-            expiresIn: tokenSet.expires_in!,
-            tokenType: tokenSet.token_type!,
-            refreshToken: tokenSet.refresh_token!,
-            scope: tokenSet.scope!,
-        },
-        create: {
-            organizationId: organizationId,
-            idToken: tokenSet.id_token!,
-            accessToken: tokenSet.access_token!,
-            expiresIn: tokenSet.expires_in!,
-            tokenType: tokenSet.token_type!,
-            refreshToken: tokenSet.refresh_token!,
-            scope: tokenSet.scope!,
-        }
-    })
+    // await prisma.xeroAuthenticationKey.upsert({
+    //     where: {
+    //         organizationId: organizationId
+    //     },
+    //     update: {
+    //         idToken: tokenSet.id_token!,
+    //         accessToken: tokenSet.access_token!,
+    //         expiresIn: tokenSet.expires_in!,
+    //         tokenType: tokenSet.token_type!,
+    //         refreshToken: tokenSet.refresh_token!,
+    //         scope: tokenSet.scope!,
+    //     },
+    //     create: {
+    //         organizationId: organizationId,
+    //         idToken: tokenSet.id_token!,
+    //         accessToken: tokenSet.access_token!,
+    //         expiresIn: tokenSet.expires_in!,
+    //         tokenType: tokenSet.token_type!,
+    //         refreshToken: tokenSet.refresh_token!,
+    //         scope: tokenSet.scope!,
+    //     }
+    // })
 }
 
 async function getActiveTenantId() {
