@@ -117,6 +117,16 @@ const Issues = (props: IProps) => {
         issues
     }
 
+    // const [data, setData] = useState() => {
+    //     const d = {
+    //         amount: issues.length,
+    //         total: issues.length,
+    //         issues
+    //     }
+
+    //     return ()
+    // }
+
     useEffect(() => {
         setTimeout(() => {
             setIsLoading(false)
@@ -185,7 +195,7 @@ const Issues = (props: IProps) => {
         })
 
         return selected
-    }, [store.pickedIssues])
+    }, [data.issues, store.pickedIssues])
 
     const columns: ColumnDef<TableIssue>[] = [
         {
