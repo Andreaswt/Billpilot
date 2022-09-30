@@ -28,7 +28,6 @@ interface IPagination {
 const Issues = (props: IProps) => {
     const { setStep } = props
     const store = useInvoiceIssuesStore();
-    const [selected, setSelected] = useState<string[]>([])
     const [searchTerm, setSearchTerm] = useState<string>("")
     const [pagination, setPagination] = useState<IPagination>({ amount: 0, total: 0 })
     const [isLoading, setIsLoading] = useState<Boolean>(true)
@@ -99,11 +98,24 @@ const Issues = (props: IProps) => {
         ]
     })
 
+    const [selected, setSelected] = useState<string[]>(() => {
+        // Selected issues from zustand are used to restore state in selected
+        let storeSelected: string[] = []
+        store.pickedIssues.forEach(item => {
+            const issueIndex = issues.findIndex(x => x.key === item.key && x.id === item.id)
+            if (!issueIndex && issueIndex != 0) return
+
+            storeSelected.push(issueIndex.toString())
+        })
+
+        return storeSelected
+    })
+
     const data = {
         amount: issues.length,
         total: issues.length,
         issues
-    } 
+    }
 
     useEffect(() => {
         setTimeout(() => {
@@ -158,6 +170,7 @@ const Issues = (props: IProps) => {
     function pickIssues() {
         let selectedData: PickedIssue[] = []
 
+        // console.log(selected)
         if (selected.length === 0) {
             setPickAtLeastOneIssue(true)
             return
@@ -172,7 +185,9 @@ const Issues = (props: IProps) => {
             selectedData.push(issueWithEdits)
         })
 
+        // console.log(selectedData)
         store.pickIssues(selectedData)
+
 
         setStep((state) => state + 1)
     }
