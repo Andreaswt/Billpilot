@@ -296,8 +296,8 @@ const EconomicOptions = (props: IProps) => {
                                                                 placeholder="Select Customer"
                                                                 {...register(`economicOptions.customer`)}>
                                                                 {
-                                                                    invoiceOptionsData?.economicCustomers.map(item => {
-                                                                        return (<option key={item.customerNumber} value={item.customerNumber}>{item.name}</option>)
+                                                                    invoiceOptionsData?.economicCustomers.map((item, index) => {
+                                                                        return (<option key={index} value={item.customerNumber}>{item.name}</option>)
                                                                     })
                                                                 }
                                                             </Select>

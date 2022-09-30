@@ -28,7 +28,6 @@ interface IPagination {
 const Issues = (props: IProps) => {
     const { setStep } = props
     const store = useInvoiceIssuesStore();
-    const [selected, setSelected] = useState<string[]>([])
     const [searchTerm, setSearchTerm] = useState<string>("")
     const [pagination, setPagination] = useState<IPagination>({ amount: 0, total: 0 })
     const [isLoading, setIsLoading] = useState<Boolean>(true)
@@ -99,11 +98,34 @@ const Issues = (props: IProps) => {
         ]
     })
 
+    const [selected, setSelected] = useState<string[]>(() => {
+        // Selected issues from zustand are used to restore state in selected
+        let storeSelected: string[] = []
+        store.pickedIssues.forEach(item => {
+            const issueIndex = issues.findIndex(x => x.key === item.key && x.id === item.id)
+            if (!issueIndex && issueIndex != 0) return
+
+            storeSelected.push(issueIndex.toString())
+        })
+
+        return storeSelected
+    })
+
     const data = {
         amount: issues.length,
         total: issues.length,
         issues
-    } 
+    }
+
+    // const [data, setData] = useState() => {
+    //     const d = {
+    //         amount: issues.length,
+    //         total: issues.length,
+    //         issues
+    //     }
+
+    //     return ()
+    // }
 
     useEffect(() => {
         setTimeout(() => {
@@ -136,25 +158,6 @@ const Issues = (props: IProps) => {
     })
     let isInitialized = false;
 
-    // const { data, isLoading, isRefetching } = trpc.useQuery(["jira.searchIssuesForIssueInvoicing", { searchTerm: searchTerm, projectKey: store.pickedProject }], {
-    //     onSuccess(data) {
-    //         setPagination({ amount: data.amount, total: data.total })
-    //         setIssues(data.issues)
-
-    //         // Selected issues from zustand are used to restore state in selected
-    //         let storeSelected: string[] = []
-    //         store.pickedIssues.forEach(item => {
-    //             const issueIndex = data.issues.findIndex(x => x.key === item.key && x.id === item.id)
-    //             if (!issueIndex && issueIndex != 0) return
-
-    //             storeSelected.push(issueIndex.toString())
-    //         })
-
-    //         setSelected(storeSelected)
-    //     },
-    //     refetchOnWindowFocus: false
-    // });
-
     function pickIssues() {
         let selectedData: PickedIssue[] = []
 
@@ -174,6 +177,7 @@ const Issues = (props: IProps) => {
 
         store.pickIssues(selectedData)
 
+
         setStep((state) => state + 1)
     }
 
@@ -182,8 +186,6 @@ const Issues = (props: IProps) => {
 
         store.pickedIssues.forEach((item) => {
             // Get index of checked item in list of items
-            if (!data) return
-
             const index = data.issues.findIndex(x => x.key == item.key && x.id == item.id)
 
             // Add the index to the record such that it is checked
@@ -193,7 +195,7 @@ const Issues = (props: IProps) => {
         })
 
         return selected
-    }, [data, store.pickedIssues])
+    }, [data.issues, store.pickedIssues])
 
     const columns: ColumnDef<TableIssue>[] = [
         {

@@ -40,9 +40,9 @@ export const UserMenu = () => {
             </NextLink>
           </MenuGroup>
           <MenuDivider />
-          <MenuItem label="Changelog" />
+          {/* <MenuItem label="Changelog" />
           <MenuItem label="Feedback" />
-          <MenuItem label="Help &amp; Support" />
+          <MenuItem label="Help &amp; Support" /> */}
           <MenuItem
             label={colorMode === 'dark' ? 'Light mode' : 'Dark mode'}
             onClick={(e: React.MouseEvent) => {

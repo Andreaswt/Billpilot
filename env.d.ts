@@ -24,5 +24,9 @@ declare namespace NodeJS {
         JIRA_CLIENT_ID: string
         JIRA_CLIENT_SECRET: string
         JIRA_CALLBACK_URL: string
+        HUBSPOT_CLIENT_ID: string
+        HUBSPOT_CLIENT_SECRET: string
+        HUBSPOT_REDIRECT_URI: string
+        HUBSPOT_CALLBACK_URL: string
     }
   }
