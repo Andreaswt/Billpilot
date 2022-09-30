@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Card, CardBody, Column, DataTable } from '@saas-ui/react'
-import { Box, ButtonGroup, Flex, HStack, SimpleGrid } from '@chakra-ui/react';
+import { Box, ButtonGroup, color, Flex, HStack, SimpleGrid, useColorMode } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -9,6 +9,8 @@ enum TimeCategory {
   MONTH,
   WEEK
 }
+
+
 
 interface ExampleData {
   invoice: string
@@ -48,20 +50,56 @@ const weeklyDue = [
 
 const RevenueChart = () => {
 
+  const { colorMode, toggleColorMode } = useColorMode()
+
   const [timeCategory, setTimeCategory] = React.useState(TimeCategory.YEAR);
-  
+
   const chartData = {
     options: {
       plotOptions: {
-
       },
       chart: {
         type: 'line',
+        toolbar: {
+          show: false
+        },
       },
-      dataLabels: {
-        enabled: false
+      yaxis: {
+        axisBorder: {
+          show: true,
+          color: colorMode === 'dark' ? '#ffffff' : '#78909C',
+        },
+        axisTicks: {
+          show: true,
+          borderType: 'solid',
+          color: colorMode === 'dark' ? '#ffffff' : '#78909C',
+        },
+        labels: {
+          style: {
+            colors: colorMode === 'dark' ? '#ffffff' : '#78909C',
+          },
+        },
+
       },
+
+
       xaxis: {
+        axisBorder: {
+          show: true,
+          color: colorMode === 'dark' ? '#ffffff' : '#78909C',
+          width: '100%',
+          offsetX: -3,
+        },
+        axisTicks: {
+          show: true,
+          borderType: 'solid',
+          color: colorMode === 'dark' ? '#ffffff' : '#78909C',
+        },
+        labels: {
+          style: {
+            colors: colorMode === 'dark' ? '#ffffff' : '#78909C',
+          },
+        },
         categories: (timeCategory === TimeCategory.YEAR) ? categoryWeek : categoryDay
       },
       dataLabels: {
@@ -71,7 +109,10 @@ const RevenueChart = () => {
       legend: {
         show: true,
         showForSingleSeries: true,
-        colors: '[#4C91E1, #73A9E8]'
+        colors: '[#4C91E1, #73A9E8]',
+        labels: {
+          colors: colorMode === 'dark' ? '#ffffff' : '#78909C',
+        }
       }
     },
     series: [
@@ -106,7 +147,7 @@ const RevenueChart = () => {
       Header: 'Status',
     },
   ]
-  
+
   const data: ExampleData[] = [
     {
       invoice: 1392,
@@ -138,17 +179,16 @@ const RevenueChart = () => {
       duedate: '12/11/2021',
       status: 'Paid'
     },
-    
+
   ]
-  
+
 
   return (
     <>
-      {/* <SimpleGrid columns={[2, 1, 3]} gap={4}> */}
-      <Flex gap={4}>
-        
-        <Card title="Most Recent Invoices" width="33%" border="1px solid #e0dede" boxShadow='md'>
-            <DataTable columns={columns} data={data} />
+      <Flex gap={4} flexDirection={{ base: "column", md: "row"}}>
+
+        <Card title="Most Recent Invoices" width="33%" border="1px solid #e0dede" boxShadow='md' minWidth ={330}>
+          <DataTable columns={columns} data={data} />
         </Card>
         <Card title="Monthly Invoiced Hours" border="1px solid #e0dede" boxShadow='md' width="66%">
           <ButtonGroup px='15px' isAttached variant="outline">
@@ -161,12 +201,9 @@ const RevenueChart = () => {
               options={chartData.options}
               series={chartData.series}
               type="line"
-              width="100%"
-              height="300"
             />
           </CardBody>
         </Card>
-        {/* </SimpleGrid> */}
       </Flex>
     </>
   );
