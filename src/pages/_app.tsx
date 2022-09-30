@@ -1,7 +1,5 @@
 // src/pages/_app.tsx
 import { withTRPC } from "@trpc/next";
-import type { AppRouter } from "../server/router";
-import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
 import { SessionProvider } from "next-auth/react";
 import "../styles/globals.css";
@@ -9,15 +7,18 @@ import { ModalsProvider, NProgressNextRouter, SaasProvider } from '@saas-ui/reac
 import { useRouter } from "next/router";
 import landingPageTheme from '../styles/index';
 import { AppLayout } from "../components/layout/layouts/app-layout";
+import type { AppType } from "next/app";
+import type { AppRouter } from "../server/router";
+import type { Session } from "next-auth";
 
-const MyApp: AppType = ({
+const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
   const router = useRouter();
   return (
     <SaasProvider theme={landingPageTheme}>
-      <SessionProvider session={pageProps.session} refetchInterval={0}>
+      <SessionProvider session={session} refetchInterval={0}>
         <ModalsProvider>
           <AppLayout>
             <NProgressNextRouter router={router} />

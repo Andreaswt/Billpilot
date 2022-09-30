@@ -391,6 +391,47 @@ export async function importJiraTime(accountIds: string[], issueIds: string[], p
 }
 
 async function getJiraAccessToken(organizationId: string) {
+    let accessToken = await prisma.apiKey.findUniqueOrThrow({
+        where: {
+            organizationsApiKey: {
+                organizationId: organizationId,
+                provider: ApiKeyProvider.JIRA,
+                key: ApiKeyName.JIRAACCESSTOKEN
+            }
+        },
+        select: {
+            expires: true,
+            value: true
+        }
+    })
+
+    let requestUrl = await prisma.apiKey.findUniqueOrThrow({
+        where: {
+            organizationsApiKey: {
+                organizationId: organizationId,
+                provider: ApiKeyProvider.JIRA,
+                key: ApiKeyName.JIRAREQUESTURL
+            }
+        },
+        select: {
+            value: true
+        }
+    })
+
+    // If the access token has expired, retrieve
+    // a new one using the refresh token
+    if (!accessToken.expires) throw new Error("Expiry date not set for Jira access token")
+    if (accessToken.expires < new Date()) {
+        const { access_token } = await refreshAccessToken(organizationId);
+        if (typeof (access_token) !== 'string') throw new Error("Jira access token not string")
+
+        return {access_token: access_token, request_url: requestUrl.value}
+    }
+
+    return {access_token: accessToken.value, request_url: requestUrl.value}
+}
+
+export async function refreshAccessToken(organizationId: string) {
     let refreshToken = await prisma.apiKey.findUniqueOrThrow({
         where: {
             organizationsApiKey: {
@@ -405,7 +446,7 @@ async function getJiraAccessToken(organizationId: string) {
     })
 
     // Refresh access_token with refresh_token
-    const response = await fetch(`https://auth.atlassian.com/oauth/token`, {
+    const tokenResponse = await fetch(`https://auth.atlassian.com/oauth/token`, {
       method: 'POST',
       headers: {
         'content-type': 'application/json'
@@ -418,10 +459,13 @@ async function getJiraAccessToken(organizationId: string) {
       })
     });
     
-    const json = await response.json();
-    if (!json.access_token || !json.refresh_token) throw new Error("Missing token during rotation")
+    const json = await tokenResponse.json();
+    if (!json.access_token || !json.refresh_token || !json.expires_in) throw new Error("Missing token during Jira token refresh")
     
     // Update access token
+    var accessTokenExpirationDate = new Date()
+    accessTokenExpirationDate.setSeconds(accessTokenExpirationDate.getSeconds() + json.expires_in)
+
     await prisma.apiKey.update({
         where: {
             organizationsApiKey: {
@@ -432,6 +476,7 @@ async function getJiraAccessToken(organizationId: string) {
         },
         data: {
             value: json.access_token,
+            expires: accessTokenExpirationDate
         },
     })
 
@@ -449,45 +494,43 @@ async function getJiraAccessToken(organizationId: string) {
         },
     })
 
-    let requestUrl = await prisma.apiKey.findUniqueOrThrow({
-        where: {
-            organizationsApiKey: {
-                organizationId: organizationId,
-                provider: ApiKeyProvider.JIRA,
-                key: ApiKeyName.JIRAREQUESTURL
-            }
-        },
-        select: {
-            value: true
-        }
-    })
+    const response: { access_token: string } = {
+        access_token: json.access_token
+    }
 
-    return {access_token: json.access_token, request_url: requestUrl.value}
+    return response
 }
 
 export interface JiraRotateTokenResponse {
     access_token: string
     refresh_token: string
+    expires_in: number
 }
 
 export async function saveJiraTokens(tokens: JiraRotateTokenResponse, requestUrl: string, organizationId: string) {
+    var accessTokenExpirationDate = new Date()
+    accessTokenExpirationDate.setSeconds(accessTokenExpirationDate.getSeconds() + Math.round(tokens.expires_in * 0.75))
+
     await prisma.apiKey.createMany({
         data: [{
             provider: ApiKeyProvider.JIRA,
             key: ApiKeyName.JIRAACCESSTOKEN,
             value: tokens.access_token,
+            expires: accessTokenExpirationDate,
             organizationId: organizationId
         },
         {
             provider: ApiKeyProvider.JIRA,
             key: ApiKeyName.JIRAREFRESHTOKEN,
             value: tokens.refresh_token,
+            expires: null,
             organizationId: organizationId
         },
         {
             provider: ApiKeyProvider.JIRA,
             key: ApiKeyName.JIRAREQUESTURL,
             value: requestUrl,
+            expires: null,
             organizationId: organizationId
         },
         ]

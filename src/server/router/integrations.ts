@@ -43,6 +43,10 @@ export const integrationsRouter = createRouter()
                 response[ApiKeyProvider.QUICKBOOKS.toString()] = true
             }
 
+            if (apiKeys.find(x => x.provider === ApiKeyProvider.HUBSPOT)) {
+                response[ApiKeyProvider.HUBSPOT.toString()] = true
+            }
+
             return response
         },
     })
