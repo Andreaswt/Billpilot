@@ -148,29 +148,9 @@ const Issues = (props: IProps) => {
     })
     let isInitialized = false;
 
-    // const { data, isLoading, isRefetching } = trpc.useQuery(["jira.searchIssuesForIssueInvoicing", { searchTerm: searchTerm, projectKey: store.pickedProject }], {
-    //     onSuccess(data) {
-    //         setPagination({ amount: data.amount, total: data.total })
-    //         setIssues(data.issues)
-
-    //         // Selected issues from zustand are used to restore state in selected
-    //         let storeSelected: string[] = []
-    //         store.pickedIssues.forEach(item => {
-    //             const issueIndex = data.issues.findIndex(x => x.key === item.key && x.id === item.id)
-    //             if (!issueIndex && issueIndex != 0) return
-
-    //             storeSelected.push(issueIndex.toString())
-    //         })
-
-    //         setSelected(storeSelected)
-    //     },
-    //     refetchOnWindowFocus: false
-    // });
-
     function pickIssues() {
         let selectedData: PickedIssue[] = []
 
-        // console.log(selected)
         if (selected.length === 0) {
             setPickAtLeastOneIssue(true)
             return
@@ -185,7 +165,6 @@ const Issues = (props: IProps) => {
             selectedData.push(issueWithEdits)
         })
 
-        // console.log(selectedData)
         store.pickIssues(selectedData)
 
 
@@ -197,8 +176,6 @@ const Issues = (props: IProps) => {
 
         store.pickedIssues.forEach((item) => {
             // Get index of checked item in list of items
-            if (!data) return
-
             const index = data.issues.findIndex(x => x.key == item.key && x.id == item.id)
 
             // Add the index to the record such that it is checked
@@ -208,7 +185,7 @@ const Issues = (props: IProps) => {
         })
 
         return selected
-    }, [data, store.pickedIssues])
+    }, [store.pickedIssues])
 
     const columns: ColumnDef<TableIssue>[] = [
         {
