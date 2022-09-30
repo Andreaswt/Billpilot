@@ -34,7 +34,7 @@ const pricing = {
           </Text> */}
           <Text>$99</Text>
           <Text fontSize="sm">
-            / month / user
+            / month
           </Text>
         </HStack>
       ),
