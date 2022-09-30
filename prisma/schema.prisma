@@ -40,8 +40,6 @@ model Organization {
     discounts Discount[]
     fixedPriceDiscounts FixedPriceDiscount[]
     invoiceLayouts InvoiceLayout[]
-    xeroAuthenticationKeyId String?
-    xeroAuthenticationKey XeroAuthenticationKey? @relation(fields: [xeroAuthenticationKeyId], references: [id])
     currency Currency @default(USD)
     roundingScheme RoundingScheme @default(POINTPOINT)
 }
@@ -71,7 +69,7 @@ model ApiKey {
     value String @db.Text()
     expires DateTime?
     organizationId String
-    organization Organization @relation(fields: [organizationId], references: [id])
+    organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
     @@unique(fields: [provider, key, organizationId], name: "organizationsApiKey")
 }
 
@@ -84,7 +82,7 @@ model Worklog {
   billed Boolean?
   billedDate DateTime?
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   @@unique(fields: [worklogId, organizationId], name: "organizationsWorklog")
 }
 
@@ -92,7 +90,7 @@ model Worklog {
 model Role {
   name String @id @unique
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   pricelists RolesOnPricelists[]
   jiraEmployees JiraEmployee[]
   teamSchemes TeamScheme[]
@@ -101,7 +99,7 @@ model Role {
 model Pricelist {
   name String @id @unique
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   roles RolesOnPricelists[]
 }
 
@@ -119,7 +117,7 @@ model Project {
   name String
   billable Boolean
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   @@unique([key, organizationId])
 }
 
@@ -131,7 +129,7 @@ model TeamScheme {
   name String
   roles Role[]
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model JiraEmployee {
@@ -140,7 +138,7 @@ model JiraEmployee {
   accountId String
   roles Role[]
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   @@unique ([accountId, organizationId], name: "organizationsJiraEmployee")
 }
 
@@ -149,7 +147,7 @@ model Client {
   name String
   invoice Invoice[]
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   @@unique ([name, organizationId], name: "organizationsClient")
 }
 
@@ -162,7 +160,7 @@ model TimeItem {
   invoiceId String
   invoice Invoice @relation(fields: [invoiceId], references: [id])
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   taxId String
   tax Tax @relation(fields: [taxId], references: [id])
   discountId String
@@ -178,7 +176,7 @@ model FixedPriceTimeItem {
   invoiceId String
   invoice Invoice @relation(fields: [invoiceId], references: [id])
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   taxId String
   tax Tax @relation(fields: [taxId], references: [id])
   discountId String
@@ -194,7 +192,7 @@ model Tax {
   invoiceId String
   invoice Invoice @relation(fields: [invoiceId], references: [id])
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   appliesToTimeItems TimeItem[]
   appliesToFixedPriceTimeItems FixedPriceTimeItem[]
 }
@@ -206,7 +204,7 @@ model Discount {
   invoiceId String
   invoice Invoice @relation(fields: [invoiceId], references: [id])
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   appliesToTimeItems TimeItem[]
   appliesToFixedPriceTimeItems FixedPriceTimeItem[]
 }
@@ -218,7 +216,7 @@ model FixedPriceDiscount {
   invoiceId String
   invoice Invoice @relation(fields: [invoiceId], references: [id])
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   appliesToTimeItems TimeItem[]
   appliesToFixedPriceTimeItems FixedPriceTimeItem[]
 }
@@ -250,7 +248,7 @@ model InvoiceLayout {
   showTimeReport Boolean
   timeReportGroupings String // TODO: Custom string parsing such as project->issue->subtask->employee->worklog
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 enum InvoiceStatus {
@@ -286,7 +284,7 @@ model Invoice {
   fixedPriceDiscounts FixedPriceDiscount[]
   notesForClient String
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   @@unique ([id, organizationId], name: "organizationsInvoice")
 }
 
@@ -302,7 +300,7 @@ model IssueTimeItem {
   issueInvoiceId String
   issueInvoice IssueInvoice @relation(fields: [issueInvoiceId], references: [id])
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model IssueInvoice {
@@ -318,21 +316,8 @@ model IssueInvoice {
   economicCustomerContact String
   issueTimeItems IssueTimeItem[]
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   @@unique ([id, organizationId], name: "organizationsIssueInvoice")
-}
-
-// Xero
-model XeroAuthenticationKey {
-  id String @id @default(cuid())
-  organizationId String @unique
-  organization Organization[]
-  idToken String @db.Text() // Token id is too long to store in a string, so it's stored in a SQL text instead
-  accessToken String @db.Text()
-  expiresIn Int
-  tokenType String
-  refreshToken String @db.Text()
-  scope String
 }
 
 // Necessary for Next auth
@@ -381,7 +366,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   organizationId  String?
-  organization Organization? @relation(fields: [organizationId], references: [id])
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {

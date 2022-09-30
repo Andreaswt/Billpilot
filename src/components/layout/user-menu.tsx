@@ -35,7 +35,7 @@ export const UserMenu = () => {
         {/* Wrap the menu in a portal so that the color scheme tokens get applied correctly.  */}
         <MenuList zIndex={['modal', null, 'dropdown']}>
           <MenuGroup title={session?.user.name || ''}>
-            <NextLink href={"/dashboard/settings"} passHref>
+            <NextLink href={"/dashboard/settings/profile"} passHref>
               <MenuItem label="Profile" />
             </NextLink>
           </MenuGroup>
