@@ -117,6 +117,30 @@ const Integrations: NextPage = () => {
                                         </Card>
                                     </Section>
                                     <Section
+                                        title="Hubspot"
+                                        description="Connect to Hubspot by clicking the button and logging in."
+                                        variant="annotated">
+                                        <Card>
+                                            <CardBody>
+                                                {
+                                                    data["HUBSPOT"]
+                                                        ?
+                                                        <Flex alignItems="center" justifyContent="space-between" gap={2}>
+                                                            <Text fontSize="sm" as="i">Your account is integrated with Hubspot.</Text>
+                                                            <Button onClick={() => mutateAsync({ provider: "HUBSPOT" })} colorScheme="red">
+                                                                Log out of Hubspot
+                                                            </Button>
+                                                        </Flex>
+                                                        : <Flex justifyContent="start">
+                                                            <Button onClick={() => router.push("/api/hubspot/redirect")} colorScheme="primary">
+                                                                Log in with Hubspot
+                                                            </Button>
+                                                        </Flex>
+                                                }
+                                            </CardBody>
+                                        </Card>
+                                    </Section>
+                                    <Section
                                         title="Xero"
                                         description="Connect to Xero by clicking the button and logging in."
                                         variant="annotated">
