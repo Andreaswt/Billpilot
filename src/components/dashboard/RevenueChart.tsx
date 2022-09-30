@@ -13,9 +13,9 @@ enum TimeCategory {
 
 
 interface ExampleData {
-  invoice: string
+  invoice: number
   duedate: string
-  email: string
+  status: string
 }
 
 const categoryWeek = [
@@ -56,10 +56,7 @@ const RevenueChart = () => {
 
   const chartData = {
     options: {
-      plotOptions: {
-      },
       chart: {
-        type: 'line',
         toolbar: {
           show: false
         },
@@ -81,8 +78,6 @@ const RevenueChart = () => {
         },
 
       },
-
-
       xaxis: {
         axisBorder: {
           show: true,
