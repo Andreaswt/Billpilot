@@ -54,15 +54,15 @@ const siteConfig = {
     ),
     links: [
       {
-        href: 'mailto:carl.larsen.dk@gmail.com',
+        href: 'mailto:contact@billpilot.io',
         label: 'Contact',
       },
       {
-        href: '/',
+        href: 'https://twitter.com/Billpilotsaas',
         label: <FaTwitter size="14" />,
       },
       {
-        href: '/',
+        href: 'https://www.linkedin.com/company/billpilot/',
         label: <FaLinkedin size="14" />,
       },
     ],

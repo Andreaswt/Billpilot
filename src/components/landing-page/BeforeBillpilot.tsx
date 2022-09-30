@@ -7,7 +7,7 @@ import { Em } from './typography'
 export const BeforeBillpilot: React.FC = (props) => {
     const { toggleColorMode, colorMode } = useColorMode()
     return (
-        <Center id="backendshowcase" py={{ base: '50', md: '50', sm: '50' }}>
+        <Center id="backendshowcase" py={{ base: '0', md: '50', sm: '50' }}>
             <Flex maxWidth="container.xl" flexDirection = {{md: 'row', base: 'column'}} py={{ base: '0', md: '0', sm: '0'}} px={{ base: 10, lg: 8 }} id="backendshowcase" w="100%" justifyContent="space-evenly">
                     <Flex px={{md: '20', base: '10'}} justifyContent="start" w={{ base: "100%", md: '50%'}}>
                         <SectionTitle
@@ -19,7 +19,7 @@ export const BeforeBillpilot: React.FC = (props) => {
                     <Flex borderLeft={{md: '1px', base: '0px'}} borderTop={{md: '0px', base: '1px'}} py={{ base: "30pt", md: '0pt'}}  px={{md: '20', base: '10'}} w={{ base: "100%", md: '50%'}} justifyContent="end">
                         <SectionTitle
                             title={'With Billpilot'}
-                            description={<><Em>Swiftly</Em> create invoiced based on time items imported. Time and cost <Em>reports</Em> are <Em>automatically attached to invoices</Em>. <Em>Track</Em> your <Em>uninvoiced hours</Em> effortlessly to avoid uninvoiced time.</>}
+                            description={<><Em>Swiftly</Em> create invoices based on time items imported. Time and cost <Em>reports</Em> are <Em>automatically attached to invoices</Em>. <Em>Track</Em> your <Em>uninvoiced hours</Em> effortlessly to avoid uninvoiced time.</>}
                             align={'left'}
                         />
                     </Flex>

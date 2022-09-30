@@ -67,7 +67,7 @@ const SignupPage: NextPage = () => {
               >
                 <Container>
                   <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
-                    <Heading textAlign="center" color='#FFFFFF' fontSize="3xl" zIndex='9999'>
+                    <Heading textAlign="center" color={useColorModeValue('gray.800', 'white')} fontSize="3xl" zIndex='9999'>
                       Sign up for access
                     </Heading>
                     <form onSubmit={handleSubmit(onSubmit)}>
