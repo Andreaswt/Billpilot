@@ -217,7 +217,7 @@ const EconomicOptions = (props: IProps) => {
                                                             variant="filled"
                                                             {...register(`economicOptions.exportToEconomic`)}
                                                         />
-                                                        <Text textColor="white">Export to E-conomic?</Text>
+                                                        <Text>Export to E-conomic?</Text>
                                                     </Flex>
                                                 </Flex>}
                                             variant="annotated">
