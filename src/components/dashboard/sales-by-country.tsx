@@ -57,10 +57,10 @@ const ProgressCell: DataGridCell<Data> = (cell) => {
       value={getPercentage(cell.row.getValue('paid'), cell.row.getValue('invoiced'))}
       size="sm"
       colorScheme="primary"
+      width= '100px'
     />
   )
 }
-
 
 const columns: ColumnDef<Data>[] = [
   {
@@ -78,6 +78,7 @@ const columns: ColumnDef<Data>[] = [
     meta: {
       isNumeric: true,
     },
+    
   },
   {
     id: 'paid',
