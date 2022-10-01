@@ -61,6 +61,9 @@ const RevenueChart = () => {
           show: false
         },
       },
+      grid: {
+        show: false
+      },
       yaxis: {
         axisBorder: {
           show: true,
@@ -77,7 +80,9 @@ const RevenueChart = () => {
           },
         },
 
+
       },
+
       xaxis: {
         axisBorder: {
           show: true,
@@ -180,12 +185,12 @@ const RevenueChart = () => {
 
   return (
     <>
-      <Flex gap={4} flexDirection={{ base: "column", md: "row"}}>
+      <Flex gap={4} flexDirection={{ base: "column", md: "row" }}>
 
-        <Card title="Most Recent Invoices" width="33%" border="1px solid #e0dede" boxShadow='md' minWidth ={330}>
+        <Card title="Most Recent Invoices" width={{ base: "100%", md: "33%" }} boxShadow='md' minWidth={330}>
           <DataTable columns={columns} data={data} />
         </Card>
-        <Card title="Monthly Invoiced Hours" border="1px solid #e0dede" boxShadow='md' width="66%">
+        <Card title="Monthly Invoiced Hours" boxShadow='md' width={{ base: "100%", md: "66%" }}>
           <ButtonGroup px='15px' isAttached variant="outline">
             <Button onClick={() => setTimeCategory(TimeCategory.YEAR)}>Year</Button>
             {/* <Button onClick={() => setTimeCategory(TimeCategory.MONTH)}>Month</Button> */}

@@ -1,7 +1,7 @@
 import { Card } from '@saas-ui/react'
 import { DataGrid, ColumnDef, DataGridCell } from '@saas-ui/pro'
 import { Sparklines } from '@saas-ui/charts'
-import { Progress } from '@chakra-ui/react'
+import { Progress, Text, useBreakpointValue } from '@chakra-ui/react'
 
 // @todo get this from graphql
 interface Data {
@@ -51,21 +51,32 @@ const data: Data[] = [
   },
 ]
 
+const CompanyCell: DataGridCell<Data> = (cell) => {
+  return (
+    <Text flexGrow={1}>
+      {cell.row.getValue('company')}
+    </Text>
+  )
+}
+
 const ProgressCell: DataGridCell<Data> = (cell) => {
   return (
     <Progress
       value={getPercentage(cell.row.getValue('paid'), cell.row.getValue('invoiced'))}
       size="sm"
       colorScheme="primary"
-      width= '100px'
+      // width= '100px'
     />
   )
 }
+
+
 
 const columns: ColumnDef<Data>[] = [
   {
     id: 'company',
     header: 'Company',
+    cell: CompanyCell,
   },
   {
     id: 'statusbar',
@@ -98,9 +109,15 @@ const columns: ColumnDef<Data>[] = [
 ]
 
 export const SalesByCountry = () => {
+
+  const dataGridWidth = useBreakpointValue({
+    xs: 'auto',
+    md: '100%'
+  })
+
   return (
-    <Card title="Clients" border="1px solid #e0dede" boxShadow='md'>
-      <DataGrid<Data> columns={columns} data={data} isSortable />
+    <Card title="Clients" boxShadow='md'>
+      <DataGrid<Data> sx={{width: dataGridWidth}} columnResizeMode='onEnd'  columns={columns} data={data} isSortable />
     </Card>
   )
 }

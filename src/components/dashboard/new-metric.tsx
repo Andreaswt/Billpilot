@@ -34,7 +34,7 @@ export const Metric: React.FC<MetricProps> = (props) => {
   const { label, value, change, data, color, icon, iconSize = 12, variant, key, ...rest } = props
 
   return (
-    <Card {...rest} borderRadius="8px" border="1px solid #e0dede" boxShadow='md' key={key}>
+    <Card {...rest} borderRadius="8px" boxShadow='md' key={key}>
       <CardBody>
       <HStack {...rest} position="relative">
       <Stat>

@@ -37,7 +37,7 @@ export const Today = () => {
     <>
       {/* <Grid templateRows='repeat(2, 1fr)' templateColumns='repeat(3, 1fr)' gap="4"> */}
         {/* <GridItem rowSpan={2} colSpan={2}> */}
-          <SimpleGrid columns={{md: 4, base: 1}} gap={4}>
+          <SimpleGrid columns={{md: 4, base: 2}} gap={4}>
             {data.map((metric, index) => (
               <Metric key={index} {...metric} color="primary" />
             ))}
