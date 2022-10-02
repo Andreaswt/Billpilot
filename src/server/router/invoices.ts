@@ -46,19 +46,19 @@ export const invoicesRouter = createRouter()
       const activeIntegrationsResponse: { [provider: string]: boolean } = {}
       let activeIntegrations = await ctx.prisma.apiKey.findMany({
         select: {
-            provider: true,
-            key: true
+          provider: true,
+          key: true
         }
-    })
+      })
 
-    // E-conomic
-    let economicCustomers: { customerNumber: number, name: string }[] = []
-    if (activeIntegrations.find(x => x.provider === ApiKeyProvider.ECONOMIC)) {
-      const economicCustomersCollection = await getAllCustomers(ctx.organizationId)
-      economicCustomers = economicCustomersCollection.collection.map(x => ({ customerNumber: x.customerNumber, name: x.name }))
+      // E-conomic
+      let economicCustomers: { customerNumber: number, name: string }[] = []
+      if (activeIntegrations.find(x => x.provider === ApiKeyProvider.ECONOMIC)) {
+        const economicCustomersCollection = await getAllCustomers(ctx.organizationId)
+        economicCustomers = economicCustomersCollection.collection.map(x => ({ customerNumber: x.customerNumber, name: x.name }))
 
-      activeIntegrationsResponse[ApiKeyProvider.ECONOMIC.toString()] = true
-    }
+        activeIntegrationsResponse[ApiKeyProvider.ECONOMIC.toString()] = true
+      }
 
       const response = {
         statuses: statuses,
@@ -131,10 +131,7 @@ export const invoicesRouter = createRouter()
       })
     }),
     async resolve({ ctx, input }) {
-      let roundingScheme: RoundingScheme = RoundingScheme.POINTPOINT
-      if (input.invoiceInformation.roundingScheme === "1. Decimal") roundingScheme = RoundingScheme.POINT
-      if (input.invoiceInformation.roundingScheme === "2. Decimals") roundingScheme = RoundingScheme.POINTPOINT
-      if (input.invoiceInformation.roundingScheme === "3. Decimals") roundingScheme = RoundingScheme.POINTPOINTPOINT
+      let roundingScheme: RoundingScheme = mapRoundingScheme(input.invoiceInformation.roundingScheme)
 
       const createInvoiceInput: ICreateIssueInvoice = {
         title: input.invoiceInformation.title,
@@ -159,4 +156,69 @@ export const invoicesRouter = createRouter()
 
       return await createIssueInvoice(createInvoiceInput, ctx.organizationId)
     }
+  })
+  .mutation("createHubspotTicketInvoice", {
+    input: z.object({
+      invoiceInformation: z.object({
+        title: z.string(),
+        currency: z.string(),
+        dueDate: z.string(),
+        roundingScheme: z.string(),
+      }),
+      pickedTickets: z.object({
+        id: z.string(),
+        subject: z.string(),
+        content: z.string(),
+        lastModified: z.string(),
+        updatedHoursSpent: z.number(),
+        discountPercentage: z.number(),
+      }).array(),
+      economicOptions: z.object({
+        exportToEconomic: z.boolean(),
+        customer: z.string(),
+        customerName: z.string(),
+        customerPrice: z.number(),
+        text1: z.string(),
+        ourReference: z.string(),
+        customerContact: z.string(),
+      })
+    }),
+    async resolve({ ctx, input }) {
+      let roundingScheme: RoundingScheme = mapRoundingScheme(input.invoiceInformation.roundingScheme)
+
+      // const createInvoiceInput: ICreateIssueInvoice = {
+      //   title: input.invoiceInformation.title,
+      //   currency: input.invoiceInformation.currency,
+      //   dueDate: new Date(input.invoiceInformation.dueDate),
+      //   roundingScheme: roundingScheme,
+      //   exportToEconomic: input.economicOptions.exportToEconomic,
+      //   economicCustomer: input.economicOptions.customer,
+      //   economicCustomerPrice: input.economicOptions.customerPrice,
+      //   economicText1: input.economicOptions.text1,
+      //   economicOurReference: input.economicOptions.ourReference,
+      //   economicCustomerContact: input.economicOptions.customerContact,
+      //   tickets: input.pickedTickets.map(item => ({
+      //     id: item.id,
+      //     subject: item.subject,
+      //     content: item.content,
+      //     lastModified: item.lastModified,
+      //     updatedHoursSpent: item.updatedHoursSpent ?? 0,
+      //     discountPercentage: item.discountPercentage ?? 0,
+      //   }))
+      // }
+
+      // return await createIssueInvoice(createInvoiceInput, ctx.organizationId)
+    }
   });
+
+
+//==========================================//
+//   Helpers and Mappers                    //
+//==========================================//
+const mapRoundingScheme = (roundingSchemeString: string) => {
+  let roundingScheme: RoundingScheme = RoundingScheme.POINTPOINT
+  if (roundingSchemeString === "1. Decimal") roundingScheme = RoundingScheme.POINT
+  if (roundingSchemeString === "2. Decimals") roundingScheme = RoundingScheme.POINTPOINT
+  if (roundingSchemeString === "3. Decimals") roundingScheme = RoundingScheme.POINTPOINTPOINT
+  return roundingScheme
+}

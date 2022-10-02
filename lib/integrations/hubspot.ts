@@ -1,11 +1,12 @@
-
 //==========================================//
 //   Exchanging Proof for an Access Token   //
 //==========================================//
 
 import { Client } from "@hubspot/api-client";
+import { Filter, FilterGroup, PublicObjectSearchRequest } from "@hubspot/api-client/lib/codegen/crm/tickets";
 import { ApiKeyName, ApiKeyProvider } from "@prisma/client";
 import { prisma } from "../../src/server/db/client";
+import { logger } from "../logger";
 
 export const exchangeForTokens = async (organizationId: string, code: string, refreshToken: boolean = false) => {
     const authCodeProof = {
@@ -42,22 +43,46 @@ export const exchangeForTokens = async (organizationId: string, code: string, re
             var accessTokenExpirationDate = new Date()
             accessTokenExpirationDate.setSeconds(accessTokenExpirationDate.getSeconds() + Math.round(data.expires_in * 0.75))
 
-            await prisma.apiKey.createMany({
-                data: [{
+            await prisma.apiKey.upsert({
+                where: {
+                    organizationsApiKey: {
+                        organizationId: organizationId,
+                        provider: ApiKeyProvider.HUBSPOT,
+                        key: ApiKeyName.HUBSPOTACCESSTOKEN,
+                    }
+                },
+                create: {
                     provider: ApiKeyProvider.HUBSPOT,
                     key: ApiKeyName.HUBSPOTACCESSTOKEN,
                     value: data.access_token,
                     expires: accessTokenExpirationDate,
                     organizationId: organizationId
                 },
-                {
+                update: {
+                    value: data.access_token,
+                    expires: accessTokenExpirationDate,
+                }
+            })
+
+            await prisma.apiKey.upsert({
+                where: {
+                    organizationsApiKey: {
+                        provider: ApiKeyProvider.HUBSPOT,
+                        key: ApiKeyName.HUBSPOTREFRESHTOKEN,
+                        organizationId: organizationId
+                    }
+                },
+                create: {
                     provider: ApiKeyProvider.HUBSPOT,
                     key: ApiKeyName.HUBSPOTREFRESHTOKEN,
                     value: data.refresh_token,
                     expires: null,
                     organizationId: organizationId
                 },
-                ]
+                update: {
+                    value: data.refresh_token,
+                    expires: null,
+                }
             })
 
             accessToken = data.access_token;
@@ -71,7 +96,7 @@ const refreshAccessToken = async (organizationId: string) => {
         where: {
             organizationsApiKey: {
                 provider: ApiKeyProvider.HUBSPOT,
-                key: ApiKeyName.JIRAREFRESHTOKEN,
+                key: ApiKeyName.HUBSPOTREFRESHTOKEN,
                 organizationId: organizationId
             }
         },
@@ -111,12 +136,51 @@ const getClient = async (organizationId: string) => {
     return new Client({ accessToken: accessToken.value })
 };
 
+//==========================================//
+//   Methods                                //
+//==========================================//
 
-const getContact = async (organizationId: string) => {
+export const searchCompanies = async (organizationId: string, searchString: string = "") => {
     try {
         const client = await getClient(organizationId)
-        return client.crm.contacts.getAll()
+
+        const publicObjectSearchRequest = {
+            filterGroups: [],
+            sorts: [],
+            query: searchString,
+            properties: ['name', 'domain', 'city'],
+            limit: 100,
+            after: 0,
+        }
+
+        return await client.crm.companies.searchApi.doSearch(publicObjectSearchRequest)
     } catch (e) {
-        throw new Error("Error fetching contacts")
+        logger.error(e)
+        throw new Error("Error fetching companies")
     }
-};
+}
+
+export const searchTickets = async (organizationId: string, companyId: string, searchString: string = "") => {
+    try {
+        if (companyId === "") throw new Error("Emplty companyId")
+
+        const client = await getClient(organizationId)
+
+        const filter: Filter = { propertyName: 'associations.company', operator: "EQ", value: companyId }
+        const filterGroup: FilterGroup = { filters: [filter] }
+
+        const publicObjectSearchRequest: PublicObjectSearchRequest = {
+            filterGroups: [filterGroup],
+            sorts: [],
+            query: searchString,
+            properties: ['subject', 'content', 'hs_lastmodifieddate', 'hs_object_id'],
+            limit: 100,
+            after: 0,
+        }
+
+        return await client.crm.tickets.searchApi.doSearch(publicObjectSearchRequest)
+    } catch (e) {
+        logger.error(e)
+        throw new Error("Error fetching companies")
+    }
+}
