@@ -2,7 +2,7 @@ import { ApiKeyProvider, Currency, RoundingScheme } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createInvoiceDraft, getAllCustomers, getAllEmployees, getCustomerContacts } from "../../../lib/integrations/e-conomic";
-import { createIssueInvoice, getInvoice, ICreateIssueInvoice } from "../../../lib/invoice";
+import { getInvoice } from "../../../lib/invoice";
 import { createRouter } from "./context";
 
 export const invoicesRouter = createRouter()
@@ -133,28 +133,42 @@ export const invoicesRouter = createRouter()
     async resolve({ ctx, input }) {
       let roundingScheme: RoundingScheme = mapRoundingScheme(input.invoiceInformation.roundingScheme)
 
-      const createInvoiceInput: ICreateIssueInvoice = {
-        title: input.invoiceInformation.title,
-        currency: input.invoiceInformation.currency,
-        dueDate: new Date(input.invoiceInformation.dueDate),
-        roundingScheme: roundingScheme,
-        exportToEconomic: input.economicOptions.exportToEconomic,
-        economicCustomer: input.economicOptions.customer,
-        economicCustomerPrice: input.economicOptions.customerPrice,
-        economicText1: input.economicOptions.text1,
-        economicOurReference: input.economicOptions.ourReference,
-        economicCustomerContact: input.economicOptions.customerContact,
-        issueTimeItems: input.pickedIssues.map(item => ({
-          jiraId: item.jiraId,
-          jiraKey: item.jiraKey,
-          name: item.name,
-          hours: item.hoursSpent,
-          updatedHoursSpent: item.updatedHoursSpent ?? 0,
-          discountPercentage: item.discountPercentage ?? 0,
-        }))
-      }
+      const invoice = await ctx.prisma.generalInvoice.create({
+        data: {
+          title: input.invoiceInformation.title,
+          currency: <Currency>input.invoiceInformation.currency,
+          dueDate: new Date(input.invoiceInformation.dueDate),
+          description: "",
+          roundingScheme: roundingScheme,
+          organizationId: ctx.organizationId,
+          economicOptions: {
+            create: {
+              customer: input.economicOptions.customer,
+              customerPrice: input.economicOptions.customerPrice,
+              text1: input.economicOptions.text1,
+              ourReference: input.economicOptions.ourReference,
+              customerContact: input.economicOptions.customerContact,
+              organizationId: ctx.organizationId,
+            }
+          },
+          invoiceLines: {
+            create: input.pickedIssues.map(line => {
+              return ({
+                title: line.name,
+                hours: line.hoursSpent,
+                pricePerHour: input.economicOptions.customerPrice,
+                updatedHoursSpent: line.updatedHoursSpent ?? 0,
+                discountPercentage: line.discountPercentage ?? 0,
+                organizationId: ctx.organizationId
+              })
+            })
+          }
+        }
+      })
 
-      return await createIssueInvoice(createInvoiceInput, ctx.organizationId)
+      if (input.economicOptions.exportToEconomic) {
+        createInvoiceDraft(invoice.id, ctx.organizationId)
+      }
     }
   })
   .mutation("createHubspotTicketInvoice", {

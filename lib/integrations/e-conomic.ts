@@ -88,57 +88,6 @@ export async function saveAgreementGrantToken(agreementGrantToken: string, organ
     })
 }
 
-export async function test(organizationId: string) {
-    let invoiceDb = {
-        timeItems: [
-            {
-                name: "item 1",
-                hourlyWage: 100,
-                time: 5
-            },
-            {
-                name: "item 2",
-                hourlyWage: 300,
-                time: 30
-            }
-        ],
-        fixedPriceTimeItems: [
-            {
-                name: "fixed item 1",
-                amount: 600,
-            },
-            {
-                name: "fixed item 2",
-                amount: 1200,
-            }
-        ],
-        discounts: [
-            {
-                name: "discount 1",
-                percent: 10
-            }
-        ],
-        fixedPriceDiscounts: [
-            {
-                name: "fixed discount 1",
-                amount: 100
-            }
-        ],
-        taxes: [
-            {
-                name: "fixed discount 1",
-                percent: 15
-            }
-        ],
-        date: new Date(),
-        currency: {
-            abbrevation: 'DKK',
-        },
-        dueDate: new Date(),
-        issueDate: new Date(),
-    }
-}
-
 export async function createInvoice(invoiceId: string, organizationId: string) {
     let { invoiceDb,
         discountAppliesToTimeItems,
@@ -225,77 +174,6 @@ export async function createInvoice(invoiceId: string, organizationId: string) {
             },
             customerContact: {
                 customerContactNumber: 0 // TODO: doesnt work
-            }
-        }
-    }
-
-    let result = await request<any>("invoices/drafts", httpMethod.post, organizationId, createInvoice);
-    return result;
-}
-
-export async function createJiraIssueInvoice(invoice: ICreateIssueInvoice, organizationId: string) {
-    let layouts = await getAllLayouts(organizationId)
-    // let customers = await getAllCustomers(organizationId)
-    let paymentTerms = await getAllPaymentTerms(organizationId)
-    let vatZones = await getAllVatZones(organizationId)
-    let products = await getAllProducts(organizationId)
-    let units = await getAllUnits(organizationId)
-    // let employees = await getAllEmployees(organizationId)
-
-    // All lines must have a linenumber
-    let lineNumber = 1;
-
-    // Add all time items
-    let timeItems: Line[] = invoice.issueTimeItems.map(item => {
-        let hours = item.hours
-
-        if (item.updatedHoursSpent && item.updatedHoursSpent > 0) {
-            hours = item.updatedHoursSpent
-        }
-
-        let lineAmount = hours * invoice.economicCustomerPrice;
-
-        // Apply discount
-        if (item.discountPercentage && item.discountPercentage > 0) {
-            lineAmount *= ((100 - item.discountPercentage) / 100)
-        }
-
-        return ({
-            lineNumber: lineNumber++,
-            unit: units.collection[0]!,
-            quantity: hours,
-            unitNetPrice: invoice.economicCustomerPrice,
-            discountPercentage: item.discountPercentage,
-            totalNetAmount: lineAmount,
-            description: item.name,
-            product: products.collection[0]!
-        })
-    })
-
-    let createInvoice: CreateInvoice = {
-        date: (new Date()).toISOString().slice(0, 10),
-        dueDate: invoice.dueDate.toISOString().slice(0, 10),
-        currency: invoice.currency,
-        paymentTerms: paymentTerms.collection[0]!,
-        customer: {
-            customerNumber: parseInt(invoice.economicCustomer),
-        },
-        recipient: {
-            name: invoice.economicCustomer,
-            vatZone: vatZones.collection[0]!,
-        },
-        layout: layouts.collection[0]!,
-        lines: [ ...timeItems ],
-        notes: {
-            heading: invoice.title,
-            textLine1: invoice.economicText1
-        },
-        references: {
-            salesPerson: {
-                employeeNumber: parseInt(invoice.economicOurReference)
-            },
-            customerContact: {
-                customerContactNumber: parseInt(invoice.economicCustomerContact)
             }
         }
     }
