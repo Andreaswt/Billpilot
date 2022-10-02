@@ -13,12 +13,11 @@ const TermsOfService: NextPage = () => {
       />
       <Box position="relative" overflow="hidden">
         <Container maxW="container.md" pt={{ base: 20, lg: 40 }} pb={{ md: 0 }}>
-          <Center>
+          {/* <Center> */}
             <Stack flex="1" direction="column">
               <Stack
                 flex="1"
                 alignItems="center"
-                justify="center"
                 direction="column"
                 spacing="8"
               >
@@ -357,7 +356,7 @@ const TermsOfService: NextPage = () => {
 
               </Stack>
             </Stack>
-          </Center>
+          {/* </Center> */}
         </Container>
       </Box >
     </Box >

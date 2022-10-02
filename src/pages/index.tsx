@@ -52,13 +52,13 @@ const Home: NextPage = () => {
       <Box>
         <HeroSection />
 
-        <ProjectToInvoiceSection/>
+        <ProjectToInvoiceSection />
 
         <BackendShowcaseSection />
 
         <BeforeBillpilotSection />
 
-        
+
 
         <HighlightsSection />
 
@@ -70,7 +70,7 @@ const Home: NextPage = () => {
 
         <FaqSection />
 
-        <SlackSection/>
+        <SlackSection />
 
         <ContactFormSection />
 
@@ -120,7 +120,7 @@ const HeroSection: React.FC = () => {
               description={
                 <FallInPlace delay={0.4} fontWeight="400" fontSize={{ base: '1xl', lg: '2xl' }}>
                   Billpilot imports data from your <Em>project<Br /> mangement software</Em>,
-                   helps you create invoices, <Br />
+                  helps you create invoices, <Br />
                   and sends them to your accounting app in minutes.
                 </FallInPlace>
               }
@@ -131,54 +131,49 @@ const HeroSection: React.FC = () => {
                 <Flex w='100%' justifyContent="center" gap={4} flexDir='column'  >
                   <Center alignItems='center' flexDir={{ base: 'column', lg: 'row' }}>
                     <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                      <picture>
-                        {/* eslint-disable @next/next/no-img-element */}
-                        <img
+                    <Image
                           src="static/images/integrationlogos/asana.png"
                           style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                          alt='xero logo'
+                          alt='asana logo'
+                          width={150}
+                          height={30}
                         />
-                      </picture>
                     </Box>
                     <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                      <picture>
-                        {/* eslint-disable @next/next/no-img-element */}
-                        <img
+                    <Image
                           src="static/images/integrationlogos/economic.png"
                           style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                          alt='xero logo'
+                          alt='e-conomic logo'
+                          width={150}
+                          height={33}
                         />
-                      </picture>
                     </Box>
                     <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                      <picture>
-                        {/* eslint-disable @next/next/no-img-element */}
-                        <img
+                    <Image
                           src="static/images/integrationlogos/jira.png"
                           style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                          alt='xero logo'
+                          alt='jira logo'
+                          width={150}
+                          height={20}
                         />
-                      </picture>
                     </Box>
                     <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                      <picture>
-                        {/* eslint-disable @next/next/no-img-element */}
-                        <img
+                      <Image
                           src="static/images/integrationlogos/quickbooks.png"
                           style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                          alt='xero logo'
+                          alt='quickbooks logo'
+                          width={150}
+                          height={29}
                         />
-                      </picture>
                     </Box>
                     <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                      <picture>
-
-                        <img
-                          src="static/images/integrationlogos/xero.png"
-                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                          alt='xero logo'
-                        />
-                      </picture>
+                      <Image
+                        src="static/images/integrationlogos/xero.png"
+                        style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                        alt='xero logo'
+                        width={150}
+                        height={45}
+                      />
                     </Box>
 
                   </Center>
@@ -219,14 +214,14 @@ const HeroSection: React.FC = () => {
         </Center>
       </Container>
       <Flex justifyContent='center'>
-      <div style={{borderRadius: '10px', overflow: 'hidden'}}>
-        <Image
-          src="static/screenshots/list.png"
-          alt="Picture of the author"
-          width={1200}
-          height={800}
-        />
-      </div>
+        <div style={{ borderRadius: '10px', overflow: 'hidden' }}>
+          <Image
+            src="static/screenshots/list.png"
+            alt="Picture of the author"
+            width={1200}
+            height={800}
+          />
+        </div>
       </Flex>
       <Features
         id="benefits"
@@ -262,7 +257,7 @@ const HeroSection: React.FC = () => {
             title: 'Linked Invoices',
             icon: FiSliders,
             description:
-            "Generate custom links to give clients direct access to invoices from Billpilot, or email them directly",
+              "Generate custom links to give clients direct access to invoices from Billpilot, or email them directly",
             iconPosition: 'left',
             delay: 0.8,
           },
@@ -270,8 +265,8 @@ const HeroSection: React.FC = () => {
         ]}
         reveal={FallInPlace}
       />
-    </Box>
-    
+    </Box >
+
   )
 }
 
@@ -281,11 +276,11 @@ const BackendShowcaseSection = () => {
 }
 
 const BeforeBillpilotSection = () => {
-  return <BeforeBillpilot/>
+  return <BeforeBillpilot />
 }
 
 const ProjectToInvoiceSection = () => {
-  return <ProjectToInvoice/>
+  return <ProjectToInvoice />
 }
 
 const HighlightsSection = () => {
