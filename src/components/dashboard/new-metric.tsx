@@ -26,15 +26,13 @@ export interface MetricProps {
   data?: number[]
   variant?: string
   color?: string
-  key: number
-
 }
 
 export const Metric: React.FC<MetricProps> = (props) => {
-  const { label, value, change, data, color, icon, iconSize = 12, variant, key, ...rest } = props
+  const { label, value, change, data, color, icon, iconSize = 12, variant, ...rest } = props
 
   return (
-    <Card {...rest} borderRadius="8px" boxShadow='md' key={key}>
+    <Card {...rest} borderRadius="8px" boxShadow='md'>
       <CardBody>
       <HStack {...rest} position="relative">
       <Stat>

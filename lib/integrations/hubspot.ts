@@ -25,70 +25,65 @@ export const exchangeForTokens = async (organizationId: string, code: string, re
         refresh_token: code
     }
 
-    let accessToken = ""
-
-    fetch("https://api.hubapi.com/oauth/v1/token", {
+    const response = await fetch("https://api.hubapi.com/oauth/v1/token", {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         method: "POST",
         body: new URLSearchParams(refreshToken ? refreshTokenProof : authCodeProof)
     })
-        .then(async response => {
-            // If Jira reports and error back, redirect to integration page with error parameter, so error can be shown
-            if (!response.ok) throw new Error("Faulty response during hubspot token exchange")
-            return response.json() as Promise<{ refresh_token: string, access_token: string, expires_in: number }>
-        })
-        .then(async data => {
-            var accessTokenExpirationDate = new Date()
-            accessTokenExpirationDate.setSeconds(accessTokenExpirationDate.getSeconds() + Math.round(data.expires_in * 0.75))
 
-            await prisma.apiKey.upsert({
-                where: {
-                    organizationsApiKey: {
-                        organizationId: organizationId,
-                        provider: ApiKeyProvider.HUBSPOT,
-                        key: ApiKeyName.HUBSPOTACCESSTOKEN,
-                    }
-                },
-                create: {
-                    provider: ApiKeyProvider.HUBSPOT,
-                    key: ApiKeyName.HUBSPOTACCESSTOKEN,
-                    value: data.access_token,
-                    expires: accessTokenExpirationDate,
-                    organizationId: organizationId
-                },
-                update: {
-                    value: data.access_token,
-                    expires: accessTokenExpirationDate,
-                }
-            })
+    // If Jira reports and error back, redirect to integration page with error parameter, so error can be shown
+    if (!response.ok) throw new Error("Faulty response during hubspot token exchange")
+    const jsonResponse = await response.json() as { refresh_token: string, access_token: string, expires_in: number }
 
-            await prisma.apiKey.upsert({
-                where: {
-                    organizationsApiKey: {
-                        provider: ApiKeyProvider.HUBSPOT,
-                        key: ApiKeyName.HUBSPOTREFRESHTOKEN,
-                        organizationId: organizationId
-                    }
-                },
-                create: {
-                    provider: ApiKeyProvider.HUBSPOT,
-                    key: ApiKeyName.HUBSPOTREFRESHTOKEN,
-                    value: data.refresh_token,
-                    expires: null,
-                    organizationId: organizationId
-                },
-                update: {
-                    value: data.refresh_token,
-                    expires: null,
-                }
-            })
 
-            accessToken = data.access_token;
-        })
+    var accessTokenExpirationDate = new Date()
+    accessTokenExpirationDate.setSeconds(accessTokenExpirationDate.getSeconds() + Math.round(jsonResponse.expires_in * 0.75))
 
-    return accessToken
+    const newAccessToken = await prisma.apiKey.upsert({
+        where: {
+            organizationsApiKey: {
+                organizationId: organizationId,
+                provider: ApiKeyProvider.HUBSPOT,
+                key: ApiKeyName.HUBSPOTACCESSTOKEN,
+            }
+        },
+        create: {
+            provider: ApiKeyProvider.HUBSPOT,
+            key: ApiKeyName.HUBSPOTACCESSTOKEN,
+            value: jsonResponse.access_token,
+            expires: accessTokenExpirationDate,
+            organizationId: organizationId
+        },
+        update: {
+            value: jsonResponse.access_token,
+            expires: accessTokenExpirationDate,
+        }
+    })
+
+    await prisma.apiKey.upsert({
+        where: {
+            organizationsApiKey: {
+                provider: ApiKeyProvider.HUBSPOT,
+                key: ApiKeyName.HUBSPOTREFRESHTOKEN,
+                organizationId: organizationId
+            }
+        },
+        create: {
+            provider: ApiKeyProvider.HUBSPOT,
+            key: ApiKeyName.HUBSPOTREFRESHTOKEN,
+            value: jsonResponse.refresh_token,
+            expires: null,
+            organizationId: organizationId
+        },
+        update: {
+            value: jsonResponse.refresh_token,
+            expires: null,
+        }
+    })
+
+    return newAccessToken.value
 };
 
 const refreshAccessToken = async (organizationId: string) => {
