@@ -2,10 +2,11 @@ import { chakra, Center, Flex, Text, Box, useColorMode, SimpleGrid, Stack, VStac
 import { Section, SectionProps } from '@saas-ui/pro'
 import { Form, Field, FormLayout, SubmitButton } from '@saas-ui/react'
 import { SectionTitle } from './section/section-title'
+import Image from 'next/image'
 
 interface IProps {
     sectionId: string
-  }
+}
 
 export const BackendShowcase: React.FC<IProps> = (props) => {
     const { sectionId } = props
@@ -19,13 +20,12 @@ export const BackendShowcase: React.FC<IProps> = (props) => {
                             <SimpleGrid columns={{ base: 1, sm: 2 }} spacing='10'>
                                 <Box >
                                     <Flex flexDirection={'column'}>
-                                        <picture>
-                                            {/* eslint-disable @next/next/no-img-element */}
-                                            <img
-                                                src="static/screenshots/list.png"
-                                                alt='xero logo'
-                                            />
-                                        </picture>
+                                        <Image
+                                            src="static/screenshots/list.png"
+                                            alt='invoice by project'
+                                            width={600}
+                                            height={381}
+                                        />
                                         <Text px='10'>
                                             Invoice by project
                                         </Text>
@@ -33,13 +33,12 @@ export const BackendShowcase: React.FC<IProps> = (props) => {
                                 </Box>
                                 <Box >
                                     <Flex flexDirection={'column'}>
-                                        <picture>
-                                            {/* eslint-disable @next/next/no-img-element */}
-                                            <img
-                                                src="static/screenshots/list.png"
-                                                alt='xero logo'
-                                            />
-                                        </picture>
+                                        <Image
+                                            src="static/screenshots/list.png"
+                                            alt='invoice by project'
+                                            width={600}
+                                            height={381}
+                                        />
                                         <Text px='10'>
                                             Invoice by issue
                                         </Text>
@@ -47,13 +46,12 @@ export const BackendShowcase: React.FC<IProps> = (props) => {
                                 </Box>
                                 <Box>
                                     <Flex flexDirection={'column'}>
-                                        <picture>
-                                            {/* eslint-disable @next/next/no-img-element */}
-                                            <img
-                                                src="static/screenshots/list.png"
-                                                alt='xero logo'
-                                            />
-                                        </picture>
+                                        <Image
+                                            src="static/screenshots/list.png"
+                                            alt='invoice by project'
+                                            width={600}
+                                            height={381}
+                                        />
                                         <Text px='10'>
                                             Label invoices
                                         </Text>
@@ -61,13 +59,12 @@ export const BackendShowcase: React.FC<IProps> = (props) => {
                                 </Box>
                                 <Box>
                                     <Flex flexDirection={'column'}>
-                                        <picture>
-                                            {/* eslint-disable @next/next/no-img-element */}
-                                            <img
-                                                src="static/screenshots/list.png"
-                                                alt='xero logo'
-                                            />
-                                        </picture>
+                                        <Image
+                                            src="static/screenshots/list.png"
+                                            alt='invoice by project'
+                                            width={600}
+                                            height={381}
+                                        />
                                         <Text px='10'>
                                             Keep track of invoices
                                         </Text>
