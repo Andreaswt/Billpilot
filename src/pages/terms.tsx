@@ -30,16 +30,12 @@ const TermsOfService: NextPage = () => {
 
             </Stack>
 
-           
-
             <Stack
               flex="1"
               alignItems="left"
               direction="column"
               spacing="8"
             >
-
-
               <Heading textAlign='left' size="md">1. AGREEMENT TO TERMS</Heading>
               <Heading size="md">2. INTELLECTUAL PROPERTY RIGHTS</Heading>
               <Heading size="md">3. USER REPRESENTATIONS</Heading>

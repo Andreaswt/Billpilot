@@ -77,6 +77,7 @@ const ConfirmInvoiceIssues = (props: IProps) => {
 
         snackbar({
             title: 'Invoice successfully created',
+            description: 'Invoice created in E-conomic',
             status: 'success',
             duration: 2000,
             isClosable: true,
@@ -107,7 +108,7 @@ const ConfirmInvoiceIssues = (props: IProps) => {
                 <Heading>Confirm Selections</Heading>
             </Flex>}>
             <CardBody>
-                <VStack divider={<StackDivider />} align="stretch" spacing={8} pb="16">
+                <VStack divider={<StackDivider/>} align="stretch" spacing={8} pb="16">
                     <Section
                         title="Invoice"
                         description="Confirm your selections regarding the general invoice."

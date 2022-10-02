@@ -167,7 +167,7 @@ const EconomicOptions = (props: IProps) => {
     const { toggleColorMode, colorMode } = useColorMode()
     return (
         <Card title={
-            <Flex>
+            <Flex width = '92em'>
                 <Heading>Create Invoice</Heading>
             </Flex>}>
             <CardBody>
@@ -175,7 +175,7 @@ const EconomicOptions = (props: IProps) => {
                     invoiceOptionsIsLoading || invoiceOptionsIsRefetching || !invoiceOptionsData
                         ? <Center><Spinner /></Center>
                         : <form onSubmit={handleSubmit(onSubmit)}>
-                            <VStack divider={<StackDivider />} align="stretch" spacing={8} pb="16">
+                            <VStack divider={<StackDivider />}  align="stretch" spacing={8} pb="16">
                                 <Section
                                     title="Invoice"
                                     description="Information about invoice stored in our systems."

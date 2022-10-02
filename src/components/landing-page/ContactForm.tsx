@@ -39,9 +39,9 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
         })
 
         snackbar({
-            title: 'Invoice successfully created',
+            title: 'Message Sent',
             status: 'success',
-            duration: 2000,
+            duration: 5000,
             isClosable: true,
         })
     }
@@ -55,11 +55,11 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
     }
 
     return (
-        <Section id={sectionId} py={{ base: '120', md: '120', sm: '120' }} px={10}>
+        <Section id={sectionId} py={{base:'30', md:'20'}} px={10}>
             <SectionTitle title={title} />
             <Center>
                 <Flex justifyContent="center" w="100%">
-                    <Form<PostInputs>
+                    <Form<PostInputs>  
                         w={{ lg: "50%", base: "100%" }}
                         defaultValues={{
                             name: '',
