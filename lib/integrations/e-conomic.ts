@@ -304,87 +304,98 @@ export async function createJiraIssueInvoice(invoice: ICreateIssueInvoice, organ
     return result;
 }
 
-var hej = {
-    draftInvoiceNumber: 30066,
-    soap: { currentInvoiceHandle: { id: 30 } },
-    templates: {
-        bookingInstructions: 'https://restapi.e-conomic.com/invoices/drafts/30066/templates/booking-instructions',
-        self: 'https://restapi.e-conomic.com/invoices/drafts/30066/templates'
-    },
-    lines: [
-        {
-            lineNumber: 2,
-            sortKey: 1,
-            description: 'Timer samlet',
-            product: [Object],
-            quantity: 1,
-            unitNetPrice: 5000,
-            discountPercentage: 20,
-            unitCostPrice: 0,
-            totalNetAmount: 4000,
-            marginInBaseCurrency: 4000,
-            marginPercentage: 100
+export async function createInvoiceDraft(generalInvoiceId: string, organizationId: string) {
+    const invoice = await prisma.generalInvoice.findUniqueOrThrow({
+        where: {
+            id: generalInvoiceId
         },
-        {
-            lineNumber: 3,
-            sortKey: 2,
-            description: 'Materialer',
-            product: [Object],
-            quantity: 1,
-            unitNetPrice: 5000,
-            discountPercentage: 50,
-            unitCostPrice: 0,
-            totalNetAmount: 2500,
-            marginInBaseCurrency: 2500,
-            marginPercentage: 100
+        select: {
+            title: true,
+            description: true,
+            currency: true,
+            roundingScheme: true,
+            invoiceLines: true,
+            invoicedFrom: true,
+            invoicedTo: true,
+            issueDate: true,
+            dueDate: true,
+            economicOptions: true,
         }
-    ],
-    date: '2017-10-30',
-    currency: 'DKK',
-    exchangeRate: 100,
-    netAmount: 6500,
-    netAmountInBaseCurrency: 6500,
-    grossAmount: 8125,
-    grossAmountInBaseCurrency: 8125,
-    marginInBaseCurrency: 6500,
-    marginPercentage: 100,
-    vatAmount: 1625,
-    roundingAmount: 0,
-    costPriceInBaseCurrency: 0,
-    dueDate: '2017-11-29',
-    paymentTerms: {
-        paymentTermsNumber: 5,
-        daysOfCredit: 30,
-        name: 'Netto 30 dage',
-        paymentTermsType: 'net',
-        self: 'https://restapi.e-conomic.com/payment-terms/5'
-    },
-    customer: {
-        customerNumber: 1007,
-        self: 'https://restapi.e-conomic.com/customers/1007'
-    },
-    recipient: {
-        name: 'Andersens Eftf. A/S',
-        address: 'Wildersgade 10B',
-        zip: '1408',
-        city: 'København K',
-        vatZone: {
-            name: 'Domestic',
-            vatZoneNumber: 1,
-            enabledForCustomer: true,
-            enabledForSupplier: true,
-            self: 'https://restapi.e-conomic.com/vat-zones/1'
+    })
+
+    if (!invoice.economicOptions) throw new Error("Economic options not defined for invoice during e-conomic invoice export")
+
+
+    let layouts = await getAllLayouts(organizationId)
+    // let customers = await getAllCustomers(organizationId)
+    let paymentTerms = await getAllPaymentTerms(organizationId)
+    let vatZones = await getAllVatZones(organizationId)
+    let products = await getAllProducts(organizationId)
+    let units = await getAllUnits(organizationId)
+    // let employees = await getAllEmployees(organizationId)
+
+    // All lines must have a linenumber
+    let lineNumber = 1;
+
+    // Add all time items
+    let timeItems: Line[] = invoice.invoiceLines.map(item => {
+        if (!invoice.economicOptions) throw new Error("Economic options not defined for invoice during e-conomic invoice export")
+
+        let hours = item.hours.toNumber()
+
+        if (item.updatedHoursSpent && item.updatedHoursSpent.toNumber() > 0) {
+            hours = item.updatedHoursSpent.toNumber()
+        }
+
+        let lineAmount = hours * invoice.economicOptions.customerPrice.toNumber();
+
+        // Apply discount
+        if (item.discountPercentage && item.discountPercentage.toNumber() > 0) {
+            lineAmount *= ((100 - item.discountPercentage.toNumber()) / 100)
+        }
+
+        return ({
+            lineNumber: lineNumber++,
+            unit: units.collection[0]!,
+            quantity: hours,
+            unitNetPrice: invoice.economicOptions.customerPrice.toNumber(),
+            discountPercentage: item.discountPercentage.toNumber(),
+            totalNetAmount: lineAmount,
+            description: item.title,
+            product: products.collection[0]!
+        })
+    })
+
+    let createInvoice: CreateInvoice = {
+        date: (new Date()).toISOString().slice(0, 10),
+        dueDate: invoice.dueDate.toISOString().slice(0, 10),
+        currency: invoice.currency,
+        paymentTerms: paymentTerms.collection[0]!,
+        customer: {
+            customerNumber: parseInt(invoice.economicOptions.customer),
         },
-        nemHandelType: 'ean'
-    },
-    layout: {
-        layoutNumber: 19,
-        self: 'https://restapi.e-conomic.com/layouts/19'
-    },
-    pdf: {
-        download: 'https://restapi.e-conomic.com/invoices/drafts/30066/pdf'
-    },
-    self: 'https://restapi.e-conomic.com/invoices/drafts/30066'
+        recipient: {
+            name: invoice.economicOptions.customer,
+            vatZone: vatZones.collection[0]!,
+        },
+        layout: layouts.collection[0]!,
+        lines: [ ...timeItems ],
+        notes: {
+            heading: invoice.title,
+            textLine1: invoice.economicOptions.text1
+        },
+        references: {
+            salesPerson: {
+                employeeNumber: parseInt(invoice.economicOptions.ourReference)
+            },
+            customerContact: {
+                customerContactNumber: parseInt(invoice.economicOptions.customerContact)
+            }
+        }
+    }
+
+    let result = await request<any>("invoices/drafts", httpMethod.post, organizationId, createInvoice);
+    return result;
 }
 
 export async function getAllLayouts(organizationId: string) {

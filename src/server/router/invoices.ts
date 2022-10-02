@@ -1,7 +1,7 @@
-import { ApiKeyProvider, RoundingScheme } from "@prisma/client";
+import { ApiKeyProvider, Currency, InvoiceType, RoundingScheme } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { getAllCustomers, getAllEmployees, getCustomerContacts } from "../../../lib/integrations/e-conomic";
+import { createInvoiceDraft, getAllCustomers, getAllEmployees, getCustomerContacts } from "../../../lib/integrations/e-conomic";
 import { createIssueInvoice, getInvoice, ICreateIssueInvoice } from "../../../lib/invoice";
 import { createRouter } from "./context";
 
@@ -186,28 +186,42 @@ export const invoicesRouter = createRouter()
     async resolve({ ctx, input }) {
       let roundingScheme: RoundingScheme = mapRoundingScheme(input.invoiceInformation.roundingScheme)
 
-      // const createInvoiceInput: ICreateIssueInvoice = {
-      //   title: input.invoiceInformation.title,
-      //   currency: input.invoiceInformation.currency,
-      //   dueDate: new Date(input.invoiceInformation.dueDate),
-      //   roundingScheme: roundingScheme,
-      //   exportToEconomic: input.economicOptions.exportToEconomic,
-      //   economicCustomer: input.economicOptions.customer,
-      //   economicCustomerPrice: input.economicOptions.customerPrice,
-      //   economicText1: input.economicOptions.text1,
-      //   economicOurReference: input.economicOptions.ourReference,
-      //   economicCustomerContact: input.economicOptions.customerContact,
-      //   tickets: input.pickedTickets.map(item => ({
-      //     id: item.id,
-      //     subject: item.subject,
-      //     content: item.content,
-      //     lastModified: item.lastModified,
-      //     updatedHoursSpent: item.updatedHoursSpent ?? 0,
-      //     discountPercentage: item.discountPercentage ?? 0,
-      //   }))
-      // }
+      const invoice = await ctx.prisma.generalInvoice.create({
+        data: {
+          title: input.invoiceInformation.title,
+          currency: <Currency>input.invoiceInformation.currency,
+          dueDate: new Date(input.invoiceInformation.dueDate),
+          description: "",
+          roundingScheme: roundingScheme,
+          organizationId: ctx.organizationId,
+          economicOptions: {
+            create: {
+              customer: input.economicOptions.customer,
+              customerPrice: input.economicOptions.customerPrice,
+              text1: input.economicOptions.text1,
+              ourReference: input.economicOptions.ourReference,
+              customerContact: input.economicOptions.customerContact,
+              organizationId: ctx.organizationId,
+            }
+          },
+          invoiceLines: {
+            create: input.pickedTickets.map(line => {
+              return ({
+                title: line.subject,
+                hours: 0,
+                pricePerHour: input.economicOptions.customerPrice,
+                updatedHoursSpent: line.updatedHoursSpent,
+                discountPercentage: line.discountPercentage,
+                organizationId: ctx.organizationId
+              })
+            })
+          }
+        }
+      })
 
-      // return await createIssueInvoice(createInvoiceInput, ctx.organizationId)
+      if (input.economicOptions.exportToEconomic) {
+        createInvoiceDraft(invoice.id, ctx.organizationId)
+      }
     }
   });
 

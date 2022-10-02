@@ -42,6 +42,11 @@ model Organization {
     invoiceLayouts InvoiceLayout[]
     currency Currency @default(USD)
     roundingScheme RoundingScheme @default(POINTPOINT)
+
+    // General invoice models
+    generalInvoices GeneralInvoice[]
+    economicInvoiceOptions EconomicInvoiceOptions[]
+    invoiceLines InvoiceLine[]
 }
 
 enum ApiKeyProvider {
@@ -286,6 +291,66 @@ model Invoice {
   organizationId String
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   @@unique ([id, organizationId], name: "organizationsInvoice")
+}
+
+// enum InvoiceType {
+//   GENERAL
+//   ECONOMIC
+//   XERO
+//   QUICKBOOKS
+// }
+
+model InvoiceLine {
+  id String @id @default(cuid())
+  title String
+  hours Decimal
+  pricePerHour Decimal
+  updatedHoursSpent Decimal
+  discountPercentage Decimal
+
+  generalInvoiceId String
+  generalInvoice GeneralInvoice @relation(fields: [generalInvoiceId], references: [id])
+
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+model GeneralInvoice {
+  id String @id @default(cuid())
+  title String
+  description String
+
+  // invoiceType InvoiceType @default(GENERAL)
+  currency Currency @default(USD)
+  roundingScheme RoundingScheme @default(POINTPOINT)
+
+  invoiceLines InvoiceLine[]
+
+  invoicedFrom DateTime?
+  invoicedTo DateTime?
+  issueDate DateTime @default(now())
+  dueDate DateTime
+
+  // Invoice options for specific providers
+  economicOptions EconomicInvoiceOptions?
+
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+model EconomicInvoiceOptions {
+  id String @id @default(cuid())
+  customer String
+  customerPrice Decimal
+  text1 String
+  ourReference String
+  customerContact String
+
+  generalInvoiceId String @unique
+  generalInvoice GeneralInvoice @relation(fields: [generalInvoiceId], references: [id], onDelete: Cascade)
+
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 // Issue Invoice
