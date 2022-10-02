@@ -34,38 +34,25 @@ export const Metric: React.FC<MetricProps> = (props) => {
   const { label, value, change, data, color, icon, iconSize = 12, variant, key, ...rest } = props
 
   return (
-    <Card {...rest} borderRadius="8px" border="1px solid #e0dede" boxShadow='md' key={key}>
+    <Card {...rest} borderRadius="8px" boxShadow='md' key={key}>
       <CardBody>
-        <HStack>
-          {icon && (
-            <Icon as={icon} boxSize={iconSize} />
-          )}
-
-          <Flex p="1rem" flexDirection="column">
-            <Text><b>Total Invoiced</b></Text>
-            <Flex mt="2rem" flexDir="column">
-              <Flex ml="0.5rem" flexDir="column">
-                <Text fontSize="6xl"><b><sup>$</sup>{value}</b></Text>
-                  <Stat>
-                    {/* <StatNumber>{value}</StatNumber> */}
-                    {typeof change !== 'undefined' && (
-                      <StatHelpText fontSize="xl" margin="0">
-                        <StatArrow type={change > 0 ? 'increase' : 'decrease'} />
-                        {change}%
-                      </StatHelpText>
-                    )}
-                  </Stat>
-              </Flex>
-            </Flex>
-
-            {data && (
-              <Box position="absolute" right="0" bottom="0">
-                <Sparklines data={data} height="32px" strokeWidth={2} color={color} />
-              </Box>
-            )}
-
-          </Flex>
-        </HStack>
+      <HStack {...rest} position="relative">
+      <Stat>
+        <StatLabel>{label}</StatLabel>
+        <StatNumber>{value}</StatNumber>
+        {typeof change !== 'undefined' && (
+          <StatHelpText margin="0">
+            <StatArrow type={change > 0 ? 'increase' : 'decrease'} />
+            {change}%
+          </StatHelpText>
+        )}
+      </Stat>
+      {data && (
+        <Box position="absolute" right="0" bottom="0">
+          <Sparklines data={data} height="32px" strokeWidth={2} color={color} />
+        </Box>
+      )}
+    </HStack>
       </CardBody>
     </Card>
   )
