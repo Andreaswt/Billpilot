@@ -1,20 +1,20 @@
-import { Button, Center, Flex, Heading, Spinner, Text } from '@chakra-ui/react';
+import { Button, Center, Flex, Heading, Input, Spinner, Text } from '@chakra-ui/react';
 import { Dispatch, SetStateAction, useState } from 'react';
 
 import { ColumnDef, DataGrid, DataGridPagination } from '@saas-ui/pro';
 import { Card, CardBody, SearchInput } from "@saas-ui/react";
-import useInvoiceHubspotTicketsStore from '../../../../store/invoiceHubspotTickets';
-import { trpc } from '../../../utils/trpc';
+import { trpc } from '../../../../utils/trpc';
+import useInvoiceStore from '../../../../../store/invoiceStore';
 
 interface IProps {
     setStep: Dispatch<SetStateAction<number>>
 }
 
-interface TableRow {
-    id: string
+interface TableProject {
     name: string
-    domain: string
-    city: string
+    type: string
+    key: string
+    id: string
 }
 
 interface IPagination {
@@ -22,43 +22,39 @@ interface IPagination {
     total: number
 }
 
-const Companies = (props: IProps) => {
+const Projects = (props: IProps) => {
     const { setStep } = props
-    const store = useInvoiceHubspotTicketsStore();
+    const store = useInvoiceStore();
 
     const [searchTerm, setSearchTerm] = useState<string>("")
     const [pagination, setPagination] = useState<IPagination>({ amount: 0, total: 0 })
-    const [companies, setCompanies] = useState<TableRow[]>([])
+    const [projects, setProjects] = useState<TableProject[]>([])
 
-    const { isLoading, isRefetching } = trpc.useQuery(["hubspot.searchCompanies", { searchTerm: searchTerm }], {
+    const { isLoading, isRefetching } = trpc.useQuery(["jira.searchProjectsForIssueInvoicing", { searchTerm: searchTerm }], {
         onSuccess(data) {
             setPagination({ amount: data.amount, total: data.total })
-            setCompanies(data.companies)
+            setProjects(data.projects)
         },
         refetchOnWindowFocus: false
     });
 
-    function pickCompany(id: string) {
-        store.pickCompany(id)
+    function pickProject(key: string) {
+        store.pickProject(key)
         setStep((step) => step + 1)
     }
 
-    const columns: ColumnDef<TableRow>[] = [
+    const columns: ColumnDef<TableProject>[] = [
         {
             id: 'name',
             header: 'Name',
         },
         {
-            id: 'domain',
-            header: 'Domain',
+            id: 'type',
+            header: 'Type',
         },
         {
-            id: 'city',
-            header: 'City',
-        },
-        {
-            id: 'id',
-            header: 'Id',
+            id: 'key',
+            header: 'Key',
         },
         {
             id: 'select',
@@ -66,7 +62,7 @@ const Companies = (props: IProps) => {
             cell: (data) => (
                 <>
                     <Flex justifyContent="end">
-                        <Button colorScheme="primary" onClick={() => pickCompany(data.row.original.id)} size="sm">Select</Button>
+                        <Button colorScheme="primary" onClick={() => pickProject(data.row.original.name)} size="sm">Select</Button>
                     </Flex>
                 </>
             )
@@ -76,7 +72,7 @@ const Companies = (props: IProps) => {
     return (
         <Card title={
             <Flex>
-                <Heading>Pick Company</Heading>
+                <Heading>Pick Project</Heading>
             </Flex>}>
             <CardBody>
                 <Flex gap={4} flexDir="column">
@@ -91,7 +87,7 @@ const Companies = (props: IProps) => {
                             ? <Center><Spinner /></Center>
                             : <DataGrid
                                 columns={columns}
-                                data={companies}
+                                data={projects}
                                 isSortable>
                                 <DataGridPagination mt={2} pl={0} />
                                 <Text fontSize='xs' as='i'>Loaded {pagination.amount} of {pagination.total} results total. Search to narrow results.</Text>
@@ -103,4 +99,4 @@ const Companies = (props: IProps) => {
     )
 }
 
-export default Companies;
+export default Projects;

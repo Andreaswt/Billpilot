@@ -4,9 +4,9 @@ import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { ColumnDef, DataGrid, DataGridPagination } from '@saas-ui/pro';
 import { Card, CardBody, SearchInput } from "@saas-ui/react";
 import { TbPercentage } from "react-icons/tb";
-import useInvoiceHubspotTicketsStore, { PickedTicket } from '../../../../store/invoiceHubspotTickets';
-import { trpc } from '../../../utils/trpc';
-import { TableTooltip } from './table-tooltip';
+import useInvoiceStore, { PickedHubspotTicket } from '../../../../../store/invoiceStore';
+import { trpc } from '../../../../utils/trpc';
+import { TableTooltip } from '../shared/table-tooltip';
 
 
 interface IProps {
@@ -27,7 +27,7 @@ interface IPagination {
 
 const Tickets = (props: IProps) => {
     const { setStep } = props
-    const store = useInvoiceHubspotTicketsStore();
+    const store = useInvoiceStore();
     const [selected, setSelected] = useState<string[]>([])
     const [searchTerm, setSearchTerm] = useState<string>("")
     const [pagination, setPagination] = useState<IPagination>({ amount: 0, total: 0 })
@@ -77,7 +77,7 @@ const Tickets = (props: IProps) => {
     });
 
     function pickTickets() {
-        let selectedData: PickedTicket[] = []
+        let selectedData: PickedHubspotTicket[] = []
 
         if (selected.length === 0) {
             setPickAtLeastOneTicket(true)

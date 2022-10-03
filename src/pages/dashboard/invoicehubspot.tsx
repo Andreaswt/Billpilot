@@ -8,11 +8,11 @@ import {
     Page, PageBody
 } from '@saas-ui/pro';
 import router from 'next/router';
-import Companies from '../../components/dashboard/invoice-hubspot/Companies';
-import ConfirmHubspotTicketInvoice from '../../components/dashboard/invoice-hubspot/Confirm';
-import InvoiceInformation from '../../components/dashboard/invoice-hubspot/invoice-information';
-import Tickets from '../../components/dashboard/invoice-hubspot/Tickets';
 import { trpc } from '../../utils/trpc';
+import Companies from '../../components/dashboard/step-by-step/hubspot/companies';
+import Tickets from '../../components/dashboard/step-by-step/hubspot/tickets';
+import ConfirmInvoice from '../../components/dashboard/step-by-step/shared/confirm';
+import InvoiceInformation from '../../components/dashboard/step-by-step/shared/invoice-information';
 
 const InvoiceHubspot: NextPage = () => {
     const [step, setStep] = React.useState(0);
@@ -58,7 +58,7 @@ const InvoiceHubspot: NextPage = () => {
                                         {step == 0 ? <Companies setStep={setStep} /> : null}
                                         {step == 1 ? <Tickets setStep={setStep} /> : null}
                                         {step == 2 ? <InvoiceInformation setStep={setStep} /> : null}
-                                        {step == 3 ? <ConfirmHubspotTicketInvoice setStep={setStep} /> : null}
+                                        {step == 3 ? <ConfirmInvoice invoiceType='HUBSPOT' setStep={setStep} /> : null}
                                     </>
                             )
                     }

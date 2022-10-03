@@ -1,7 +1,7 @@
 import { ApiKeyProvider, Currency, RoundingScheme } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createInvoiceDraft, getAllCustomers, getAllEmployees, getCustomerContacts } from "../../../lib/integrations/e-conomic";
+import { createInvoiceDraft, getAllCustomers, getAllEmployees, getAllLayouts, getAllPaymentTerms, getAllProducts, getAllUnits, getAllVatZones, getCustomerContacts } from "../../../lib/integrations/e-conomic";
 import { getInvoice } from "../../../lib/invoice";
 import { createRouter } from "./context";
 
@@ -55,7 +55,7 @@ export const invoicesRouter = createRouter()
       let economicCustomers: { customerNumber: number, name: string }[] = []
       if (activeIntegrations.find(x => x.provider === ApiKeyProvider.ECONOMIC)) {
         const economicCustomersCollection = await getAllCustomers(ctx.organizationId)
-        economicCustomers = economicCustomersCollection.collection.map(x => ({ customerNumber: x.customerNumber, name: x.name }))
+        economicCustomers = economicCustomersCollection.map(x => ({ customerNumber: x.customerNumber, name: x.name }))
 
         activeIntegrationsResponse[ApiKeyProvider.ECONOMIC.toString()] = true
       }
@@ -82,14 +82,34 @@ export const invoicesRouter = createRouter()
     async resolve({ ctx, input }) {
       // E-conomic options
       const ourReferencesCollection = await getAllEmployees(ctx.organizationId)
-      const ourReferences: { employeeNumber: number, name: string }[] = ourReferencesCollection.collection.map(x => ({ employeeNumber: x.employeeNumber, name: x.name }))
+      const ourReferences: { employeeNumber: number, name: string }[] = ourReferencesCollection.map(x => ({ employeeNumber: x.employeeNumber, name: x.name }))
 
       const customerContactsCollection = await getCustomerContacts(ctx.organizationId, input.customerNumber)
-      const customerContacts: { customerContactNumber: number, name: string }[] = customerContactsCollection.collection.map(x => ({ customerContactNumber: x.customerContactNumber, name: x.name }))
+      const customerContacts: { customerContactNumber: number, name: string }[] = customerContactsCollection.map(x => ({ customerContactNumber: x.customerContactNumber, name: x.name }))
+
+      const unitsCollection = await getAllUnits(ctx.organizationId)
+      const units: { unitNumber: number, name: string }[] = unitsCollection.map(x => ({ unitNumber: x.unitNumber, name: x.name }))
+
+      const layoutsCollection = await getAllLayouts(ctx.organizationId)
+      const layouts: { layoutNumber: number, name: string }[] = layoutsCollection.map(x => ({ layoutNumber: x.layoutNumber, name: x.name }))
+
+      const vatZonesCollection = await getAllVatZones(ctx.organizationId)
+      const vatZones: { vatZoneNumber: number, name: string }[] = vatZonesCollection.map(x => ({ vatZoneNumber: x.vatZoneNumber, name: x.name }))
+
+      const paymentTermsCollection = await getAllPaymentTerms(ctx.organizationId)
+      const paymentTerms: { paymentTermNumber: number, name: string }[] = paymentTermsCollection.map(x => ({ paymentTermNumber: x.paymentTermsNumber, name: x.name }))
+
+      const productsCollection = await getAllProducts(ctx.organizationId)
+      const products: { productNumber: number, name: string }[] = productsCollection.map(x => ({ productNumber: x.productNumber, name: x.name }))
 
       const response = {
         ourReferences: ourReferences,
-        customerContacts: customerContacts
+        customerContacts: customerContacts,
+        units: units,
+        layouts: layouts,
+        vatZones: vatZones,
+        paymentTerms: paymentTerms,
+        products: products
       }
 
       return await response
@@ -108,6 +128,7 @@ export const invoicesRouter = createRouter()
     input: z.object({
       invoiceInformation: z.object({
         title: z.string(),
+        description: z.string(),
         currency: z.string(),
         dueDate: z.string(),
         roundingScheme: z.string(),
@@ -128,6 +149,11 @@ export const invoicesRouter = createRouter()
         text1: z.string(),
         ourReference: z.string(),
         customerContact: z.string(),
+        unit: z.string(),
+        layout: z.string(),
+        vatZone: z.string(),
+        paymentTerms: z.string(),
+        product: z.string(),
       })
     }),
     async resolve({ ctx, input }) {
@@ -136,9 +162,9 @@ export const invoicesRouter = createRouter()
       const invoice = await ctx.prisma.generalInvoice.create({
         data: {
           title: input.invoiceInformation.title,
+          description: input.invoiceInformation.description,
           currency: <Currency>input.invoiceInformation.currency,
           dueDate: new Date(input.invoiceInformation.dueDate),
-          description: "",
           roundingScheme: roundingScheme,
           organizationId: ctx.organizationId,
           economicOptions: {
@@ -148,7 +174,12 @@ export const invoicesRouter = createRouter()
               text1: input.economicOptions.text1,
               ourReference: input.economicOptions.ourReference,
               customerContact: input.economicOptions.customerContact,
-              organizationId: ctx.organizationId,
+              unit: input.economicOptions.unit,
+              layout: input.economicOptions.layout,
+              vatZone: input.economicOptions.vatZone,
+              paymentTerms: input.economicOptions.paymentTerms,
+              product: input.economicOptions.product,
+              organizationId: ctx.organizationId
             }
           },
           invoiceLines: {
@@ -175,6 +206,7 @@ export const invoicesRouter = createRouter()
     input: z.object({
       invoiceInformation: z.object({
         title: z.string(),
+        description: z.string(),
         currency: z.string(),
         dueDate: z.string(),
         roundingScheme: z.string(),
@@ -195,6 +227,11 @@ export const invoicesRouter = createRouter()
         text1: z.string(),
         ourReference: z.string(),
         customerContact: z.string(),
+        unit: z.string(),
+        layout: z.string(),
+        vatZone: z.string(),
+        paymentTerms: z.string(),
+        product: z.string(),
       })
     }),
     async resolve({ ctx, input }) {
@@ -203,9 +240,9 @@ export const invoicesRouter = createRouter()
       const invoice = await ctx.prisma.generalInvoice.create({
         data: {
           title: input.invoiceInformation.title,
+          description: input.invoiceInformation.description,
           currency: <Currency>input.invoiceInformation.currency,
           dueDate: new Date(input.invoiceInformation.dueDate),
-          description: "",
           roundingScheme: roundingScheme,
           organizationId: ctx.organizationId,
           economicOptions: {
@@ -215,6 +252,11 @@ export const invoicesRouter = createRouter()
               text1: input.economicOptions.text1,
               ourReference: input.economicOptions.ourReference,
               customerContact: input.economicOptions.customerContact,
+              unit: input.economicOptions.unit,
+              layout: input.economicOptions.layout,
+              vatZone: input.economicOptions.vatZone,
+              paymentTerms: input.economicOptions.paymentTerms,
+              product: input.economicOptions.product,
               organizationId: ctx.organizationId,
             }
           },

@@ -1,26 +1,3 @@
-export interface CreateInvoice {
-    date:                    string;
-    dueDate:                 string;
-    currency:                string;
-    // exchangeRate:            number;
-    // netAmount:               number;
-    // netAmountInBaseCurrency: number;
-    // grossAmount:             number;
-    // marginInBaseCurrency:    number;
-    // marginPercentage:        number;
-    // vatAmount:               number;
-    // roundingAmount:          number;
-    // costPriceInBaseCurrency: number;
-    paymentTerms:            PaymentTerms;
-    customer:                CustomerForInvoice;
-    recipient:               Recipient;
-    // delivery:                Delivery;
-    references:              References;
-    layout:                  Layout;
-    lines:                   Line[];
-    notes:                   Note;
-}
-
 // Customer
 export interface CustomerForInvoice {
     customerNumber: number;
@@ -42,6 +19,7 @@ export interface Delivery {
 
 export interface Layout {
     layoutNumber: number;
+    name:         string;
 }
 
 export interface Line {
@@ -60,12 +38,13 @@ export interface Line {
 }
 
 export interface Product {
-    productNumber: string;
+    productNumber: number;
+    name:          string;
 }
 
 export interface Unit {
     unitNumber: number;
-    name?:      string;
+    name:      string;
 }
 
 export interface PaymentTerms {

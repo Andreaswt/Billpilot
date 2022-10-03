@@ -293,13 +293,6 @@ model Invoice {
   @@unique ([id, organizationId], name: "organizationsInvoice")
 }
 
-// enum InvoiceType {
-//   GENERAL
-//   ECONOMIC
-//   XERO
-//   QUICKBOOKS
-// }
-
 model InvoiceLine {
   id String @id @default(cuid())
   title String
@@ -345,6 +338,11 @@ model EconomicInvoiceOptions {
   text1 String
   ourReference String
   customerContact String
+  unit String
+  layout String
+  vatZone String
+  paymentTerms String
+  product String
 
   generalInvoiceId String @unique
   generalInvoice GeneralInvoice @relation(fields: [generalInvoiceId], references: [id], onDelete: Cascade)

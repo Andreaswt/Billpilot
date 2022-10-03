@@ -1,51 +1,24 @@
-import { Button, Flex, Heading, StackDivider, Text, VStack } from '@chakra-ui/react';
+import { Button, Flex, Heading, StackDivider, VStack } from '@chakra-ui/react';
 import { Dispatch, SetStateAction } from 'react';
 
 import { Card, CardBody, Property, PropertyList, useSnackbar } from "@saas-ui/react";
 
-import { ColumnDef, DataGrid, DataGridPagination, Section } from '@saas-ui/pro';
+import { Section } from '@saas-ui/pro';
 import moment from 'moment';
 import router from 'next/router';
-import useInvoiceHubspotTicketsStore, { PickedTicket } from '../../../../store/invoiceHubspotTickets';
-import { trpc } from '../../../utils/trpc';
-import { TableTooltip } from './table-tooltip';
+import useInvoiceStore from '../../../../../store/invoiceStore';
+import { trpc } from '../../../../utils/trpc';
+import { PickedJiraItems } from '../jira-issues/picked-jira-items';
+import { PickedHubspotItems } from '../hubspot/picked-hubspot-items';
 
 interface IProps {
     setStep: Dispatch<SetStateAction<number>>
+    invoiceType: "HUBSPOT" | "JIRA"
 }
 
-interface TableRow {
-    id: string
-    subject: string
-    content: string
-    lastModified: string
-}
-
-const columns: ColumnDef<TableRow>[] = [
-    {
-        id: 'subject',
-        header: 'Subject',
-        cell: (data) => (<TableTooltip text={data.row.original.subject} />)
-    },
-    {
-        id: 'content',
-        header: 'Content',
-        cell: (data) => (<TableTooltip text={data.row.original.content} />)
-    },
-    {
-        id: 'lastModified',
-        header: 'Last Modified',
-        cell: (data) => (<TableTooltip text={data.row.original.lastModified} />)
-    },
-    {
-        id: 'id',
-        header: 'Id',
-    },
-]
-
-const ConfirmHubspotTicketInvoice = (props: IProps) => {
-    const { setStep } = props
-    const store = useInvoiceHubspotTicketsStore();
+const ConfirmInvoice = (props: IProps) => {
+    const { setStep, invoiceType } = props
+    const store = useInvoiceStore();
     const createTicketInvoice = trpc.useMutation('invoices.createHubspotTicketInvoice', {
         onSuccess: () => {
             router.push("/dashboard")
@@ -76,6 +49,7 @@ const ConfirmHubspotTicketInvoice = (props: IProps) => {
                 currency: store.currency,
                 roundingScheme: store.roundingScheme,
                 title: store.title,
+                description: store.description,
                 dueDate: store.dueDate.toString()
             },
             pickedTickets: pickedTickets,
@@ -110,7 +84,7 @@ const ConfirmHubspotTicketInvoice = (props: IProps) => {
                         </Card>
                     </Section>
                     {
-                        data?.activeIntegrations["ECONOMIC"]
+                        data?.activeIntegrations["ECONOMIC"] && store.economicOptions.exportToEconomic
                             ? <Section
                                 title="E-conomic"
                                 description="Confirm your selections regarding export to e-conomic."
@@ -123,25 +97,19 @@ const ConfirmHubspotTicketInvoice = (props: IProps) => {
                                             <Property label="Text 1" value={store.economicOptions.text1} />
                                             <Property label="Our Reference" value={store.economicOptions.ourReferenceName} />
                                             <Property label="Customer Contact" value={store.economicOptions.customerContactName} />
+                                            <Property label="Unit" value={store.economicOptions.unitName} />
+                                            <Property label="Layout" value={store.economicOptions.layoutName} />
+                                            <Property label="Vat Zone" value={store.economicOptions.vatZoneName} />
+                                            <Property label="Payment Terms" value={store.economicOptions.paymentTermsName} />
+                                            <Property label="Product" value={store.economicOptions.productName} />
                                         </PropertyList>
                                     </CardBody>
                                 </Card>
                             </Section>
                             : null
                     }
-                    <Section
-                        title="Tickets"
-                        description="Confirm your picked tickets."
-                        variant="annotated">
-                        <Card>
-                            <CardBody>
-                                <DataGrid<TableRow> columns={columns} data={store.pickedTickets} isSortable isHoverable>
-                                    <Text fontSize='xs' as='i'>Scroll right to view all columns.</Text>
-                                    <DataGridPagination mt={2} pl={0} />
-                                </DataGrid>
-                            </CardBody>
-                        </Card>
-                    </Section>
+                    {invoiceType === "JIRA" ? <PickedJiraItems /> : null}
+                    {invoiceType === "HUBSPOT" ? <PickedHubspotItems /> : null}
                 </VStack>
                 <Flex justifyContent="space-between">
                     <Button mt={6} colorScheme="primary" onClick={() => setStep((step) => step - 1)}>Previous</Button>
@@ -152,4 +120,4 @@ const ConfirmHubspotTicketInvoice = (props: IProps) => {
     )
 }
 
-export default ConfirmHubspotTicketInvoice;
+export default ConfirmInvoice;

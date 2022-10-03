@@ -1,13 +1,7 @@
-import { logger } from "../logger";
-import { prisma } from "../../src/server/db/client";
-import { connect } from "http2";
-import { Contact, CreateInvoice, Customer, Layout, Line, PaymentTerms, Product, SalesPerson, Unit, VatZone } from "../../types/integrations/economic";
-import { Invoice, Invoices, LineItem } from "xero-node";
-import { custom } from "zod";
-import { SuperFundProducts } from "xero-node/dist/gen/model/payroll-au/superFundProducts";
-import { ApplicationRoles } from "jira.js/out/version2";
-import { calculateDiscountPercentage, getInvoiceForExportToIntegration, ICreateIssueInvoice } from "../invoice";
 import { ApiKeyName, ApiKeyProvider } from "@prisma/client";
+import { prisma } from "../../src/server/db/client";
+import { Contact, Customer, Layout, PaymentTerms, Product, SalesPerson, Unit, VatZone } from "../../types/integrations/economic";
+import { logger } from "../logger";
 
 enum httpMethod {
     get = 'GET',
@@ -88,100 +82,6 @@ export async function saveAgreementGrantToken(agreementGrantToken: string, organ
     })
 }
 
-export async function createInvoice(invoiceId: string, organizationId: string) {
-    let { invoiceDb,
-        discountAppliesToTimeItems,
-        discountAppliesToFixedPriceTimeItems,
-        fixedDiscountAppliesToTimeItems,
-        fixedDiscountAppliesToFixedPriceTimeItems,
-        taxAppliesToTimeItems,
-        taxAppliesToFixedPriceTimeItems } = await getInvoiceForExportToIntegration(invoiceId, organizationId);
-
-    // TODO: create picker for user to select layout, customer, paymentterms, vatzones, products
-    // TODO: when new invoice is created, use the values from the latest invoice, so customer won't have to select again
-    let layouts = await getAllLayouts(organizationId);
-    let customers = await getAllCustomers(organizationId);
-    let paymentTerms = await getAllPaymentTerms(organizationId);
-    let vatZones = await getAllVatZones(organizationId);
-    let products = await getAllProducts(organizationId);
-    let units = await getAllUnits(organizationId);
-    let employees = await getAllEmployees(organizationId);
-
-    // All lines must have a linenumber
-    let lineNumber = 1;
-
-    // Add all time items
-    let timeItems: Line[] = invoiceDb.timeItems.map(item => {
-        let discount = discountAppliesToTimeItems[item.id];
-        let fixedPriceDiscount = fixedDiscountAppliesToTimeItems[item.id];
-        let tax = taxAppliesToTimeItems[item.id];
-
-        let lineAmount = item.time.toNumber() * item.hourlyWage.toNumber();
-
-        return ({
-            lineNumber: lineNumber++,
-            unit: units.collection[0]!,
-            quantity: item.time.toNumber(),
-            unitNetPrice: lineAmount,
-            discountPercentage: calculateDiscountPercentage(fixedPriceDiscount?.amount, discount?.percent, lineAmount),
-            totalNetAmount: lineAmount,
-            description: item.name,
-            product: products.collection[0]!
-        })
-    })
-
-    // Add all fixed price items
-    let fixedPriceItems: Line[] = invoiceDb.fixedPriceTimeItems.map(item => {
-        let discount = discountAppliesToFixedPriceTimeItems[item.id];
-        let fixedPriceDiscount = fixedDiscountAppliesToFixedPriceTimeItems[item.id];
-        let tax = taxAppliesToFixedPriceTimeItems[item.id];
-
-        // TODO: apply tax
-
-        let lineAmount = item.amount.toNumber();
-
-        return ({
-            lineNumber: lineNumber++,
-            unit: units.collection[0]!,
-            quantity: 1,
-            unitNetPrice: item.amount.toNumber(),
-            discountPercentage: calculateDiscountPercentage(fixedPriceDiscount?.amount, discount?.percent, lineAmount),
-            totalNetAmount: lineAmount,
-            description: item.name,
-            product: products.collection[0]!
-        })
-    })
-
-    let createInvoice: CreateInvoice = {
-        date: invoiceDb.issueDate.toISOString().slice(0, 10),
-        dueDate: invoiceDb.dueDate.toISOString().slice(0, 10),
-        currency: invoiceDb.currency ?? "USD", // Default to USD
-        paymentTerms: paymentTerms.collection[0]!,
-        customer: customers.collection[0]!,
-        recipient: {
-            name: "", // TODO: use real one
-            vatZone: vatZones.collection[0]!,
-        },
-        layout: layouts.collection[0]!,
-        lines: [...timeItems, ...fixedPriceItems],
-        notes: {
-            heading: invoiceDb.name,
-            textLine1: invoiceDb.name
-        },
-        references: {
-            salesPerson: {
-                employeeNumber: employees.collection[0]!.employeeNumber,
-            },
-            customerContact: {
-                customerContactNumber: 0 // TODO: doesnt work
-            }
-        }
-    }
-
-    let result = await request<any>("invoices/drafts", httpMethod.post, organizationId, createInvoice);
-    return result;
-}
-
 export async function createInvoiceDraft(generalInvoiceId: string, organizationId: string) {
     const invoice = await prisma.generalInvoice.findUniqueOrThrow({
         where: {
@@ -203,20 +103,11 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
 
     if (!invoice.economicOptions) throw new Error("Economic options not defined for invoice during e-conomic invoice export")
 
-
-    let layouts = await getAllLayouts(organizationId)
-    // let customers = await getAllCustomers(organizationId)
-    let paymentTerms = await getAllPaymentTerms(organizationId)
-    let vatZones = await getAllVatZones(organizationId)
-    let products = await getAllProducts(organizationId)
-    let units = await getAllUnits(organizationId)
-    // let employees = await getAllEmployees(organizationId)
-
     // All lines must have a linenumber
     let lineNumber = 1;
 
     // Add all time items
-    let timeItems: Line[] = invoice.invoiceLines.map(item => {
+    let timeItems = invoice.invoiceLines.map(item => {
         if (!invoice.economicOptions) throw new Error("Economic options not defined for invoice during e-conomic invoice export")
 
         let hours = item.hours.toNumber()
@@ -234,29 +125,39 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
 
         return ({
             lineNumber: lineNumber++,
-            unit: units.collection[0]!,
+            unit: {
+                unitNumber: Number(invoice.economicOptions.unit)
+            },
             quantity: hours,
             unitNetPrice: invoice.economicOptions.customerPrice.toNumber(),
             discountPercentage: item.discountPercentage.toNumber(),
             totalNetAmount: lineAmount,
             description: item.title,
-            product: products.collection[0]!
+            product: {
+                productNumber: invoice.economicOptions.product
+            }
         })
     })
 
-    let createInvoice: CreateInvoice = {
+    let createInvoice = {
         date: (new Date()).toISOString().slice(0, 10),
         dueDate: invoice.dueDate.toISOString().slice(0, 10),
         currency: invoice.currency,
-        paymentTerms: paymentTerms.collection[0]!,
+        paymentTerms: {
+            paymentTermsNumber: Number(invoice.economicOptions.paymentTerms)
+        },
         customer: {
-            customerNumber: parseInt(invoice.economicOptions.customer),
+            customerNumber: Number(invoice.economicOptions.customer),
         },
         recipient: {
             name: invoice.economicOptions.customer,
-            vatZone: vatZones.collection[0]!,
+            vatZone: {
+                vatZoneNumber: Number(invoice.economicOptions.vatZone)
+            },
         },
-        layout: layouts.collection[0]!,
+        layout: {
+            layoutNumber: Number(invoice.economicOptions.layout)
+        },
         lines: [ ...timeItems ],
         notes: {
             heading: invoice.title,
@@ -264,10 +165,10 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
         },
         references: {
             salesPerson: {
-                employeeNumber: parseInt(invoice.economicOptions.ourReference)
+                employeeNumber: Number(invoice.economicOptions.ourReference)
             },
             customerContact: {
-                customerContactNumber: parseInt(invoice.economicOptions.customerContact)
+                customerContactNumber: Number(invoice.economicOptions.customerContact)
             }
         }
     }
@@ -277,33 +178,33 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
 }
 
 export async function getAllLayouts(organizationId: string) {
-    return await request<{ collection: Layout[] }>("layouts", httpMethod.get, organizationId);
+    return await (await request<{ collection: Layout[] }>("layouts", httpMethod.get, organizationId)).collection;
 }
 
 export async function getAllCustomers(organizationId: string) {
-    return await request<{ collection: Customer[] }>("customers", httpMethod.get, organizationId);
+    return await (await request<{ collection: Customer[] }>("customers", httpMethod.get, organizationId)).collection;
 }
 
 export async function getAllPaymentTerms(organizationId: string) {
-    return await request<{ collection: PaymentTerms[] }>("payment-terms", httpMethod.get, organizationId);
+    return await (await request<{ collection: PaymentTerms[] }>("payment-terms", httpMethod.get, organizationId)).collection;
 }
 
 export async function getAllVatZones(organizationId: string) {
-    return await request<{ collection: VatZone[] }>("vat-zones", httpMethod.get, organizationId);
+    return await (await request<{ collection: VatZone[] }>("vat-zones", httpMethod.get, organizationId)).collection;
 }
 
 export async function getAllProducts(organizationId: string) {
-    return await request<{ collection: Product[] }>("products", httpMethod.get, organizationId);
+    return await (await request<{ collection: Product[] }>("products", httpMethod.get, organizationId)).collection;
 }
 
 export async function getAllUnits(organizationId: string) {
-    return await request<{ collection: Unit[] }>("units", httpMethod.get, organizationId);
+    return await (await request<{ collection: Unit[] }>("units", httpMethod.get, organizationId)).collection;
 }
 
 export async function getAllEmployees(organizationId: string) {
-    return await request<{ collection: SalesPerson[] }>("employees", httpMethod.get, organizationId);
+    return await (await request<{ collection: SalesPerson[] }>("employees", httpMethod.get, organizationId)).collection;
 }
 
 export async function getCustomerContacts(organizationId: string, customerNumber: number) {
-    return await request<{ collection: Contact[] }>("customers/" + customerNumber + "/contacts", httpMethod.get, organizationId);
+    return await (await request<{ collection: Contact[] }>("customers/" + customerNumber + "/contacts", httpMethod.get, organizationId)).collection;
 }

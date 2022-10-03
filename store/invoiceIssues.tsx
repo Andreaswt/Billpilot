@@ -1,7 +1,7 @@
 import create from 'zustand';
 
 export interface PickedState {
-    pickedIssues: PickedIssue[]
+    pickedIssues: PickedJiraIssue[]
     pickedProject: string,
 }
 
@@ -23,7 +23,7 @@ export interface InvoiceInformation {
     },
 }
 
-export interface PickedIssue {
+export interface PickedJiraIssue {
     key: string,
     id: string,
     name: string,
@@ -35,7 +35,7 @@ export interface PickedIssue {
 interface CreateInvoiceState extends PickedState, InvoiceInformation {
     setInvoiceInformation: (invoiceInformation: InvoiceInformation) => void,
     pickProject: (projectKey: string) => void,
-    pickIssues: (pickedIssues: PickedIssue[]) => void,
+    pickIssues: (pickedIssues: PickedJiraIssue[]) => void,
 }
 
 const useInvoiceIssuesStore = create<CreateInvoiceState>((set) => ({
@@ -59,7 +59,7 @@ const useInvoiceIssuesStore = create<CreateInvoiceState>((set) => ({
     },
     setInvoiceInformation: (invoiceInformation: InvoiceInformation) => set((state) => ({ ...state, ...invoiceInformation })),
     pickProject: (projectKey: string) => set((state) => ({ ...state, pickedProject: projectKey })),
-    pickIssues: (pickedIssues: PickedIssue[]) => set((state) => ({ ...state, pickedIssues: pickedIssues })),
+    pickIssues: (pickedIssues: PickedJiraIssue[]) => set((state) => ({ ...state, pickedIssues: pickedIssues })),
 }))
 
 export default useInvoiceIssuesStore;

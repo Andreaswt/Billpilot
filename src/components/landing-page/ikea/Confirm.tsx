@@ -5,7 +5,7 @@ import { Card, CardBody, Column, Property, PropertyList, useSnackbar } from "@sa
 
 import { ColumnDef, DataGrid, DataGridPagination, Section } from '@saas-ui/pro';
 import moment from 'moment';
-import { PickedIssue } from '../../../../store/invoice';
+import { PickedJiraIssue } from '../../../../store/invoice';
 import useInvoiceIssuesStore from '../../../../store/invoiceIssues';
 import { trpc } from '../../../utils/trpc';
 import router from 'next/router';
@@ -14,7 +14,7 @@ interface IProps {
     setStep: Dispatch<SetStateAction<number>>
 }
 
-const columns: ColumnDef<PickedIssue>[] = [
+const columns: ColumnDef<PickedJiraIssue>[] = [
     {
         id: 'key',
         header: 'Key',
@@ -146,7 +146,7 @@ const ConfirmInvoiceIssues = (props: IProps) => {
                         variant="annotated">
                         <Card>
                             <CardBody>
-                                <DataGrid<PickedIssue> columns={columns} data={store.pickedIssues} isSortable isHoverable>
+                                <DataGrid<PickedJiraIssue> columns={columns} data={store.pickedIssues} isSortable isHoverable>
                                     <Text fontSize='xs' as='i'>Scroll right to view all columns.</Text>
                                     <DataGridPagination mt={2} pl={0} />
                                 </DataGrid>

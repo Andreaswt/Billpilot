@@ -4,9 +4,9 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { ColumnDef, DataGrid, DataGridPagination } from '@saas-ui/pro';
 import { Card, CardBody, SearchInput } from "@saas-ui/react";
 import { TbPercentage } from "react-icons/tb";
-import useCreateInvoiceStore, { PickedIssue } from '../../../../store/invoice';
-import { trpc } from '../../../utils/trpc';
-import useInvoiceIssuesStore from '../../../../store/invoiceIssues';
+import { PickedJiraIssue } from '../../../../../store/invoice';
+import { trpc } from '../../../../utils/trpc';
+import useInvoiceStore from '../../../../../store/invoiceStore';
 
 
 interface IProps {
@@ -27,7 +27,7 @@ interface IPagination {
 
 const Issues = (props: IProps) => {
     const { setStep } = props
-    const store = useInvoiceIssuesStore();
+    const store = useInvoiceStore();
     const [selected, setSelected] = useState<string[]>([])
     const [searchTerm, setSearchTerm] = useState<string>("")
     const [pagination, setPagination] = useState<IPagination>({ amount: 0, total: 0 })
@@ -77,7 +77,7 @@ const Issues = (props: IProps) => {
     });
 
     function pickIssues() {
-        let selectedData: PickedIssue[] = []
+        let selectedData: PickedJiraIssue[] = []
 
         if (selected.length === 0) {
             setPickAtLeastOneIssue(true)
