@@ -8,9 +8,7 @@ import { useLocation } from '@saas-ui/router'
 import { useSession } from 'next-auth/react'
 import { ClientOnly } from '../client-only'
 import { AppSidebar } from '../sidebars/authenticated-sidebar'
-import { SettingsSidebar } from '../sidebars/settings-sidebar'
 import { Box } from '@chakra-ui/react'
-import { ReactNode } from 'react'
 
 import { SkipNavContent, SkipNavLink } from '@chakra-ui/skip-nav'
 
@@ -20,7 +18,6 @@ import {
     AnnouncementBannerProps,
 } from '../../landing-page/announcement-banner/announcement-banner'
 import { Footer, FooterProps } from '../../landing-page/layout/footer'
-import router from 'next/router'
 
 /**
  * Layout for authentication screens (login/signup/etc...)
@@ -50,25 +47,6 @@ export const AuthenticatedLayout: React.FC<LayoutProps> = ({
             sidebar={
                 <AppSidebar />
             }>
-            {children}
-        </AppShell>
-    )
-}
-
-/**
- * Layout for settings pages.
- */
-export const SettingsLayout: React.FC<LayoutProps> = ({
-    children,
-    ...rest
-}) => {
-    return (
-        <AppShell
-            minH="100vh"
-            sidebar={
-                <SettingsSidebar />
-            }
-        >
             {children}
         </AppShell>
     )
@@ -135,14 +113,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     publicRoutes =["/", "/login", "/signup", "/terms", "/privacypolicy"]
 
     const isPublicRoute = publicRoutes.indexOf(location.pathname) !== -1
-    const isSettings = location.pathname.indexOf('/dashboard/settings') === 0
 
     let LayoutComponent
     if (isPublicRoute) {
         LayoutComponent = PublicLayout
-    }
-    else if (isSettings) {
-        LayoutComponent = SettingsLayout
     }
     else if (status === 'authenticated' && session) {
         LayoutComponent = AuthenticatedLayout

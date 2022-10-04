@@ -10,6 +10,7 @@ import { integrationsRouter } from "./integrations";
 import { hubspotRouter } from "./hubspot";
 import { contactRouter} from "./contactrouter"
 import { accountRouter } from "./account";
+import { clientsRouter } from "./clients";
 
 export const appRouter = createRouter()
   .transformer(superjson)
@@ -20,7 +21,8 @@ export const appRouter = createRouter()
   .merge("integrations.", integrationsRouter)
   .merge("hubspot.", hubspotRouter)
   .merge("contact.", contactRouter)
-  .merge("account.", accountRouter);
+  .merge("account.", accountRouter)
+  .merge("clients.", clientsRouter);
 
 // export type definition of API
 
