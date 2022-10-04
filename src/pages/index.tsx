@@ -214,14 +214,14 @@ const HeroSection: React.FC = () => {
         </Center>
       </Container>
       <Flex justifyContent='center'>
-        <div style={{ borderRadius: '10px', overflow: 'hidden' }}>
+        <Box style={{ borderRadius: '20px', overflow: 'hidden' }}>
           <Image
-            src="static/screenshots/list.png"
+            src="static/screenshots/showcase.png"
             alt="Picture of the author"
-            width={1200}
-            height={800}
+            width={1607}
+            height={1021}
           />
-        </div>
+        </Box>
       </Flex>
       <Features
         id="benefits"
