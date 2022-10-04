@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { ColumnDef, DataGrid, DataGridPagination } from '@saas-ui/pro';
 import { Card, CardBody, SearchInput } from "@saas-ui/react";
 import { TbPercentage } from "react-icons/tb";
-import useCreateInvoiceStore, { PickedIssue } from '../../../../store/invoice';
+import useCreateInvoiceStore, { PickedJiraIssue } from '../../../../store/invoice';
 import { trpc } from '../../../utils/trpc';
 import useInvoiceIssuesStore from '../../../../store/invoiceIssues';
 
@@ -159,7 +159,7 @@ const Issues = (props: IProps) => {
     let isInitialized = false;
 
     function pickIssues() {
-        let selectedData: PickedIssue[] = []
+        let selectedData: PickedJiraIssue[] = []
 
         if (selected.length === 0) {
             setPickAtLeastOneIssue(true)

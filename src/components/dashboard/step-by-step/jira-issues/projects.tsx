@@ -1,11 +1,10 @@
 import { Button, Center, Flex, Heading, Input, Spinner, Text } from '@chakra-ui/react';
-import { Dispatch, SetStateAction, useState, useEffect } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 
 import { ColumnDef, DataGrid, DataGridPagination } from '@saas-ui/pro';
 import { Card, CardBody, SearchInput } from "@saas-ui/react";
-import useCreateInvoiceStore from '../../../../store/invoice';
-import { trpc } from '../../../utils/trpc';
-import useInvoiceIssuesStore from '../../../../store/invoiceIssues';
+import { trpc } from '../../../../utils/trpc';
+import useInvoiceStore from '../../../../../store/invoiceStore';
 
 interface IProps {
     setStep: Dispatch<SetStateAction<number>>
@@ -25,54 +24,19 @@ interface IPagination {
 
 const Projects = (props: IProps) => {
     const { setStep } = props
-    const store = useInvoiceIssuesStore();
+    const store = useInvoiceStore();
 
     const [searchTerm, setSearchTerm] = useState<string>("")
     const [pagination, setPagination] = useState<IPagination>({ amount: 0, total: 0 })
-    const [isLoading, setIsLoading] = useState<Boolean>(true)
-    const [isRefetching, setIsRefetching] = useState<Boolean>(false)
-    const [projects, setProjects] = useState<TableProject[]>(() => {
-        return [
-            {
-                name: 'Group 3.1',
-                type: 'Project',
-                key: 'G31',
-                id: '1',
-            },
-            {
-                name: 'Sprint 4.2',
-                type: 'Project',
-                key: 'TES',
-                id: '2',
-            },
-            {
-                name: 'Sprint 7.7',
-                type: 'Project',
-                key: 'F73',
-                id: '3',
-            },
-            {
-                name: 'Meet 8.2',
-                type: 'Meeting',
-                key: 'F13',
-                id: '4',
-            },
-        ]
-    })
+    const [projects, setProjects] = useState<TableProject[]>([])
 
-    useEffect(() => { 
-        setTimeout(()=> {
-            setIsLoading(false)
-        }, 500)
-    }, []) 
-
-    // const { isLoading, isRefetching } = trpc.useQuery(["jira.searchProjectsForIssueInvoicing", { searchTerm: searchTerm }], {
-    //     onSuccess(data) {
-    //         setPagination({ amount: data.amount, total: data.total })
-    //         setProjects(data.projects)
-    //     },
-    //     refetchOnWindowFocus: false
-    // });
+    const { isLoading, isRefetching } = trpc.useQuery(["jira.searchProjectsForIssueInvoicing", { searchTerm: searchTerm }], {
+        onSuccess(data) {
+            setPagination({ amount: data.amount, total: data.total })
+            setProjects(data.projects)
+        },
+        refetchOnWindowFocus: false
+    });
 
     function pickProject(key: string) {
         store.pickProject(key)
@@ -126,7 +90,7 @@ const Projects = (props: IProps) => {
                                 data={projects}
                                 isSortable>
                                 <DataGridPagination mt={2} pl={0} />
-                                <Text fontSize='xs' as='i'>Loaded 4 of 4 results total. Search to narrow results.</Text>
+                                <Text fontSize='xs' as='i'>Loaded {pagination.amount} of {pagination.total} results total. Search to narrow results.</Text>
                             </DataGrid>
                     }
                 </Flex>

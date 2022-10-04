@@ -1,57 +1,25 @@
-import { Button, Flex, Heading, StackDivider, Tooltip, VStack, Text } from '@chakra-ui/react';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { Button, Flex, Heading, StackDivider, VStack } from '@chakra-ui/react';
+import { Dispatch, SetStateAction } from 'react';
 
-import { Card, CardBody, Column, Property, PropertyList, useSnackbar } from "@saas-ui/react";
+import { Card, CardBody, Property, PropertyList, useSnackbar } from "@saas-ui/react";
 
-import { ColumnDef, DataGrid, DataGridPagination, Section } from '@saas-ui/pro';
+import { Section } from '@saas-ui/pro';
 import moment from 'moment';
-import { PickedIssue } from '../../../../store/invoice';
-import useInvoiceIssuesStore from '../../../../store/invoiceIssues';
-import { trpc } from '../../../utils/trpc';
 import router from 'next/router';
+import useInvoiceStore from '../../../../../store/invoiceStore';
+import { trpc } from '../../../../utils/trpc';
+import { PickedJiraItems } from '../jira-issues/picked-jira-items';
+import { PickedHubspotItems } from '../hubspot/picked-hubspot-items';
 
 interface IProps {
     setStep: Dispatch<SetStateAction<number>>
+    invoiceType: "HUBSPOT" | "JIRA"
 }
 
-const columns: ColumnDef<PickedIssue>[] = [
-    {
-        id: 'key',
-        header: 'Key',
-    },
-    {
-        id: 'id',
-        header: 'Id',
-    },
-    {
-        id: 'name',
-        header: 'Name',
-        cell: (data) => (
-            <Flex>
-                <Tooltip label={data.row.original.name}>
-                    <Text>{data.row.original.name}</Text>
-                </Tooltip>
-            </Flex>
-        )
-    },
-    {
-        id: 'hoursSpent',
-        header: 'Hours Spent',
-    },
-    {
-        id: 'updatedHoursSpent',
-        header: 'Updated Hours Spent',
-    },
-    {
-        id: 'discountPercentage',
-        header: 'Percentage Discount',
-    },
-]
-
-const ConfirmInvoiceIssues = (props: IProps) => {
-    const { setStep } = props
-    const store = useInvoiceIssuesStore();
-    const createIssueInvoice = trpc.useMutation('invoices.createIssueInvoice', {
+const ConfirmInvoice = (props: IProps) => {
+    const { setStep, invoiceType } = props
+    const store = useInvoiceStore();
+    const createTicketInvoice = trpc.useMutation('invoices.createHubspotTicketInvoice', {
         onSuccess: () => {
             router.push("/dashboard")
         },
@@ -67,23 +35,24 @@ const ConfirmInvoiceIssues = (props: IProps) => {
     const snackbar = useSnackbar()
 
     function submitInvoice() {
-        const pickedIssues = store.pickedIssues.map(item => ({
-            jiraKey: item.key,
-            jiraId: item.id,
-            name: item.name,
-            hoursSpent: item.hoursSpent,
+        const pickedTickets = store.pickedTickets.map(item => ({
+            id: item.id,
+            subject: item.subject,
+            content: item.content,
+            lastModified: item.lastModified,
             updatedHoursSpent: item.updatedHoursSpent ?? 0,
             discountPercentage: item.discountPercentage ?? 0
         }))
 
-        createIssueInvoice.mutate({
+        createTicketInvoice.mutate({
             invoiceInformation: {
                 currency: store.currency,
                 roundingScheme: store.roundingScheme,
                 title: store.title,
+                description: store.description,
                 dueDate: store.dueDate.toString()
             },
-            pickedIssues: pickedIssues,
+            pickedTickets: pickedTickets,
             economicOptions: { ...store.economicOptions }
         })
     }
@@ -115,7 +84,7 @@ const ConfirmInvoiceIssues = (props: IProps) => {
                         </Card>
                     </Section>
                     {
-                        data?.activeIntegrations["ECONOMIC"]
+                        data?.activeIntegrations["ECONOMIC"] && store.economicOptions.exportToEconomic
                             ? <Section
                                 title="E-conomic"
                                 description="Confirm your selections regarding export to e-conomic."
@@ -128,33 +97,27 @@ const ConfirmInvoiceIssues = (props: IProps) => {
                                             <Property label="Text 1" value={store.economicOptions.text1} />
                                             <Property label="Our Reference" value={store.economicOptions.ourReferenceName} />
                                             <Property label="Customer Contact" value={store.economicOptions.customerContactName} />
+                                            <Property label="Unit" value={store.economicOptions.unitName} />
+                                            <Property label="Layout" value={store.economicOptions.layoutName} />
+                                            <Property label="Vat Zone" value={store.economicOptions.vatZoneName} />
+                                            <Property label="Payment Terms" value={store.economicOptions.paymentTermsName} />
+                                            <Property label="Product" value={store.economicOptions.productName} />
                                         </PropertyList>
                                     </CardBody>
                                 </Card>
                             </Section>
                             : null
                     }
-                    <Section
-                        title="Issues"
-                        description="Confirm your picked issues."
-                        variant="annotated">
-                        <Card>
-                            <CardBody>
-                                <DataGrid<PickedIssue> columns={columns} data={store.pickedIssues} isSortable isHoverable>
-                                    <Text fontSize='xs' as='i'>Scroll right to view all columns.</Text>
-                                    <DataGridPagination mt={2} pl={0} />
-                                </DataGrid>
-                            </CardBody>
-                        </Card>
-                    </Section>
+                    {invoiceType === "JIRA" ? <PickedJiraItems /> : null}
+                    {invoiceType === "HUBSPOT" ? <PickedHubspotItems /> : null}
                 </VStack>
                 <Flex justifyContent="space-between">
                     <Button mt={6} colorScheme="primary" onClick={() => setStep((step) => step - 1)}>Previous</Button>
-                    <Button isLoading={createIssueInvoice.isLoading} mt={6} colorScheme="primary" onClick={submitInvoice}>Submit Invoice</Button>
+                    <Button isLoading={createTicketInvoice.isLoading} mt={6} colorScheme="primary" onClick={submitInvoice}>Submit Invoice</Button>
                 </Flex>
             </CardBody>
         </Card >
     )
 }
 
-export default ConfirmInvoiceIssues;
+export default ConfirmInvoice;

@@ -7,6 +7,7 @@ import { jiraRouter } from "./jira";
 import { invoicesRouter } from "./invoices";
 import { usersRouter } from "./users";
 import { integrationsRouter } from "./integrations";
+import { hubspotRouter } from "./hubspot";
 import { contactRouter} from "./contactrouter"
 import { accountRouter } from "./account";
 
@@ -17,6 +18,7 @@ export const appRouter = createRouter()
   .merge("jira.", jiraRouter)
   .merge("users.", usersRouter)
   .merge("integrations.", integrationsRouter)
+  .merge("hubspot.", hubspotRouter)
   .merge("contact.", contactRouter)
   .merge("account.", accountRouter);
 

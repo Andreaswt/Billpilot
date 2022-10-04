@@ -1,7 +1,7 @@
 import { Currency, FixedPriceTimeItem, InvoiceStatus, RoundingScheme, TimeItem } from "@prisma/client";
 import { withCoalescedInvoke } from "next/dist/lib/coalesced-function";
 import { prisma } from "../src/server/db/client";
-import { createJiraIssueInvoice, getAllCustomers, getAllLayouts, getAllPaymentTerms, getAllProducts, getAllUnits, getAllVatZones } from "./integrations/e-conomic";
+import { getAllCustomers, getAllLayouts, getAllPaymentTerms, getAllProducts, getAllUnits, getAllVatZones } from "./integrations/e-conomic";
 
 interface ICreateInvoiceInput {
     invoice: {
@@ -80,28 +80,6 @@ export async function createInvoice(invoice: ICreateInvoiceInput, organizationId
         },
     })
 
-}
-
-export async function createIssueInvoice(invoice: ICreateIssueInvoice, organizationId: string) {
-    const { issueTimeItems, currency, roundingScheme, exportToEconomic, ...invoiceWithoutIssues } = invoice;
-
-    await prisma.issueInvoice.create({
-        data: { 
-            ...invoiceWithoutIssues, 
-            currency: <Currency> currency, 
-            roundingScheme: <RoundingScheme> roundingScheme, 
-            organizationId: organizationId,
-            issueTimeItems: {
-                createMany: {
-                    data: invoice.issueTimeItems.map(item => ({ ...item, organizationId: organizationId, }))
-                }
-            }
-        }
-    })
-
-    if (exportToEconomic) {
-        createJiraIssueInvoice(invoice, organizationId)
-    }
 }
 
 export async function getInvoiceForExportToIntegration(invoiceId: string, organizationId: string) {

@@ -4,6 +4,7 @@ import { Metric } from './new-metric'
 
 import { IoIosPaper, IoMdCalendar } from 'react-icons/io'
 import { MdPayment } from 'react-icons/md'
+import React from 'react'
 
 const data = [
   {
@@ -36,14 +37,16 @@ export const Today = () => {
   return (
     <>
       {/* <Grid templateRows='repeat(2, 1fr)' templateColumns='repeat(3, 1fr)' gap="4"> */}
-        {/* <GridItem rowSpan={2} colSpan={2}> */}
-          <SimpleGrid columns={{md: 4, base: 2}} gap={4}>
-            {data.map((metric, index) => (
-              <Metric key={index} {...metric} color="primary" />
-            ))}
-          </SimpleGrid>
-        {/* </GridItem> */}
-        {/* <GridItem colSpan={1}>
+      {/* <GridItem rowSpan={2} colSpan={2}> */}
+      <SimpleGrid columns={{ md: 4, base: 2 }} gap={4}>
+        {data.map((metric, index) => (
+          <React.Fragment key={index}>
+            <Metric {...metric} color="primary" />
+          </React.Fragment>
+        ))}
+      </SimpleGrid>
+      {/* </GridItem> */}
+      {/* <GridItem colSpan={1}>
           <Card borderRadius="8px" border="1px solid #e0dede" boxShadow='md' title="Recent invoices">
             <CardBody>
               SaaS UI datagrid here
