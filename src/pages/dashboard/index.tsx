@@ -57,9 +57,6 @@ const SimpleCard: NextPage = () => {
           gap="4"
           p="4"
         >
-          <Flex>
-            <Heading>Dashboard</Heading>
-          </Flex>
           <GridItem>
             <Today />
           </GridItem>

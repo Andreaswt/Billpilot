@@ -10,6 +10,7 @@ import { AppLayout } from "../components/layout/layouts/app-layout";
 import type { AppType } from "next/app";
 import type { AppRouter } from "../server/router";
 import type { Session } from "next-auth";
+import '@fontsource/inter/variable.css'
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
