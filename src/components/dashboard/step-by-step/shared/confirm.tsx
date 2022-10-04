@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, StackDivider, VStack } from '@chakra-ui/react';
+import { Button, Flex, Heading, StackDivider, VStack, Text } from '@chakra-ui/react';
 import { Dispatch, SetStateAction } from 'react';
 
 import { Card, CardBody, Property, PropertyList, useSnackbar } from "@saas-ui/react";
@@ -76,6 +76,9 @@ const ConfirmInvoice = (props: IProps) => {
                             <CardBody>
                                 <PropertyList>
                                     <Property label="Title" value={store.title} />
+                                    <Property label="Description">
+                                        <Text width="50%" overflowWrap="break-word">{store.description}</Text>
+                                    </Property>
                                     <Property label="Currency" value={store.currency} />
                                     <Property label="Due Date" value={moment(store.dueDate).format("YYYY-MM-DD")} />
                                     <Property label="Rounding Scheme" value={store.roundingScheme} />

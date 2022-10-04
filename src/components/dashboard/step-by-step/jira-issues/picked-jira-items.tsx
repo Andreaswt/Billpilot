@@ -26,14 +26,17 @@ const columns: ColumnDef<PickedJiraIssue>[] = [
     {
         id: 'hoursSpent',
         header: 'Hours Spent',
+        cell: (data) => (<p>{data.row.original.hoursSpent ?? "-"}</p>)
     },
     {
         id: 'updatedHoursSpent',
         header: 'Updated Hours Spent',
+        cell: (data) => (<p>{data.row.original.updatedHoursSpent ?? "-"}</p>)
     },
     {
         id: 'discountPercentage',
         header: 'Percentage Discount',
+        cell: (data) => (<p>{data.row.original.discountPercentage ?? "-"}</p>)
     },
 ]
 
