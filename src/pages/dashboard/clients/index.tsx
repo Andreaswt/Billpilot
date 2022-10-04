@@ -3,11 +3,11 @@ import * as Yup from 'yup'
 
 import {
     BulkActionsSelections, DataGridCell, MenuProperty, ToggleButton, ToggleButtonGroup, Toolbar,
-    ToolbarButton, useColumns, useDataGridFilter
+    ToolbarButton, useColumns
 } from '@saas-ui/pro'
+import {useDataGridFilter as getDataGridFilter} from '@saas-ui/pro'
 import {
-    Button, EmptyState,
-    Menu,
+    Button, EmptyState, Menu,
     MenuButton,
     MenuItem,
     MenuList,
@@ -19,12 +19,12 @@ import { FiSliders, FiUser } from 'react-icons/fi'
 import { Box, Portal, Spacer, Tag, useBreakpointValue } from '@chakra-ui/react'
 import { format } from 'date-fns'
 import { NextPage } from 'next'
+import router, { useRouter } from 'next/router'
 import { AddFilterButton, filters } from '../../../components/dashboard/clients/client-filters'
 import { ClientStatuses } from '../../../components/dashboard/clients/client-statuses'
 import { InlineSearch } from '../../../components/dashboard/clients/inline-search'
 import { ListPage } from '../../../components/dashboard/clients/list-page'
 import { trpc } from '../../../utils/trpc'
-import { useRouter } from 'next/router'
 
 interface Client {
     name: string
@@ -68,14 +68,6 @@ const ActionCell: DataGridCell<Client> = () => {
     )
 }
 
-const schema = Yup.object().shape({
-    name: Yup.string()
-        .min(2, 'Too short')
-        .max(25, 'Too long')
-        .required()
-        .label('Name'),
-})
-
 const ClientsListPage: NextPage = () => {
     const modals = useModals()
     const [searchQuery, setSearchQuery] = React.useState('')
@@ -97,28 +89,28 @@ const ClientsListPage: NextPage = () => {
             {
                 id: 'invoiced',
                 header: 'Invoiced',
-                filterFn: useDataGridFilter('number'),
+                filterFn: getDataGridFilter('number'),
                 size: 300
             },
             {
                 id: 'createdAt',
                 header: 'Created at',
                 cell: DateCell,
-                filterFn: useDataGridFilter('date'),
+                filterFn: getDataGridFilter('date'),
                 enableGlobalFilter: false,
             },
             {
                 id: 'latestBill',
                 header: 'Latest bill',
                 cell: DateCell,
-                filterFn: useDataGridFilter('date'),
+                filterFn: getDataGridFilter('date'),
                 enableGlobalFilter: false,
             },
             {
                 id: 'status',
                 header: 'Status',
                 cell: StatusCell,
-                filterFn: useDataGridFilter('string'),
+                filterFn: getDataGridFilter('string'),
                 enableGlobalFilter: false,
                 meta: {
                     isNumeric: true,
@@ -135,18 +127,6 @@ const ClientsListPage: NextPage = () => {
         ],
         [],
     )
-
-    const addClient = () => {
-        modals.form?.({
-            title: 'Add client',
-            schema,
-            submitLabel: 'Save',
-            onSubmit: (client) => console.log("submitted")
-            // mutation.mutateAsync({
-            //   name: contact.name,
-            // }),
-        })
-    }
 
     const [visibleColumns, setVisibleColumns] = useLocalStorage(
         'clients.columns',
@@ -185,7 +165,7 @@ const ClientsListPage: NextPage = () => {
             label="Add client"
             variant="solid"
             colorScheme="primary"
-            onClick={addClient}
+            onClick={() => router.push("/dashboard/clients/create")}
         />
     )
 
@@ -247,7 +227,7 @@ const ClientsListPage: NextPage = () => {
             icon={FiUser}
             actions={
                 <>
-                    <Button colorScheme="primary" variant="solid" onClick={addClient}>
+                    <Button colorScheme="primary" variant="solid" onClick={() => router.push("/dashboard/clients/create")}>
                         Add a client
                     </Button>
                 </>
@@ -256,19 +236,22 @@ const ClientsListPage: NextPage = () => {
     )
 
     return (
-        <ListPage<Client>
-            title="Clients"
-            toolbar={toolbar}
-            tabbar={tabbar}
-            bulkActions={bulkActions}
-            filters={filters}
-            searchQuery={searchQuery}
-            emptyState={emptyState}
-            columns={columns}
-            visibleColumns={visibleColumns}
-            data={data as Client[]}
-            isLoading={isLoading}
-        />
+        <>
+            <ListPage<Client>
+                title="Clients"
+                toolbar={toolbar}
+                tabbar={tabbar}
+                bulkActions={bulkActions}
+                filters={filters}
+                searchQuery={searchQuery}
+                emptyState={emptyState}
+                columns={columns}
+                visibleColumns={visibleColumns}
+                data={data as Client[]}
+                isLoading={isLoading}
+            />
+        </>
+
     )
 }
 

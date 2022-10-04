@@ -9,8 +9,8 @@ interface TableRow {
     subject: string
     content: string
     lastModified: string
-    updatedHoursSpent: number
-    discountPercentage: number
+    updatedHoursSpent: number | null
+    discountPercentage: number | null
 }
 
 const columns: ColumnDef<TableRow>[] = [

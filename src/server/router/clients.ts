@@ -57,4 +57,29 @@ export const clientsRouter = createRouter()
       ]
       return clients;
     }
+  })
+  .mutation("createClient", {
+    input: z.object({
+      clientInformation: z.object({
+        name: z.string(),
+        currency: z.string(),
+        roundingScheme: z.string(),
+      }),
+      economicOptions: z.object({
+        customer: z.string(),
+        customerPrice: z.number(),
+        text1: z.string(),
+        ourReference: z.string(),
+        customerContact: z.string(),
+        unit: z.string(),
+        layout: z.string(),
+        vatZone: z.string(),
+        paymentTerms: z.string(),
+        product: z.string(),
+      })
+    }),
+    async resolve({ input, ctx }) {
+      
+    
+    }
   });

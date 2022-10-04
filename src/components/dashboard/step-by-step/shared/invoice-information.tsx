@@ -7,6 +7,7 @@ import moment from 'moment';
 import { useForm } from 'react-hook-form';
 import { trpc } from '../../../../utils/trpc';
 import useInvoiceStore, { InvoiceInformationState, PickedHubspotTicket } from '../../../../../store/invoiceStore';
+import RequiredFormField from '../../forms/required-field';
 
 interface IProps {
     setStep: Dispatch<SetStateAction<number>>
@@ -147,10 +148,7 @@ const InvoiceInformation = (props: IProps) => {
                                                 <FormLayout>
                                                     <FormControl isInvalid={!!errors.invoiceInformation?.title}>
                                                         <FormLabel htmlFor={`invoiceInformation.title`}>
-                                                            <Flex gap={1}>
-                                                                Title
-                                                                <Text color="red" size="sm">*</Text>
-                                                            </Flex>
+                                                            <RequiredFormField title="Title" />
                                                         </FormLabel>
                                                         <Flex flexDirection="column">
                                                             <Input
@@ -272,7 +270,7 @@ const InvoiceInformation = (props: IProps) => {
                                                                         isDisabled={!exportToEconomicField}
                                                                         placeholder="Select Customer"
                                                                         {...register(`economicOptions.customer`, {
-                                                                            required: 'Customer is required',
+                                                                            required: { value: exportToEconomicField ? true : false, message: "Customer is required"}
                                                                         })}>
                                                                         {
                                                                             invoiceOptionsData?.economicCustomers.map(item => {

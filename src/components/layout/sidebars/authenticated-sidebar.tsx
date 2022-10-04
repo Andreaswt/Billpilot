@@ -22,7 +22,8 @@ import { UserMenu } from '../user-menu'
 import {
   NavGroup, NavItem,
   NavItemProps, Sidebar,
-  SidebarProps, SidebarSection
+  SidebarProps, SidebarSection,
+  SidebarToggleButton
 } from '@saas-ui/sidebar'
 
 export interface AppSidebarProps extends SidebarProps { }
@@ -42,6 +43,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
         width={300}
         {...props}
       >
+        <SidebarToggleButton />
         <SidebarSection direction="row">
           {!isCondensed && (
             <>
