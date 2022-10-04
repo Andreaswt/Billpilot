@@ -20,6 +20,7 @@ import {
     AnnouncementBannerProps,
 } from '../../landing-page/announcement-banner/announcement-banner'
 import { Footer, FooterProps } from '../../landing-page/layout/footer'
+import router from 'next/router'
 
 /**
  * Layout for authentication screens (login/signup/etc...)
@@ -106,7 +107,7 @@ export const PublicLayout: React.FC<LayoutProps> = ({
     ...rest
 }) => {
     return (
-        <AppShell>
+        <AppShell h="100vh">
             <Center h="100vh" as="main">
                 <Loading />
             </Center>
@@ -145,6 +146,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     }
     else if (status === 'authenticated' && session) {
         LayoutComponent = AuthenticatedLayout
+    }
+    else if (!isPublicRoute && status === 'unauthenticated') {
+        LayoutComponent = PublicLayout
     }
     else {
         LayoutComponent = LoadingScreen

@@ -13,6 +13,11 @@ import Companies from '../../components/dashboard/step-by-step/hubspot/companies
 import Tickets from '../../components/dashboard/step-by-step/hubspot/tickets';
 import ConfirmInvoice from '../../components/dashboard/step-by-step/shared/confirm';
 import InvoiceInformation from '../../components/dashboard/step-by-step/shared/invoice-information';
+import { requireAuth } from '../../common/requireAuth';
+
+export const getServerSideProps = requireAuth(async (ctx) => {
+    return { props: {} };
+});
 
 const InvoiceHubspot: NextPage = () => {
     const [step, setStep] = React.useState(0);

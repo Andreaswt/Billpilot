@@ -87,6 +87,11 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
                 label="Integrations"
                 icon={<BsPlugFill />}
               />
+              <AppSidebarLink
+                href={"/dashboard/clients"}
+                label="Clients"
+                icon={<BsPlugFill />}
+              />
             </SidebarNavGroup>
             <SidebarNavGroup title="Create Invoice From" isCollapsible>
               <AppSidebarLink
@@ -99,11 +104,6 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
                 label="Hubspot"
                 icon={<AiFillFileAdd />}
               />
-              {/* <AppSidebarLink
-                href={"/dashboard/create"}
-                label="Imported Jira Items"
-                icon={<AiFillFileAdd />}
-              /> */}
             </SidebarNavGroup>
 
             {!isCondensed && (
@@ -135,12 +135,6 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
                 color="sidebar-muted"
                 icon={<FiPlus />}
               />
-              {/* <SidebarLink
-                href="/"
-                label="Documentation"
-                color="sidebar-muted"
-                icon={<FiHelpCircle />}
-              /> */}
             </SidebarNavGroup>
           </SidebarNav>
         </SidebarOverflow>
