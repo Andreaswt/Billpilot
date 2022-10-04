@@ -24,13 +24,13 @@ export const filters: FilterItem[] = [
     type: 'enum',
     items: [
       {
-        id: 'new',
-        label: 'New',
+        id: 'billed',
+        label: 'Billed',
         icon: <Badge boxSize="8px" borderRadius="full" bg="blue.400" />,
       },
       {
-        id: 'active',
-        label: 'Active',
+        id: 'notBilled',
+        label: 'Not billed',
         icon: <Badge boxSize="8px" borderRadius="full" bg="green.400" />,
       },
     ],
@@ -53,16 +53,30 @@ export const filters: FilterItem[] = [
       })
       .concat([{ id: 'custom', label: 'Custom' }]),
   },
+  {
+    id: 'latestBill',
+    label: 'Latest bill',
+    icon: <FiCalendar />,
+    type: 'date',
+    operators: ['after', 'before'],
+    defaultOperator: 'after',
+    items: days
+      .map((day): FilterItem => {
+        const date = startOfDay(subDays(new Date(), day))
+        return {
+          id: `${day}days`,
+          label: formatDistanceToNowStrict(date, { addSuffix: true }),
+          value: date,
+        }
+      })
+      .concat([{ id: 'custom', label: 'Custom' }]),
+  },
 ]
 
 export const AddFilterButton: React.FC<Omit<FilterMenuProps, 'items'>> = (
   props,
 ) => {
   const disclosure = useDisclosure()
-
-  const filterCommand = useHotkeysShortcut('general.filter', () => {
-    disclosure.onOpen()
-  })
 
   const menuRef = React.useRef<HTMLButtonElement>(null)
 
@@ -78,7 +92,6 @@ export const AddFilterButton: React.FC<Omit<FilterMenuProps, 'items'>> = (
       items={filters}
       icon={<FiFilter />}
       ref={menuRef}
-      command={filterCommand}
       buttonProps={{ variant: 'outline' }}
       onSelect={onSelect}
       {...disclosure}

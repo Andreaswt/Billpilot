@@ -1,143 +1,55 @@
-// import { Center, Flex, Heading, Spinner, Stack, StackDivider, Text, VStack } from '@chakra-ui/react';
-// import { Button, useSnackbar } from '@saas-ui/react';
-// import { NextPage } from "next";
-// import { requireAuth } from "../../common/requireAuth";
-
-// import {
-//     Page, PageBody, Section
-// } from '@saas-ui/pro';
-// import { Card, CardBody } from "@saas-ui/react";
-// import { useRouter } from 'next/router';
-// import { trpc } from '../../utils/trpc';
-
-// export const getServerSideProps = requireAuth(async (ctx) => {
-//     return { props: {} };
-// });
-
-// const Clients: NextPage = () => {
-//     const { data, isLoading, isRefetching, refetch } = trpc.useQuery(["integrations.getActiveIntegrations"])
-
-
-//     const router = useRouter()
-//     const snackbar = useSnackbar()
-
-
-//     return (
-//         <Page title={"Clients"}>
-//             <PageBody pt="8">
-//                 <Stack p="4" width="100%" gap="4">
-//                     <Card title={
-//                         <Flex>
-//                             <Heading>Clients</Heading>
-//                         </Flex>}>
-//                         <CardBody>
-
-//                         </CardBody>
-//                     </Card>
-//                 </Stack>
-//             </PageBody>
-//         </Page >
-//     )
-// }
-
-// export default Clients;
-
-
 import * as React from 'react'
 import * as Yup from 'yup'
 
 import {
-    Box,
-    Tag,
-    Spacer,
-    MenuItem,
-    useBreakpointValue,
+    BulkActionsSelections, DataGridCell, MenuProperty, ToggleButton, ToggleButtonGroup, Toolbar,
+    ToolbarButton, useColumns, useDataGridFilter
+} from '@saas-ui/pro'
+import {
+    Button, EmptyState,
     Menu,
     MenuButton,
+    MenuItem,
     MenuList,
-    Portal,
-} from '@chakra-ui/react'
-import { FiSliders, FiUser } from 'react-icons/fi'
-import {
-    Select,
-    EmptyState,
     OverflowMenu,
-    useModals,
-    useHotkeysShortcut,
-    useLocalStorage,
-    Button,
+    useLocalStorage, useModals
 } from '@saas-ui/react'
-import { useParams } from '@saas-ui/router'
-import {
-    Command,
-    Toolbar,
-    ToolbarButton,
-    useTenant,
-    useDataGridFilter,
-    DataGridCell,
-    ColumnDef,
-    BulkActionsSelections,
-    MenuProperty,
-    ToggleButtonGroup,
-    ToggleButton,
-    useColumns,
-} from '@saas-ui/pro'
+import { FiSliders, FiUser } from 'react-icons/fi'
 
+import { Box, Portal, Spacer, Tag, useBreakpointValue } from '@chakra-ui/react'
 import { format } from 'date-fns'
-import { trpc } from '../../utils/trpc'
-import { ContactTypes } from '../../components/dashboard/clients/client-types'
-import { AddFilterButton, filters } from '../../components/dashboard/clients/contact-filters'
-import { InlineSearch } from '../../components/dashboard/clients/inline-search'
-import { ListPage } from '../../components/dashboard/clients/list-page'
 import { NextPage } from 'next'
+import { AddFilterButton, filters } from '../../../components/dashboard/clients/client-filters'
+import { ClientStatuses } from '../../../components/dashboard/clients/client-statuses'
+import { InlineSearch } from '../../../components/dashboard/clients/inline-search'
+import { ListPage } from '../../../components/dashboard/clients/list-page'
+import { trpc } from '../../../utils/trpc'
+import { useRouter } from 'next/router'
 
 interface Client {
     name: string
+    invoiced: string
     createdAt: Date
-    type: string
+    latestBill: Date
     status: string
 }
 
-const contactTypes: Record<string, { label: string; color: string }> = {
-    lead: {
-        label: 'Lead',
-        color: 'cyan',
-    },
-    customer: {
-        label: 'Customer',
-        color: 'purple',
-    },
-}
-
-const contactStatus: Record<string, { label: string; color: string }> = {
-    active: {
-        label: 'Active',
+const billedStatus: Record<string, { label: string; color: string }> = {
+    billed: {
+        label: 'Billed',
         color: 'green',
     },
-    inactive: {
-        label: 'Inactive',
+    notBilled: {
+        label: 'Not billed',
         color: 'orange',
-    },
-    new: {
-        label: 'New',
-        color: 'blue',
     },
 }
 
 const StatusCell: DataGridCell<Client> = (cell) => {
-    const status = contactStatus[cell.getValue<string>()] || contactStatus.new
+    const status = billedStatus[cell.getValue<string>()] || billedStatus.notBilled
     return (
         <Tag colorScheme={status.color} size="sm">
             {status.label}
-        </Tag>
-    )
-}
-
-const TypeCell: DataGridCell<Client> = ({ cell }) => {
-    const type = contactTypes[cell.getValue<string>()] || contactTypes.lead
-    return (
-        <Tag colorScheme={type.color} size="sm" variant="outline">
-            {type.label}
         </Tag>
     )
 }
@@ -164,32 +76,29 @@ const schema = Yup.object().shape({
         .label('Name'),
 })
 
-const ContactsListPage: NextPage = () => {
-    const tenant = useTenant()
+const ClientsListPage: NextPage = () => {
     const modals = useModals()
-    const params = useParams()
-
     const [searchQuery, setSearchQuery] = React.useState('')
-
     const isMobile = useBreakpointValue({ base: true, lg: false })
-
-    const { data, isLoading } = trpc.useQuery(["clients.getClient"]);
+    const params = useRouter()
+    const { data, isLoading } = trpc.useQuery(["clients.getClient", { status: params?.query?.type as string ?? "" }]);
 
     const columns = useColumns<Client>(
         () => [
             {
                 id: 'name',
-                accessorKey: 'fullName',
+                accessorKey: 'name',
                 header: 'Name',
                 size: 300,
                 meta: {
-                    href: ({ id }) => `/contacts/view/${id}`,
+                    href: ({ id }) => `/dashboard/clients/${id}`,
                 },
             },
             {
-                id: 'email',
-                header: 'Email',
-                size: 300,
+                id: 'invoiced',
+                header: 'Invoiced',
+                filterFn: useDataGridFilter('number'),
+                size: 300
             },
             {
                 id: 'createdAt',
@@ -199,21 +108,11 @@ const ContactsListPage: NextPage = () => {
                 enableGlobalFilter: false,
             },
             {
-                id: 'updatedAt',
-                header: 'Updated at',
+                id: 'latestBill',
+                header: 'Latest bill',
                 cell: DateCell,
                 filterFn: useDataGridFilter('date'),
                 enableGlobalFilter: false,
-            },
-            {
-                id: 'type',
-                header: 'Type',
-                cell: TypeCell,
-                filterFn: useDataGridFilter('string'),
-                enableGlobalFilter: false,
-                meta: {
-                    isNumeric: true,
-                },
             },
             {
                 id: 'status',
@@ -237,23 +136,21 @@ const ContactsListPage: NextPage = () => {
         [],
     )
 
-    const addPerson = () => {
+    const addClient = () => {
         modals.form?.({
-            title: 'Add person',
+            title: 'Add client',
             schema,
             submitLabel: 'Save',
-            onSubmit: (contact) => console.log("submittd")
+            onSubmit: (client) => console.log("submitted")
             // mutation.mutateAsync({
             //   name: contact.name,
             // }),
         })
     }
 
-    const addCommand = useHotkeysShortcut('contacts.add', addPerson)
-
     const [visibleColumns, setVisibleColumns] = useLocalStorage(
-        'app.contacts.columns',
-        ['name', 'email', 'createdAt', 'type', 'status'],
+        'clients.columns',
+        ['name', 'invoiced', 'createdAt', 'latestBill', 'status'],
     )
 
     const displayProperties = (
@@ -285,27 +182,20 @@ const ContactsListPage: NextPage = () => {
 
     const primaryAction = (
         <ToolbarButton
-            label="Add person"
+            label="Add client"
             variant="solid"
             colorScheme="primary"
-            onClick={addPerson}
-            tooltipProps={{
-                label: (
-                    <>
-                        Add a person <Command>{addCommand}</Command>
-                    </>
-                ),
-            }}
+            onClick={addClient}
         />
     )
 
     const toolbarItems = (
         <>
-            <ContactTypes />
+            <ClientStatuses />
             <AddFilterButton />
             <Spacer />
             <InlineSearch
-                placeholder="Search by name or email..."
+                placeholder="Search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onReset={() => setSearchQuery('')}
@@ -351,16 +241,15 @@ const ContactsListPage: NextPage = () => {
 
     const emptyState = (
         <EmptyState
-            title="No people added yet"
-            description="Add a person or import data to get started."
+            title="No clients added yet"
+            description="Add a client to get started."
             colorScheme="primary"
             icon={FiUser}
             actions={
                 <>
-                    <Button colorScheme="primary" variant="solid" onClick={addPerson}>
-                        Add a person
+                    <Button colorScheme="primary" variant="solid" onClick={addClient}>
+                        Add a client
                     </Button>
-                    <Button>Import data</Button>
                 </>
             }
         />
@@ -383,4 +272,4 @@ const ContactsListPage: NextPage = () => {
     )
 }
 
-export default ContactsListPage;
+export default ClientsListPage;

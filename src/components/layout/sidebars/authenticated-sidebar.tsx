@@ -9,7 +9,7 @@ import { useNavigate } from '@saas-ui/router'
 import NextLink from 'next/link'
 import * as React from 'react'
 import { AiFillFileAdd, AiFillHome } from 'react-icons/ai'
-import { BsPlugFill } from 'react-icons/bs'
+import { BsPlugFill, BsFillPeopleFill } from 'react-icons/bs'
 import {
   FiHash, FiPlus, FiSearch, FiUser
 } from 'react-icons/fi'
@@ -80,7 +80,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
               <AppSidebarLink
                 href={"/dashboard/clients"}
                 label="Clients"
-                icon={<BsPlugFill />}
+                icon={<BsFillPeopleFill />}
               />
             </NavGroup>
             <NavGroup title="Create Invoice From" isCollapsible>
@@ -155,6 +155,7 @@ interface AppSidebarlink extends NavItemProps {
 
 const AppSidebarLink: React.FC<AppSidebarlink> = (props) => {
   const { href, label, ...rest } = props
+
   const isActive = useActivePath(href, { end: true })
 
   return (

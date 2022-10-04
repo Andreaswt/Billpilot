@@ -8,7 +8,7 @@ import { invoicesRouter } from "./invoices";
 import { usersRouter } from "./users";
 import { integrationsRouter } from "./integrations";
 import { hubspotRouter } from "./hubspot";
-import { contactRouter} from "./contactrouter"
+import { contactRouter} from "./contact"
 import { accountRouter } from "./account";
 import { clientsRouter } from "./clients";
 

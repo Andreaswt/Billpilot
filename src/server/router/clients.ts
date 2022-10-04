@@ -4,7 +4,6 @@ import { searchCompanies, searchTickets } from "../../../lib/integrations/hubspo
 import { getEmployees, importJiraTime, searchEpics, searchIssues, searchProjectIssues, searchProjects } from "../../../lib/integrations/jira";
 import { createRouter } from "./context";
 
-
 export const clientsRouter = createRouter()
   .middleware(async ({ ctx, next }) => {
     const organizationId = ctx.session?.user.organizationId;
@@ -15,33 +14,47 @@ export const clientsRouter = createRouter()
     return next({ ctx: { ...ctx, organizationId } })
   })
   .query("getClient", {
-      async resolve({ ctx }) {
-        const clients = [
-          {
-            name: "Carl",
-            createdAt: new Date(),
-            type: "Customer",
-            status: "Billed"
-          },
-          {
-            name: "Larsen",
-            createdAt: new Date(),
-            type: "Customer",
-            status: "Billed"
-          },
-          {
-            name: "Daniel",
-            createdAt: new Date(),
-            type: "Customer",
-            status: "Billed"
-          },
-          {
-            name: "Holler",
-            createdAt: new Date(),
-            type: "Customer",
-            status: "Billed"
-          }
-        ]
-        return clients;
-      }
+    input: z.object({
+      status: z.string(),
+    }),
+    async resolve({ input, ctx }) {
+      const clients = [
+        {
+          name: "Daniel",
+          invoiced: "100 USD",
+          createdAt: new Date(),
+          latestBill: new Date(),
+          status: "billed"
+        },
+        {
+          name: "Carl",
+          invoiced: "200 USD",
+          createdAt: new Date(),
+          latestBill: new Date(),
+          status: "notBilled"
+        },
+        {
+          name: "Holler",
+          invoiced: "300 USD",
+          createdAt: new Date(),
+          latestBill: new Date(),
+          status: "billed"
+        },
+        {
+          name: "Larsen",
+          invoiced: "400 USD",
+          createdAt: new Date(),
+          latestBill: new Date(),
+          status: "notBilled"
+        },
+        {
+          name: "Henry",
+          invoiced: "500 USD",
+          createdAt: new Date(),
+          latestBill: new Date(),
+          status: "billed"
+        },
+      ]
+      return clients;
+    }
   });
