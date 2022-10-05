@@ -32,6 +32,21 @@ const ConfirmInvoice = (props: IProps) => {
             })
         }
     });
+
+    const createIssueInvoice = trpc.useMutation('invoices.createIssueInvoice', {
+        onSuccess: () => {
+            router.push("/dashboard")
+        },
+        onError: () => {
+            snackbar({
+                title: 'Invoice could not be created',
+                status: 'error',
+                duration: 2000,
+                isClosable: true,
+            })
+        }
+    });
+
     const snackbar = useSnackbar()
 
     function submitInvoice() {
@@ -44,15 +59,25 @@ const ConfirmInvoice = (props: IProps) => {
             discountPercentage: item.discountPercentage ?? 0
         }))
 
-        createTicketInvoice.mutate({
+        const pickedIssues = store.pickedIssues.map(item => ({
+            jiraKey: item.key,
+            jiraId: item.id,
+            name: item.name,
+            hoursSpent: item.hoursSpent,
+            updatedHoursSpent: item.updatedHoursSpent ?? 0,
+            discountPercentage: item.discountPercentage ?? 0
+        }))
+
+        createIssueInvoice.mutate({
             invoiceInformation: {
                 currency: store.currency,
                 roundingScheme: store.roundingScheme,
+                pricePerHour: store.pricePerHour,
                 title: store.title,
                 description: store.description,
                 dueDate: store.dueDate.toString()
             },
-            pickedTickets: pickedTickets,
+            pickedIssues: pickedIssues,
             economicOptions: { ...store.economicOptions }
         })
     }
@@ -96,7 +121,7 @@ const ConfirmInvoice = (props: IProps) => {
                                     <CardBody>
                                         <PropertyList>
                                             <Property label="Customer" value={store.economicOptions.customerName} />
-                                            <Property label="Customer Price" value={store.economicOptions.customerPrice} />
+                                            <Property label="Customer Price" value={store.pricePerHour} />
                                             <Property label="Text 1" value={store.economicOptions.text1} />
                                             <Property label="Our Reference" value={store.economicOptions.ourReferenceName} />
                                             <Property label="Customer Contact" value={store.economicOptions.customerContactName} />

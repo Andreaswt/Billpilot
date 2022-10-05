@@ -1,5 +1,7 @@
+import { ClientStatus, Currency } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { mapRoundingScheme, mapStatus } from "../../../lib/helpers/invoices";
 import { searchCompanies, searchTickets } from "../../../lib/integrations/hubspot";
 import { getEmployees, importJiraTime, searchEpics, searchIssues, searchProjectIssues, searchProjects } from "../../../lib/integrations/jira";
 import { createRouter } from "./context";
@@ -13,49 +15,40 @@ export const clientsRouter = createRouter()
     }
     return next({ ctx: { ...ctx, organizationId } })
   })
-  .query("getClient", {
+  .query("getClients", {
     input: z.object({
       status: z.string(),
     }),
     async resolve({ input, ctx }) {
-      const clients = [
-        {
-          name: "Daniel",
-          invoiced: "100 USD",
-          createdAt: new Date(),
-          latestBill: new Date(),
-          status: "billed"
+      return await ctx.prisma.client.findMany({
+        where: {
+          organizationId: ctx.organizationId,
+          ...(input.status ? { status: mapStatus(input.status)} : {}) 
         },
-        {
-          name: "Carl",
-          invoiced: "200 USD",
-          createdAt: new Date(),
-          latestBill: new Date(),
-          status: "notBilled"
+        select: {
+          id: true,
+          name: true,
+          createdAt: true,
+          latestBill: true,
+          status: true
+        }
+      })
+
+    }
+  })
+  .mutation("deleteClient", {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ input, ctx }) {
+      await ctx.prisma.client.delete({
+        where: {
+          organizationsClient: {
+            organizationId: ctx.organizationId,
+            id: input.id
+          }
         },
-        {
-          name: "Holler",
-          invoiced: "300 USD",
-          createdAt: new Date(),
-          latestBill: new Date(),
-          status: "billed"
-        },
-        {
-          name: "Larsen",
-          invoiced: "400 USD",
-          createdAt: new Date(),
-          latestBill: new Date(),
-          status: "notBilled"
-        },
-        {
-          name: "Henry",
-          invoiced: "500 USD",
-          createdAt: new Date(),
-          latestBill: new Date(),
-          status: "billed"
-        },
-      ]
-      return clients;
+      })
     }
   })
   .mutation("createClient", {
@@ -64,10 +57,10 @@ export const clientsRouter = createRouter()
         name: z.string(),
         currency: z.string(),
         roundingScheme: z.string(),
+        pricePerHour: z.number(),
       }),
       economicOptions: z.object({
         customer: z.string(),
-        customerPrice: z.number(),
         text1: z.string(),
         ourReference: z.string(),
         customerContact: z.string(),
@@ -79,7 +72,31 @@ export const clientsRouter = createRouter()
       })
     }),
     async resolve({ input, ctx }) {
-      
-    
+      await ctx.prisma.client.create({
+        data: {
+          name: input.clientInformation.name,
+          currency: <Currency>input.clientInformation.currency,
+          roundingScheme: mapRoundingScheme(input.clientInformation.roundingScheme),
+          organizationId: ctx.organizationId,
+          economicOptions: {
+            create: {
+              customer: input.economicOptions.customer,
+              text1: input.economicOptions.ourReference,
+              ourReference: input.economicOptions.ourReference,
+              customerContact: input.economicOptions.customerContact,
+              unit: input.economicOptions.unit,
+              layout: input.economicOptions.layout,
+              vatZone: input.economicOptions.vatZone,
+              paymentTerms: input.economicOptions.paymentTerms,
+              product: input.economicOptions.product,
+              organization: {
+                connect: {
+                  id: ctx.organizationId
+                }
+              },
+            }
+          }
+        }
+      })
     }
   });

@@ -1,6 +1,4 @@
-import { prisma } from "../../src/server/db/client";
-import { Invoice, Invoices, LineItem, TokenSet, XeroClient } from 'xero-node';
-import { getInvoiceForExportToIntegration } from "../invoice";
+import { TokenSet, XeroClient } from 'xero-node';
 
 export async function getXeroClient(organizationId?: string) {
     let xero = new XeroClient({
@@ -39,85 +37,85 @@ export async function getXeroClient(organizationId?: string) {
 }
 
 export async function createInvoice(invoiceId: string, organizationId: string) {
-    let { invoiceDb,
-        discountAppliesToTimeItems,
-        discountAppliesToFixedPriceTimeItems,
-        fixedDiscountAppliesToTimeItems,
-        fixedDiscountAppliesToFixedPriceTimeItems,
-        taxAppliesToTimeItems,
-        taxAppliesToFixedPriceTimeItems } = await getInvoiceForExportToIntegration(invoiceId, organizationId);
+    // let { invoiceDb,
+    //     discountAppliesToTimeItems,
+    //     discountAppliesToFixedPriceTimeItems,
+    //     fixedDiscountAppliesToTimeItems,
+    //     fixedDiscountAppliesToFixedPriceTimeItems,
+    //     taxAppliesToTimeItems,
+    //     taxAppliesToFixedPriceTimeItems } = await getInvoiceForExportToIntegration(invoiceId, organizationId);
 
-    let lineItems: LineItem[] = [];
+    // let lineItems: LineItem[] = [];
 
-    // Add all time items
-    invoiceDb.timeItems.map(item => {
-        let discount = discountAppliesToTimeItems[item.id];
-        let fixedPriceDiscount = fixedDiscountAppliesToTimeItems[item.id];
-        let tax = taxAppliesToTimeItems[item.id];
+    // // Add all time items
+    // invoiceDb.timeItems.map(item => {
+    //     let discount = discountAppliesToTimeItems[item.id];
+    //     let fixedPriceDiscount = fixedDiscountAppliesToTimeItems[item.id];
+    //     let tax = taxAppliesToTimeItems[item.id];
 
-        let lineAmount = item.time.toNumber() * item.hourlyWage.toNumber();
+    //     let lineAmount = item.time.toNumber() * item.hourlyWage.toNumber();
 
-        return ({
-            description: item.name,
-            quantity: item.time,
-            accountCode: "200",
-            taxType: tax ? "OUTPUT" : "NONE",
-            taxAmount: tax ? lineAmount + (lineAmount * tax.percent) : 0,
-            lineAmount: lineAmount,
-            discountRate: discount ? discount.percent : 0,
-            discountAmount: fixedPriceDiscount ? fixedPriceDiscount?.amount : 0,
-        })
-    })
+    //     return ({
+    //         description: item.name,
+    //         quantity: item.time,
+    //         accountCode: "200",
+    //         taxType: tax ? "OUTPUT" : "NONE",
+    //         taxAmount: tax ? lineAmount + (lineAmount * tax.percent) : 0,
+    //         lineAmount: lineAmount,
+    //         discountRate: discount ? discount.percent : 0,
+    //         discountAmount: fixedPriceDiscount ? fixedPriceDiscount?.amount : 0,
+    //     })
+    // })
 
-    // Add all fixed price items
-    invoiceDb.fixedPriceTimeItems.map(item => {
-        let discount = discountAppliesToFixedPriceTimeItems[item.id];
-        let fixedPriceDiscount = fixedDiscountAppliesToFixedPriceTimeItems[item.id];
-        let tax = taxAppliesToFixedPriceTimeItems[item.id];
+    // // Add all fixed price items
+    // invoiceDb.fixedPriceTimeItems.map(item => {
+    //     let discount = discountAppliesToFixedPriceTimeItems[item.id];
+    //     let fixedPriceDiscount = fixedDiscountAppliesToFixedPriceTimeItems[item.id];
+    //     let tax = taxAppliesToFixedPriceTimeItems[item.id];
 
-        let lineAmount = item.amount.toNumber();
+    //     let lineAmount = item.amount.toNumber();
 
-        return ({
-            description: item.name,
-            quantity: 1,
-            unitPrice: item.amount,
-            accountCode: "200",
-            taxType: tax ? "OUTPUT" : "NONE",
-            taxAmount: tax ? lineAmount + (lineAmount * tax.percent) : 0,
-            lineAmount: lineAmount,
-            discountRate: discount ? discount.percent : 0,
-            discountAmount: fixedPriceDiscount ? fixedPriceDiscount?.amount : 0,
-        })
-    })
+    //     return ({
+    //         description: item.name,
+    //         quantity: 1,
+    //         unitPrice: item.amount,
+    //         accountCode: "200",
+    //         taxType: tax ? "OUTPUT" : "NONE",
+    //         taxAmount: tax ? lineAmount + (lineAmount * tax.percent) : 0,
+    //         lineAmount: lineAmount,
+    //         discountRate: discount ? discount.percent : 0,
+    //         discountAmount: fixedPriceDiscount ? fixedPriceDiscount?.amount : 0,
+    //     })
+    // })
 
-    // Add invoiced dates as first element in the line items
-    lineItems.unshift({
-        description: "Invoices dates: " + invoiceDb.invoicedFrom.toISOString() + " - " + invoiceDb.invoicedTo.toISOString(),
-    })
+    // // Add invoiced dates as first element in the line items
+    // lineItems.unshift({
+    //     description: "Invoices dates: " + invoiceDb.invoicedFrom.toISOString() + " - " + invoiceDb.invoicedTo.toISOString(),
+    // })
 
-    // Add customer notes as last element in the line items
-    lineItems.push({
-        description: invoiceDb.notesForClient,
-    })
+    // // Add customer notes as last element in the line items
+    // lineItems.push({
+    //     description: invoiceDb.notesForClient,
+    // })
 
-    const invoices: Invoices = {
-        invoices: [
-            {
-                type: Invoice.TypeEnum.ACCREC,
-                lineItems: lineItems,
-                date: invoiceDb.issueDate.toISOString().slice(0, 10),
-                dueDate: invoiceDb.dueDate.toISOString().slice(0, 10), // yyyy-mm-dd
-                reference: invoiceDb.name,
-                status: Invoice.StatusEnum.DRAFT
-            }
-        ]
-    }
+    // const invoices: Invoices = {
+    //     invoices: [
+    //         {
+    //             type: Invoice.TypeEnum.ACCREC,
+    //             lineItems: lineItems,
+    //             date: invoiceDb.issueDate.toISOString().slice(0, 10),
+    //             dueDate: invoiceDb.dueDate.toISOString().slice(0, 10), // yyyy-mm-dd
+    //             reference: invoiceDb.name,
+    //             status: Invoice.StatusEnum.DRAFT
+    //         }
+    //     ]
+    // }
 
-    let xero = await getXeroClient(organizationId);
+    // let xero = await getXeroClient(organizationId);
 
-    const createdInvoicesResponse = await xero.accountingApi.createInvoices(await getActiveTenantId(), invoices)
+    // const createdInvoicesResponse = await xero.accountingApi.createInvoices(await getActiveTenantId(), invoices)
 
-    return createdInvoicesResponse.body.invoices![0];
+    // return createdInvoicesResponse.body.invoices![0];
 }
 
 export async function getAccounts(organizationId: string) {

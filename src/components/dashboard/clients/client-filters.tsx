@@ -24,12 +24,12 @@ export const filters: FilterItem[] = [
     type: 'enum',
     items: [
       {
-        id: 'billed',
+        id: 'BILLED',
         label: 'Billed',
         icon: <Badge boxSize="8px" borderRadius="full" bg="blue.400" />,
       },
       {
-        id: 'notBilled',
+        id: 'NOTBILLED',
         label: 'Not billed',
         icon: <Badge boxSize="8px" borderRadius="full" bg="green.400" />,
       },

@@ -25,21 +25,7 @@ model Organization {
     updatedAt DateTime @default(now())
     apiKeys ApiKey[]
     worklog Worklog[]
-    roles Role[]
-    pricelists Pricelist[]
-    projects Project[]
-    teamSchemes TeamScheme[]
-    jiraEmployees JiraEmployee[]
-    invoices Invoice[]
-    issueInvoices IssueInvoice[]
-    issueTimeItems IssueTimeItem[]
-    timeItems TimeItem[]
-    fixedPriceTimeItem FixedPriceTimeItem[]
     clients Client[]
-    taxes Tax[]
-    discounts Discount[]
-    fixedPriceDiscounts FixedPriceDiscount[]
-    invoiceLayouts InvoiceLayout[]
     currency Currency @default(USD)
     roundingScheme RoundingScheme @default(POINTPOINT)
 
@@ -91,139 +77,26 @@ model Worklog {
   @@unique(fields: [worklogId, organizationId], name: "organizationsWorklog")
 }
 
-// Roles and pricelists
-model Role {
-  name String @id @unique
-  organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  pricelists RolesOnPricelists[]
-  jiraEmployees JiraEmployee[]
-  teamSchemes TeamScheme[]
-}
-
-model Pricelist {
-  name String @id @unique
-  organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  roles RolesOnPricelists[]
-}
-
-model RolesOnPricelists {
-  role       Role     @relation(fields: [roleName], references: [name])
-  roleName     String
-  pricelist   Pricelist @relation(fields: [pricelistName], references: [name])
-  pricelistName String
-  hourlyRate Decimal
-  @@id([roleName, pricelistName])
-}
-
-model Project {
-  key String
-  name String
-  billable Boolean
-  organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  @@unique([key, organizationId])
-}
-
-// Team schemes
-// A team scheme can have multiple roles, and a role can have multiple employees (implicit many-to-many)
-// A role can have multiple employees, and an employee can have multiple roles (implicit many-to-many)
-model TeamScheme {
-  id String @id @default(cuid())
-  name String
-  roles Role[]
-  organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-}
-
-model JiraEmployee {
-  id String @id @default(cuid())
-  name String
-  accountId String
-  roles Role[]
-  organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  @@unique ([accountId, organizationId], name: "organizationsJiraEmployee")
+enum ClientStatus {
+  BILLED
+  NOTBILLED
 }
 
 model Client {
   id String @id @default(cuid())
   name String
-  invoice Invoice[]
-  organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  @@unique ([name, organizationId], name: "organizationsClient")
-}
+  currency Currency @default(USD)
+  roundingScheme RoundingScheme @default(POINTPOINT)
+  createdAt DateTime @default(now())
+  latestBill DateTime?
+  status ClientStatus @default(NOTBILLED)
 
-// Invoices
-model TimeItem {
-  id String @id @default(cuid())
-  name String
-  time Decimal
-  hourlyWage Decimal
-  invoiceId String
-  invoice Invoice @relation(fields: [invoiceId], references: [id])
-  organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  taxId String
-  tax Tax @relation(fields: [taxId], references: [id])
-  discountId String
-  discount Discount @relation(fields: [discountId], references: [id])
-  fixedPriceDiscountId String
-  fixedPriceDiscount FixedPriceDiscount @relation(fields: [fixedPriceDiscountId], references: [id])
-}
+  // Options for specific providers
+  economicOptions EconomicInvoiceOptions?
 
-model FixedPriceTimeItem {
-  id String @id @default(cuid())
-  name String
-  amount Decimal
-  invoiceId String
-  invoice Invoice @relation(fields: [invoiceId], references: [id])
   organizationId String
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  taxId String
-  tax Tax @relation(fields: [taxId], references: [id])
-  discountId String
-  discount Discount @relation(fields: [discountId], references: [id])
-  fixedPriceDiscountId String
-  fixedPriceDiscount FixedPriceDiscount @relation(fields: [fixedPriceDiscountId], references: [id])
-}
-
-model Tax {
-  id String @id @default(cuid())
-  name String
-  percent Decimal
-  invoiceId String
-  invoice Invoice @relation(fields: [invoiceId], references: [id])
-  organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  appliesToTimeItems TimeItem[]
-  appliesToFixedPriceTimeItems FixedPriceTimeItem[]
-}
-
-model Discount {
-  id String @id @default(cuid())
-  name String
-  percent Decimal
-  invoiceId String
-  invoice Invoice @relation(fields: [invoiceId], references: [id])
-  organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  appliesToTimeItems TimeItem[]
-  appliesToFixedPriceTimeItems FixedPriceTimeItem[]
-}
-
-model FixedPriceDiscount {
-  id String @id @default(cuid())
-  name String
-  amount Decimal
-  invoiceId String
-  invoice Invoice @relation(fields: [invoiceId], references: [id])
-  organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  appliesToTimeItems TimeItem[]
-  appliesToFixedPriceTimeItems FixedPriceTimeItem[]
+  @@unique ([id, organizationId], name: "organizationsClient")
 }
 
 enum Currency {
@@ -231,66 +104,10 @@ enum Currency {
   DKK
 }
 
-enum Language {
-  DANISH
-  ENGLISH
-}
-
-model NumberAndDateFormat {
-  format String @id @unique
-  invoiceLayout InvoiceLayout[]
-}
-
-model InvoiceLayout {
-  id String @id @default(cuid())
-  name String
-  companyName String
-  companyDetails String
-  companyLogo String // TODO: add to S3 bucket
-  language Language @default(ENGLISH)
-  format String
-  numberAndDateFormat NumberAndDateFormat @relation(fields: [format], references: [format])
-  showTimeReport Boolean
-  timeReportGroupings String // TODO: Custom string parsing such as project->issue->subtask->employee->worklog
-  organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-}
-
-enum InvoiceStatus {
-  DRAFT
-  SENT
-  PAID
-  NOCHARGE
-}
-
 enum RoundingScheme {
   POINT
   POINTPOINT
   POINTPOINTPOINT
-}
-
-model Invoice {
-  id String @id @default(cuid())
-  name String
-  status InvoiceStatus @default(DRAFT)
-  invoiceNumber Int
-  currency Currency @default(USD)
-  roundingScheme RoundingScheme @default(POINTPOINT)
-  invoicedFrom DateTime
-  invoicedTo DateTime
-  issueDate DateTime
-  dueDate DateTime
-  clientName String
-  client Client @relation(fields: [clientName, organizationId], references: [name, organizationId])
-  timeItems TimeItem[]
-  fixedPriceTimeItems FixedPriceTimeItem[]
-  taxes Tax[]
-  discounts Discount[]
-  fixedPriceDiscounts FixedPriceDiscount[]
-  notesForClient String
-  organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  @@unique ([id, organizationId], name: "organizationsInvoice")
 }
 
 model InvoiceLine {
@@ -312,6 +129,7 @@ model GeneralInvoice {
   id String @id @default(cuid())
   title String
   description String
+  pricePerHour Decimal
 
   // invoiceType InvoiceType @default(GENERAL)
   currency Currency @default(USD)
@@ -334,7 +152,6 @@ model GeneralInvoice {
 model EconomicInvoiceOptions {
   id String @id @default(cuid())
   customer String
-  customerPrice Decimal
   text1 String
   ourReference String
   customerContact String
@@ -344,43 +161,14 @@ model EconomicInvoiceOptions {
   paymentTerms String
   product String
 
-  generalInvoiceId String @unique
-  generalInvoice GeneralInvoice @relation(fields: [generalInvoiceId], references: [id], onDelete: Cascade)
+  clientId String? @unique
+  client Client? @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  generalInvoiceId String? @unique
+  generalInvoice GeneralInvoice? @relation(fields: [generalInvoiceId], references: [id], onDelete: Cascade)
 
   organizationId String
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-}
-
-// Issue Invoice
-model IssueTimeItem {
-  id String @id @default(cuid())
-  jiraId String
-  jiraKey String
-  name String
-  hours Decimal
-  updatedHoursSpent Decimal
-  discountPercentage Decimal
-  issueInvoiceId String
-  issueInvoice IssueInvoice @relation(fields: [issueInvoiceId], references: [id])
-  organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-}
-
-model IssueInvoice {
-  id String @id @default(cuid())
-  title String
-  currency Currency @default(USD)
-  roundingScheme RoundingScheme @default(POINTPOINT)
-  dueDate DateTime
-  economicCustomer String
-  economicCustomerPrice Decimal
-  economicText1 String
-  economicOurReference String
-  economicCustomerContact String
-  issueTimeItems IssueTimeItem[]
-  organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  @@unique ([id, organizationId], name: "organizationsIssueInvoice")
 }
 
 // Necessary for Next auth

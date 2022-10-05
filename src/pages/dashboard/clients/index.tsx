@@ -12,7 +12,7 @@ import {
     MenuItem,
     MenuList,
     OverflowMenu,
-    useLocalStorage, useModals
+    useLocalStorage
 } from '@saas-ui/react'
 import { FiSliders, FiUser } from 'react-icons/fi'
 
@@ -27,8 +27,8 @@ import { ListPage } from '../../../components/dashboard/clients/list-page'
 import { trpc } from '../../../utils/trpc'
 
 interface Client {
+    id: string
     name: string
-    invoiced: string
     createdAt: Date
     latestBill: Date
     status: string
@@ -58,22 +58,29 @@ const DateCell: DataGridCell<Client> = ({ cell }) => {
     return <>{format(new Date(cell.getValue<string>()), 'PP')}</>
 }
 
-const ActionCell: DataGridCell<Client> = () => {
+const ActionCell: DataGridCell<Client> = (client) => {
+    const utils = trpc.useContext()
+    
+    const mutation = trpc.useMutation(["clients.deleteClient"], {
+        onSuccess() {
+            utils.invalidateQueries(['clients.getClients'])
+        }
+    });
+
     return (
         <Box onClick={(e) => e.stopPropagation()}>
             <OverflowMenu size="xs">
-                <MenuItem>Delete</MenuItem>
+                <MenuItem onClick={async () => await mutation.mutateAsync({id: client.row.original.id})}>Delete</MenuItem>
             </OverflowMenu>
         </Box>
     )
 }
 
 const ClientsListPage: NextPage = () => {
-    const modals = useModals()
     const [searchQuery, setSearchQuery] = React.useState('')
     const isMobile = useBreakpointValue({ base: true, lg: false })
     const params = useRouter()
-    const { data, isLoading } = trpc.useQuery(["clients.getClient", { status: params?.query?.type as string ?? "" }]);
+    const { data, isLoading } = trpc.useQuery(["clients.getClients", { status: params?.query?.type as string ?? "" }]);
 
     const columns = useColumns<Client>(
         () => [
@@ -87,12 +94,6 @@ const ClientsListPage: NextPage = () => {
                 },
             },
             {
-                id: 'invoiced',
-                header: 'Invoiced',
-                filterFn: getDataGridFilter('number'),
-                size: 300
-            },
-            {
                 id: 'createdAt',
                 header: 'Created at',
                 cell: DateCell,
@@ -102,7 +103,11 @@ const ClientsListPage: NextPage = () => {
             {
                 id: 'latestBill',
                 header: 'Latest bill',
-                cell: DateCell,
+                cell: (data) => (
+                    !data.row.original.latestBill
+                    ? <> - </>
+                    : DateCell
+                    ),
                 filterFn: getDataGridFilter('date'),
                 enableGlobalFilter: false,
             },
@@ -130,7 +135,7 @@ const ClientsListPage: NextPage = () => {
 
     const [visibleColumns, setVisibleColumns] = useLocalStorage(
         'clients.columns',
-        ['name', 'invoiced', 'createdAt', 'latestBill', 'status'],
+        ['name', 'createdAt', 'latestBill', 'status'],
     )
 
     const displayProperties = (

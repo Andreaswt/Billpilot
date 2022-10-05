@@ -92,6 +92,7 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
             description: true,
             currency: true,
             roundingScheme: true,
+            pricePerHour: true,
             invoiceLines: true,
             invoicedFrom: true,
             invoicedTo: true,
@@ -116,7 +117,7 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
             hours = item.updatedHoursSpent.toNumber()
         }
 
-        let lineAmount = hours * invoice.economicOptions.customerPrice.toNumber();
+        let lineAmount = hours * invoice.pricePerHour.toNumber();
 
         // Apply discount
         if (item.discountPercentage && item.discountPercentage.toNumber() > 0) {
@@ -129,7 +130,7 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
                 unitNumber: Number(invoice.economicOptions.unit)
             },
             quantity: hours,
-            unitNetPrice: invoice.economicOptions.customerPrice.toNumber(),
+            unitNetPrice: invoice.pricePerHour.toNumber(),
             discountPercentage: item.discountPercentage.toNumber(),
             totalNetAmount: lineAmount,
             description: item.title,

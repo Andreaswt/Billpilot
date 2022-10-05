@@ -1,8 +1,8 @@
 import { ApiKeyProvider, Currency, RoundingScheme } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { mapRoundingScheme } from "../../../lib/helpers/invoices";
 import { createInvoiceDraft, getAllCustomers, getAllEmployees, getAllLayouts, getAllPaymentTerms, getAllProducts, getAllUnits, getAllVatZones, getCustomerContacts } from "../../../lib/integrations/e-conomic";
-import { getInvoice } from "../../../lib/invoice";
 import { createRouter } from "./context";
 
 export const invoicesRouter = createRouter()
@@ -27,11 +27,6 @@ export const invoicesRouter = createRouter()
               name: true
             }
           },
-          invoiceLayouts: {
-            select: {
-              name: true
-            }
-          }
         }
       })
 
@@ -39,7 +34,6 @@ export const invoicesRouter = createRouter()
       const statuses = ["DRAFT", "SENT", "PAID", "NOCHARGE"]
       const currencies = ["USD", "DKK"]
       const roundingSchemes = ["1. Decimal", "2. Decimals", "3. Decimals"]
-      const invoiceLayouts = organisation.invoiceLayouts.map(x => x.name)
 
       // Get active integration, so only options for active integrations are shown
       // Get optional data for integrations, if integrated
@@ -65,7 +59,6 @@ export const invoicesRouter = createRouter()
         currencies: currencies,
         clients: clients,
         defaultCurrency: organisation.currency,
-        invoiceLayouts: invoiceLayouts,
         roundingScheme: roundingSchemes,
         economicCustomers: economicCustomers,
         activeIntegrations: activeIntegrationsResponse
@@ -121,7 +114,7 @@ export const invoicesRouter = createRouter()
         invoiceId: z.string(),
       }),
     async resolve({ ctx, input }) {
-      return await getInvoice(input.invoiceId, ctx.organizationId);
+      
     },
   })
   .mutation("createIssueInvoice", {
@@ -132,6 +125,7 @@ export const invoicesRouter = createRouter()
         currency: z.string(),
         dueDate: z.string(),
         roundingScheme: z.string(),
+        pricePerHour: z.number(),
       }),
       pickedIssues: z.object({
         jiraId: z.string(),
@@ -145,7 +139,6 @@ export const invoicesRouter = createRouter()
         exportToEconomic: z.boolean(),
         customer: z.string(),
         customerName: z.string(),
-        customerPrice: z.number(),
         text1: z.string(),
         ourReference: z.string(),
         customerContact: z.string(),
@@ -163,14 +156,14 @@ export const invoicesRouter = createRouter()
         data: {
           title: input.invoiceInformation.title,
           description: input.invoiceInformation.description,
-          currency: <Currency>input.invoiceInformation.currency,
+          currency: <Currency> input.invoiceInformation.currency,
           dueDate: new Date(input.invoiceInformation.dueDate),
           roundingScheme: roundingScheme,
+          pricePerHour: input.invoiceInformation.pricePerHour,
           organizationId: ctx.organizationId,
           economicOptions: {
             create: {
               customer: input.economicOptions.customer,
-              customerPrice: input.economicOptions.customerPrice,
               text1: input.economicOptions.text1,
               ourReference: input.economicOptions.ourReference,
               customerContact: input.economicOptions.customerContact,
@@ -187,7 +180,7 @@ export const invoicesRouter = createRouter()
               return ({
                 title: line.name,
                 hours: line.hoursSpent,
-                pricePerHour: input.economicOptions.customerPrice,
+                pricePerHour: input.invoiceInformation.pricePerHour,
                 updatedHoursSpent: line.updatedHoursSpent ?? 0,
                 discountPercentage: line.discountPercentage ?? 0,
                 organizationId: ctx.organizationId
@@ -210,6 +203,7 @@ export const invoicesRouter = createRouter()
         currency: z.string(),
         dueDate: z.string(),
         roundingScheme: z.string(),
+        pricePerHour: z.number(),
       }),
       pickedTickets: z.object({
         id: z.string(),
@@ -223,7 +217,6 @@ export const invoicesRouter = createRouter()
         exportToEconomic: z.boolean(),
         customer: z.string(),
         customerName: z.string(),
-        customerPrice: z.number(),
         text1: z.string(),
         ourReference: z.string(),
         customerContact: z.string(),
@@ -244,11 +237,11 @@ export const invoicesRouter = createRouter()
           currency: <Currency>input.invoiceInformation.currency,
           dueDate: new Date(input.invoiceInformation.dueDate),
           roundingScheme: roundingScheme,
+          pricePerHour: input.invoiceInformation.pricePerHour,
           organizationId: ctx.organizationId,
           economicOptions: {
             create: {
               customer: input.economicOptions.customer,
-              customerPrice: input.economicOptions.customerPrice,
               text1: input.economicOptions.text1,
               ourReference: input.economicOptions.ourReference,
               customerContact: input.economicOptions.customerContact,
@@ -265,7 +258,7 @@ export const invoicesRouter = createRouter()
               return ({
                 title: line.subject,
                 hours: 0,
-                pricePerHour: input.economicOptions.customerPrice,
+                pricePerHour: input.invoiceInformation.pricePerHour,
                 updatedHoursSpent: line.updatedHoursSpent,
                 discountPercentage: line.discountPercentage,
                 organizationId: ctx.organizationId
@@ -280,15 +273,3 @@ export const invoicesRouter = createRouter()
       }
     }
   });
-
-
-//==========================================//
-//   Helpers and Mappers                    //
-//==========================================//
-const mapRoundingScheme = (roundingSchemeString: string) => {
-  let roundingScheme: RoundingScheme = RoundingScheme.POINTPOINT
-  if (roundingSchemeString === "1. Decimal") roundingScheme = RoundingScheme.POINT
-  if (roundingSchemeString === "2. Decimals") roundingScheme = RoundingScheme.POINTPOINT
-  if (roundingSchemeString === "3. Decimals") roundingScheme = RoundingScheme.POINTPOINTPOINT
-  return roundingScheme
-}

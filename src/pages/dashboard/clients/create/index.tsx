@@ -13,10 +13,10 @@ export interface CreateClientForm {
         name: string,
         currency: string,
         roundingScheme: string,
+        pricePerHour: number
     },
     economicOptions: {
         customer: string
-        customerPrice: number
         text1: string
         ourReference: string
         customerContact: string
@@ -50,10 +50,10 @@ const Create: NextPage = () => {
                 name: "",
                 currency: "",
                 roundingScheme: "",
+                pricePerHour: 0,
             },
             economicOptions: {
                 customer: "",
-                customerPrice: 0,
                 text1: "",
                 ourReference: "",
                 customerContact: "",
@@ -131,7 +131,7 @@ const Create: NextPage = () => {
                                                                                 variant="filled"
                                                                                 placeholder="Select option"
                                                                                 {...register(`clientInformation.currency`, {
-                                                                                    required: 'Customer Contact is required',
+                                                                                    required: 'Currency is required',
                                                                                 })}>
                                                                                 {invoiceOptionsData.currencies.map(item => {
                                                                                     return (
@@ -152,7 +152,7 @@ const Create: NextPage = () => {
                                                                                 variant="filled"
                                                                                 placeholder="Select option"
                                                                                 {...register(`clientInformation.roundingScheme`, {
-                                                                                    required: 'Customer Contact is required',
+                                                                                    required: 'Rounding scheme is required',
                                                                                 })}>
                                                                                 {invoiceOptionsData.roundingScheme.map(item => {
                                                                                     return (
@@ -221,7 +221,7 @@ const Create: NextPage = () => {
                                                                                                             placeholder="Enter Text 1"
                                                                                                             variant="filled"
                                                                                                             {...register(`economicOptions.text1`, {
-                                                                                                                required: 'Customer Contact is required',
+                                                                                                                required: 'Text 1 is required',
                                                                                                             })}
                                                                                                         />
                                                                                                         <FormErrorMessage>
@@ -229,22 +229,22 @@ const Create: NextPage = () => {
                                                                                                         </FormErrorMessage>
                                                                                                     </Flex>
                                                                                                 </FormControl>
-                                                                                                <FormControl isInvalid={!!errors.economicOptions?.customerPrice}>
-                                                                                                    <FormLabel htmlFor={`economicOptions.customerPrice`}>Customer Price</FormLabel>
+                                                                                                <FormControl isInvalid={!!errors.clientInformation?.pricePerHour}>
+                                                                                                    <FormLabel htmlFor={`clientInformation.pricePerHour`}>Price per hour</FormLabel>
                                                                                                     <Flex flexDirection="column">
                                                                                                         <Input
-                                                                                                            id='customerPrice'
+                                                                                                            id='pricePerHour'
                                                                                                             type="number"
-                                                                                                            placeholder="Enter Customer Price"
+                                                                                                            placeholder="Enter Price per Hour"
                                                                                                             variant="filled"
-                                                                                                            {...register(`economicOptions.customerPrice`, {
+                                                                                                            {...register(`clientInformation.pricePerHour`, {
                                                                                                                 valueAsNumber: true,
-                                                                                                                min: { value: 0, message: "Price must be larger than 0" },
-                                                                                                                required: 'Customer price is required'
+                                                                                                                min: { value: 0, message: "Price per hour must be larger than 0" },
+                                                                                                                required: 'Price per hour is required'
                                                                                                             })}
                                                                                                         />
                                                                                                         <FormErrorMessage>
-                                                                                                            {errors.economicOptions?.customerPrice?.message}
+                                                                                                            {errors.clientInformation?.pricePerHour?.message}
                                                                                                         </FormErrorMessage>
                                                                                                     </Flex>
                                                                                                 </FormControl>
