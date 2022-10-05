@@ -1,7 +1,7 @@
 import { Card } from '@saas-ui/react'
 import { DataGrid, ColumnDef, DataGridCell } from '@saas-ui/pro'
 import { Sparklines } from '@saas-ui/charts'
-import { Progress, Text, useBreakpointValue } from '@chakra-ui/react'
+import { Progress, Text, useBreakpointValue, useColorMode } from '@chakra-ui/react'
 
 // @todo get this from graphql
 interface Data {
@@ -115,8 +115,10 @@ export const SalesByCountry = () => {
     md: '100%'
   })
 
+  const { colorMode, toggleColorMode } = useColorMode()
+
   return (
-    <Card title="Clients" boxShadow='md'>
+    <Card title="Clients" boxShadow='md' borderColor={colorMode === 'dark' ? 'white.50' : 'gray.300'}>
       <DataGrid<Data> sx={{width: dataGridWidth}} columnResizeMode='onEnd'  columns={columns} data={data} isSortable />
     </Card>
   )
