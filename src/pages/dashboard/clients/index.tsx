@@ -219,8 +219,8 @@ const ClientsListPage: NextPage = () => {
         selections: BulkActionsSelections
     }) => (
         <>
-            <Button>Add to segment</Button>
-            <Button>Add tags</Button>
+            {/* <Button>Add to segment</Button>
+            <Button>Add tags</Button> */}
         </>
     )
 
