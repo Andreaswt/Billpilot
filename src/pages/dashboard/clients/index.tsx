@@ -71,6 +71,7 @@ const ActionCell: DataGridCell<Client> = (client) => {
         <Box onClick={(e) => e.stopPropagation()}>
             <OverflowMenu size="xs">
                 <MenuItem onClick={async () => await mutation.mutateAsync({id: client.row.original.id})}>Delete</MenuItem>
+                <MenuItem onClick={() => router.push(`/dashboard/clients/update/${client.row.original.id}`)}>Edit</MenuItem>
             </OverflowMenu>
         </Box>
     )
@@ -90,7 +91,7 @@ const ClientsListPage: NextPage = () => {
                 header: 'Name',
                 size: 300,
                 meta: {
-                    href: ({ id }) => `/dashboard/clients/${id}`,
+                    href: ({ id }) => `/dashboard/clients/view/${id}`,
                 },
             },
             {

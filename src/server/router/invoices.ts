@@ -105,7 +105,7 @@ export const invoicesRouter = createRouter()
         products: products
       }
 
-      return await response
+      return response
     },
   })
   .query("getInvoice", {

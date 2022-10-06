@@ -90,6 +90,7 @@ model Client {
   createdAt DateTime @default(now())
   latestBill DateTime?
   status ClientStatus @default(NOTBILLED)
+  pricePerHour Decimal
 
   // Options for specific providers
   economicOptions EconomicInvoiceOptions?

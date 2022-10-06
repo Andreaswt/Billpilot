@@ -1,4 +1,5 @@
 import { ApiKeyName, ApiKeyProvider } from "@prisma/client";
+import { Employee } from "xero-node";
 import { prisma } from "../../src/server/db/client";
 import { Contact, Customer, Layout, PaymentTerms, Product, SalesPerson, Unit, VatZone } from "../../types/integrations/economic";
 import { logger } from "../logger";
@@ -179,33 +180,65 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
 }
 
 export async function getAllLayouts(organizationId: string) {
-    return await (await request<{ collection: Layout[] }>("layouts", httpMethod.get, organizationId)).collection;
+    return (await request<{ collection: Layout[] }>("layouts", httpMethod.get, organizationId)).collection;
+}
+
+export async function getLayout(organizationId: string, layoutNumber: string) {
+    return await request<Layout>(`layouts/${layoutNumber}`, httpMethod.get, organizationId);
 }
 
 export async function getAllCustomers(organizationId: string) {
-    return await (await request<{ collection: Customer[] }>("customers", httpMethod.get, organizationId)).collection;
+    return (await request<{ collection: Customer[] }>("customers", httpMethod.get, organizationId)).collection;
+}
+
+export async function getCustomer(organizationId: string, customerNumber: string) {
+    return await request<Customer>(`customers/${customerNumber}`, httpMethod.get, organizationId);
 }
 
 export async function getAllPaymentTerms(organizationId: string) {
-    return await (await request<{ collection: PaymentTerms[] }>("payment-terms", httpMethod.get, organizationId)).collection;
+    return (await request<{ collection: PaymentTerms[] }>("payment-terms", httpMethod.get, organizationId)).collection;
+}
+
+export async function getPaymentTerm(organizationId: string, paymentTermNumber: string) {
+    return await request<PaymentTerms>(`payment-terms/${paymentTermNumber}`, httpMethod.get, organizationId);
 }
 
 export async function getAllVatZones(organizationId: string) {
-    return await (await request<{ collection: VatZone[] }>("vat-zones", httpMethod.get, organizationId)).collection;
+    return (await request<{ collection: VatZone[] }>("vat-zones", httpMethod.get, organizationId)).collection;
+}
+
+export async function getVatZone(organizationId: string, vatZoneNumber: string) {
+    return await request<VatZone>(`vat-zones/${vatZoneNumber}`, httpMethod.get, organizationId);
 }
 
 export async function getAllProducts(organizationId: string) {
-    return await (await request<{ collection: Product[] }>("products", httpMethod.get, organizationId)).collection;
+    return (await request<{ collection: Product[] }>("products", httpMethod.get, organizationId)).collection;
+}
+
+export async function getProduct(organizationId: string, productNumber: string) {
+    return await request<Product>(`products/${productNumber}`, httpMethod.get, organizationId);
 }
 
 export async function getAllUnits(organizationId: string) {
-    return await (await request<{ collection: Unit[] }>("units", httpMethod.get, organizationId)).collection;
+    return (await request<{ collection: Unit[] }>("units", httpMethod.get, organizationId)).collection;
+}
+
+export async function getUnit(organizationId: string, unitNumber: string) {
+    return await request<Unit>(`units/${unitNumber}`, httpMethod.get, organizationId);
 }
 
 export async function getAllEmployees(organizationId: string) {
-    return await (await request<{ collection: SalesPerson[] }>("employees", httpMethod.get, organizationId)).collection;
+    return (await request<{ collection: SalesPerson[] }>("employees", httpMethod.get, organizationId)).collection;
+}
+
+export async function getEmployee(organizationId: string, employeeNumber: string) {
+    return await request<SalesPerson>(`employees/${employeeNumber}`, httpMethod.get, organizationId);
 }
 
 export async function getCustomerContacts(organizationId: string, customerNumber: number) {
-    return await (await request<{ collection: Contact[] }>("customers/" + customerNumber + "/contacts", httpMethod.get, organizationId)).collection;
+    return (await request<{ collection: Contact[] }>("customers/" + customerNumber + "/contacts", httpMethod.get, organizationId)).collection;
+}
+
+export async function getCustomerContact(organizationId: string, customerNumber: string, customerContactNumber: string) {
+    return await request<Contact>("customers/" + customerNumber + "/contacts/" + customerContactNumber, httpMethod.get, organizationId);
 }

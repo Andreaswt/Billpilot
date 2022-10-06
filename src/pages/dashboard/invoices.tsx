@@ -1,16 +1,8 @@
 import { NextPage } from "next";
 import { requireAuth } from "../../common/requireAuth";
 
-import { Grid, GridItem } from '@chakra-ui/react';
-
-import { FaGithub, FaTwitter } from 'react-icons/fa';
-import { MRR } from "../../components/dashboard/mrr";
-import { SalesByCountry } from "../../components/dashboard/sales-by-country";
-import { Today } from "../../components/dashboard/today";
-
 import {
-  Page, PageBody, Toolbar,
-  ToolbarButton
+  Page, PageBody
 } from '@saas-ui/pro';
 
 export const getServerSideProps = requireAuth(async (ctx) => {
