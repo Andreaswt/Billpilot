@@ -49,7 +49,7 @@ const siteConfig = {
   footer: {
     copyright: (
       <>
-        Billpilot LLC
+        Billpilot Limited
       </>
     ),
     links: [

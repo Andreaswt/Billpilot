@@ -131,7 +131,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     const { data: session, status } = useSession();
     const location = useLocation()
 
-    publicRoutes =["/", "/login", "/signup", "/terms", "/privacypolicy"]
+    publicRoutes =["/", "/login", "/signup", "/terms", "/privacypolicy", "/jira", "/xero", "/hubspot", "/economic"]
 
     const isPublicRoute = publicRoutes.indexOf(location.pathname) !== -1
     const isSettings = location.pathname.indexOf('/dashboard/settings') === 0

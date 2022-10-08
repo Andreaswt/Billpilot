@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { HStack, Flex, Spacer} from '@chakra-ui/react'
+import { HStack, Flex, Spacer, Select, Button, Menu, MenuButton, MenuItem, MenuList, useColorModeValue, } from '@chakra-ui/react'
 import { ButtonLink } from '../../landing-page/button-link/button-link'
 import { useRouter } from 'next/router'
 
@@ -15,6 +15,7 @@ import { useDisclosure, useUpdateEffect } from '@chakra-ui/react'
 
 import ThemeToggle from './theme-toggle'
 import Colors from '../../../styles/colors'
+import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons'
 
 
 const Navigation: React.FC = () => {
@@ -35,67 +36,93 @@ const Navigation: React.FC = () => {
     mobileNavBtnRef.current?.focus()
   }, [mobileNav.isOpen])
 
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
   return (
-  <>
-  <Flex w="100%" justify="space-between">
-    <HStack marginLeft = '2rem'>
-      <NavLink
-          label = {"Solution"}
-          display={['none', null, 'block']}
-          href={"/#features"}
-          isActive={
-            !!(
-              ("/#features" && !!router.asPath.match(new RegExp("dfsf")))
-            )
-          }
-        />
-      <NavLink
-          label = {"Pricing"}
-          display={['none', null, 'block']}
-          href={"/#pricing"}
-          isActive={
-            !!(
-              ("/#pricing" && !!router.asPath.match(new RegExp("Pricing")))
-            )
-          }
-        />
-      <NavLink
-          label = {"Resources"}
-          display={['none', null, 'block']}
-          href={"/#resources"}
-          isActive={
-            !!(
-              ("/#resources" && !!router.asPath.match(new RegExp("Resources")))
-            )
-          }
-        />
-        <NavLink
-          label = {"Contact"}
-          display={['none', null, 'block']}
-          href={"/#contact"}
-          isActive={
-            !!(
-              ("/#contact" && !!router.asPath.match(new RegExp("dfsf")))
-            )
-          }
-        />
+    <>
+      <Flex w="100%" justify="space-between">
+        <HStack marginLeft='2rem'>
+          <NavLink
+            label={"Solution"}
+            display={['none', null, 'block']}
+            href={"/#features"}
+            isActive={
+              !!(
+                ("/#features" && !!router.asPath.match(new RegExp("dfsf")))
+              )
+            }
+          />
+          <NavLink
+            label={"Pricing"}
+            display={['none', null, 'block']}
+            href={"/#pricing"}
+            isActive={
+              !!(
+                ("/#pricing" && !!router.asPath.match(new RegExp("Pricing")))
+              )
+            }
+          />
+          <NavLink
+            label={"Resources"}
+            display={['none', null, 'block']}
+            href={"/#resources"}
+            isActive={
+              !!(
+                ("/#resources" && !!router.asPath.match(new RegExp("Resources")))
+              )
+            }
+          />
+          <NavLink
+            label={"Contact"}
+            display={['none', null, 'block']}
+            href={"/#contact"}
+            isActive={
+              !!(
+                ("/#contact" && !!router.asPath.match(new RegExp("dfsf")))
+              )
+            }
+          />
+
+          <Menu isOpen={isOpen}>
+            <MenuButton
+              as={Button}
+              rounded={'full'}
+              variant={'nav-link'}
+              cursor={'pointer'}
+              minW={0}
+              borderColor={'transparent'}
+              _hover={{ boxShadow: 'none', borderColor: 'transparent' }}
+              _focusVisible={{boxShadow: 'none'}}
+              onMouseEnter={onOpen}
+              onMouseLeave={onClose}
+              rightIcon={<ChevronDownIcon />}>
+              Integrations
+            </MenuButton>
+            <MenuList onMouseEnter={onOpen} onMouseLeave={onClose}>
+              <MenuItem as={Button} _focusVisible={{boxShadow: 'none'}} justifyContent='left' variant={'nav-link'} onClick={()=>router.push("/jira")}>Jira</MenuItem>
+              <MenuItem as={Button} _focusVisible={{boxShadow: 'none'}} justifyContent='left' variant={'nav-link'} onClick={()=>router.push("/hubspot")}>Hubspot</MenuItem>
+              <MenuItem as={Button} _focusVisible={{boxShadow: 'none'}} justifyContent='left' variant={'nav-link'} onClick={()=>router.push("/economic")}>E-conomic</MenuItem>
+              <MenuItem as={Button} _focusVisible={{boxShadow: 'none'}} justifyContent='left' variant={'nav-link'} onClick={()=>router.push("/xero")}>Xero</MenuItem>
+            </MenuList>
+          </Menu>
+
         </HStack>
         <Spacer />
         <HStack>
-        <NavLink
-          label = {"Login"}
-          display={['none', null, 'block']}
-          href={"/login"}
-          isActive={
-            !!(
-              ("/login" && !!router.asPath.match(new RegExp("Login")))
-            )
-          }
-        />
-        <ButtonLink colorScheme="primary" size="sm" href="/signup">
-                  Sign Up
-        </ButtonLink>
-        {/* <NavLink
+          <NavLink
+            label={"Login"}
+            display={['none', null, 'block']}
+            href={"/login"}
+            isActive={
+              !!(
+                ("/login" && !!router.asPath.match(new RegExp("Login")))
+              )
+            }
+          />
+          <ButtonLink colorScheme="primary" size="sm" href="/signup">
+            Sign Up
+          </ButtonLink>
+          {/* <NavLink
           label = {"Try It Free"}
           display={['none', null, 'block']}
           href={"dfsf"}
@@ -105,20 +132,20 @@ const Navigation: React.FC = () => {
             )
           }
         /> */}
-      </HStack>
-  <ThemeToggle />
+        </HStack>
+        <ThemeToggle />
 
-  <MobileNavButton
-    ref={mobileNavBtnRef}
-    aria-label="Open Menu"
-    onClick={mobileNav.onOpen}
-  />
+        <MobileNavButton
+          ref={mobileNavBtnRef}
+          aria-label="Open Menu"
+          onClick={mobileNav.onOpen}
+        />
 
-  <MobileNavContent isOpen={mobileNav.isOpen} onClose={mobileNav.onClose} />
+        <MobileNavContent isOpen={mobileNav.isOpen} onClose={mobileNav.onClose} />
 
-</Flex>
+      </Flex>
 
-  </>
+    </>
 
   )
 }

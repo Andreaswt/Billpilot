@@ -47,8 +47,8 @@ const LoginPage: NextPage = () => {
   return (
     <Box>
       <SEO
-        title="Saas UI Landingspage"
-        description="Free SaaS landingspage starter kit"
+        title="Billpilot Login"
+        description="Login to your Billpilot account"
       />
       <Box>
         <Box position="relative" overflow="hidden">

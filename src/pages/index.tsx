@@ -46,8 +46,10 @@ const Home: NextPage = () => {
   return (
     <Box>
       <SEO
-        title="Billpilot Landingspage"
-        description="Free SaaS landingspage starter kit"
+        title="Billpilot Landingpage"
+        description="Billpilot imports data from your project
+        mangement software, helps you create invoices,
+        and sends them to your accounting app in minutes."
       />
       <Box>
         <HeroSection />

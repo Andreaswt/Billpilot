@@ -50,8 +50,8 @@ const SignupPage: NextPage = () => {
   return (
     <Box>
       <SEO
-        title="Saas UI Landingspage"
-        description="Free SaaS landingspage starter kit"
+        title="Billpilot SignUp"
+        description="Signup for your Billpilot account"
       />
       <Box>
         <Box position="relative" overflow="hidden">

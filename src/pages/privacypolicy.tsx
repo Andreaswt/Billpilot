@@ -8,8 +8,8 @@ const TermsOfService: NextPage = () => {
   return (
     <Box>
       <SEO
-        title="Billpilot Landingspage"
-        description="Free SaaS landingspage starter kit"
+        title="Billpilot Privacy Policy"
+        description="How we handle customer data"
       />
       <Box position="relative" overflow="hidden">
         <Container maxW="container.md" pt={{ base: 20, lg: 40 }} pb={{ md: 0 }}>
