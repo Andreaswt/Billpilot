@@ -1,13 +1,16 @@
 import { Button, Center, Checkbox, Flex, FormControl, FormErrorMessage, FormLabel, Heading, Input, Select, Spinner, StackDivider, Text, Textarea, useColorMode, VStack } from '@chakra-ui/react';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
-import { Card, CardBody, FormLayout } from "@saas-ui/react";
 import { Section } from '@saas-ui/pro';
+import { Card, CardBody, FormLayout } from "@saas-ui/react";
 import moment from 'moment';
+import React from 'react';
 import { useForm } from 'react-hook-form';
+import useInvoiceStore from '../../../../../store/invoiceStore';
 import { trpc } from '../../../../utils/trpc';
-import useInvoiceStore, { InvoiceInformationState, PickedHubspotTicket } from '../../../../../store/invoiceStore';
 import RequiredFormField from '../../forms/required-field';
+import { SearchClient } from './search-clients';
+import { mapRoundingScheme, mapRoundingSchemeToString } from '../../../../../lib/helpers/invoices';
 
 interface IProps {
     setStep: Dispatch<SetStateAction<number>>
@@ -123,12 +126,56 @@ const InvoiceInformation = (props: IProps) => {
             economicRefetch()
         }
     }, [economicCustomer, economicRefetch])
-    const { toggleColorMode, colorMode } = useColorMode()
-    return (
 
+    const { colorMode } = useColorMode()
+
+    const [selectedClient, setSelectedClient] = useState("")
+
+    const { data: clientData, isLoading: clientLoading, refetch: clientRefetch } = trpc.useQuery(["clients.getClient", {
+        id: selectedClient
+    }], {
+        refetchOnWindowFocus: false,
+        enabled: false,
+        onSuccess(data) {
+            reset({
+                invoiceInformation: {
+                    title: data.name,
+                    currency: data.currency,
+                    roundingScheme: mapRoundingSchemeToString(data.roundingScheme),
+                    pricePerHour: Number(data.pricePerHour),
+                },
+                ...(
+                    data.economicOptions
+                        ? {
+                            economicOptions: {
+                                customer: data.economicOptions.customer,
+                                text1: data.economicOptions.text1,
+                                ourReference: data.economicOptions.ourReference,
+                                customerContact: data.economicOptions.customerContact,
+                                unit: data.economicOptions.unit,
+                                layout: data.economicOptions.layout,
+                                vatZone: data.economicOptions.vatZone,
+                                paymentTerms: data.economicOptions.paymentTerms,
+                                product: data.economicOptions.product,
+                            }
+                        }
+                        : {}
+                )
+
+            })
+        }
+    });
+
+    React.useEffect(() => {
+        if (selectedClient === "") return
+        clientRefetch()
+    }, [selectedClient])
+
+    return (
         <Card title={
-            <Flex>
+            <Flex justifyContent="space-between">
                 <Heading>Create Invoice</Heading>
+                <SearchClient selectClient={setSelectedClient} />
             </Flex>}>
             <CardBody>
                 {

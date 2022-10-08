@@ -1,15 +1,12 @@
 import * as React from 'react'
 
-import { PropertyList, Property, Persona } from '@saas-ui/react'
+import { Persona, Property, PropertyList } from '@saas-ui/react'
 
-import {
-  PageSidebar,
-  PageSidebarHeader,
-  PageSidebarBody,
-  PageSidebarProps,
-} from '@saas-ui/pro'
-import { Client, Currency, EconomicInvoiceOptions, Prisma } from '@prisma/client'
 import { Heading } from '@chakra-ui/react'
+import { Currency, Prisma } from '@prisma/client'
+import {
+  PageSidebar, PageSidebarBody, PageSidebarHeader, PageSidebarProps
+} from '@saas-ui/pro'
 
 export interface ClientSidebarProps extends PageSidebarProps {
   client?: {

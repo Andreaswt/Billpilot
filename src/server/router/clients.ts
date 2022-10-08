@@ -1,10 +1,8 @@
-import { ClientStatus, Currency } from "@prisma/client";
+import { Currency } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { mapRoundingScheme, mapRoundingSchemeToString, mapStatus, mapStatusToString } from "../../../lib/helpers/invoices";
-import { getAllEmployees, getAllLayouts, getAllPaymentTerms, getAllProducts, getAllUnits, getAllVatZones, getCustomer, getCustomerContact, getCustomerContacts, getEmployee, getLayout, getPaymentTerm, getProduct, getUnit, getVatZone, getVatZones } from "../../../lib/integrations/e-conomic";
-import { searchCompanies, searchTickets } from "../../../lib/integrations/hubspot";
-import { getEmployees, importJiraTime, searchEpics, searchIssues, searchProjectIssues, searchProjects } from "../../../lib/integrations/jira";
+import { getCustomer, getCustomerContact, getEmployee, getLayout, getPaymentTerm, getProduct, getUnit, getVatZone } from "../../../lib/integrations/e-conomic";
 import { createRouter } from "./context";
 
 export const clientsRouter = createRouter()
@@ -90,6 +88,27 @@ export const clientsRouter = createRouter()
           latestBill: true,
           status: true
         }
+      })
+    }
+  })
+  .query("searchClients", {
+    input: z.object({
+      amount: z.number(),
+      search: z.string(),
+    }),
+    async resolve({ input, ctx }) {
+      return await ctx.prisma.client.findMany({
+        where: {
+          organizationId: ctx.organizationId,
+          name: {
+            contains: input.search
+          }
+        },
+        select: {
+          id: true,
+          name: true
+        },
+        take: input.amount
       })
     }
   })

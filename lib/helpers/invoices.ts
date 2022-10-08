@@ -17,9 +17,9 @@ export const mapRoundingSchemeToString = (roundingScheme: RoundingScheme) => {
     case RoundingScheme.POINT:
       return "1. Decimal"
     case RoundingScheme.POINTPOINT:
-      return "2. Decimal"
+      return "2. Decimals"
     case RoundingScheme.POINTPOINTPOINT:
-      return "3. Decimal"
+      return "3. Decimals"
   }
 }
 

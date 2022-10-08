@@ -1,11 +1,10 @@
-import { Center, Flex, FormControl, FormErrorMessage, FormLabel, Input, Select, Spinner, Stack, StackDivider, Text, Textarea, VStack } from '@chakra-ui/react';
+import { Center, Flex, FormControl, FormErrorMessage, FormLabel, Input, Select, Spinner, Stack, StackDivider, Textarea, VStack } from '@chakra-ui/react';
 import { Page, PageBody, Section } from '@saas-ui/pro';
 import { Button, Card, CardBody, FormLayout } from '@saas-ui/react';
-import { NextPage } from 'next';
 import router from 'next/router';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { number } from 'yup/lib/locale';
+import { mapRoundingSchemeToString } from '../../../../lib/helpers/invoices';
 import { trpc } from '../../../utils/trpc';
 
 export interface CreateClientForm {
@@ -100,7 +99,7 @@ export const CreateUpdateClient: React.FunctionComponent<IProps> = (props) => {
             clientInformation: {
                 name: clientData.name,
                 currency: clientData.currency,
-                roundingScheme: clientData.roundingScheme,
+                roundingScheme: mapRoundingSchemeToString(clientData.roundingScheme),
                 pricePerHour: Number(clientData.pricePerHour),
             },
             economicOptions: {
@@ -135,7 +134,7 @@ export const CreateUpdateClient: React.FunctionComponent<IProps> = (props) => {
     }, [economicCustomer, economicRefetch])
 
     return (
-        <Page title={"Add Client"}>
+        <Page title={clientId ? "Update client" : "Create client"}>
             <PageBody pt="8">
                 <Stack p="4" width="100%" gap="4">
                     <Card>
