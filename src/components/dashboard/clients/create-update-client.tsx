@@ -116,7 +116,7 @@ export const CreateUpdateClient: React.FunctionComponent<IProps> = (props) => {
         })
 
         setClientDataLoaded(true)
-    }, [clientData])
+    }, [clientData, clientDataLoaded, reset])
 
     const economicCustomer = createClientForm.watch("economicOptions.customer")
 

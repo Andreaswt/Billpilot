@@ -169,7 +169,7 @@ const InvoiceInformation = (props: IProps) => {
     React.useEffect(() => {
         if (selectedClient === "") return
         clientRefetch()
-    }, [selectedClient])
+    }, [selectedClient, clientRefetch])
 
     return (
         <Card title={

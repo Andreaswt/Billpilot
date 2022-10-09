@@ -21,7 +21,7 @@ export const SearchClient: React.FC<Props> = (props) => {
 
     React.useEffect(() => {
         refetch()
-    }, [search])
+    }, [search, refetch])
 
     const { isOpen, onClose, onOpen } = useDisclosure()
 
