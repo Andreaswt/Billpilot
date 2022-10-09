@@ -11,6 +11,7 @@ const callback = async (req: NextApiRequest, res: NextApiResponse) => {
     // If Jira authorization was aborted Jira will return an error in the query
     if (req.query["error"] && req.query["error_description"] && typeof (req.query["error_description"]) === 'string') {
         const errorMessage = encodeURIComponent(req.query["error_description"])
+        console.log("yeet1", req.query)
         res.redirect("/dashboard/integrations?error=true&message=" + errorMessage)
     }
 
@@ -35,6 +36,7 @@ const callback = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // If Jira reports and error back, redirect to integration page with error parameter, so error can be shown
     if (!response.ok) {
+        console.log("yeet2", response)
         const errorMessage = encodeURIComponent('Error happened during Jira Integration')
         res.redirect("/dashboard/integrations?error=true&message=" + errorMessage)
     }
@@ -51,8 +53,8 @@ const callback = async (req: NextApiRequest, res: NextApiResponse) => {
     })
     const cloudIdJsonResponse = await cloudIdResponse.json() as { id: string }[]
 
-    if (!cloudIdJsonResponse[0].id) throw new Error("Cloud id missing")
-    if (!jsonResponse.access_token && !jsonResponse.refresh_token) throw new Error("Token missing")
+    if (!cloudIdJsonResponse[0].hasOwnProperty("id")) throw new Error("Cloud id missing")
+    if (!jsonResponse.hasOwnProperty("access_token") || !jsonResponse.hasOwnProperty("refresh_token")) throw new Error("Tokens missing")
 
     const requestUrl = "https://api.atlassian.com/ex/jira/" + cloudIdJsonResponse[0].id
 

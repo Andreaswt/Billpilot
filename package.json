@@ -3,18 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "vercel-build": "prisma generate && next build",
     "dev": "next dev",
+    "generate-db": "prisma generate",
+    "update-db": "prisma db push",
+    "fetch-env": "npx vercel env pull",
+    "studio": "prisma studio",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "pscale": "pscale connect billing-app --port 3309",
-    "studio": "prisma studio",
-    "generate-db": "prisma generate",
-    "update-db": "prisma db push",
+    "vercel": "vercel",
     "reset-db": "prisma migrate reset",
     "seed-db": "npx prisma db seed",
-    "fetch-env": "npx vercel env pull"
+    "vercel-build": "prisma generate && next build",
+    "pscale": "pscale connect billing-app --port 3309"
   },
   "overrides": {
     "recharts": "2.1.12"
