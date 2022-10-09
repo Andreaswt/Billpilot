@@ -12,9 +12,9 @@ enum TimeCategory {
 
 
 
-interface ExampleData {
-  invoice: number
-  duedate: string
+interface RecentInvoices {
+  invoice: string
+  dueDate: string
   status: string
 }
 
@@ -48,7 +48,11 @@ const weeklyDue = [
   0, 120, 0, 0, 300, 0, 170,
 ]
 
-const RevenueChart = () => {
+interface Props {
+  recentInvoices: RecentInvoices[]
+}
+
+const RevenueChart: React.FunctionComponent<Props> = (props) => {
 
   const { colorMode, toggleColorMode } = useColorMode()
 
@@ -133,13 +137,13 @@ const RevenueChart = () => {
   };
 
 
-  const columns: Column<ExampleData>[] = [
+  const columns: Column<RecentInvoices>[] = [
     {
       accessor: 'invoice',
       Header: 'Invoice',
     },
     {
-      accessor: 'duedate',
+      accessor: 'dueDate',
       Header: 'Due Date',
     },
     {
@@ -148,47 +152,12 @@ const RevenueChart = () => {
     },
   ]
 
-  const data: ExampleData[] = [
-    {
-      invoice: 1392,
-      duedate: '24/12/2021',
-      status: 'Due',
-    },
-    {
-      invoice: 1391,
-      duedate: '11/12/2021',
-      status: 'Paid',
-    },
-    {
-      invoice: 1390,
-      duedate: '07/12/2021',
-      status: 'Unpaid',
-    },
-    {
-      invoice: 1389,
-      duedate: '08/12/2021',
-      status: 'Paid',
-    },
-    {
-      invoice: 1388,
-      duedate: '08/12/2021',
-      status: 'Paid',
-    },
-    {
-      invoice: 1387,
-      duedate: '12/11/2021',
-      status: 'Paid'
-    },
-
-  ]
-
-
   return (
     <>
       <Flex gap={4} flexDirection={{ base: "column", md: "row" }}>
 
         <Card title="Most Recent Invoices" width={{ base: "100%", md: "33%" }} borderColor={colorMode === 'dark' ? 'white.50' : 'gray.300'}  overflow='hidden' boxShadow='md' minWidth={330}>
-          <DataTable columns={columns} data={data} />
+          <DataTable columns={columns} data={props.recentInvoices} />
         </Card>
         <Card title="Monthly Invoiced Hours" boxShadow='md' width={{ base: "100%", md: "66%" }} borderColor={colorMode === 'dark' ? 'white.50' : 'gray.300'}>
           <ButtonGroup px='15px' isAttached variant="outline">
