@@ -47,19 +47,15 @@ export async function request<T>(endpoint: string, method: httpMethod, organizat
         delete options.body;
     }
 
-    return fetch(baseApiPath + "/" + endpoint, options)
-        .then(async response => {
-            if (!response.ok) {
-                let errorMsg = await response.json();
-                logger.error(errorMsg);
-                throw new Error(response.statusText)
-            }
+    const response = await fetch(baseApiPath + "/" + endpoint, options)
 
-            return response.json() as Promise<T>
-        })
-        .then(data => {
-            return data
-        })
+    if (!response.ok) {
+        let errorMsg = await response.json();
+        logger.error(errorMsg);
+        throw new Error(response.statusText)
+    }
+
+    return await response.json() as T
 }
 
 export async function saveAgreementGrantToken(agreementGrantToken: string, organizationId: string) {
