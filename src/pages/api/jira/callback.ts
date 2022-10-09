@@ -11,7 +11,6 @@ const callback = async (req: NextApiRequest, res: NextApiResponse) => {
     // If Jira authorization was aborted Jira will return an error in the query
     if (req.query["error"] && req.query["error_description"] && typeof (req.query["error_description"]) === 'string') {
         const errorMessage = encodeURIComponent(req.query["error_description"])
-        console.log("yeet1", req.query)
         res.redirect("/dashboard/integrations?error=true&message=" + errorMessage)
     }
 
@@ -36,7 +35,6 @@ const callback = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // If Jira reports and error back, redirect to integration page with error parameter, so error can be shown
     if (!response.ok) {
-        console.log("yeet2", response)
         const errorMessage = encodeURIComponent('Error happened during Jira Integration')
         res.redirect("/dashboard/integrations?error=true&message=" + errorMessage)
     }

@@ -55,7 +55,7 @@ export async function request<T>(endpoint: string, method: httpMethod, organizat
         throw new Error(response.statusText)
     }
 
-    return await response.json() as T
+    return await response.json() as Promise<T>
 }
 
 export async function saveAgreementGrantToken(agreementGrantToken: string, organizationId: string) {
