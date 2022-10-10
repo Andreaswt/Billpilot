@@ -1,7 +1,10 @@
-import * as React from 'react';
-import { Button, Card, CardBody, Column, DataTable } from '@saas-ui/react'
-import { Box, ButtonGroup, color, Flex, HStack, SimpleGrid, useColorMode } from '@chakra-ui/react';
+import { ButtonGroup, Flex, Link, useColorMode, Center } from '@chakra-ui/react';
+import { Button, Card, CardBody, Column, DataTable, EmptyState } from '@saas-ui/react';
 import dynamic from 'next/dynamic';
+import NextLink from "next/link";
+import router from 'next/router';
+import * as React from 'react';
+import { IoDocumentsSharp } from 'react-icons/io5'
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 enum TimeCategory {
@@ -13,9 +16,10 @@ enum TimeCategory {
 
 
 interface RecentInvoices {
-  invoice: string
-  dueDate: string
-  status: string
+  id: string
+  title: string
+  invoicedDates: string
+  total: string
 }
 
 const categoryWeek = [
@@ -53,7 +57,6 @@ interface Props {
 }
 
 const RevenueChart: React.FunctionComponent<Props> = (props) => {
-
   const { colorMode, toggleColorMode } = useColorMode()
 
   const [timeCategory, setTimeCategory] = React.useState(TimeCategory.YEAR);
@@ -139,16 +142,22 @@ const RevenueChart: React.FunctionComponent<Props> = (props) => {
 
   const columns: Column<RecentInvoices>[] = [
     {
-      accessor: 'invoice',
-      Header: 'Invoice',
+      accessor: 'title',
+      Header: 'Title',
+      Cell: ({ value, column, row }) => {
+        return (
+          <NextLink href={`/dashboard/invoices/view/${row.original.id}`} passHref>
+            <Link>{value}</Link>
+          </NextLink>)
+      }
     },
     {
-      accessor: 'dueDate',
-      Header: 'Due Date',
+      accessor: 'invoicedDates',
+      Header: 'Invoiced Dates',
     },
     {
-      accessor: 'status',
-      Header: 'Status',
+      accessor: 'total',
+      Header: 'Total',
     },
   ]
 
@@ -156,13 +165,28 @@ const RevenueChart: React.FunctionComponent<Props> = (props) => {
     <>
       <Flex gap={4} flexDirection={{ base: "column", md: "row" }}>
 
-        <Card title="Most Recent Invoices" width={{ base: "100%", md: "33%" }} borderColor={colorMode === 'dark' ? 'white.50' : 'gray.300'}  overflow='hidden' boxShadow='md' minWidth={330}>
-          <DataTable columns={columns} data={props.recentInvoices} />
+        <Card title="Most Recent Invoices" width={{ base: "100%", md: "33%" }} borderColor={colorMode === 'dark' ? 'white.50' : 'gray.300'} overflow='hidden' boxShadow='md' minWidth={330}>
+          {
+            props.recentInvoices.length === 0
+              ? <Center py={4}>
+                <EmptyState
+                  colorScheme="primary"
+                  icon={IoDocumentsSharp}
+                  title="No invoices yet"
+                  description="Create your first invoice now."
+                  actions={
+                    <>
+                      <Button onClick={() => router.push("/dashboard/invoices")} label="Create invoice" colorScheme="primary" />
+                    </>
+                  }
+                />
+              </Center>
+              : <DataTable columns={columns} data={props.recentInvoices} />
+          }
         </Card>
-        <Card title="Monthly Invoiced Hours" boxShadow='md' width={{ base: "100%", md: "66%" }} borderColor={colorMode === 'dark' ? 'white.50' : 'gray.300'}>
+        <Card title="Monthly Invoiced Hours" boxShadow='md' minH={625} width={{ base: "100%", md: "66%" }} borderColor={colorMode === 'dark' ? 'white.50' : 'gray.300'}>
           <ButtonGroup px='15px' isAttached variant="outline">
             <Button onClick={() => setTimeCategory(TimeCategory.YEAR)}>Year</Button>
-            {/* <Button onClick={() => setTimeCategory(TimeCategory.MONTH)}>Month</Button> */}
             <Button onClick={() => setTimeCategory(TimeCategory.WEEK)}>Week</Button>
           </ButtonGroup>
           <CardBody>

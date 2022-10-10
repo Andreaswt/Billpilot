@@ -23,38 +23,23 @@ export const dashboardRouter = createRouter()
 
             const today = new Date()
 
-            const recentInvoices = [
-                {
-                    invoice: "1392",
-                    dueDate: '24/12/2021',
-                    status: 'Due',
+            let invoices = await ctx.prisma.generalInvoice.findMany({
+                select: {
+                    id: true,
+                    title: true,
+                    invoicedFrom: true,
+                    invoicedTo: true,
+                    currency: true
                 },
-                {
-                    invoice: "1391",
-                    dueDate: '11/12/2021',
-                    status: 'Paid',
-                },
-                {
-                    invoice: "1390",
-                    dueDate: '07/12/2021',
-                    status: 'Unpaid',
-                },
-                {
-                    invoice: "1389",
-                    dueDate: '08/12/2021',
-                    status: 'Paid',
-                },
-                {
-                    invoice: "1388",
-                    dueDate: '08/12/2021',
-                    status: 'Paid',
-                },
-                {
-                    invoice: "1387",
-                    dueDate: '12/11/2021',
-                    status: 'Paid'
-                },
-            ]
+            })
+
+            const recentInvoices = invoices.map(item => {
+                return {
+                    id: item.id,
+                    title: item.title, 
+                    invoicedDates: item.invoicedFrom && item.invoicedTo ? item.invoicedFrom?.toDateString() + " - " + item.invoicedTo?.toDateString() : "-",
+                    total: "100 " + item.currency }
+            })
 
             const clients = [
                 {

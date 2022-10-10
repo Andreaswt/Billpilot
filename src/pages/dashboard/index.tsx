@@ -67,13 +67,11 @@ const SimpleCard: NextPage = () => {
       label: 'Total Hours Due',
       icon: IoMdCalendar,
       value: data?.totalHoursDue || "",
-      // change: 0,
     },
     {
       label: 'Total Due',
       icon: IoMdCalendar,
       value: data?.totalDue || "",
-      // change: 0,
     },
   ]
 
