@@ -82,29 +82,31 @@ const Navigation: React.FC = () => {
               )
             }
           />
-
-          <Menu isOpen={isOpen}>
-            <MenuButton
-              as={Button}
-              rounded={'full'}
-              variant={'nav-link'}
-              cursor={'pointer'}
-              minW={0}
-              borderColor={'transparent'}
-              _hover={{ boxShadow: 'none', borderColor: 'transparent' }}
-              _focusVisible={{boxShadow: 'none'}}
-              onMouseEnter={onOpen}
-              onMouseLeave={onClose}
-              rightIcon={<ChevronDownIcon />}>
-              Integrations
-            </MenuButton>
-            <MenuList onMouseEnter={onOpen} onMouseLeave={onClose}>
-              <MenuItem as={Button} _focusVisible={{boxShadow: 'none'}} justifyContent='left' variant={'nav-link'} onClick={()=>router.push("/jira")}>Jira</MenuItem>
-              <MenuItem as={Button} _focusVisible={{boxShadow: 'none'}} justifyContent='left' variant={'nav-link'} onClick={()=>router.push("/hubspot")}>Hubspot</MenuItem>
-              <MenuItem as={Button} _focusVisible={{boxShadow: 'none'}} justifyContent='left' variant={'nav-link'} onClick={()=>router.push("/economic")}>E-conomic</MenuItem>
-              <MenuItem as={Button} _focusVisible={{boxShadow: 'none'}} justifyContent='left' variant={'nav-link'} onClick={()=>router.push("/xero")}>Xero</MenuItem>
-            </MenuList>
-          </Menu>
+          
+            <Menu isOpen={isOpen}>
+              <MenuButton
+                as={Button}
+                rounded={'full'}
+                variant={'nav-link'}
+                cursor={'pointer'}
+                minW={0}
+                label={"Integrations"}
+                borderColor={'transparent'}
+                _hover={{ boxShadow: 'none', borderColor: 'transparent' }}
+                _focusVisible={{ boxShadow: 'none' }}
+                onMouseEnter={onOpen}
+                onMouseLeave={onClose}
+                rightIcon={<ChevronDownIcon />}
+                onClick={() => router.push("/integrations")}>
+                Integrations
+              </MenuButton>
+              <MenuList onMouseEnter={onOpen} onMouseLeave={onClose}>
+                <MenuItem as={Button} _focusVisible={{ boxShadow: 'none' }} justifyContent='left' variant={'nav-link'} onClick={() => router.push("/jira")}>Jira</MenuItem>
+                <MenuItem as={Button} _focusVisible={{ boxShadow: 'none' }} justifyContent='left' variant={'nav-link'} onClick={() => router.push("/hubspot")}>Hubspot</MenuItem>
+                <MenuItem as={Button} _focusVisible={{ boxShadow: 'none' }} justifyContent='left' variant={'nav-link'} onClick={() => router.push("/economic")}>E-conomic</MenuItem>
+                <MenuItem as={Button} _focusVisible={{ boxShadow: 'none' }} justifyContent='left' variant={'nav-link'} onClick={() => router.push("/xero")}>Xero</MenuItem>
+              </MenuList>
+            </Menu>
 
         </HStack>
         <Spacer />
