@@ -61,17 +61,12 @@ const SimpleCard: NextPage = () => {
       label: 'Total Billable Hours',
       icon: MdPayment,
       value: data?.totalBillableHours || "",
-      change: -10,
+      change: data?.totalBillableHoursChange || 0,
     },
     {
-      label: 'Total Hours Due',
+      label: 'Uninvoiced time',
       icon: IoMdCalendar,
-      value: data?.totalHoursDue || "",
-    },
-    {
-      label: 'Total Due',
-      icon: IoMdCalendar,
-      value: data?.totalDue || "",
+      value: data?.uninvoicedTime || "",
     },
   ]
 

@@ -41,6 +41,39 @@ export const dashboardRouter = createRouter()
                     total: "100 " + item.currency }
             })
 
+            let thisMonth = await ctx.prisma.generalInvoice.findMany({
+                // where: {
+                //     // TODO: fetch invoices from this month only
+                //     issueDate: {
+                //         lte: new Date(),
+                //         gte: new Date(),
+                //     }
+                // },
+                select: {
+                    invoiceLines: {
+                        select: {
+                            hours: true,
+                            pricePerHour: true,
+                            updatedHoursSpent: true,
+                            discountPercentage: true,
+                        }
+                    }
+                },
+            })
+
+            let totalHoursBilled = 0
+            thisMonth.forEach(i => {
+                i.invoiceLines.forEach(j => {
+                    let hoursBilled = j.updatedHoursSpent.toNumber() !== 0 ? j.updatedHoursSpent.toNumber() : j.hours.toNumber()
+                    
+                    if (j.discountPercentage.toNumber() !== 0) {
+                        hoursBilled *= (100 - j.discountPercentage.toNumber()) / 100
+                    }
+
+                    totalHoursBilled += hoursBilled
+                })
+            })
+
             const clients = [
                 {
                     id: '',
@@ -75,11 +108,11 @@ export const dashboardRouter = createRouter()
             const response = {
                 month: toMonthName(today.getMonth()),
                 year: today.getFullYear(),
-                totalHoursBilled: String(200),
+                totalHoursBilled: String(totalHoursBilled),
                 totalHoursBilledChange: 20,
-                totalBillableHours: String(375),
-                totalHoursDue: String(110),
-                totalDue: String(110000),
+                totalBillableHours: String(0),
+                totalBillableHoursChange: 0,
+                uninvoicedTime: String(0),
                 recentInvoices: recentInvoices,
                 clients: clients,
             }

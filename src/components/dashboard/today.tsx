@@ -1,10 +1,8 @@
-import { SimpleGrid } from '@chakra-ui/react'
+import { Flex, Link, SimpleGrid, Stack, Text, useColorMode } from '@chakra-ui/react'
 import { Metric } from './new-metric'
-
 
 import React from 'react'
 import { IconType } from 'react-icons'
-
 interface Props {
   data: {
     label: string,
@@ -25,6 +23,10 @@ export const Today: React.FunctionComponent<Props> = (props) => {
             <Metric {...metric} color="primary" />
           </React.Fragment>
         ))}
+        <Flex flexDir="column" alignItems="end" justifyContent="start" gap={1}>
+            <Text fontSize="sm">This report was built 5 minutes ago.</Text>
+            <Link color='blue.400' fontSize="sm" onClick={() => console.log("rebuilding")}>Rebuild Report</Link>
+        </Flex>
       </SimpleGrid>
     </>
   )
