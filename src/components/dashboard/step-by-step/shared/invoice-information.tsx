@@ -1,12 +1,16 @@
 import { Button, Center, Checkbox, Flex, FormControl, FormErrorMessage, FormLabel, Heading, Input, Select, Spinner, StackDivider, Text, Textarea, useColorMode, VStack } from '@chakra-ui/react';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
-import { Card, CardBody, FormLayout } from "@saas-ui/react";
 import { Section } from '@saas-ui/pro';
+import { Card, CardBody, FormLayout } from "@saas-ui/react";
 import moment from 'moment';
+import React from 'react';
 import { useForm } from 'react-hook-form';
+import useInvoiceStore from '../../../../../store/invoiceStore';
 import { trpc } from '../../../../utils/trpc';
-import useInvoiceStore, { InvoiceInformationState, PickedHubspotTicket } from '../../../../../store/invoiceStore';
+import RequiredFormField from '../../forms/required-field';
+import { SearchClient } from './search-clients';
+import { mapRoundingScheme, mapRoundingSchemeToString } from '../../../../../lib/helpers/invoices';
 
 interface IProps {
     setStep: Dispatch<SetStateAction<number>>
@@ -19,12 +23,12 @@ export interface FormInvoiceState {
         currency: string,
         dueDate: string,
         roundingScheme: string,
+        pricePerHour: number
     },
 
     economicOptions: {
         exportToEconomic: boolean
         customer: string
-        customerPrice: number
         text1: string
         ourReference: string
         customerContact: string
@@ -49,11 +53,11 @@ const InvoiceInformation = (props: IProps) => {
                 currency: store.currency,
                 dueDate: moment(store.dueDate).format("YYYY-MM-DD"),
                 roundingScheme: store.roundingScheme,
+                pricePerHour: store.pricePerHour,
             },
             economicOptions: {
                 exportToEconomic: store.economicOptions.exportToEconomic,
                 customer: store.economicOptions.customer,
-                customerPrice: store.economicOptions.customerPrice,
                 text1: store.economicOptions.text1,
                 ourReference: store.economicOptions.ourReference,
                 customerContact: store.economicOptions.customerContact,
@@ -68,7 +72,6 @@ const InvoiceInformation = (props: IProps) => {
 
     const exportToEconomicField = invoiceInformationForm.watch("economicOptions.exportToEconomic")
     const economicCustomer = invoiceInformationForm.watch("economicOptions.customer")
-    const economicCustomerPrice = invoiceInformationForm.watch("economicOptions.customerPrice")
 
     const { register, control, handleSubmit, reset, formState, watch, setValue } = invoiceInformationForm
     const { errors } = formState;
@@ -123,12 +126,56 @@ const InvoiceInformation = (props: IProps) => {
             economicRefetch()
         }
     }, [economicCustomer, economicRefetch])
-    const { toggleColorMode, colorMode } = useColorMode()
-    return (
 
+    const { colorMode } = useColorMode()
+
+    const [selectedClient, setSelectedClient] = useState("")
+
+    const { data: clientData, isLoading: clientLoading, refetch: clientRefetch } = trpc.useQuery(["clients.getClient", {
+        id: selectedClient
+    }], {
+        refetchOnWindowFocus: false,
+        enabled: false,
+        onSuccess(data) {
+            reset({
+                invoiceInformation: {
+                    title: data.name,
+                    currency: data.currency,
+                    roundingScheme: mapRoundingSchemeToString(data.roundingScheme),
+                    pricePerHour: Number(data.pricePerHour),
+                },
+                ...(
+                    data.economicOptions
+                        ? {
+                            economicOptions: {
+                                customer: data.economicOptions.customer,
+                                text1: data.economicOptions.text1,
+                                ourReference: data.economicOptions.ourReference,
+                                customerContact: data.economicOptions.customerContact,
+                                unit: data.economicOptions.unit,
+                                layout: data.economicOptions.layout,
+                                vatZone: data.economicOptions.vatZone,
+                                paymentTerms: data.economicOptions.paymentTerms,
+                                product: data.economicOptions.product,
+                            }
+                        }
+                        : {}
+                )
+
+            })
+        }
+    });
+
+    React.useEffect(() => {
+        if (selectedClient === "") return
+        clientRefetch()
+    }, [selectedClient, clientRefetch])
+
+    return (
         <Card title={
-            <Flex>
+            <Flex justifyContent="space-between">
                 <Heading>Create Invoice</Heading>
+                <SearchClient selectClient={setSelectedClient} />
             </Flex>}>
             <CardBody>
                 {
@@ -147,10 +194,7 @@ const InvoiceInformation = (props: IProps) => {
                                                 <FormLayout>
                                                     <FormControl isInvalid={!!errors.invoiceInformation?.title}>
                                                         <FormLabel htmlFor={`invoiceInformation.title`}>
-                                                            <Flex gap={1}>
-                                                                Title
-                                                                <Text color="red" size="sm">*</Text>
-                                                            </Flex>
+                                                            <RequiredFormField title="Title" />
                                                         </FormLabel>
                                                         <Flex flexDirection="column">
                                                             <Input
@@ -217,6 +261,26 @@ const InvoiceInformation = (props: IProps) => {
                                                             </FormErrorMessage>
                                                         </Flex>
                                                     </FormControl>
+                                                    <FormLayout>
+                                                        <FormControl isInvalid={!!errors.invoiceInformation?.pricePerHour}>
+                                                            <FormLabel htmlFor={`invoiceInformation.pricePerHour`}>Price per Hour</FormLabel>
+                                                            <Flex flexDirection="column">
+                                                                <Input
+                                                                    id='pricePerHour'
+                                                                    type="number"
+                                                                    placeholder="Enter Price per Hour"
+                                                                    variant="filled"
+                                                                    {...register(`invoiceInformation.pricePerHour`, {
+                                                                        valueAsNumber: true,
+                                                                        required: 'Price per hour is required'
+                                                                    })}
+                                                                />
+                                                                <FormErrorMessage>
+                                                                    {errors.invoiceInformation?.pricePerHour?.message}
+                                                                </FormErrorMessage>
+                                                            </Flex>
+                                                        </FormControl>
+                                                    </FormLayout>
                                                     <FormControl isInvalid={!!errors.invoiceInformation?.roundingScheme}>
                                                         <FormLabel htmlFor={`invoiceInformation.roundingScheme`}>Rounding scheme</FormLabel>
                                                         <Flex flexDirection="column">
@@ -272,7 +336,7 @@ const InvoiceInformation = (props: IProps) => {
                                                                         isDisabled={!exportToEconomicField}
                                                                         placeholder="Select Customer"
                                                                         {...register(`economicOptions.customer`, {
-                                                                            required: 'Customer is required',
+                                                                            required: { value: exportToEconomicField ? true : false, message: "Customer is required" }
                                                                         })}>
                                                                         {
                                                                             invoiceOptionsData?.economicCustomers.map(item => {
@@ -287,31 +351,7 @@ const InvoiceInformation = (props: IProps) => {
                                                             </FormControl>
                                                         </FormLayout>
 
-                                                        {exportToEconomicField && economicCustomer
-                                                            ? <FormLayout>
-                                                                <FormControl isInvalid={!!errors.economicOptions?.customerPrice}>
-                                                                    <FormLabel htmlFor={`economicOptions.customerPrice`}>Pick E-conomic Customer Price</FormLabel>
-                                                                    <Flex flexDirection="column">
-                                                                        <Input
-                                                                            id='customerPrice'
-                                                                            type="number"
-                                                                            isDisabled={!exportToEconomicField}
-                                                                            placeholder="Enter Customer Price"
-                                                                            variant="filled"
-                                                                            {...register(`economicOptions.customerPrice`, {
-                                                                                valueAsNumber: true,
-                                                                                required: 'Customer price is required'
-                                                                            })}
-                                                                        />
-                                                                        <FormErrorMessage>
-                                                                            {errors.economicOptions?.customerPrice?.message}
-                                                                        </FormErrorMessage>
-                                                                    </Flex>
-                                                                </FormControl>
-                                                            </FormLayout>
-                                                            : null}
-
-                                                        {exportToEconomicField && economicCustomer && economicCustomerPrice ? <>
+                                                        {exportToEconomicField && economicCustomer ? <>
                                                             <FormLayout>
                                                                 <FormLayout>
                                                                     <FormControl isInvalid={!!errors.economicOptions?.text1}>

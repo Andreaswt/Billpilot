@@ -1,77 +1,69 @@
-import * as React from 'react'
-
 import { Box, Spacer } from '@chakra-ui/react'
-
 import {
-  FiHash, FiHelpCircle,
-  FiPlus, FiSearch
-} from 'react-icons/fi'
-
-import { IoDocumentsSharp } from 'react-icons/io5'
-
-import { AiFillFileAdd, AiFillHome } from 'react-icons/ai'
-import { BsPlugFill } from 'react-icons/bs'
-
-import {
-  ResizeHandler, Sidebar, SidebarLink, SidebarLinkProps, SidebarNav, SidebarNavGroup,
-  SidebarOverflow, SidebarProps
+  ResizeHandler
 } from '@saas-ui/pro'
-
+import {
+  IconButton, useActivePath, useLocalStorage, useModals
+} from '@saas-ui/react'
 import { useNavigate } from '@saas-ui/router'
 import NextLink from 'next/link'
-
+import * as React from 'react'
+import { AiFillFileAdd, AiFillHome } from 'react-icons/ai'
+import { BsPlugFill, BsFillPeopleFill } from 'react-icons/bs'
 import {
-  IconButton, useLocalStorage, useModals
-} from '@saas-ui/react'
-
+  FiHash, FiPlus, FiSearch, FiUser
+} from 'react-icons/fi'
+import { IoDocumentsSharp } from 'react-icons/io5'
 import { BillingStatus } from '../billing-status'
 import { GlobalSearchInput } from '../global-search-input'
 import { MembersInviteDialog } from '../members-invite-dialog'
 import { UserMenu } from '../user-menu'
-import { trpc } from '../../../utils/trpc'
+
+import {
+  NavGroup, NavItem,
+  NavItemProps, Sidebar,
+  SidebarProps, SidebarSection,
+  SidebarToggleButton
+} from '@saas-ui/sidebar'
 
 export interface AppSidebarProps extends SidebarProps { }
 
 export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
   const modals = useModals()
-  const [width, setWidth] = useLocalStorage('app.sidebar.width', 280)
 
   const { variant, colorScheme } = props
 
   const isCondensed = variant === 'condensed'
-
-  const onResize: ResizeHandler = ({ width }) => {
-    setWidth(width)
-  }
 
   return (
     <>
       <Sidebar
         variant={variant}
         colorScheme={colorScheme}
-        isResizable
-        onResize={onResize}
-        defaultWidth={width}
+        width={300}
         {...props}
       >
-        <SidebarNav direction="row">
+        <SidebarToggleButton />
+        <SidebarSection direction="row">
           {!isCondensed && (
             <>
               <Spacer />
               <UserMenu />
             </>
           )}
-        </SidebarNav>
-        <Box px={4}>
-          {isCondensed ? (
-            <IconButton icon={<FiSearch />} aria-label="Search" />
-          ) : (
-            <GlobalSearchInput />
-          )}
-        </Box>
-        <SidebarOverflow>
-          <SidebarNav flex="1" spacing={6}>
-            <SidebarNavGroup>
+        </SidebarSection>
+        <SidebarSection>
+          <Box px={4}>
+            {isCondensed ? (
+              <IconButton icon={<FiSearch />} aria-label="Search" />
+            ) : (
+              <GlobalSearchInput />
+            )}
+          </Box></SidebarSection>
+        <SidebarSection flex="1" overflowY="auto">
+
+          <SidebarSection flex="1" gap={6}>
+            <NavGroup>
               <AppSidebarLink
                 href={"/dashboard"}
                 label="Dashboard"
@@ -87,8 +79,13 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
                 label="Integrations"
                 icon={<BsPlugFill />}
               />
-            </SidebarNavGroup>
-            <SidebarNavGroup title="Create Invoice From" isCollapsible>
+              <AppSidebarLink
+                href={"/dashboard/clients"}
+                label="Clients"
+                icon={<BsFillPeopleFill />}
+              />
+            </NavGroup>
+            <NavGroup title="Create Invoice From" isCollapsible>
               <AppSidebarLink
                 href={"/dashboard/invoicejiraissues"}
                 label="Jira"
@@ -99,32 +96,35 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
                 label="Hubspot"
                 icon={<AiFillFileAdd />}
               />
-              {/* <AppSidebarLink
-                href={"/dashboard/create"}
-                label="Imported Jira Items"
-                icon={<AiFillFileAdd />}
-              /> */}
-            </SidebarNavGroup>
+            </NavGroup>
 
             {!isCondensed && (
-              <SidebarNavGroup title="Search Invoices" isCollapsible>
-                <SidebarLink
-                  href={"/dashboard/invoices/design-system"}
+              <NavGroup title="Search Invoices" isCollapsible>
+                <AppSidebarLink
+                  href={"/dashboard/invoices/"}
                   label="From this month"
                   icon={<FiHash />}
                 />
-                <SidebarLink
-                  href={"/dashboard/tags/framework"}
+                <AppSidebarLink
+                  href={"/dashboard/invoices/thisweek"}
                   label="From this week"
                   icon={<FiHash />}
                 />
-              </SidebarNavGroup>
+              </NavGroup>
             )}
+
+            <NavGroup title="Settings" isCollapsible defaultIsOpen={false}>
+              <AppSidebarLink
+                href={"/dashboard/settings/profile"}
+                label="Profile"
+                icon={<FiUser />}
+              />
+            </NavGroup>
 
             <Spacer />
 
-            <SidebarNavGroup>
-              <SidebarLink
+            <NavGroup>
+              <NavItem
                 onClick={() =>
                   modals.open({
                     title: 'Invite people',
@@ -135,20 +135,14 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
                 color="sidebar-muted"
                 icon={<FiPlus />}
               />
-              {/* <SidebarLink
-                href="/"
-                label="Documentation"
-                color="sidebar-muted"
-                icon={<FiHelpCircle />}
-              /> */}
-            </SidebarNavGroup>
-          </SidebarNav>
-        </SidebarOverflow>
+            </NavGroup>
+          </SidebarSection>
+        </SidebarSection>
 
         {isCondensed ? (
-          <SidebarNav>
+          <SidebarSection>
             <UserMenu />
-          </SidebarNav>
+          </SidebarSection>
         ) : (
           <BillingStatus />
         )}
@@ -157,17 +151,19 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
   )
 }
 
-interface AppSidebarlink extends SidebarLinkProps {
+interface AppSidebarlink extends NavItemProps {
   href: string
 }
 
 const AppSidebarLink: React.FC<AppSidebarlink> = (props) => {
   const { href, label, ...rest } = props
-  const navigate = useNavigate()
+
+  const isActive = useActivePath(href, { end: true })
 
   return (
     <NextLink href={href} passHref>
-      <SidebarLink
+      <NavItem
+        isActive={isActive}
         label={label}
         {...rest}
       />

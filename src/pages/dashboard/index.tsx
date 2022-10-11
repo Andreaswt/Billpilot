@@ -8,8 +8,6 @@ import { MRR } from "../../components/dashboard/mrr";
 import { SalesByCountry } from "../../components/dashboard/sales-by-country";
 import { Today } from "../../components/dashboard/today";
 
-
-
 import {
   Page, PageBody, Toolbar,
   ToolbarButton
@@ -59,9 +57,6 @@ const SimpleCard: NextPage = () => {
           gap="4"
           p="4"
         >
-          <Flex>
-            <Heading>Dashboard</Heading>
-          </Flex>
           <GridItem>
             <Today />
           </GridItem>

@@ -70,17 +70,18 @@ export async function getHoursForIssues(issueIds: string[], organizationId: stri
     let client = await getClient(organizationId);
 
     // Get all projects from our database, so we know which ones are billable
-    let projects = await prisma.project.findMany({
-        select: {
-            key: true,
-        },
-        where: {
-            organizationId: organizationId,
-            billable: true,
-        }
-    })
+    // let projects = await prisma.project.findMany({
+    //     select: {
+    //         key: true,
+    //     },
+    //     where: {
+    //         organizationId: organizationId,
+    //         billable: true,
+    //     }
+    // })
 
-    let projectKeys = projects.map(project => project.key);
+    // let projectKeys = projects.map(project => project.key);
+    let projectKeys: string[] = []
 
     let hours = 0;
     try {
@@ -192,17 +193,18 @@ export async function getWorklogsThisMonth(organizationId: string, project?: str
         let worklogs: Worklog[] = [];
 
         // Get all projects from our database, so we know which ones are billable
-        let projects = await prisma.project.findMany({
-            select: {
-                key: true,
-            },
-            where: {
-                organizationId: organizationId,
-                billable: false,
-            }
-        })
+        // let projects = await prisma.project.findMany({
+        //     select: {
+        //         key: true,
+        //     },
+        //     where: {
+        //         organizationId: organizationId,
+        //         billable: false,
+        //     }
+        // })
 
-        let projectKeys = projects.map(projectDb => projectDb.key);
+        // let projectKeys = projects.map(projectDb => projectDb.key);
+        let projectKeys: string[] = []
 
         // Loop through all issues from search if objects exist
         issues.forEach(issue => {

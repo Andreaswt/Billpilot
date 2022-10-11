@@ -61,7 +61,7 @@ export const Header = (props: HeaderProps) => {
             }}
           />
           {/* style = {colorMode === 'dark' ? {color = '#2479DB'} : {color = '#FFFFFF'} */}
-          <Link href='/'>
+          <Link passHref href='/'>
             <a>
             <Text letterSpacing='2px' textColor={colorMode === 'dark' ? '#FFFFFF' : '#2479DB'} as='em'>
               Billpilot

@@ -13,11 +13,11 @@ export interface InvoiceInformationState {
     currency: string,
     dueDate: Date,
     roundingScheme: string,
+    pricePerHour: number,
     economicOptions: {
         exportToEconomic: boolean,
         customer: string,
         customerName: string,
-        customerPrice: number,
         text1: string,
         ourReference: string,
         ourReferenceName: string,
@@ -78,6 +78,7 @@ const useInvoiceStore = create<CreateInvoiceState>((set) => ({
     currency: "USD",
     dueDate: new Date(),
     roundingScheme: "2. Decimals",
+    pricePerHour: 0,
     client: "",
 
     // Hubspot
@@ -97,7 +98,6 @@ const useInvoiceStore = create<CreateInvoiceState>((set) => ({
         exportToEconomic: false,
         customer: "",
         customerName: "",
-        customerPrice: 0,
         text1: "",
         ourReference: "",
         ourReferenceName: "",

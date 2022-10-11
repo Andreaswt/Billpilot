@@ -132,7 +132,7 @@ const ConfirmInvoiceIssues = (props: IProps) => {
                             <CardBody>
                                 <PropertyList>
                                     <Property label="Customer" value={store.economicOptions.customerName} />
-                                    <Property label="Customer Price" value={store.economicOptions.customerPrice} />
+                                    <Property label="Customer Price" value={store.pricePerHour} />
                                     <Property label="Text 1" value={store.economicOptions.text1} />
                                     <Property label="Our Reference" value={store.economicOptions.ourReferenceName} />
                                     <Property label="Customer Contact" value={store.economicOptions.customerContactName} />

@@ -187,10 +187,10 @@ const RevenueChart = () => {
     <>
       <Flex gap={4} flexDirection={{ base: "column", md: "row" }}>
 
-        <Card title="Most Recent Invoices" width={{ base: "100%", md: "33%" }} boxShadow='md' minWidth={330}>
+        <Card title="Most Recent Invoices" width={{ base: "100%", md: "33%" }} borderColor={colorMode === 'dark' ? 'white.50' : 'gray.300'}  overflow='hidden' boxShadow='md' minWidth={330}>
           <DataTable columns={columns} data={data} />
         </Card>
-        <Card title="Monthly Invoiced Hours" boxShadow='md' width={{ base: "100%", md: "66%" }}>
+        <Card title="Monthly Invoiced Hours" boxShadow='md' width={{ base: "100%", md: "66%" }} borderColor={colorMode === 'dark' ? 'white.50' : 'gray.300'}>
           <ButtonGroup px='15px' isAttached variant="outline">
             <Button onClick={() => setTimeCategory(TimeCategory.YEAR)}>Year</Button>
             {/* <Button onClick={() => setTimeCategory(TimeCategory.MONTH)}>Month</Button> */}

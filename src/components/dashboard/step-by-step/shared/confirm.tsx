@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, StackDivider, VStack } from '@chakra-ui/react';
+import { Button, Flex, Heading, StackDivider, VStack, Text } from '@chakra-ui/react';
 import { Dispatch, SetStateAction } from 'react';
 
 import { Card, CardBody, Property, PropertyList, useSnackbar } from "@saas-ui/react";
@@ -32,6 +32,21 @@ const ConfirmInvoice = (props: IProps) => {
             })
         }
     });
+
+    const createIssueInvoice = trpc.useMutation('invoices.createIssueInvoice', {
+        onSuccess: () => {
+            router.push("/dashboard")
+        },
+        onError: () => {
+            snackbar({
+                title: 'Invoice could not be created',
+                status: 'error',
+                duration: 2000,
+                isClosable: true,
+            })
+        }
+    });
+
     const snackbar = useSnackbar()
 
     function submitInvoice() {
@@ -44,15 +59,25 @@ const ConfirmInvoice = (props: IProps) => {
             discountPercentage: item.discountPercentage ?? 0
         }))
 
-        createTicketInvoice.mutate({
+        const pickedIssues = store.pickedIssues.map(item => ({
+            jiraKey: item.key,
+            jiraId: item.id,
+            name: item.name,
+            hoursSpent: item.hoursSpent,
+            updatedHoursSpent: item.updatedHoursSpent ?? 0,
+            discountPercentage: item.discountPercentage ?? 0
+        }))
+
+        createIssueInvoice.mutate({
             invoiceInformation: {
                 currency: store.currency,
                 roundingScheme: store.roundingScheme,
+                pricePerHour: store.pricePerHour,
                 title: store.title,
                 description: store.description,
                 dueDate: store.dueDate.toString()
             },
-            pickedTickets: pickedTickets,
+            pickedIssues: pickedIssues,
             economicOptions: { ...store.economicOptions }
         })
     }
@@ -76,6 +101,9 @@ const ConfirmInvoice = (props: IProps) => {
                             <CardBody>
                                 <PropertyList>
                                     <Property label="Title" value={store.title} />
+                                    <Property label="Description">
+                                        <Text width="50%" overflowWrap="break-word">{store.description}</Text>
+                                    </Property>
                                     <Property label="Currency" value={store.currency} />
                                     <Property label="Due Date" value={moment(store.dueDate).format("YYYY-MM-DD")} />
                                     <Property label="Rounding Scheme" value={store.roundingScheme} />
@@ -93,7 +121,7 @@ const ConfirmInvoice = (props: IProps) => {
                                     <CardBody>
                                         <PropertyList>
                                             <Property label="Customer" value={store.economicOptions.customerName} />
-                                            <Property label="Customer Price" value={store.economicOptions.customerPrice} />
+                                            <Property label="Customer Price" value={store.pricePerHour} />
                                             <Property label="Text 1" value={store.economicOptions.text1} />
                                             <Property label="Our Reference" value={store.economicOptions.ourReferenceName} />
                                             <Property label="Customer Contact" value={store.economicOptions.customerContactName} />

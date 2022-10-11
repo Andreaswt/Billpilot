@@ -9,7 +9,8 @@ import {
   Circle,
   Icon,
   Flex,
-  Text
+  Text,
+  useColorMode
 
 } from '@chakra-ui/react'
 
@@ -30,9 +31,10 @@ export interface MetricProps {
 
 export const Metric: React.FC<MetricProps> = (props) => {
   const { label, value, change, data, color, icon, iconSize = 12, variant, ...rest } = props
+  const { colorMode, toggleColorMode } = useColorMode()
 
   return (
-    <Card {...rest} borderRadius="8px" boxShadow='md'>
+    <Card {...rest} borderRadius="8px" boxShadow='md' borderColor={colorMode === 'dark' ? 'white.50' : 'gray.300'}>
       <CardBody>
       <HStack {...rest} position="relative">
       <Stat>

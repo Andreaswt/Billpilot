@@ -9,6 +9,8 @@ interface TableRow {
     subject: string
     content: string
     lastModified: string
+    updatedHoursSpent: number | null
+    discountPercentage: number | null
 }
 
 const columns: ColumnDef<TableRow>[] = [
@@ -26,6 +28,16 @@ const columns: ColumnDef<TableRow>[] = [
         id: 'lastModified',
         header: 'Last Modified',
         cell: (data) => (<TableTooltip text={data.row.original.lastModified} />)
+    },
+    {
+        id: 'updatedHoursSpent',
+        header: 'Updated Hours Spent',
+        cell: (data) => (<p>{data.row.original.updatedHoursSpent ?? "-"}</p>)
+    },
+    {
+        id: 'discountPercentage',
+        header: 'Percentage Discount',
+        cell: (data) => (<p>{data.row.original.discountPercentage ?? "-"}</p>)
     },
     {
         id: 'id',

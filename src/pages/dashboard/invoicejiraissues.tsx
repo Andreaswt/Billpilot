@@ -14,6 +14,11 @@ import Projects from '../../components/dashboard/step-by-step/jira-issues/projec
 import Issues from '../../components/dashboard/step-by-step/jira-issues/issues';
 import ConfirmInvoice from '../../components/dashboard/step-by-step/shared/confirm';
 import InvoiceInformation from '../../components/dashboard/step-by-step/shared/invoice-information';
+import { requireAuth } from '../../common/requireAuth';
+
+export const getServerSideProps = requireAuth(async (ctx) => {
+    return { props: {} };
+});
 
 const InvoiceIssues: NextPage = () => {
     const [step, setStep] = React.useState(0);
