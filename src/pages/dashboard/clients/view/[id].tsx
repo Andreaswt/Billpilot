@@ -1,4 +1,4 @@
-import { HStack, Tab, TabList, TabPanel, TabPanels, Tabs, useDisclosure } from '@chakra-ui/react';
+import { HStack, Icon, Tab, TabList, TabPanel, TabPanels, Tabs, useDisclosure } from '@chakra-ui/react';
 import { Page } from '@saas-ui/pro';
 import { ErrorBoundary } from '@saas-ui/react';
 import { NextPage } from 'next';
@@ -7,6 +7,8 @@ import { ClientSidebar } from '../../../../components/dashboard/clients/view/cli
 import { Breadcrumbs } from '../../../../components/dashboard/shared/breadcrumbs';
 import { usePath } from '../../../../hooks/landing-page/use-path';
 import { trpc } from '../../../../utils/trpc';
+import { AddIcon, CloseIcon } from '@chakra-ui/icons'
+import { CreateInvoiceTemplate } from '../../../../components/dashboard/clients/view/create-invoice-template';
 
 const View: NextPage = () => {
     const router = useRouter()
@@ -43,6 +45,10 @@ const View: NextPage = () => {
             >
               <TabList borderBottomWidth="1px" height="12">
                 <Tab>Invoices</Tab>
+                <Tab>Invoice templates</Tab>
+                <Tab gap={2}>
+                  <Icon h={3} w={3} as={AddIcon} /> Create new invoice template
+                  </Tab>
               </TabList>
               <TabPanels
                 py="8"
@@ -54,7 +60,19 @@ const View: NextPage = () => {
               >
                 <TabPanel>
                   <ErrorBoundary>
-                    {/* <ActivitiesPanel contactId={id} /> */}
+                    
+                    Invoices
+                  </ErrorBoundary>
+                </TabPanel>
+                <TabPanel>
+                  <ErrorBoundary>
+                    
+                    Invoice template
+                  </ErrorBoundary>
+                </TabPanel>
+                <TabPanel>
+                  <ErrorBoundary>
+                  <CreateInvoiceTemplate />
                   </ErrorBoundary>
                 </TabPanel>
               </TabPanels>

@@ -48,7 +48,7 @@ export const ClientSidebar: React.FC<ClientSidebarProps> = (props) => {
       </PageSidebarHeader>
       <PageSidebarBody>
         <PropertyList>
-        <Heading size="md">Invoice</Heading>
+        <Heading size="md">Client</Heading>
           <Property label="Currency" value={client?.currency} />
           <Property label="Rounding Scheme" value={client?.roundingScheme} />
           <Property label="Created At" value={client?.createdAt.toISOString()} />
