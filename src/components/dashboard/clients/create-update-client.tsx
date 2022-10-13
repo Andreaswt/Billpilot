@@ -330,9 +330,7 @@ export const CreateUpdateClient: React.FunctionComponent<IProps> = (props) => {
                                                                                                             id='customerContact'
                                                                                                             variant="filled"
                                                                                                             placeholder="Select Customer Contact"
-                                                                                                            {...register(`economicOptions.customerContact`, {
-                                                                                                                required: 'Customer Contact is required',
-                                                                                                            })}>
+                                                                                                            {...register(`economicOptions.customerContact`)}>
                                                                                                             {economicData.customerContacts.map(item => {
                                                                                                                 return (<option key={item.customerContactNumber} value={item.customerContactNumber}>{item.name}</option>)
                                                                                                             })}
@@ -350,9 +348,7 @@ export const CreateUpdateClient: React.FunctionComponent<IProps> = (props) => {
                                                                                                                 id='ourReference'
                                                                                                                 variant="filled"
                                                                                                                 placeholder="Select Our Reference"
-                                                                                                                {...register(`economicOptions.ourReference`, {
-                                                                                                                    required: 'Our reference is required',
-                                                                                                                })}>
+                                                                                                                {...register(`economicOptions.ourReference`)}>
                                                                                                                 {economicData.ourReferences.map(item => {
                                                                                                                     return (<option key={item.employeeNumber} value={item.employeeNumber}>{item.name}</option>)
                                                                                                                 })}

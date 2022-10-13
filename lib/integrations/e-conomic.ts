@@ -156,18 +156,16 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
         layout: {
             layoutNumber: Number(invoice.economicOptions.layout)
         },
-        lines: [ ...timeItems ],
+        lines: [...timeItems],
         notes: {
             heading: invoice.title,
             textLine1: invoice.economicOptions.text1
         },
         references: {
-            salesPerson: {
-                employeeNumber: Number(invoice.economicOptions.ourReference)
-            },
-            customerContact: {
-                customerContactNumber: Number(invoice.economicOptions.customerContact)
-            }
+            ...(invoice.economicOptions.ourReference ? { salesPerson: { employeeNumber: Number(invoice.economicOptions.ourReference) } } : {}
+            ),
+            ...(invoice.economicOptions.customerContact ? { customerContact: { customerContactNumber: Number(invoice.economicOptions.customerContact) } } : {}
+            )
         }
     }
 

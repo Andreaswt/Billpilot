@@ -380,9 +380,7 @@ const InvoiceInformation = (props: IProps) => {
                                                                                     isDisabled={!exportToEconomicField}
                                                                                     variant="filled"
                                                                                     placeholder="Select Our Reference"
-                                                                                    {...register(`economicOptions.ourReference`, {
-                                                                                        required: 'Our reference is required',
-                                                                                    })}>
+                                                                                    {...register(`economicOptions.ourReference`)}>
                                                                                     {
                                                                                         !economicIsRefetching || economicIsLoading || !economicData
                                                                                             ? economicData?.ourReferences.map(item => {
@@ -406,9 +404,7 @@ const InvoiceInformation = (props: IProps) => {
                                                                                     isDisabled={!exportToEconomicField}
                                                                                     variant="filled"
                                                                                     placeholder="Select Customer Contact"
-                                                                                    {...register(`economicOptions.customerContact`, {
-                                                                                        required: 'Customer Contact is required',
-                                                                                    })}>
+                                                                                    {...register(`economicOptions.customerContact`)}>
                                                                                     {
                                                                                         !economicIsRefetching || economicIsLoading || !economicData
                                                                                             ? economicData?.customerContacts.map(item => {
