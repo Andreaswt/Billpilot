@@ -52,13 +52,13 @@ const Home: NextPage = () => {
       <Box>
         <HeroSection />
 
-        <ProjectToInvoiceSection/>
+        <ProjectToInvoiceSection />
 
         <BackendShowcaseSection />
 
         <BeforeBillpilotSection />
 
-        
+
 
         <HighlightsSection />
 
@@ -70,7 +70,7 @@ const Home: NextPage = () => {
 
         <FaqSection />
 
-        <SlackSection/>
+        <SlackSection />
 
         <ContactFormSection />
 
@@ -120,8 +120,8 @@ const HeroSection: React.FC = () => {
               description={
                 <FallInPlace delay={0.4} fontWeight="400" fontSize={{ base: '1xl', lg: '2xl' }}>
                   Billpilot imports data from your <Em>project<Br /> mangement software</Em>,
-                   helps you create invoices, <Br />
-                  and sends them to your accounting app in minutes.
+                  creates invoices, and sends<Br />
+                   them to your <Em>accounting app</Em> in minutes.
                 </FallInPlace>
               }
             >
@@ -219,14 +219,14 @@ const HeroSection: React.FC = () => {
         </Center>
       </Container>
       <Flex justifyContent='center'>
-      <div style={{borderRadius: '10px', overflow: 'hidden'}}>
-        <Image
-          src="static/screenshots/list.png"
-          alt="Picture of the author"
-          width={1200}
-          height={800}
-        />
-      </div>
+        <div style={{ borderRadius: '10px', overflow: 'hidden' }}>
+          <Image
+            src="static/screenshots/list.png"
+            alt="Picture of the author"
+            width={1200}
+            height={800}
+          />
+        </div>
       </Flex>
       <Features
         id="benefits"
@@ -262,7 +262,7 @@ const HeroSection: React.FC = () => {
             title: 'Linked Invoices',
             icon: FiSliders,
             description:
-            "Generate custom links to give clients direct access to invoices from Billpilot, or email them directly",
+              "Generate custom links to give clients direct access to invoices from Billpilot, or email them directly",
             iconPosition: 'left',
             delay: 0.8,
           },
@@ -271,7 +271,7 @@ const HeroSection: React.FC = () => {
         reveal={FallInPlace}
       />
     </Box>
-    
+
   )
 }
 
@@ -281,11 +281,11 @@ const BackendShowcaseSection = () => {
 }
 
 const BeforeBillpilotSection = () => {
-  return <BeforeBillpilot/>
+  return <BeforeBillpilot />
 }
 
 const ProjectToInvoiceSection = () => {
-  return <ProjectToInvoice/>
+  return <ProjectToInvoice />
 }
 
 const HighlightsSection = () => {
