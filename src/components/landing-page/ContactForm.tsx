@@ -68,8 +68,7 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
                             phone: '',
                             message: '',
                         }}
-                        onSubmit={submitHandler}¨
-                        action="http://namecheap/mypage"
+                        onSubmit={submitHandler}
                     >
 
                         <FormLayout>
