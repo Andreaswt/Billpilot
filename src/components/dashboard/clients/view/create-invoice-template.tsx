@@ -1,10 +1,10 @@
 import { AddIcon, CloseIcon, MinusIcon } from '@chakra-ui/icons'
-import { Button, Checkbox, Flex, FormControl, Text, FormErrorMessage, FormLabel, Heading, Icon, Input, Stack, Wrap, HStack, Badge, IconButton, InputGroup, InputLeftAddon, InputRightAddon, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper } from '@chakra-ui/react'
+import { Badge, Button, Checkbox, Flex, FormControl, FormErrorMessage, FormLabel, Heading, HStack, Icon, IconButton, Input, InputGroup, InputLeftAddon, InputRightAddon, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, Stack, Text, Wrap } from '@chakra-ui/react'
 import { Card, CardBody, Divider, Select, useFieldArray, useForm } from '@saas-ui/react'
 import * as React from 'react'
-import { BsClockFill } from 'react-icons/bs'
-import { FaFileInvoiceDollar, FaSleigh } from 'react-icons/fa'
-import { HiReceiptTax } from "react-icons/hi";
+import { FaFileInvoiceDollar } from 'react-icons/fa'
+import { HiReceiptTax } from "react-icons/hi"
+import { Filters } from './filters'
 
 interface Props {
 
@@ -14,10 +14,10 @@ export interface InvoiceTemplateForm {
     applyTaxToItems: Boolean,
     taxName: string,
     taxAmount: number,
-    fixedPriceTimeItems: { 
-        name: string, 
-        amount: number, 
-        applyTax: Boolean 
+    fixedPriceTimeItems: {
+        name: string,
+        amount: number,
+        applyTax: Boolean
     }[],
 }
 
@@ -64,7 +64,6 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
                             <Select
                                 value={activated ? "Activated" : "Inactive"}
                                 onChange={(value: string | string[]) => setActivated(value === "Activated" ? true : false)}
-                                // onChange={(e: string | string[]) => console.log("hej")}
                                 name="activated"
                                 placeholder="Activated"
                                 options={[
@@ -83,7 +82,8 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
                             <Card>
                                 <CardBody>
                                     <Stack gap={2}>
-                                        <Divider orientation="horizontal" label="Filters" />
+                                    <Filters />
+                                        {/* <Divider orientation="horizontal" label="Filters" />
                                         <Wrap>
                                             <Card>
                                                 <CardBody p={2}>
@@ -104,9 +104,6 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
                                                 </CardBody>
                                             </Card>
                                         </Wrap>
-
-
-
                                         <Flex justifyContent="space-between" alignItems="end">
                                             <Button leftIcon={<AddIcon />} colorScheme='primary'>
                                                 Add filter
@@ -126,7 +123,7 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
                                                     <Icon h={7} w={7} as={HiReceiptTax} />
                                                 </Flex>
                                             </Stack>
-                                        </Flex>
+                                        </Flex> */}
                                     </Stack>
                                 </CardBody>
                             </Card>
@@ -276,6 +273,7 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
                                                                         variant="filled">
                                                                         <NumberInputField {...register(`taxAmount`, {
                                                                             valueAsNumber: true,
+                                                                            disabled: !showTax1,
                                                                             required: 'Tax amount is required',
                                                                             min: { value: 0, message: "Amount must be larger than 0" },
                                                                         })} />
@@ -295,7 +293,6 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
                                                 </Flex>
                                                 : null
                                         }
-
                                         {
                                             showTax1 === false
                                                 ? <>
@@ -307,7 +304,6 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
                                                 </>
                                                 : null
                                         }
-
                                     </Stack>
                                 </CardBody>
                             </Card>
