@@ -57,7 +57,7 @@ const Home: NextPage = () => {
 
         <ProjectToInvoiceSection />
 
-        <BackendShowcaseSection />
+        {/* <BackendShowcaseSection /> */}
 
         <BeforeBillpilotSection />
 
@@ -227,7 +227,7 @@ const HeroSection: React.FC = () => {
       <Flex justifyContent='center'>
         <Box style={{ borderRadius: '20px', overflow: 'hidden' }}>
           <Image
-            src="static/screenshots/showcase.png"
+            src="static/screenshots/showcasedark.png"
             alt="Picture of the author"
             width={1607}
             height={1021}
