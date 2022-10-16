@@ -21,6 +21,7 @@ import { IoCheckmarkCircle } from 'react-icons/io5'
 import router from 'next/router'
 import EconomicOptions from '../components/landing-page/ikea/InvoiceOptions'
 import { SetStateAction } from 'react'
+import { FallInPlace } from '../components/landing-page/motion/fall-in-place'
 
 const EconomicPage: NextPage = () => {
   const { toggleColorMode, colorMode } = useColorMode()
@@ -44,7 +45,28 @@ const EconomicPage: NextPage = () => {
               direction="column"
               spacing="8"
             >
-              <Heading size="lg">E-conomic Integration</Heading>
+              
+              <Heading size="lg">Streamline Accounting Using Productive With Visma e-conomic</Heading>
+
+              <Text as="h1" textStyle="h1" textAlign="center">
+              <FallInPlace
+                bgGradient={colorMode === 'dark' ? 'linear(to-l, #68affb, #FFFFFF)' : 'linear(to-l, #68affb, #000)'}
+                bgClip='text'
+                fontSize={{ base: '48px', lg: '8xl' }}
+                fontWeight='400'>
+                Bill your clients.
+              </FallInPlace>
+              </Text>
+              <Text as="h1" textStyle="h1" textAlign="center">
+              <FallInPlace
+                bgGradient={colorMode === 'dark' ? 'linear(to-l, #68affb, #FFFFFF)' : 'linear(to-l, #68affb, #000)'}
+                bgClip='text'
+                fontSize={{ base: '48px', lg: '8xl' }}
+                fontWeight='400'
+              >
+                At scale.
+              </FallInPlace>
+              </Text>
 
               <Text>
                 If you use {' '}
@@ -60,7 +82,8 @@ const EconomicPage: NextPage = () => {
               <Highlights p='0'>
                 <HighlightsItem colSpan={[1, null, 2]} title="Invoice Process">
                   <Flex w='100%' justifyContent="center" gap={4} flexDir='row' alignItems="center" >
-                    <Box width='26%' >
+
+                    <Box width='26%'>
                       <Swiper
                         // spaceBetween={30}
                         centeredSlides={true}
@@ -73,24 +96,21 @@ const EconomicPage: NextPage = () => {
                         }}
                         navigation={true}
                         modules={[Autoplay, Pagination, Navigation]}
-
                       >
-                        <SwiperSlide>
-
+                        <SwiperSlide >
                           <Image
                             src="static/images/integrationlogos/asana.png"
-                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : {}}
                             alt='asana logo'
                             width={200}
                             height={40}
                           />
-
                         </SwiperSlide>
                         <SwiperSlide>
 
                           <Image
                             src="static/images/integrationlogos/hubspot.png"
-                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : {}}
                             alt='hubspot logo'
                             width={150}
                             height={40}
@@ -101,7 +121,7 @@ const EconomicPage: NextPage = () => {
 
                           <Image
                             src="static/images/integrationlogos/jira.png"
-                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : {}}
                             alt='jira logo'
                             width={300}
                             height={40}
@@ -110,29 +130,30 @@ const EconomicPage: NextPage = () => {
                         </SwiperSlide>
                       </Swiper>
                     </Box>
+
                     <Box >
                       <FiArrowRight size='' />
                     </Box>
-                    <Box width='26%'>
+                    <Flex align='center' justifyContent='center'>
                       <Flex flexDir='row' width="full" align='center'>
                         <Box as={siteConfig.logo} />
                         <Text letterSpacing='2px' fontSize='3xl' textColor={colorMode === 'dark' ? '#FFFFFF' : '#2479DB'} as='em'>
                           Billpilot
                         </Text>
                       </Flex>
-                    </Box>
+                    </Flex>
                     <Box>
                       <FiArrowRight size='' />
                     </Box>
-                    <Box width='26%'>
+                    <Flex width='26%' align='center' justifyContent='center'>
                       <Image
                         src="static/images/integrationlogos/economic.png"
-                        style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                        style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : {}}
                         alt='economic logo'
                         width={150}
                         height={33}
                       />
-                    </Box>
+                    </Flex>
                   </Flex>
                 </HighlightsItem>
                 <HighlightsItem title="Seamless Setup">
