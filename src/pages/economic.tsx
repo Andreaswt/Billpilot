@@ -11,7 +11,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from "swiper";
 import { FiArrowRight } from 'react-icons/fi'
 
-
 // Import Swiper styles
 import 'swiper/css';
 import { Logo } from '../components/landing-page/layout/logo'
@@ -38,35 +37,25 @@ const EconomicPage: NextPage = () => {
         <Container maxW="container.xl" pt={{ base: 20, lg: 40 }} pb={{ md: 0 }}>
           {/* <Center> */}
 
-          <Stack flex="1" direction="column">
+
+          <Stack flex="1" direction="column" >
             <Stack
               flex="1"
               alignItems="center"
               direction="column"
-              spacing="8"
+              spacing="100"
             >
-              
-              <Heading size="lg">Streamline Accounting Using Productive With Visma e-conomic</Heading>
-
-              <Text as="h1" textStyle="h1" textAlign="center">
-              <FallInPlace
-                bgGradient={colorMode === 'dark' ? 'linear(to-l, #68affb, #FFFFFF)' : 'linear(to-l, #68affb, #000)'}
-                bgClip='text'
-                fontSize={{ base: '48px', lg: '8xl' }}
-                fontWeight='400'>
-                Bill your clients.
+              <FallInPlace>
+              <Heading pb='0px' size='xl' fontWeight='400' >
+                  Streamline Accounting with
+                </Heading>
+              <Box alignItems="center" justifyContent="center" pt='0px' bgGradient={colorMode === 'dark' ? 'linear(to-l, #68affb, #FFFFFF)' : 'linear(to-l, #68affb, #000)'} bgClip='text' h='max'>
+                
+                <Heading size='xl' fontWeight='400'>
+                  Billpilot's E-conomic Plugin
+                </Heading>
+              </Box>
               </FallInPlace>
-              </Text>
-              <Text as="h1" textStyle="h1" textAlign="center">
-              <FallInPlace
-                bgGradient={colorMode === 'dark' ? 'linear(to-l, #68affb, #FFFFFF)' : 'linear(to-l, #68affb, #000)'}
-                bgClip='text'
-                fontSize={{ base: '48px', lg: '8xl' }}
-                fontWeight='400'
-              >
-                At scale.
-              </FallInPlace>
-              </Text>
 
               <Text>
                 If you use {' '}
@@ -80,7 +69,7 @@ const EconomicPage: NextPage = () => {
               </Text>
 
               <Highlights p='0'>
-                <HighlightsItem colSpan={[1, null, 2]} title="Invoice Process">
+                <HighlightsItem colSpan={[1, null, 2]} title="Billpilot Integrations For E-conomic">
                   <Flex w='100%' justifyContent="center" gap={4} flexDir='row' alignItems="center" >
 
                     <Box width='26%'>
@@ -162,12 +151,15 @@ const EconomicPage: NextPage = () => {
                   </Text>
                 </HighlightsItem>
               </Highlights>
-
               <HighlightsItem title="E-conomic Features">
                 <List spacing={3}>
                   <ListItem>
                     <ListIcon as={IoCheckmarkCircle} color='primary.400' />
                     Auto generate Billpilot templates from previous invoices in E-conomic
+                  </ListItem>
+                  <ListItem>
+                    <ListIcon as={IoCheckmarkCircle} color='primary.400' />
+                    One click export all or selected invoices to E-conomic
                   </ListItem>
                   <ListItem>
                     <ListIcon as={IoCheckmarkCircle} color='primary.400' />
@@ -177,29 +169,10 @@ const EconomicPage: NextPage = () => {
                     <ListIcon as={IoCheckmarkCircle} color='primary.400' />
                     One click set up
                   </ListItem>
-
-                  <ListItem>
-                    <ListIcon as={IoCheckmarkCircle} color='primary.400' />
-                    Quidem, ipsam illum quis se
-                  </ListItem>
                 </List>
               </HighlightsItem>
 
-              <Section
-                title="E-conomic"
-                description="Connect to E-conomic by clicking the button and logging in."
-                variant="annotated">
-                <Card>
-                  <CardBody>
-                    <Flex justifyContent="start">
-                      <Button onClick={() => router.push("/api/economic/redirect")} colorScheme="primary">
-                        Log in with E-conomic
-                      </Button>
-                    </Flex>
-                  </CardBody>
-                </Card>
-              </Section>
-
+              
 
             </Stack>
             <Heading size="lg">Configure E-conomic</Heading>

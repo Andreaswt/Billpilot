@@ -36,6 +36,10 @@ const siteConfig = {
         href: '/#contact',
       },
       {
+        label: 'Integrations',
+        href: '/integrations',
+      },
+      {
         label: 'Login',
         href: '/login',
       },
