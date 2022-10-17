@@ -4,6 +4,7 @@ import { Card, CardBody, Divider, Select, useFieldArray, useForm } from '@saas-u
 import * as React from 'react'
 import { FaFileInvoiceDollar } from 'react-icons/fa'
 import { HiReceiptTax } from "react-icons/hi"
+import { trpc } from '../../../../utils/trpc'
 import { Filters } from './filters'
 
 interface Props {
@@ -11,19 +12,20 @@ interface Props {
 }
 
 export interface InvoiceTemplateForm {
-    applyTaxToItems: Boolean,
+    applyTaxToItems: boolean,
     taxName: string,
     taxAmount: number,
     fixedPriceTimeItems: {
         name: string,
         amount: number,
-        applyTax: Boolean
+        applyTax: boolean
     }[],
 }
 
 export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
     const [activated, setActivated] = React.useState(false)
     const [showTax1, setShowTax1] = React.useState(false)
+    const [filters, setFilters] = React.useState<{ id: string, name: string, type: string }[]>([])
 
     const fixedPriceTimeItemsForm = useForm<InvoiceTemplateForm>({
         reValidateMode: "onSubmit",
@@ -35,6 +37,11 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
         },
     });
 
+    const createInvoiceTemplate = trpc.useMutation('invoiceTemplates.create', {
+        onSuccess() {
+
+        }
+    });
 
     const { register, control, handleSubmit, reset, formState, watch, setValue } = fixedPriceTimeItemsForm
 
@@ -52,7 +59,11 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
     const { errors } = formState;
 
     async function onSubmit(data: InvoiceTemplateForm) {
-        console.log(data)
+        createInvoiceTemplate.mutate({ ...data, filters: filters })
+    }
+
+    const removeFilter = (id: string) => {
+        setFilters(prev => prev.filter(x => x.id !== id))
     }
 
     return (
@@ -82,48 +93,39 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
                             <Card>
                                 <CardBody>
                                     <Stack gap={2}>
-                                    <Filters />
-                                        {/* <Divider orientation="horizontal" label="Filters" />
-                                        <Wrap>
-                                            <Card>
-                                                <CardBody p={2}>
-                                                    <HStack>
-                                                        <Badge colorScheme='green'>{"Project"}</Badge>
-                                                        <Text fontSize='xs'>{"Bankly Desktop App (BDA)"}</Text>
-                                                        <IconButton onClick={() => console.log("delete")} ml={4} aria-label='Remove' size={"xs"} icon={<CloseIcon />} />
-                                                    </HStack>
-                                                </CardBody>
-                                            </Card>
-                                            <Card>
-                                                <CardBody p={2}>
-                                                    <HStack>
-                                                        <Badge colorScheme='red'>{"Employee"}</Badge>
-                                                        <Text fontSize='xs'>{"Carl Larsen (CLA)"}</Text>
-                                                        <IconButton onClick={() => console.log("delete")} ml={4} aria-label='Remove' size={"xs"} icon={<CloseIcon />} />
-                                                    </HStack>
-                                                </CardBody>
-                                            </Card>
-                                        </Wrap>
-                                        <Flex justifyContent="space-between" alignItems="end">
-                                            <Button leftIcon={<AddIcon />} colorScheme='primary'>
-                                                Add filter
-                                            </Button>
-                                            <Stack>
-                                                <Flex alignItems="center" gap={5}>
-                                                    <Flex gap={2}>
-                                                        <Checkbox
-                                                            id='applyTaxToItems'
-                                                            type="checkbox"
-                                                            variant="filled"
-                                                            {...register(`applyTaxToItems`)}
-                                                        />
-                                                        <FormLabel whiteSpace="nowrap" m={0} fontSize="sm" htmlFor={`applyTaxToItems`}>Apply tax to items</FormLabel>
-                                                    </Flex>
+                                        {filters.length > 0
+                                            ? <>
+                                                <Divider orientation="horizontal" label="Filters" />
+                                                <Wrap>
+                                                    {
+                                                        filters.map(filter => {
+                                                            let color = "green"
+                                                            switch (filter.type) {
+                                                                case "Project":
+                                                                    color = "green"
+                                                                    break;
+                                                                case "Employee":
+                                                                    color = "red"
+                                                                    break;
+                                                            }
 
-                                                    <Icon h={7} w={7} as={HiReceiptTax} />
-                                                </Flex>
-                                            </Stack>
-                                        </Flex> */}
+                                                            return (
+                                                                <Card key={filter.id}>
+                                                                    <CardBody p={2}>
+                                                                        <HStack>
+                                                                            <Badge colorScheme={color}>{filter.type}</Badge>
+                                                                            <Text fontSize='xs'>{filter.name}</Text>
+                                                                            <IconButton onClick={() => removeFilter(filter.id)} ml={4} aria-label='Remove' size={"xs"} icon={<CloseIcon />} />
+                                                                        </HStack>
+                                                                    </CardBody>
+                                                                </Card>
+                                                            )
+                                                        })
+                                                    }
+                                                </Wrap>
+                                            </>
+                                            : null}
+                                        <Filters filters={filters} setFilters={setFilters} />
                                     </Stack>
                                 </CardBody>
                             </Card>
@@ -136,84 +138,80 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
                             <Card>
                                 <CardBody>
                                     <Stack gap={2}>
+                                        {fields.map((item, index) => {
+                                            return (
+                                                <React.Fragment key={item.id}>
+                                                    <Stack gap={2}>
+                                                        <Flex justifyContent="space-between" gap={4}>
+                                                            <FormControl isInvalid={!!errors.fixedPriceTimeItems?.[index]?.name}>
+                                                                <Flex alignItems="end" gap={4}>
+                                                                    <IconButton mb={0.5} aria-label='Remove Fixed Price Time Item' icon={<MinusIcon />} onClick={() => remove(index)} />
+                                                                    <Icon mb={2} h={6} w={6} as={FaFileInvoiceDollar} />
+                                                                    <Stack>
+                                                                        <FormLabel fontSize="sm" htmlFor={`fixedPriceTimeItems.${index}.name`}>Name</FormLabel>
+                                                                        <Input
+                                                                            width="xs"
+                                                                            id='name'
+                                                                            placeholder="Monthly retainer"
+                                                                            variant="filled"
+                                                                            {...register(`fixedPriceTimeItems.${index}.name`, {
+                                                                                required: 'Name is required',
+                                                                                minLength: { value: 0, message: 'Name must be defined' },
+                                                                            })}
+                                                                        />
+                                                                    </Stack>
+                                                                    <FormErrorMessage>
+                                                                        {errors.fixedPriceTimeItems?.[index]?.name?.message}
+                                                                    </FormErrorMessage>
+                                                                </Flex>
+                                                            </FormControl>
 
-                                        <Stack gap={6}>
-                                            {fields.map((item, index) => {
-                                                return (
-                                                    <React.Fragment key={item.id}>
-                                                        <Stack gap={2}>
-                                                            <Flex justifyContent="space-between" gap={4}>
-                                                                <FormControl isInvalid={!!errors.fixedPriceTimeItems?.[index]?.name}>
-                                                                    <Flex alignItems="end" gap={4}>
-                                                                        <IconButton mb={0.5} aria-label='Remove Fixed Price Time Item' icon={<MinusIcon />} onClick={() => remove(index)} />
-                                                                        <Icon mb={2} h={6} w={6} as={FaFileInvoiceDollar} />
-                                                                        <Stack>
-                                                                            <FormLabel fontSize="sm" htmlFor={`fixedPriceTimeItems.${index}.name`}>Name</FormLabel>
-                                                                            <Input
-                                                                                width="xs"
-                                                                                id='name'
-                                                                                placeholder="Monthly retainer"
-                                                                                variant="filled"
-                                                                                {...register(`fixedPriceTimeItems.${index}.name`, {
-                                                                                    required: 'Name is required',
-                                                                                    minLength: { value: 0, message: 'Name must be defined' },
-                                                                                })}
-                                                                            />
-                                                                        </Stack>
+                                                            <Flex alignItems="end" gap={4}>
+                                                                <FormControl isInvalid={!!errors.fixedPriceTimeItems?.[index]?.amount}>
+                                                                    <FormLabel fontSize="sm" htmlFor={`timeItems.${index}.amount`}>Amount</FormLabel>
+                                                                    <Flex flexDirection="column">
+                                                                        <InputGroup>
+                                                                            <InputLeftAddon>USD</InputLeftAddon>
+                                                                            <NumberInput
+                                                                                id='amount'
+                                                                                placeholder="Enter Amount"
+                                                                                variant="filled">
+                                                                                <NumberInputField
+                                                                                    {...register(`fixedPriceTimeItems.${index}.amount`, {
+                                                                                        valueAsNumber: true,
+                                                                                        required: 'Time is required',
+                                                                                        min: { value: 0, message: "Time must be larger than 0" },
+                                                                                    })} />
+                                                                                <NumberInputStepper>
+                                                                                    <NumberIncrementStepper />
+                                                                                    <NumberDecrementStepper />
+                                                                                </NumberInputStepper>
+                                                                            </NumberInput>
+                                                                        </InputGroup>
                                                                         <FormErrorMessage>
-                                                                            {errors.fixedPriceTimeItems?.[index]?.name?.message}
+                                                                            {errors.fixedPriceTimeItems?.[index]?.amount?.message}
                                                                         </FormErrorMessage>
                                                                     </Flex>
                                                                 </FormControl>
-
-                                                                <Flex alignItems="end" gap={4}>
-                                                                    <FormControl isInvalid={!!errors.fixedPriceTimeItems?.[index]?.amount}>
-                                                                        <FormLabel fontSize="sm" htmlFor={`timeItems.${index}.amount`}>Amount</FormLabel>
-                                                                        <Flex flexDirection="column">
-                                                                            <InputGroup>
-                                                                                <InputLeftAddon>USD</InputLeftAddon>
-                                                                                <NumberInput
-                                                                                    id='amount'
-                                                                                    placeholder="Enter Amount"
-                                                                                    variant="filled">
-                                                                                    <NumberInputField
-                                                                                        {...register(`fixedPriceTimeItems.${index}.amount`, {
-                                                                                            valueAsNumber: true,
-                                                                                            required: 'Time is required',
-                                                                                            min: { value: 0, message: "Time must be larger than 0" },
-                                                                                        })} />
-                                                                                    <NumberInputStepper>
-                                                                                        <NumberIncrementStepper />
-                                                                                        <NumberDecrementStepper />
-                                                                                    </NumberInputStepper>
-                                                                                </NumberInput>
-                                                                            </InputGroup>
-                                                                            <FormErrorMessage>
-                                                                                {errors.fixedPriceTimeItems?.[index]?.amount?.message}
-                                                                            </FormErrorMessage>
-                                                                        </Flex>
-                                                                    </FormControl>
-                                                                    <Stack>
-                                                                        <FormLabel whiteSpace="nowrap" m={0} fontSize="sm" htmlFor={`exportToEconomic`}>Apply tax</FormLabel>
-                                                                        <Flex h="full" gap={4} alignItems="center">
-                                                                            <Checkbox
-                                                                                id='applyTax'
-                                                                                type="checkbox"
-                                                                                variant="filled"
-                                                                                {...register(`fixedPriceTimeItems.${index}.applyTax`)}
-                                                                            />
-                                                                            <Icon h={7} w={7} as={HiReceiptTax} />
-                                                                        </Flex>
-                                                                    </Stack>
-                                                                </Flex>
+                                                                <Stack>
+                                                                    <FormLabel whiteSpace="nowrap" m={0} fontSize="sm" htmlFor={`exportToEconomic`}>Apply tax</FormLabel>
+                                                                    <Flex h="full" gap={4} alignItems="center">
+                                                                        <Checkbox
+                                                                            id='applyTax'
+                                                                            type="checkbox"
+                                                                            variant="filled"
+                                                                            {...register(`fixedPriceTimeItems.${index}.applyTax`)}
+                                                                        />
+                                                                        <Icon h={7} w={7} as={HiReceiptTax} />
+                                                                    </Flex>
+                                                                </Stack>
                                                             </Flex>
-                                                        </Stack>
-                                                        {fields.length > 0 ? <Divider /> : <></>}
-                                                    </React.Fragment>
-                                                );
-                                            })}
-                                        </Stack>
-
+                                                        </Flex>
+                                                    </Stack>
+                                                    {fields.length > 0 && index !== 4 ? <Divider /> : <></>}
+                                                </React.Fragment>
+                                            );
+                                        })}
                                         {
                                             fields.length < 5
                                                 ? <>

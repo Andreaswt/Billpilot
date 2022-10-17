@@ -1,11 +1,24 @@
-import { Flex, Grid, GridItem, Heading, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Stack } from '@chakra-ui/react'
-import { Button, Divider, SearchInput, useCollapse, Loader } from '@saas-ui/react'
+import { AddIcon } from '@chakra-ui/icons'
+import { Flex, Grid, GridItem, Heading, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverTrigger, Stack } from '@chakra-ui/react'
+import { Button, Divider, Loader, SearchInput, useCollapse } from '@saas-ui/react'
 import React from 'react'
 import { trpc } from '../../../../utils/trpc'
-import { AddIcon } from '@chakra-ui/icons'
 
-export const Filters = () => {
-    const { onToggle, isOpen, getCollapseProps } = useCollapse()
+interface Props {
+    setFilters: React.Dispatch<React.SetStateAction<{
+        id: string;
+        name: string,
+        type: string;
+    }[]>>,
+    filters: {
+        id: string;
+        name: string;
+        type: string;
+    }[]
+}
+
+export const Filters: React.FC<Props> = (props) => {
+    const { filters, setFilters } = props
     const [searchTerm, setSearchTerm] = React.useState('')
     const [currentType, setCurrentType] = React.useState('Projects')
 
@@ -14,40 +27,39 @@ export const Filters = () => {
         { searchTerm: searchTerm }],
         {
             refetchOnWindowFocus: false,
-            onSuccess() {
-                setCurrentType('Projects');
-            }
         });
 
     const { data: employees, isLoading: employeesLoading, isRefetching: employeesRefetching, refetch: employeesRefetch } = trpc.useQuery(
         ["jira.filterEmployees",
             { searchTerm: searchTerm }],
         {
+            refetchOnWindowFocus: false,
             enabled: false,
-            onSuccess() {
-                setCurrentType('Employees');
-            }
         });
 
     const { data: issues, isLoading: issuesLoading, isRefetching: issuesRefetching, refetch: issuesRefetch } = trpc.useQuery([
         "jira.searchIssues",
         { searchTerm: searchTerm }],
         {
+            refetchOnWindowFocus: false,
             enabled: false,
-            onSuccess() {
-                setCurrentType('Issues');
-            }
         });
 
     const { data: epics, isLoading: epicsLoading, isRefetching: epicsRefetching, refetch: epicsRefetch } = trpc.useQuery([
         "jira.searchEpics",
         { searchTerm: searchTerm }],
         {
+            refetchOnWindowFocus: false,
             enabled: false,
-            onSuccess() {
-                setCurrentType('Epics');
-            }
         });
+
+    const addFilter = (id: string, name: string, type: string) => {
+        setFilters(prev => [...prev, { id: id, name: name, type: type }])
+    }
+
+    const filter = (id: string) => {
+        return !filters.find(f => f.id === id)
+    }
 
     return (
         <Flex>
@@ -68,34 +80,39 @@ export const Filters = () => {
                                     <Stack>
                                         <Heading size="sm">Jira</Heading>
                                         <Divider />
-                                        <Button onClick={() => projectsRefetch()} variant={currentType === "Projects" ? "solid" : "outline"}>Projects</Button>
-                                        <Button onClick={() => employeesRefetch()} variant={currentType === "Employees" ? "solid" : "outline"}>Employees</Button>
+                                        <Button onClick={() => { setCurrentType("Projects"); projectsRefetch(); }} variant={currentType === "Projects" ? "solid" : "outline"}>Projects</Button>
+                                        <Button onClick={() => { setCurrentType("Employees"); employeesRefetch(); }} variant={currentType === "Employees" ? "solid" : "outline"}>Employees</Button>
                                     </Stack>
                                 </Stack>
                             </GridItem>
                             <GridItem py={4} mt={6} pr={4} colSpan={2}>
-                                <Stack gap={4}>
+                                <Stack maxH={400} overflowY="scroll" gap={4}>
                                     <SearchInput
                                         placeholder="Search"
                                         value={searchTerm}
                                         onChange={(e: any) => setSearchTerm(e.target.value)}
                                         onReset={() => setSearchTerm('')}
                                     />
-                                    <Stack>
+                                    <Stack gap={2} flexDir="column">
                                         <Heading size="sm">{currentType}</Heading>
                                         <Divider />
-                                        {currentType === "Projects" && (projectsLoading || projectsRefetching) ? <Loader /> : null}
-                                        {currentType === "Employees" && (employeesLoading || employeesRefetching) ? <Loader /> : null}
-
-                                        {currentType === "Projects" && projects
-                                            ? projects.projectsResponse.map(x => {
-                                                return (<Button key={x.id} onClick={() => console.log(x.id)} colorScheme="primary">{x.name} ({x.key})</Button>)
-                                            })
+                                        {currentType === "Projects"
+                                            ? (projectsLoading || projectsRefetching || !projects
+                                                ? <Loader />
+                                                : projects.projectsResponse
+                                                    .filter(x => filter(x.id))
+                                                    .map(x => {
+                                                        return (<Button key={x.id} onClick={() => addFilter(x.id, `${x.name} (${x.key})`, "Project")} colorScheme="primary">{x.name} ({x.key})</Button>)
+                                                    }))
                                             : null}
-                                        {currentType === "Employees" && employees
-                                            ? employees.employeesResponse.map(x => {
-                                                return (<Button key={x.id} onClick={() => console.log(x.id)} colorScheme="primary">{x.name}</Button>)
-                                            })
+                                        {currentType === "Employees"
+                                            ? (employeesLoading || employeesRefetching || !employees
+                                                ? <Loader />
+                                                : employees.employeesResponse
+                                                    .filter(x => filter(x.id))
+                                                    .map(x => {
+                                                        return (<Button key={x.id} onClick={() => addFilter(x.id, x.name, "Employee")} colorScheme="primary">{x.name}</Button>)
+                                                    }))
                                             : null}
                                     </Stack>
                                 </Stack>
