@@ -95,6 +95,8 @@ model Client {
   // Options for specific providers
   economicOptions EconomicInvoiceOptions?
 
+  invoiceTemplates InvoiceTemplate[]
+
   organizationId String
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   @@unique ([id, organizationId], name: "organizationsClient")
@@ -171,6 +173,60 @@ model EconomicInvoiceOptions {
   organizationId String
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
+
+// Templating
+model InvoiceTemplate {
+  id String @id @default(cuid())
+  clientId String
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  active Boolean
+
+  // Fields
+  filters InvoiceTemplateFilter[]
+  invoiceTemplateFixedPriceTimeItems InvoiceTemplateFixedPriceTimeItem[]
+  taxes InvoiceTemplateTax[]
+}
+
+enum InvoiceTemplateFilterTypes {
+  JIRAPROJECT
+  JIRAEMPLOYEE
+}
+
+model InvoiceTemplateFilter {
+  id String @id @default(cuid())
+  name String
+  filterId String
+  type InvoiceTemplateFilterTypes
+
+  taxes InvoiceTemplateTax[]
+
+  invoiceTemplateId String
+  invoiceTemplate InvoiceTemplate @relation(fields: [invoiceTemplateId], references: [id], onDelete: Cascade)
+}
+
+model InvoiceTemplateFixedPriceTimeItem {
+  id String @id @default(cuid())
+
+  taxes InvoiceTemplateTax[]
+
+  invoiceTemplateId String
+  invoiceTemplate InvoiceTemplate @relation(fields: [invoiceTemplateId], references: [id], onDelete: Cascade)
+}
+
+model InvoiceTemplateTax {
+  id String @id @default(cuid())
+
+  invoiceTemplateFilterId String
+  invoiceTemplateFilter InvoiceTemplateFilter @relation(fields: [invoiceTemplateFilterId], references: [id], onDelete: Cascade)
+
+  invoiceTemplateFixedPriceTimeItemId String
+  invoiceTemplateFixedPriceTimeItem InvoiceTemplateFixedPriceTimeItem @relation(fields: [invoiceTemplateFixedPriceTimeItemId], references: [id], onDelete: Cascade)
+
+  invoiceTemplateId String
+  invoiceTemplate InvoiceTemplate @relation(fields: [invoiceTemplateId], references: [id], onDelete: Cascade)
+}
+
 
 // Necessary for Next auth
 model Account {

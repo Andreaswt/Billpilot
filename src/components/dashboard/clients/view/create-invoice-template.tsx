@@ -96,33 +96,49 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
                                         {filters.length > 0
                                             ? <>
                                                 <Divider orientation="horizontal" label="Filters" />
-                                                <Wrap>
-                                                    {
-                                                        filters.map(filter => {
-                                                            let color = "green"
-                                                            switch (filter.type) {
-                                                                case "Project":
-                                                                    color = "green"
-                                                                    break;
-                                                                case "Employee":
-                                                                    color = "red"
-                                                                    break;
-                                                            }
+                                                <Flex justifyContent="space-between">
+                                                    <Wrap>
+                                                        {
+                                                            filters.map(filter => {
+                                                                let color = "green"
+                                                                switch (filter.type) {
+                                                                    case "Project":
+                                                                        color = "green"
+                                                                        break;
+                                                                    case "Employee":
+                                                                        color = "red"
+                                                                        break;
+                                                                }
 
-                                                            return (
-                                                                <Card key={filter.id}>
-                                                                    <CardBody p={2}>
-                                                                        <HStack>
-                                                                            <Badge colorScheme={color}>{filter.type}</Badge>
-                                                                            <Text fontSize='xs'>{filter.name}</Text>
-                                                                            <IconButton onClick={() => removeFilter(filter.id)} ml={4} aria-label='Remove' size={"xs"} icon={<CloseIcon />} />
-                                                                        </HStack>
-                                                                    </CardBody>
-                                                                </Card>
-                                                            )
-                                                        })
-                                                    }
-                                                </Wrap>
+                                                                return (
+                                                                    <Card key={filter.id}>
+                                                                        <CardBody p={2}>
+                                                                            <HStack>
+                                                                                <Badge colorScheme={color}>{filter.type}</Badge>
+                                                                                <Text fontSize='xs'>{filter.name}</Text>
+                                                                                <IconButton onClick={() => removeFilter(filter.id)} ml={4} aria-label='Remove' size={"xs"} icon={<CloseIcon />} />
+                                                                            </HStack>
+                                                                        </CardBody>
+                                                                    </Card>
+                                                                )
+                                                            })
+                                                        }
+                                                    </Wrap>
+                                                    <Stack>
+                                                        <FormLabel whiteSpace="nowrap" m={0} fontSize="sm" htmlFor={`applyTaxToItems`}>Apply tax</FormLabel>
+                                                        <Flex h="full" gap={4} alignItems="center">
+                                                            <Checkbox
+                                                                id='applyTaxToItems'
+                                                                type="checkbox"
+                                                                variant="filled"
+                                                                {...register(`applyTaxToItems`)}
+                                                            />
+                                                            <Icon h={7} w={7} as={HiReceiptTax} />
+                                                        </Flex>
+                                                    </Stack>
+                                                </Flex>
+
+
                                             </>
                                             : null}
                                         <Filters filters={filters} setFilters={setFilters} />

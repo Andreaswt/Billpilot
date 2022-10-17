@@ -28,6 +28,6 @@ export const invoiceTemplatesRouter = createRouter()
       }).array()
     }),
     async resolve({ input, ctx }) {
-
+      
     }
   });
