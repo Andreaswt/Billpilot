@@ -50,7 +50,7 @@ const XeroPage: NextPage = () => {
                 </Link>
                 {' '} connect it with Billpilot to
                 How Billpilot integrates with Xero?
-                We'll automatically sync all your clients in Billpilot, let you assign projects to these clients,
+                We&apos;ll automatically sync all your clients in Billpilot, let you assign projects to these clients,
                 issue invoices and export these invoices back to Xero
               </Text>
 
@@ -121,7 +121,7 @@ const XeroPage: NextPage = () => {
                     <Box>
                       <FiArrowRight size='' />
                     </Box>
-                    <Box width='26%' align='center'>
+                    <Box width='26%' alignItems='center'>
                       <Image
                         src="static/images/integrationlogos/xero.png"
                         style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}

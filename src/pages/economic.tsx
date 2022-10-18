@@ -46,30 +46,51 @@ const EconomicPage: NextPage = () => {
               spacing="100"
             >
               <FallInPlace>
-              <Heading pb='0px' size='xl' fontWeight='400' >
+                <Heading pb='0px' size='xl' fontWeight='400' >
                   Streamline Accounting with
                 </Heading>
-              <Box alignItems="center" justifyContent="center" pt='0px' bgGradient={colorMode === 'dark' ? 'linear(to-l, #68affb, #FFFFFF)' : 'linear(to-l, #68affb, #000)'} bgClip='text' h='max'>
-                
-                <Heading size='xl' fontWeight='400'>
-                  Billpilot's E-conomic Plugin
-                </Heading>
-              </Box>
+                <Box alignItems="center" justifyContent="center" pt='0px' bgGradient={colorMode === 'dark' ? 'linear(to-l, #68affb, #FFFFFF)' : 'linear(to-l, #68affb, #000)'} bgClip='text' h='max'>
+
+                  <Heading size='xl' fontWeight='400'>
+                    Billpilot&apos;s E-conomic Plugin
+                  </Heading>
+                </Box>
               </FallInPlace>
 
-              <Text>
-                If you use {' '}
-                <Link color='blue.500' href="https://www.e-conomic.com/">
-                  E-conomic
-                </Link>
-                {' '} connect it with Billpilot to
-                How Billpilot integrates with E-Conomic?
-                We'll automatically sync all your clients in Billpilot, let you assign projects to these clients,
-                issue invoices and export these invoices back to E-Conomic
-              </Text>
-
               <Highlights p='0'>
-                <HighlightsItem colSpan={[1, null, 2]} title="Billpilot Integrations For E-conomic">
+                <HighlightsItem colSpan={[1, null, 2]} title="Billpilot Integrations for E-conomic">
+                  <Text>
+                    If you use {' '}
+                    <Link color='blue.500' href="https://www.e-conomic.com/">
+                      E-conomic
+                    </Link>
+                    {' '} connect it with Billpilot to streamline your invoicing process.
+                    How Billpilot integrates with E-Conomic?
+                    We&apos;ll automatically sync all your clients in Billpilot, help you assign projects to these clients,
+                    issue invoices, and export these invoices back to E-Conomic.
+                  </Text>
+                </HighlightsItem>
+                <HighlightsItem colSpan={[1, null, 2]} title="E-conomic Features">
+                  <List spacing={3}>
+                    <ListItem>
+                      <ListIcon as={IoCheckmarkCircle} color='primary.400' />
+                      Auto generate Billpilot templates from previous invoices in E-conomic
+                    </ListItem>
+                    <ListItem>
+                      <ListIcon as={IoCheckmarkCircle} color='primary.400' />
+                      One click export all or selected invoices to E-conomic
+                    </ListItem>
+                    <ListItem>
+                      <ListIcon as={IoCheckmarkCircle} color='primary.400' />
+                      Sync invoices and clients from E-conomic
+                    </ListItem>
+                    <ListItem>
+                      <ListIcon as={IoCheckmarkCircle} color='primary.400' />
+                      One click set up
+                    </ListItem>
+                  </List>
+                </HighlightsItem>
+                <HighlightsItem colSpan={[1, null, 2]} title="Billpilot Integrations for E-conomic">
                   <Flex w='100%' justifyContent="center" gap={4} flexDir='row' alignItems="center" >
 
                     <Box width='26%'>
@@ -77,7 +98,7 @@ const EconomicPage: NextPage = () => {
                         // spaceBetween={30}
                         centeredSlides={true}
                         autoplay={{
-                          delay: 2500,
+                          delay: 2000,
                           disableOnInteraction: false,
                         }}
                         pagination={{
@@ -134,7 +155,7 @@ const EconomicPage: NextPage = () => {
                     <Box>
                       <FiArrowRight size='' />
                     </Box>
-                    <Flex width='26%' align='center' justifyContent='center'>
+                    <Flex align='center' justifyContent='center'>
                       <Image
                         src="static/images/integrationlogos/economic.png"
                         style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : {}}
@@ -145,37 +166,22 @@ const EconomicPage: NextPage = () => {
                     </Flex>
                   </Flex>
                 </HighlightsItem>
-                <HighlightsItem title="Seamless Setup">
+                <HighlightsItem title="One Click Setup">
                   <Text color="muted" fontSize="lg">
-                    Integrate Billpilot with E-conomic with a simple one click login process.
+                    Integrate Billpilot and E-conomic with a simple one click login process. Sync afterwards to start Invoicing.
                   </Text>
                 </HighlightsItem>
               </Highlights>
-              <HighlightsItem title="E-conomic Features">
-                <List spacing={3}>
-                  <ListItem>
-                    <ListIcon as={IoCheckmarkCircle} color='primary.400' />
-                    Auto generate Billpilot templates from previous invoices in E-conomic
-                  </ListItem>
-                  <ListItem>
-                    <ListIcon as={IoCheckmarkCircle} color='primary.400' />
-                    One click export all or selected invoices to E-conomic
-                  </ListItem>
-                  <ListItem>
-                    <ListIcon as={IoCheckmarkCircle} color='primary.400' />
-                    Sync invoices and clients from E-conomic
-                  </ListItem>
-                  <ListItem>
-                    <ListIcon as={IoCheckmarkCircle} color='primary.400' />
-                    One click set up
-                  </ListItem>
-                </List>
-              </HighlightsItem>
 
-              
+
+              <Highlights p='0'>
+
+              </Highlights>
+
+
 
             </Stack>
-            <Heading size="lg">Configure E-conomic</Heading>
+
           </Stack>
           {/* </Center> */}
 
