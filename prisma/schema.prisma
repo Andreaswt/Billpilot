@@ -94,6 +94,7 @@ model Client {
 
   // Options for specific providers
   economicOptions EconomicInvoiceOptions?
+  generalInvoices GeneralInvoice[]
 
   organizationId String
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
@@ -114,8 +115,8 @@ enum RoundingScheme {
 model InvoiceLine {
   id String @id @default(cuid())
   title String
-  hours Decimal
-  pricePerHour Decimal
+  hours Float
+  pricePerHour Float
   updatedHoursSpent Decimal
   discountPercentage Decimal
 
@@ -130,7 +131,11 @@ model GeneralInvoice {
   id String @id @default(cuid())
   title String
   description String
-  pricePerHour Decimal
+  pricePerHour Float
+  billed Boolean
+
+  clientId String
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   // invoiceType InvoiceType @default(GENERAL)
   currency Currency @default(USD)

@@ -7,7 +7,7 @@ import NextLink from "next/link";
 
 interface Data {
   id: string
-  company: string
+  name: string
   billed: number
   notBilled: number
   latestBill: string
@@ -22,10 +22,10 @@ const getRemaining = (value1: number, value2: number) => {
 }
 
 
-const CompanyCell: DataGridCell<Data> = (cell) => {
+const NameCell: DataGridCell<Data> = (cell) => {
   return (
     <NextLink href={`/dashboard/invoices/view/${cell.row.original.id}`} passHref>
-      <Link flexGrow={1}>{cell.row.getValue('company')}</Link>
+      <Link flexGrow={1}>{cell.row.getValue('name')}</Link>
     </NextLink>
   )
 }
@@ -42,9 +42,9 @@ const ProgressCell: DataGridCell<Data> = (cell) => {
 
 const columns: ColumnDef<Data>[] = [
   {
-    id: 'company',
-    header: 'Company',
-    cell: CompanyCell,
+    id: 'name',
+    header: 'Name',
+    cell: NameCell,
   },
   {
     id: 'statusbar',
