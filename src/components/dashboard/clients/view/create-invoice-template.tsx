@@ -9,7 +9,7 @@ import { trpc } from '../../../../utils/trpc'
 import { Filters } from './filters'
 
 interface Props {
-
+    changeTabs(index: number): void
 }
 
 export interface InvoiceTemplateForm {
@@ -36,7 +36,7 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
 
     const createInvoiceTemplate = trpc.useMutation('invoiceTemplates.create', {
         onSuccess() {
-
+            props.changeTabs(1)
         }
     });
 

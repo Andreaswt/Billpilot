@@ -9,6 +9,8 @@ import { usePath } from '../../../../hooks/landing-page/use-path';
 import { trpc } from '../../../../utils/trpc';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons'
 import { CreateInvoiceTemplate } from '../../../../components/dashboard/clients/view/create-invoice-template';
+import { useState } from 'react';
+import { InvoiceTemplates } from '../../../../components/dashboard/clients/view/invoice-templates';
 
 const View: NextPage = () => {
     const router = useRouter()
@@ -31,11 +33,17 @@ const View: NextPage = () => {
           ]}
         />
       )
+
+      const [tabIndex, setTabIndex] = useState(0)
+      const handleTabsChange = (index: number) => {
+        setTabIndex(index)
+      }
     
       return (
         <Page title={breadcrumbs} isLoading={isLoading} fullWidth>
           <HStack alignItems="stretch" height="100%" overflowX="hidden" spacing="0">
             <Tabs
+              index={tabIndex} onChange={handleTabsChange}
               colorScheme="primary"
               isLazy
               flex="1"
@@ -66,13 +74,12 @@ const View: NextPage = () => {
                 </TabPanel>
                 <TabPanel>
                   <ErrorBoundary>
-                    
-                    Invoice template
+                    <InvoiceTemplates />
                   </ErrorBoundary>
                 </TabPanel>
                 <TabPanel>
                   <ErrorBoundary>
-                  <CreateInvoiceTemplate />
+                  <CreateInvoiceTemplate changeTabs={handleTabsChange} />
                   </ErrorBoundary>
                 </TabPanel>
               </TabPanels>
@@ -85,57 +92,3 @@ const View: NextPage = () => {
 }
 
 export default View;
-
-
-// const ActivitiesPanel: React.FC<{ contactId: string }> = ({ contactId }) => {
-//     const currentUser = useCurrentUser()
-  
-//     const { data, isLoading } = useGetContactActivitiesQuery({
-//       id: contactId,
-//     })
-  
-//     const queryClient = useQueryClient()
-  
-//     const addMutation = useAddCommentMutation({
-//       onSettled: () => {
-//         queryClient.invalidateQueries(['GetContactActivities', { id: contactId }])
-//       },
-//     })
-  
-//     const deleteMutation = useDeleteCommentMutation({
-//       onSettled: () => {
-//         queryClient.invalidateQueries(['GetContactActivities', { id: contactId }])
-//       },
-//     })
-  
-//     return (
-//       <>
-//         {!currentUser || isLoading ? (
-//           <Loader />
-//         ) : (
-//           <>
-//             <Heading size="md" mb="8">
-//               Activity
-//             </Heading>
-//             <ActivityTimeline
-//               activities={(data?.activities || []) as Activities}
-//               currentUser={currentUser}
-//               onAddComment={async (data) => {
-//                 return addMutation.mutate({
-//                   contactId,
-//                   comment: data.comment,
-//                 })
-//               }}
-//               onDeleteComment={async (id) => {
-//                 return deleteMutation.mutate({
-//                   id: id as string,
-//                 })
-//               }}
-//             />
-//           </>
-//         )}
-//       </>
-//     )
-//   }
-
-
