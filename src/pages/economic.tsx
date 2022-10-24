@@ -1,4 +1,4 @@
-import { Box, Button, Center, Container, Flex, Heading, Link, List, ListIcon, ListItem, SimpleGrid, Stack, Tag, Text, useColorMode, VStack, Wrap } from '@chakra-ui/react'
+import { Box, Button, Center, Container, Flex, Heading, Icon, Link, List, ListIcon, ListItem, SimpleGrid, Stack, Tag, Text, useBreakpointValue, useColorMode, VStack, Wrap } from '@chakra-ui/react'
 import { ResizeBox, Section, SectionTitle } from '@saas-ui/pro'
 import { Br, Card, CardBody } from '@saas-ui/react'
 import { NextPage } from 'next'
@@ -21,8 +21,10 @@ import router from 'next/router'
 import EconomicOptions from '../components/landing-page/ikea/InvoiceOptions'
 import { SetStateAction } from 'react'
 import { FallInPlace } from '../components/landing-page/motion/fall-in-place'
+import { IoIosArrowDown, IoIosArrowForward } from 'react-icons/io'
 
 const EconomicPage: NextPage = () => {
+  const isMobile = useBreakpointValue({ base: true, md: false });
   const { toggleColorMode, colorMode } = useColorMode()
 
   return (
@@ -58,7 +60,7 @@ const EconomicPage: NextPage = () => {
               </FallInPlace>
 
               <Highlights p='0'>
-                <HighlightsItem colSpan={[1, null, 2]} title="Billpilot Integrations for E-conomic">
+                <HighlightsItem colSpan={[1, null, 3]} title="E-conomic Solution">
                   <Text>
                     If you use {' '}
                     <Link color='blue.500' href="https://www.e-conomic.com/">
@@ -70,7 +72,7 @@ const EconomicPage: NextPage = () => {
                     issue invoices, and export these invoices back to E-Conomic.
                   </Text>
                 </HighlightsItem>
-                <HighlightsItem colSpan={[1, null, 2]} title="E-conomic Features">
+                <HighlightsItem colSpan={[1, null, 2]} title="Features">
                   <List spacing={3}>
                     <ListItem>
                       <ListIcon as={IoCheckmarkCircle} color='primary.400' />
@@ -90,10 +92,15 @@ const EconomicPage: NextPage = () => {
                     </ListItem>
                   </List>
                 </HighlightsItem>
-                <HighlightsItem colSpan={[1, null, 2]} title="Billpilot Integrations for E-conomic">
-                  <Flex w='100%' justifyContent="center" gap={4} flexDir='row' alignItems="center" >
+                <HighlightsItem title="One Click Setup" colSpan={[1, null, 1]}>
+                  <Text color="muted" fontSize="lg">
+                    Integrate Billpilot and E-conomic with a simple one click login process. Sync afterwards to start Invoicing.
+                  </Text>
+                </HighlightsItem>
+                <HighlightsItem colSpan={[1, null, 3]} title="Billpilot Integrations for E-conomic" height="max">
+                  <Flex w='100%' justifyContent="center" gap={4} h={{ base: 60, md: 20}} flexDir={{ base: 'column', md: 'row'}} alignItems="center" >
 
-                    <Box width='26%'>
+                    <Box width={{ base: "100%", md: "26%"}} pt={{ base: "30pt", md: "0"}} >
                       <Swiper
                         // spaceBetween={30}
                         centeredSlides={true}
@@ -108,42 +115,43 @@ const EconomicPage: NextPage = () => {
                         modules={[Autoplay, Pagination, Navigation]}
                       >
                         <SwiperSlide >
-                          <Image
-                            src="static/images/integrationlogos/asana.png"
-                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : {}}
-                            alt='asana logo'
-                            width={200}
-                            height={40}
-                          />
+                          <Flex align='center' justifyContent='center'>
+                            <Image
+                              src="static/images/integrationlogos/asana.png"
+                              style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : {}}
+                              alt='asana logo'
+                              width={200}
+                              height={40}
+                            />
+                          </Flex>
                         </SwiperSlide>
                         <SwiperSlide>
-
-                          <Image
-                            src="static/images/integrationlogos/hubspot.png"
-                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : {}}
-                            alt='hubspot logo'
-                            width={150}
-                            height={40}
-                          />
-
+                          <Flex align='center' justifyContent='center'>
+                            <Image
+                              src="static/images/integrationlogos/hubspot.png"
+                              style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : {}}
+                              alt='hubspot logo'
+                              width={150}
+                              height={40}
+                            />
+                          </Flex>
                         </SwiperSlide>
+
                         <SwiperSlide>
-
-                          <Image
-                            src="static/images/integrationlogos/jira.png"
-                            style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : {}}
-                            alt='jira logo'
-                            width={300}
-                            height={40}
-                          />
-
+                          <Flex align='center' justifyContent='center'>
+                            <Image
+                              src="static/images/integrationlogos/jira.png"
+                              style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : {}}
+                              alt='jira logo'
+                              width={300}
+                              height={40}
+                            />
+                          </Flex>
                         </SwiperSlide>
                       </Swiper>
                     </Box>
 
-                    <Box >
-                      <FiArrowRight size='' />
-                    </Box>
+                    <Icon as={isMobile ? IoIosArrowDown : IoIosArrowForward} w={7} h={7}/>
                     <Flex align='center' justifyContent='center'>
                       <Flex flexDir='row' width="full" align='center'>
                         <Box as={siteConfig.logo} />
@@ -152,24 +160,19 @@ const EconomicPage: NextPage = () => {
                         </Text>
                       </Flex>
                     </Flex>
-                    <Box>
-                      <FiArrowRight size='' />
-                    </Box>
-                    <Flex align='center' justifyContent='center'>
+
+                    <Icon as={isMobile ? IoIosArrowDown : IoIosArrowForward} w={7} h={7}/>
+
+                    <Flex align='center' justifyContent='center' width={{ base: "100%", md: "26%"}}>
                       <Image
                         src="static/images/integrationlogos/economic.png"
-                        style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : {}}
+                        style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', minWidth: '400px' } : {minWidth: '400px'}}
                         alt='economic logo'
-                        width={150}
-                        height={33}
+                        width={300}
+                        height={66}
                       />
                     </Flex>
                   </Flex>
-                </HighlightsItem>
-                <HighlightsItem title="One Click Setup">
-                  <Text color="muted" fontSize="lg">
-                    Integrate Billpilot and E-conomic with a simple one click login process. Sync afterwards to start Invoicing.
-                  </Text>
                 </HighlightsItem>
               </Highlights>
 
