@@ -185,7 +185,6 @@ model InvoiceTemplate {
   // Fields
   filters InvoiceTemplateFilter[]
   invoiceTemplateFixedPriceTimeItems InvoiceTemplateFixedPriceTimeItem[]
-  taxes InvoiceTemplateTax[]
 }
 
 enum InvoiceTemplateFilterTypes {
@@ -199,29 +198,14 @@ model InvoiceTemplateFilter {
   filterId String
   type InvoiceTemplateFilterTypes
 
-  taxes InvoiceTemplateTax[]
-
   invoiceTemplateId String
   invoiceTemplate InvoiceTemplate @relation(fields: [invoiceTemplateId], references: [id], onDelete: Cascade)
 }
 
 model InvoiceTemplateFixedPriceTimeItem {
   id String @id @default(cuid())
-
-  taxes InvoiceTemplateTax[]
-
-  invoiceTemplateId String
-  invoiceTemplate InvoiceTemplate @relation(fields: [invoiceTemplateId], references: [id], onDelete: Cascade)
-}
-
-model InvoiceTemplateTax {
-  id String @id @default(cuid())
-
-  invoiceTemplateFilterId String
-  invoiceTemplateFilter InvoiceTemplateFilter @relation(fields: [invoiceTemplateFilterId], references: [id], onDelete: Cascade)
-
-  invoiceTemplateFixedPriceTimeItemId String
-  invoiceTemplateFixedPriceTimeItem InvoiceTemplateFixedPriceTimeItem @relation(fields: [invoiceTemplateFixedPriceTimeItemId], references: [id], onDelete: Cascade)
+  name String
+  amount Decimal
 
   invoiceTemplateId String
   invoiceTemplate InvoiceTemplate @relation(fields: [invoiceTemplateId], references: [id], onDelete: Cascade)

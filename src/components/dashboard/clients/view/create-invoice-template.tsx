@@ -1,9 +1,10 @@
 import { AddIcon, CloseIcon, MinusIcon } from '@chakra-ui/icons'
-import { Badge, Button, Checkbox, Flex, FormControl, FormErrorMessage, FormLabel, Heading, HStack, Icon, IconButton, Input, InputGroup, InputLeftAddon, InputRightAddon, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, Stack, Text, Wrap } from '@chakra-ui/react'
-import { Card, CardBody, Divider, Select, useFieldArray, useForm } from '@saas-ui/react'
+import { Badge, Button, Select, Checkbox, Flex, FormControl, FormErrorMessage, FormLabel, Heading, HStack, Icon, IconButton, Input, InputGroup, InputLeftAddon, InputRightAddon, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, Stack, Text, Wrap } from '@chakra-ui/react'
+import { InvoiceTemplateFilterTypes } from '@prisma/client'
+import { Card, CardBody, Divider, useFieldArray, useForm, useSnackbar } from '@saas-ui/react'
+import { useRouter } from 'next/router'
 import * as React from 'react'
 import { FaFileInvoiceDollar } from 'react-icons/fa'
-import { HiReceiptTax } from "react-icons/hi"
 import { trpc } from '../../../../utils/trpc'
 import { Filters } from './filters'
 
@@ -12,28 +13,24 @@ interface Props {
 }
 
 export interface InvoiceTemplateForm {
-    applyTaxToItems: boolean,
-    taxName: string,
-    taxAmount: number,
+    active: string,
     fixedPriceTimeItems: {
         name: string,
         amount: number,
-        applyTax: boolean
     }[],
 }
 
 export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
-    const [activated, setActivated] = React.useState(false)
-    const [showTax1, setShowTax1] = React.useState(false)
-    const [filters, setFilters] = React.useState<{ id: string, name: string, type: string }[]>([])
+    const [filters, setFilters] = React.useState<{ id: string, name: string, type: string, provider: InvoiceTemplateFilterTypes }[]>([])
+
+    const router = useRouter()
+    const snackbar = useSnackbar()
 
     const fixedPriceTimeItemsForm = useForm<InvoiceTemplateForm>({
         reValidateMode: "onSubmit",
         defaultValues: {
-            applyTaxToItems: false,
-            taxName: "",
-            taxAmount: 0,
-            fixedPriceTimeItems: [{ name: '', amount: 0, applyTax: false }],
+            active: "active",
+            fixedPriceTimeItems: [{ name: '', amount: 0 }],
         },
     });
 
@@ -59,7 +56,22 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
     const { errors } = formState;
 
     async function onSubmit(data: InvoiceTemplateForm) {
-        createInvoiceTemplate.mutate({ ...data, filters: filters })
+        const active = data.active === "active" ? true : false
+
+        const clientId = router.query?.id as string
+        if (!clientId) {
+            snackbar({
+                title: 'Invoice template could not be created',
+                description: 'Client id was not found',
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            })
+
+            return
+        }
+
+        createInvoiceTemplate.mutate({ ...data, clientId: clientId, active: active, filters: filters })
     }
 
     const removeFilter = (id: string) => {
@@ -73,14 +85,11 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
                     <Flex justifyContent="end">
                         <Flex justifyContent="space-between" gap={4}>
                             <Select
-                                value={activated ? "Activated" : "Inactive"}
-                                onChange={(value: string | string[]) => setActivated(value === "Activated" ? true : false)}
-                                name="activated"
-                                placeholder="Activated"
-                                options={[
-                                    { label: 'Active', value: 'active' },
-                                    { label: 'Inactive', value: 'inactive' },
-                                ]} />
+                                id="active"
+                                {...register(`active`)}>
+                                <option key="Active" value="active">Active</option>
+                                <option key="Inactive" value="inactive">Inactive</option>
+                            </ Select>
                             <Button type='submit' colorScheme="primary" h="full">Save</Button>
                         </Flex>
                     </Flex>
@@ -96,7 +105,7 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
                                         {filters.length > 0
                                             ? <>
                                                 <Divider orientation="horizontal" label="Filters" />
-                                                <Flex justifyContent="space-between">
+                                                <Flex justifyContent="start">
                                                     <Wrap>
                                                         {
                                                             filters.map(filter => {
@@ -124,21 +133,7 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
                                                             })
                                                         }
                                                     </Wrap>
-                                                    <Stack>
-                                                        <FormLabel whiteSpace="nowrap" m={0} fontSize="sm" htmlFor={`applyTaxToItems`}>Apply tax</FormLabel>
-                                                        <Flex h="full" gap={4} alignItems="center">
-                                                            <Checkbox
-                                                                id='applyTaxToItems'
-                                                                type="checkbox"
-                                                                variant="filled"
-                                                                {...register(`applyTaxToItems`)}
-                                                            />
-                                                            <Icon h={7} w={7} as={HiReceiptTax} />
-                                                        </Flex>
-                                                    </Stack>
                                                 </Flex>
-
-
                                             </>
                                             : null}
                                         <Filters filters={filters} setFilters={setFilters} />
@@ -209,18 +204,6 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
                                                                         </FormErrorMessage>
                                                                     </Flex>
                                                                 </FormControl>
-                                                                <Stack>
-                                                                    <FormLabel whiteSpace="nowrap" m={0} fontSize="sm" htmlFor={`exportToEconomic`}>Apply tax</FormLabel>
-                                                                    <Flex h="full" gap={4} alignItems="center">
-                                                                        <Checkbox
-                                                                            id='applyTax'
-                                                                            type="checkbox"
-                                                                            variant="filled"
-                                                                            {...register(`fixedPriceTimeItems.${index}.applyTax`)}
-                                                                        />
-                                                                        <Icon h={7} w={7} as={HiReceiptTax} />
-                                                                    </Flex>
-                                                                </Stack>
                                                             </Flex>
                                                         </Flex>
                                                     </Stack>
@@ -232,86 +215,7 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
                                             fields.length < 5
                                                 ? <>
                                                     <Flex justifyContent="start">
-                                                        <Button onClick={() => append({ name: '', amount: 0, applyTax: false })} leftIcon={<AddIcon />} colorScheme='primary'>
-                                                            Add item
-                                                        </Button>
-                                                    </Flex>
-                                                </>
-                                                : null
-                                        }
-                                    </Stack>
-                                </CardBody>
-                            </Card>
-                        </Stack>
-
-                        <Stack>
-                            <Flex justifyContent="start">
-                                <Heading color="primary" size="md">Taxes</Heading>
-                            </Flex>
-                            <Card>
-                                <CardBody>
-                                    <Stack gap={2}>
-                                        {
-                                            showTax1
-                                                ? <Flex gap={4} justifyContent="space-between">
-                                                    <FormControl isInvalid={!!errors.taxAmount}>
-                                                        <Flex alignItems="end" gap={4}>
-                                                            <IconButton mb={0.5} aria-label='Remove VAT' icon={<MinusIcon />} onClick={() => setShowTax1(false)} />
-                                                            <Icon mb={2} h={6} w={6} as={HiReceiptTax} />
-                                                            <Stack>
-                                                                <FormLabel m={0} fontSize="sm" htmlFor={`taxName`}>Tax</FormLabel>
-                                                                <Input
-                                                                    width="xs"
-                                                                    id='tax'
-                                                                    placeholder="VAT"
-                                                                    variant="filled"
-                                                                    {...register(`taxName`, {
-                                                                        required: 'Tax name is required',
-                                                                        disabled: !showTax1
-                                                                    })}
-                                                                />
-                                                            </Stack>
-                                                            <FormErrorMessage>
-                                                                {errors?.taxName?.message}
-                                                            </FormErrorMessage>
-                                                        </Flex>
-                                                    </FormControl>
-                                                    <Flex>
-                                                        <FormControl>
-                                                            <FormLabel fontSize="sm" htmlFor={`taxAmount`}>Amount</FormLabel>
-                                                            <Flex flexDirection="column">
-                                                                <InputGroup>
-                                                                    <NumberInput
-                                                                        id='amount'
-                                                                        placeholder="Enter Amount"
-                                                                        variant="filled">
-                                                                        <NumberInputField {...register(`taxAmount`, {
-                                                                            valueAsNumber: true,
-                                                                            disabled: !showTax1,
-                                                                            required: 'Tax amount is required',
-                                                                            min: { value: 0, message: "Amount must be larger than 0" },
-                                                                        })} />
-                                                                        <NumberInputStepper>
-                                                                            <NumberIncrementStepper />
-                                                                            <NumberDecrementStepper />
-                                                                        </NumberInputStepper>
-                                                                    </NumberInput>
-                                                                    <InputRightAddon>%</InputRightAddon>
-                                                                </InputGroup>
-                                                                <FormErrorMessage>
-                                                                    {errors.taxAmount?.message}
-                                                                </FormErrorMessage>
-                                                            </Flex>
-                                                        </FormControl>
-                                                    </Flex>
-                                                </Flex>
-                                                : null
-                                        }
-                                        {
-                                            showTax1 === false
-                                                ? <>
-                                                    <Flex justifyContent="start">
-                                                        <Button onClick={() => setShowTax1(true)} leftIcon={<AddIcon />} colorScheme='primary'>
+                                                        <Button onClick={() => append({ name: '', amount: 0 })} leftIcon={<AddIcon />} colorScheme='primary'>
                                                             Add item
                                                         </Button>
                                                     </Flex>

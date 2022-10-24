@@ -1,3 +1,4 @@
+import { InvoiceTemplateFilterTypes } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createRouter } from "./context";
@@ -13,21 +14,50 @@ export const invoiceTemplatesRouter = createRouter()
   })
   .mutation("create", {
     input: z.object({
-      applyTaxToItems: z.boolean(),
-      taxName: z.string(),
-      taxAmount: z.number(),
+      clientId: z.string(),
+      active: z.boolean(),
       fixedPriceTimeItems: z.object({
         name: z.string(),
         amount: z.number(),
-        applyTax: z.boolean()
       }).array(),
       filters: z.object({
         id: z.string(),
         name: z.string(),
-        type: z.string()
+        type: z.string(),
+        provider: z.string()
       }).array()
     }),
     async resolve({ input, ctx }) {
-      
+      await ctx.prisma.invoiceTemplate.create({
+        data: {
+          active: input.active,
+          client: {
+            connect: {
+              id: input.clientId
+            }
+          },
+          filters: {
+            create: [
+              ...input.filters.map(x => {
+                return {
+                  filterId: x.id,
+                  name: x.name,
+                  type: <InvoiceTemplateFilterTypes>x.provider,
+                }
+              }),
+            ]
+          },
+          invoiceTemplateFixedPriceTimeItems: {
+            create: [
+              ...input.fixedPriceTimeItems.map(x => {
+                return {
+                  name: x.name,
+                  amount: x.amount,
+                }
+              }),
+            ]
+          },
+        },
+      });
     }
   });

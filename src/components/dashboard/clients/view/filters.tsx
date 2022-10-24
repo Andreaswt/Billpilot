@@ -1,5 +1,6 @@
 import { AddIcon } from '@chakra-ui/icons'
 import { Flex, Grid, GridItem, Heading, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverTrigger, Stack } from '@chakra-ui/react'
+import { InvoiceTemplateFilterTypes } from '@prisma/client'
 import { Button, Divider, Loader, SearchInput, useCollapse } from '@saas-ui/react'
 import React from 'react'
 import { trpc } from '../../../../utils/trpc'
@@ -8,12 +9,14 @@ interface Props {
     setFilters: React.Dispatch<React.SetStateAction<{
         id: string;
         name: string,
-        type: string;
+        type: string,
+        provider: InvoiceTemplateFilterTypes;
     }[]>>,
     filters: {
         id: string;
         name: string;
         type: string;
+        provider: InvoiceTemplateFilterTypes;
     }[]
 }
 
@@ -22,14 +25,14 @@ export const Filters: React.FC<Props> = (props) => {
     const [searchTerm, setSearchTerm] = React.useState('')
     const [currentType, setCurrentType] = React.useState('Projects')
 
-    const { data: projects, isLoading: projectsLoading, isRefetching: projectsRefetching, refetch: projectsRefetch } = trpc.useQuery([
+    const { data: jiraProjects, isLoading: jiraProjectsLoading, isRefetching: jiraProjectsRefetching, refetch: jiraProjectsRefetch } = trpc.useQuery([
         "jira.filterProjects",
         { searchTerm: searchTerm }],
         {
             refetchOnWindowFocus: false,
         });
 
-    const { data: employees, isLoading: employeesLoading, isRefetching: employeesRefetching, refetch: employeesRefetch } = trpc.useQuery(
+    const { data: jiraEmployees, isLoading: jiraEmployeesLoading, isRefetching: jiraEmployeesRefetching, refetch: jiraEmployeesRefetch } = trpc.useQuery(
         ["jira.filterEmployees",
             { searchTerm: searchTerm }],
         {
@@ -37,24 +40,24 @@ export const Filters: React.FC<Props> = (props) => {
             enabled: false,
         });
 
-    const { data: issues, isLoading: issuesLoading, isRefetching: issuesRefetching, refetch: issuesRefetch } = trpc.useQuery([
-        "jira.searchIssues",
-        { searchTerm: searchTerm }],
-        {
-            refetchOnWindowFocus: false,
-            enabled: false,
-        });
+    // const { data: issues, isLoading: issuesLoading, isRefetching: issuesRefetching, refetch: issuesRefetch } = trpc.useQuery([
+    //     "jira.searchIssues",
+    //     { searchTerm: searchTerm }],
+    //     {
+    //         refetchOnWindowFocus: false,
+    //         enabled: false,
+    //     });
 
-    const { data: epics, isLoading: epicsLoading, isRefetching: epicsRefetching, refetch: epicsRefetch } = trpc.useQuery([
-        "jira.searchEpics",
-        { searchTerm: searchTerm }],
-        {
-            refetchOnWindowFocus: false,
-            enabled: false,
-        });
+    // const { data: epics, isLoading: epicsLoading, isRefetching: epicsRefetching, refetch: epicsRefetch } = trpc.useQuery([
+    //     "jira.searchEpics",
+    //     { searchTerm: searchTerm }],
+    //     {
+    //         refetchOnWindowFocus: false,
+    //         enabled: false,
+    //     });
 
-    const addFilter = (id: string, name: string, type: string) => {
-        setFilters(prev => [...prev, { id: id, name: name, type: type }])
+    const addFilter = (id: string, name: string, type: string, provider: InvoiceTemplateFilterTypes) => {
+        setFilters(prev => [...prev, { id: id, name: name, type: type, provider: provider }])
     }
 
     const filter = (id: string) => {
@@ -80,8 +83,8 @@ export const Filters: React.FC<Props> = (props) => {
                                     <Stack>
                                         <Heading size="sm">Jira</Heading>
                                         <Divider />
-                                        <Button onClick={() => { setCurrentType("Projects"); projectsRefetch(); }} variant={currentType === "Projects" ? "solid" : "outline"}>Projects</Button>
-                                        <Button onClick={() => { setCurrentType("Employees"); employeesRefetch(); }} variant={currentType === "Employees" ? "solid" : "outline"}>Employees</Button>
+                                        <Button onClick={() => { setCurrentType("Projects"); jiraProjectsRefetch(); }} variant={currentType === "Projects" ? "solid" : "outline"}>Projects</Button>
+                                        <Button onClick={() => { setCurrentType("Employees"); jiraEmployeesRefetch(); }} variant={currentType === "Employees" ? "solid" : "outline"}>Employees</Button>
                                     </Stack>
                                 </Stack>
                             </GridItem>
@@ -97,21 +100,21 @@ export const Filters: React.FC<Props> = (props) => {
                                         <Heading size="sm">{currentType}</Heading>
                                         <Divider />
                                         {currentType === "Projects"
-                                            ? (projectsLoading || projectsRefetching || !projects
+                                            ? (jiraProjectsLoading || jiraProjectsRefetching || !jiraProjects
                                                 ? <Loader />
-                                                : projects.projectsResponse
+                                                : jiraProjects.projectsResponse
                                                     .filter(x => filter(x.id))
                                                     .map(x => {
-                                                        return (<Button key={x.id} onClick={() => addFilter(x.id, `${x.name} (${x.key})`, "Project")} colorScheme="primary">{x.name} ({x.key})</Button>)
+                                                        return (<Button key={x.id} onClick={() => addFilter(x.id, `${x.name} (${x.key})`, "Project", InvoiceTemplateFilterTypes.JIRAPROJECT)} colorScheme="primary">{x.name} ({x.key})</Button>)
                                                     }))
                                             : null}
                                         {currentType === "Employees"
-                                            ? (employeesLoading || employeesRefetching || !employees
+                                            ? (jiraEmployeesLoading || jiraEmployeesRefetching || !jiraEmployees
                                                 ? <Loader />
-                                                : employees.employeesResponse
+                                                : jiraEmployees.employeesResponse
                                                     .filter(x => filter(x.id))
                                                     .map(x => {
-                                                        return (<Button key={x.id} onClick={() => addFilter(x.id, x.name, "Employee")} colorScheme="primary">{x.name}</Button>)
+                                                        return (<Button key={x.id} onClick={() => addFilter(x.id, x.name, "Employee", InvoiceTemplateFilterTypes.JIRAEMPLOYEE)} colorScheme="primary">{x.name}</Button>)
                                                     }))
                                             : null}
                                     </Stack>
