@@ -12,6 +12,24 @@ export const invoiceTemplatesRouter = createRouter()
     }
     return next({ ctx: { ...ctx, organizationId } })
   })
+  .query("getInvoiceTemplates", {
+    input: z
+      .object({
+        clientId: z.string(),
+      }),
+    async resolve({ input, ctx }) {
+      return await ctx.prisma.invoiceTemplate.findMany({
+        where: {
+          organizationId: ctx.organizationId,
+          clientId: input.clientId,
+        },
+        include: {
+          filters: true,
+          invoiceTemplateFixedPriceTimeItems: true
+        }
+      })
+    },
+  })
   .mutation("create", {
     input: z.object({
       clientId: z.string(),
@@ -30,11 +48,19 @@ export const invoiceTemplatesRouter = createRouter()
     async resolve({ input, ctx }) {
       await ctx.prisma.invoiceTemplate.create({
         data: {
+          organization: {
+            connect: {
+              id: ctx.organizationId
+            }
+          },
           active: input.active,
           client: {
             connect: {
-              id: input.clientId
-            }
+              organizationsClient: {
+                id: input.clientId,
+                organizationId: ctx.organizationId
+              }
+            },
           },
           filters: {
             create: [
@@ -43,6 +69,11 @@ export const invoiceTemplatesRouter = createRouter()
                   filterId: x.id,
                   name: x.name,
                   type: <InvoiceTemplateFilterTypes>x.provider,
+                  organization: {
+                    connect: {
+                      id: ctx.organizationId
+                    }
+                  }
                 }
               }),
             ]
@@ -53,11 +84,32 @@ export const invoiceTemplatesRouter = createRouter()
                 return {
                   name: x.name,
                   amount: x.amount,
+                  organization: {
+                    connect: {
+                      id: ctx.organizationId
+                    }
+                  }
                 }
               }),
             ]
           },
         },
       });
+    }
+  })
+  .mutation("changeActiveStatus", {
+    input: z.object({
+      invoiceTemplateId: z.string(),
+      active: z.boolean()
+    }),
+    async resolve({ input, ctx }) {
+      await ctx.prisma.invoiceTemplate.update({
+        where: {
+          id: input.invoiceTemplateId,
+        },
+        data: {
+          active: !input.active
+        }
+      })
     }
   });

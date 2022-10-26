@@ -1,47 +1,100 @@
-import { Box, Button, Progress, Text } from '@chakra-ui/react'
-import { Card, CardBody, Property, PropertyList } from '@saas-ui/react'
-import * as React from 'react'
+import { Badge, Box, Button, Flex, HStack, Stack, Text, Wrap } from '@chakra-ui/react';
+import { Currency, InvoiceTemplateFilterTypes } from '@prisma/client';
+import { Card, CardBody, Loader, Property, PropertyList } from '@saas-ui/react';
+import * as React from 'react';
+import { formatCurrency } from '../../../../../lib/helpers/currency';
+import { trpc } from '../../../../utils/trpc';
 
 interface Props {
-
+    clientId: string
+    currency?: Currency
 }
 
 export const InvoiceTemplates: React.FC<Props> = (props) => {
+    const { clientId, currency } = props
+
+    const utils = trpc.useContext();
+    const { data, isLoading } = trpc.useQuery(["invoiceTemplates.getInvoiceTemplates", { clientId: clientId }], {
+        refetchOnWindowFocus: false,
+    });
+    const activationMutation = trpc.useMutation('invoiceTemplates.changeActiveStatus', {
+        onSuccess() {
+            utils.invalidateQueries(['invoiceTemplates.getInvoiceTemplates'])
+        }
+    });
+
+    if (isLoading || !data || !currency) {
+        return (<Loader />)
+    }
 
     return (
-        <Card
-            title="Invoice template"
-            action={
-                <Button colorScheme="green" variant="solid">
-                    Active
-                </Button>
+        <Stack gap={4}>
+            {
+                data.map(x => {
+                    return (
+                        <Card
+                            key={x.id}
+                            title="Invoice template"
+                            action={
+                                <Button onClick={() => activationMutation.mutate({ invoiceTemplateId: x.id, active: x.active })} colorScheme={x.active ? "red" : "green"} variant="solid">
+                                    {x.active ? "Deactivate" : "Activate"}
+                                </Button>
+                            }>
+                            <CardBody>
+                                <PropertyList>
+                                    <Property
+                                        label="Filters"
+                                        value={
+                                            <Box flex="1">
+                                                <Wrap>
+                                                    {
+                                                        x.filters.map(filter => {
+                                                            let color = "green"
+                                                            switch (filter.type) {
+                                                                case InvoiceTemplateFilterTypes.JIRAPROJECT:
+                                                                    color = "green"
+                                                                    break;
+                                                                case InvoiceTemplateFilterTypes.JIRAEMPLOYEE:
+                                                                    color = "red"
+                                                                    break;
+                                                            }
+
+                                                            return (
+                                                                <Card key={filter.id}>
+                                                                    <CardBody p={2}>
+                                                                        <HStack>
+                                                                            <Badge colorScheme={color}>{filter.type}</Badge>
+                                                                            <Text fontSize='xs'>{filter.name}</Text>
+                                                                        </HStack>
+                                                                    </CardBody>
+                                                                </Card>
+                                                            )
+                                                        })
+                                                    }
+                                                </Wrap>
+                                            </Box>
+                                        }
+                                    />
+                                    <Property label="Fixed price time items" value={
+                                        <Stack my={x.invoiceTemplateFixedPriceTimeItems.length > 1 ? 4 : 0}>
+                                            {
+                                                x.invoiceTemplateFixedPriceTimeItems.map(item => {
+                                                    return (
+                                                        <Flex key={item.id} gap={4} justifyContent="space-between">
+                                                            <Text>{item.name}:</Text><Text>{formatCurrency(Number(item.amount), currency)}</Text>
+                                                        </Flex>
+                                                    )
+                                                })
+                                            }
+                                        </Stack>
+                                    } />
+                                    <Property label="Created at" value={x.createdAt.toUTCString()} />
+                                </PropertyList>
+                            </CardBody>
+                        </Card>
+                    )
+                })
             }
-        >
-            <CardBody>
-                <PropertyList>
-                    <Property
-                        label="Billing plan"
-                        value={<Text fontWeight="bold">Professional</Text>}
-                    />
-                    <Property label="Billing period" value="Yearly" />
-                    <Property label="Renewal date" value="01-01-2023" />
-                    <Property
-                        label="Users"
-                        value={
-                            <Box flex="1">
-                                <Text fontSize="sm">20/100</Text>{' '}
-                                <Progress
-                                    value={20}
-                                    size="xs"
-                                    colorScheme="primary"
-                                    borderRadius="full"
-                                />
-                            </Box>
-                        }
-                    />
-                    <Property label="Price" value="€1250,-" />
-                </PropertyList>
-            </CardBody>
-        </Card>
+        </Stack >
     )
 }

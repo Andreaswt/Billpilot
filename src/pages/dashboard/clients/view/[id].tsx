@@ -68,18 +68,17 @@ const View: NextPage = () => {
               >
                 <TabPanel>
                   <ErrorBoundary>
-                    
                     Invoices
                   </ErrorBoundary>
                 </TabPanel>
                 <TabPanel>
                   <ErrorBoundary>
-                    <InvoiceTemplates />
+                    <InvoiceTemplates currency={data?.currency} clientId={clientId} />
                   </ErrorBoundary>
                 </TabPanel>
                 <TabPanel>
                   <ErrorBoundary>
-                  <CreateInvoiceTemplate changeTabs={handleTabsChange} />
+                  <CreateInvoiceTemplate currency={data?.currency} changeTabs={handleTabsChange} />
                   </ErrorBoundary>
                 </TabPanel>
               </TabPanels>

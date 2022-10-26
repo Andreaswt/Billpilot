@@ -1,6 +1,6 @@
 import { AddIcon, CloseIcon, MinusIcon } from '@chakra-ui/icons'
 import { Badge, Button, Select, Checkbox, Flex, FormControl, FormErrorMessage, FormLabel, Heading, HStack, Icon, IconButton, Input, InputGroup, InputLeftAddon, InputRightAddon, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, Stack, Text, Wrap } from '@chakra-ui/react'
-import { InvoiceTemplateFilterTypes } from '@prisma/client'
+import { Currency, InvoiceTemplateFilterTypes } from '@prisma/client'
 import { Card, CardBody, Divider, useFieldArray, useForm, useSnackbar } from '@saas-ui/react'
 import { useRouter } from 'next/router'
 import * as React from 'react'
@@ -10,6 +10,7 @@ import { Filters } from './filters'
 
 interface Props {
     changeTabs(index: number): void
+    currency?: Currency
 }
 
 export interface InvoiceTemplateForm {
@@ -182,7 +183,7 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
                                                                     <FormLabel fontSize="sm" htmlFor={`timeItems.${index}.amount`}>Amount</FormLabel>
                                                                     <Flex flexDirection="column">
                                                                         <InputGroup>
-                                                                            <InputLeftAddon>USD</InputLeftAddon>
+                                                                            <InputLeftAddon>{props.currency}</InputLeftAddon>
                                                                             <NumberInput
                                                                                 id='amount'
                                                                                 placeholder="Enter Amount"

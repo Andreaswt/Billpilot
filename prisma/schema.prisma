@@ -33,6 +33,11 @@ model Organization {
     generalInvoices GeneralInvoice[]
     economicInvoiceOptions EconomicInvoiceOptions[]
     invoiceLines InvoiceLine[]
+
+    // Invoice templates
+    invoiceTemplates InvoiceTemplate[]
+    invoiceTemplateFilters InvoiceTemplateFilter[]
+    invoiceTemplateFixedPriceTimeItem InvoiceTemplateFixedPriceTimeItem[]
 }
 
 enum ApiKeyProvider {
@@ -179,12 +184,16 @@ model InvoiceTemplate {
   id String @id @default(cuid())
   clientId String
   client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
 
   active Boolean
 
   // Fields
   filters InvoiceTemplateFilter[]
   invoiceTemplateFixedPriceTimeItems InvoiceTemplateFixedPriceTimeItem[]
+
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 enum InvoiceTemplateFilterTypes {
@@ -200,6 +209,9 @@ model InvoiceTemplateFilter {
 
   invoiceTemplateId String
   invoiceTemplate InvoiceTemplate @relation(fields: [invoiceTemplateId], references: [id], onDelete: Cascade)
+
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model InvoiceTemplateFixedPriceTimeItem {
@@ -209,6 +221,9 @@ model InvoiceTemplateFixedPriceTimeItem {
 
   invoiceTemplateId String
   invoiceTemplate InvoiceTemplate @relation(fields: [invoiceTemplateId], references: [id], onDelete: Cascade)
+
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 
