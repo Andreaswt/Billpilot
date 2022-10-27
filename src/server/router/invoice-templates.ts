@@ -114,4 +114,38 @@ export const invoiceTemplatesRouter = createRouter()
         }
       })
     }
+  })
+  .query("getAll", {
+    async resolve({ ctx }) {
+      return await ctx.prisma.client.findMany({
+        where: {
+          organizationId: ctx.organizationId,
+        },
+        include: {
+          invoiceTemplates: true
+        }
+      })
+      // return await ctx.prisma.invoiceTemplate.findMany({
+      //   where: {
+      //     organizationId: ctx.organizationId,
+      //   },
+      //   include: {
+      //     client: {
+      //       select: {
+      //         name: true
+      //       }
+      //     }
+      //   }
+      // })
+    }
+  })
+  .mutation("generateInvoices", {
+    input: z.object({
+      dateFrom: z.string(),
+      dateTo: z.boolean(),
+      invoiceTemplateIds: z.string().array()
+    }),
+    async resolve({ input, ctx }) {
+      
+    }
   });
