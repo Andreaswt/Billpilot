@@ -33,6 +33,7 @@ export const invoiceTemplatesRouter = createRouter()
   .mutation("create", {
     input: z.object({
       clientId: z.string(),
+      title: z.string(),
       active: z.boolean(),
       fixedPriceTimeItems: z.object({
         name: z.string(),
@@ -53,6 +54,7 @@ export const invoiceTemplatesRouter = createRouter()
               id: ctx.organizationId
             }
           },
+          title: input.title,
           active: input.active,
           client: {
             connect: {

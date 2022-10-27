@@ -1,7 +1,7 @@
 import { AddIcon, CloseIcon, MinusIcon } from '@chakra-ui/icons'
 import { Badge, Button, Select, Checkbox, Flex, FormControl, FormErrorMessage, FormLabel, Heading, HStack, Icon, IconButton, Input, InputGroup, InputLeftAddon, InputRightAddon, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, Stack, Text, Wrap } from '@chakra-ui/react'
 import { Currency, InvoiceTemplateFilterTypes } from '@prisma/client'
-import { Card, CardBody, Divider, useFieldArray, useForm, useSnackbar } from '@saas-ui/react'
+import { Card, CardBody, Divider, useFieldArray, useForm, useSnackbar, FormLayout } from '@saas-ui/react'
 import { useRouter } from 'next/router'
 import * as React from 'react'
 import { FaFileInvoiceDollar } from 'react-icons/fa'
@@ -14,6 +14,7 @@ interface Props {
 }
 
 export interface InvoiceTemplateForm {
+    title: string,
     active: string,
     fixedPriceTimeItems: {
         name: string,
@@ -30,6 +31,7 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
     const fixedPriceTimeItemsForm = useForm<InvoiceTemplateForm>({
         reValidateMode: "onSubmit",
         defaultValues: {
+            title: "",
             active: "active",
             fixedPriceTimeItems: [{ name: '', amount: 0 }],
         },
@@ -83,7 +85,30 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
         <>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Stack gap={4}>
-                    <Flex justifyContent="end">
+                    <Flex justifyContent="space-between">
+                        <FormLayout>
+                            <Stack>
+                                <Heading color="primary" size="md">Title</Heading>
+                                <FormControl isInvalid={!!errors.title}>
+                                    <Flex flexDirection="column">
+                                        <Input
+                                            width="md"
+                                            id='title'
+                                            placeholder="Enter title"
+                                            variant="filled"
+                                            {...register(`title`, {
+                                                required: 'Title is required',
+                                            })}
+                                        />
+                                        <FormErrorMessage>
+                                            {errors.title?.message}
+                                        </FormErrorMessage>
+                                    </Flex>
+                                </FormControl>
+                            </Stack>
+                        </FormLayout>
+
+
                         <Flex justifyContent="space-between" gap={4}>
                             <Select
                                 id="active"
@@ -91,7 +116,7 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
                                 <option key="Active" value="active">Active</option>
                                 <option key="Inactive" value="inactive">Inactive</option>
                             </ Select>
-                            <Button type='submit' colorScheme="primary" h="full">Save</Button>
+                            <Button type='submit' colorScheme="primary">Save</Button>
                         </Flex>
                     </Flex>
 

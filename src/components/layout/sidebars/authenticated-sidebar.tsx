@@ -86,6 +86,11 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
               />
             </NavGroup>
             <NavGroup title="Create Invoice From" isCollapsible>
+            <AppSidebarLink
+                href={"/dashboard/generator"}
+                label="Invoice Generator"
+                icon={<AiFillFileAdd />}
+              />
               <AppSidebarLink
                 href={"/dashboard/invoicejiraissues"}
                 label="Jira"

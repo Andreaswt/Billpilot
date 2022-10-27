@@ -1,21 +1,19 @@
+import { AddIcon } from '@chakra-ui/icons';
 import { HStack, Icon, Tab, TabList, TabPanel, TabPanels, Tabs, useDisclosure } from '@chakra-ui/react';
 import { Page } from '@saas-ui/pro';
 import { ErrorBoundary } from '@saas-ui/react';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { ClientSidebar } from '../../../../components/dashboard/clients/view/client-sidebar';
-import { Breadcrumbs } from '../../../../components/dashboard/shared/breadcrumbs';
-import { usePath } from '../../../../hooks/landing-page/use-path';
-import { trpc } from '../../../../utils/trpc';
-import { AddIcon, CloseIcon } from '@chakra-ui/icons'
-import { CreateInvoiceTemplate } from '../../../../components/dashboard/clients/view/create-invoice-template';
 import { useState } from 'react';
+import { ClientSidebar } from '../../../../components/dashboard/clients/view/client-sidebar';
+import { CreateInvoiceTemplate } from '../../../../components/dashboard/clients/view/create-invoice-template';
 import { InvoiceTemplates } from '../../../../components/dashboard/clients/view/invoice-templates';
+import { Breadcrumbs } from '../../../../components/dashboard/shared/breadcrumbs';
+import { trpc } from '../../../../utils/trpc';
 
 const View: NextPage = () => {
     const router = useRouter()
     const clientId = router.query?.id as string
-    if (!clientId) router.push("/404")
 
     const { data, isLoading } = trpc.useQuery(["clients.getReadableClient", { id: clientId }], {
         refetchOnWindowFocus: false,
@@ -28,7 +26,7 @@ const View: NextPage = () => {
       const breadcrumbs = (
         <Breadcrumbs
           items={[
-            { href: usePath('/dashboard/clients'), title: 'Clients' },
+            { href: '/dashboard/clients', title: 'Clients' },
             { title: data?.name },
           ]}
         />

@@ -186,6 +186,7 @@ model InvoiceTemplate {
   client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now())
 
+  title String
   active Boolean
 
   // Fields

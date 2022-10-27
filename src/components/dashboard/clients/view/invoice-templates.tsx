@@ -34,7 +34,7 @@ export const InvoiceTemplates: React.FC<Props> = (props) => {
                     return (
                         <Card
                             key={x.id}
-                            title="Invoice template"
+                            title={x.title}
                             action={
                                 <Button onClick={() => activationMutation.mutate({ invoiceTemplateId: x.id, active: x.active })} colorScheme={x.active ? "red" : "green"} variant="solid">
                                     {x.active ? "Deactivate" : "Activate"}
