@@ -1,9 +1,13 @@
-import { Flex, Link, SimpleGrid, Stack, Text, useColorMode } from '@chakra-ui/react'
-import { Metric } from './new-metric'
-
+import { Flex, Link, SimpleGrid, Spinner, Text } from '@chakra-ui/react'
+import { useSnackbar } from '@saas-ui/react'
 import React from 'react'
 import { IconType } from 'react-icons'
+import { trpc } from '../../utils/trpc'
+import { Metric } from './new-metric'
+import ReactTimeAgo from 'react-time-ago'
+
 interface Props {
+  lastUpdated: Date,
   data: {
     label: string,
     icon: IconType,
@@ -13,7 +17,28 @@ interface Props {
 }
 
 export const Today: React.FunctionComponent<Props> = (props) => {
-  const { data } = props;
+  const { data, lastUpdated } = props;
+
+  const utils = trpc.useContext();
+  const snackbar = useSnackbar()
+
+  const rebuildReport = trpc.useMutation('dashboard.rebuildReport', {
+    onSuccess() {
+      utils.invalidateQueries(['dashboard.getDashboard']);
+      snackbar({
+        title: "Report rebuilt successfully",
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      })
+    }
+  });
+
+
+  const handleRebuildReport = () => {
+    rebuildReport.mutateAsync();
+  }
+
 
   return (
     <>
@@ -24,8 +49,14 @@ export const Today: React.FunctionComponent<Props> = (props) => {
           </React.Fragment>
         ))}
         <Flex flexDir="column" alignItems="end" justifyContent="start" gap={1}>
-            <Text fontSize="sm">This report was built 5 minutes ago.</Text>
-            <Link color='blue.400' fontSize="sm" onClick={() => console.log("rebuilding")}>Rebuild Report</Link>
+          {rebuildReport.isLoading ? (
+            <Spinner color='brand.800' />
+          ) : (
+            <>
+              <Text fontSize="sm">This report was built <ReactTimeAgo date={lastUpdated} />.</Text>
+              <Link color='blue.400' fontSize="sm" onClick={handleRebuildReport}>Rebuild Report</Link>
+            </>
+          )}
         </Flex>
       </SimpleGrid>
     </>

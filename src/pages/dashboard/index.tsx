@@ -15,6 +15,8 @@ import {
 } from '@saas-ui/pro';
 import RevenueChart from "../../components/dashboard/RevenueChart";
 import { trpc } from "../../utils/trpc";
+import { useEffect } from "react";
+import { useSnackbar } from "@saas-ui/react";
 
 export const getServerSideProps = requireAuth(async (ctx) => {
   return { props: {} };
@@ -46,8 +48,23 @@ const SimpleCard: NextPage = () => {
     </Toolbar>
   )
 
-  const { data, isLoading } = trpc.useQuery(["dashboard.getDashboard"], {
+  const { data, isLoading, isError } = trpc.useQuery(["dashboard.getDashboard"], {
     refetchOnWindowFocus: false,
+  });
+
+  const utils = trpc.useContext();
+  const snackbar = useSnackbar()
+  
+  const rebuildReport = trpc.useMutation('dashboard.rebuildReport', {
+    onSuccess() {
+      utils.invalidateQueries(['dashboard.getDashboard']);
+      snackbar({
+        title: "Report rebuilt successfully",
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+    })
+    }
   });
 
   const todayData = [
@@ -69,6 +86,12 @@ const SimpleCard: NextPage = () => {
       value: data?.uninvoicedTime || "",
     },
   ]
+
+  useEffect(() => {
+    if (isError && !rebuildReport.isLoading) {
+      rebuildReport.mutate();
+    }
+  }, [isError, rebuildReport.isLoading])
 
   return (
     <Page title={"Dashboard"} isLoading={isLoading}>
@@ -102,7 +125,7 @@ const SimpleCard: NextPage = () => {
                 p="4"
               >
                 <GridItem>
-                  <Today data={todayData} />
+                  <Today data={todayData} lastUpdated={data.updatedAt} />
                 </GridItem>
                 <GridItem>
                   <RevenueChart recentInvoices={data.recentInvoices} />

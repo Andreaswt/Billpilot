@@ -10,7 +10,6 @@ interface Data {
   name: string
   billed: number
   notBilled: number
-  latestBill: string
 }
 
 const getPercentage = (value1: number, value2: number) => {

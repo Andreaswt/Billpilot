@@ -11,6 +11,10 @@ import type { AppType } from "next/app";
 import type { AppRouter } from "../server/router";
 import type { Session } from "next-auth";
 import '@fontsource/inter/variable.css'
+import TimeAgo from 'javascript-time-ago'
+import en from 'javascript-time-ago/locale/en.json'
+
+TimeAgo.addDefaultLocale(en)
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,

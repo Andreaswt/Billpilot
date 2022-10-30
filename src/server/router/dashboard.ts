@@ -1,10 +1,33 @@
-import { ApiKeyProvider, Currency } from "@prisma/client";
+import { Currency } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { createRouter } from "./context";
-import { z } from "zod";
-import { transformDocument } from "@prisma/client/runtime";
-import { TbCurrencyRupee, TbTemperatureMinus } from "react-icons/tb";
-import { ClientSidebar } from "../../components/dashboard/clients/view/client-sidebar";
+import * as z from 'zod'
+
+
+interface DashboardReport {
+    month: string
+    year: number
+    totalHoursBilled: string
+    totalHoursBilledChange: number
+    totalBillableHours: string
+    totalBillableHoursChange: number
+    uninvoicedTime: string
+    recentInvoices: {
+        id: string
+        title: string
+        invoicedDates: string
+        total: string
+    }[]
+    clients: {
+        id: string;
+        name: string;
+        currency: Currency;
+        billed: number;
+        notBilled: number;
+    }[]
+}
+
+
 
 export const dashboardRouter = createRouter()
     .middleware(async ({ ctx, next }) => {
@@ -17,16 +40,56 @@ export const dashboardRouter = createRouter()
     })
     .query("getDashboard", {
         async resolve({ ctx }) {
-            const apiKeys = await ctx.prisma.apiKey.findMany({
+            const dashboardReport = await ctx.prisma.dashboardIndex.findUniqueOrThrow({
                 where: {
-                    organizationId: ctx.organizationId,
-                },
-                select: {
-                    provider: true,
-                    key: true
+                    organizationId: ctx.organizationId
                 }
             })
 
+            const dataReport = JSON.parse(dashboardReport.reportJson);
+
+            const dataReportSchema = z.object({
+                month: z.string(),
+                year: z.number(),
+                totalHoursBilled: z.string(),
+                totalHoursBilledChange: z.number(),
+                totalBillableHours: z.string(),
+                totalBillableHoursChange: z.number(),
+                uninvoicedTime: z.string(),
+                recentInvoices: z.array(z.object({
+                    id: z.string(),
+                    title: z.string(),
+                    invoicedDates: z.string(),
+                    total: z.string()
+                })),
+                clients: z.array(z.object({
+                    id: z.string(),
+                    name: z.string(),
+                    currency: z.nativeEnum(Currency),
+                    billed: z.number(),
+                    notBilled: z.number(),
+                }))
+            })
+
+            const dataReportParsed = dataReportSchema.safeParse(dataReport);
+
+            if (!dataReportParsed.success) {
+                return null;
+            }
+
+            const response = {
+                ...dataReportParsed.data,
+                updatedAt: dashboardReport.updatedAt
+            }
+
+            return response;
+
+        },
+    })
+
+    // TODO validate deserialized JSON against interface, and replace column contents with rebuild report if not valid
+    .mutation("rebuildReport", {
+        async resolve({ ctx }) {
             const today = new Date()
 
             const invoices = await ctx.prisma.generalInvoice.findMany({
@@ -67,18 +130,6 @@ export const dashboardRouter = createRouter()
                 }
             })
 
-            const recentInvoices = invoices.map(item => {
-                return {
-                    id: item.id,
-                    title: item.title,
-                    invoicedDates: item.invoicedFrom && item.invoicedTo ? item.invoicedFrom?.toDateString() + " - " + item.invoicedTo?.toDateString() : "-",
-                    total: "100 " + item.currency
-                }
-            });
-
-            let totalHoursBilled = 0;
-            let totalBillableHours = 0;
-
             interface IFinalClients {
                 [id: string]: {
                     name: string
@@ -88,7 +139,7 @@ export const dashboardRouter = createRouter()
                 }
             }
 
-            const finalClients : IFinalClients = {};
+            const finalClients: IFinalClients = {};
             clients.forEach((client) => {
                 finalClients[client.id] = {
                     ...client,
@@ -96,6 +147,10 @@ export const dashboardRouter = createRouter()
                     notBilled: 0
                 }
             })
+
+            let totalHoursBilled = 0;
+            let totalBillableHours = 0;
+            let totalBillableAmount = 0;
 
             invoices.forEach((invoice) => {
                 invoice.invoiceLines.forEach((line) => {
@@ -105,17 +160,28 @@ export const dashboardRouter = createRouter()
 
                     if (invoice.billed) {
                         totalHoursBilled += hours;
-                        finalClients[invoice.clientId].billed += billableAmount 
+                        finalClients[invoice.clientId].billed += billableAmount
                     } else {
                         finalClients[invoice.clientId].notBilled += billableAmount
                     }
+                    totalBillableAmount += billableAmount;
                     totalBillableHours += hours;
                 })
             });
 
+            const recentInvoices = invoices.slice(0, Math.min(invoices.length, 5)).map(item => {
+                return {
+                    id: item.id,
+                    title: item.title,
+                    invoicedDates: item.invoicedFrom && item.invoicedTo ? item.invoicedFrom?.toDateString() + " - " + item.invoicedTo?.toDateString() : "-",
+                    total: totalBillableAmount + item.currency
+                }
+            });
+
+
             const uninvoicedTime = totalBillableHours - totalHoursBilled;
 
-            const response = {
+            const response: DashboardReport = {
                 month: toMonthName(today.getMonth()),
                 year: today.getFullYear(),
                 totalHoursBilled: String(totalHoursBilled),
@@ -124,90 +190,28 @@ export const dashboardRouter = createRouter()
                 totalBillableHoursChange: 0,
                 uninvoicedTime: String(uninvoicedTime),
                 recentInvoices: recentInvoices,
-                clients: Object.keys(finalClients).map((clientId) => (finalClients[clientId])),
+                clients: Object.keys(finalClients).map((clientId) => ({ ...finalClients[clientId], id: clientId })),
             }
 
-            return response;
+            const dashboardDataStr = JSON.stringify(response);
 
-            // let thisMonth = await ctx.prisma.generalInvoice.findMany({
-            //     // where: {
-            //     //     // TODO: fetch invoices from this month only
-            //     //     issueDate: {
-            //     //         lte: new Date(),
-            //     //         gte: new Date(),
-            //     //     }
-            //     // },
-            //     select: {
-            //         invoiceLines: {
-            //             select: {
-            //                 hours: true,
-            //                 pricePerHour: true,
-            //                 updatedHoursSpent: true,
-            //                 discountPercentage: true,
-            //             }
-            //         }
-            //     },
-            // })
+            await ctx.prisma.dashboardIndex.upsert({
+                where: {
+                    organizationId: ctx.organizationId
+                },
+                update: {
+                    reportJson: dashboardDataStr,
+                },
+                create: {
+                    organizationId: ctx.organizationId,
+                    reportJson: dashboardDataStr
+                },
+            })
 
-            // let totalHoursBilled = 0
-            // thisMonth.forEach(i => {
-            //     i.invoiceLines.forEach(j => {
-            //         let hoursBilled = j.updatedHoursSpent.toNumber() !== 0 ? j.updatedHoursSpent.toNumber() : j.hours.toNumber()
-
-            //         if (j.discountPercentage.toNumber() !== 0) {
-            //             hoursBilled *= (100 - j.discountPercentage.toNumber()) / 100
-            //         }
-
-            //         totalHoursBilled += hoursBilled
-            //     })
-            // })
-
-            // const clients = [
-            //     {
-            //         id: '',
-            //         company: 'Digital Designer APS',
-            //         billed: 108630,
-            //         notBilled: 148630,
-            //         latestBill: "12/12/2022",
-            //     },
-            //     {
-            //         id: '',
-            //         company: 'Marketing Specialists LTD',
-            //         billed: 108630,
-            //         notBilled: 195785,
-            //         latestBill: "12/12/2022",
-            //     },
-            //     {
-            //         id: '',
-            //         company: 'Specialists Agency',
-            //         billed: 188630,
-            //         notBilled: 295785,
-            //         latestBill: "12/12/2022",
-            //     },
-            //     {
-            //         id: '',
-            //         company: 'Outsourcing Co',
-            //         billed: 12785,
-            //         notBilled: 15785,
-            //         latestBill: "12/12/2022",
-            //     },
-            // ]
-
-            // const response = {
-            //     month: toMonthName(today.getMonth()),
-            //     year: today.getFullYear(),
-            //     totalHoursBilled: String(totalHoursBilled),
-            //     totalHoursBilledChange: 20,
-            //     totalBillableHours: String(0),
-            //     totalBillableHoursChange: 0,
-            //     uninvoicedTime: String(0),
-            //     recentInvoices: recentInvoices,
-            //     clients: clients,
-            // }
-
-            // return response;
-        },
+        }
     });
+
+
 
 function toMonthName(monthNumber: number) {
     const date = new Date();
