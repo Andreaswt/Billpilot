@@ -125,18 +125,6 @@ export const invoiceTemplatesRouter = createRouter()
           invoiceTemplates: true
         }
       })
-      // return await ctx.prisma.invoiceTemplate.findMany({
-      //   where: {
-      //     organizationId: ctx.organizationId,
-      //   },
-      //   include: {
-      //     client: {
-      //       select: {
-      //         name: true
-      //       }
-      //     }
-      //   }
-      // })
     }
   })
   .mutation("generateInvoices", {

@@ -7,36 +7,61 @@ import {
 } from '@saas-ui/pro';
 import { Card, CardBody, Form, FormLayout, useForm } from "@saas-ui/react";
 import moment from 'moment';
-import React from "react";
+import React, { useMemo } from "react";
 import { trpc } from "../../utils/trpc";
+import useInvoiceTemplatesStore from "../../../store/invoice-templates";
+import ClientCheckbox from "../../components/dashboard/create-invoice/invoice-generator/ClientCheckbox";
 
 export const getServerSideProps = requireAuth(async (ctx) => {
   return { props: {} };
 });
 
 const Generator: NextPage = () => {
+  const store = useInvoiceTemplatesStore()
+
   var date = new Date();
   var firstDayInMonth = new Date(date.getFullYear(), date.getMonth(), 1);
   var lastDayInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
-  const form = useForm<{ invoicedDatesFrom: string, invoicedDatesTo: string, checkAll: boolean, templates: boolean[], clients: boolean[] }>({
+  const form = useForm<{ invoicedDatesFrom: string, invoicedDatesTo: string }>({
     defaultValues: {
       invoicedDatesFrom: moment(firstDayInMonth).format("YYYY-MM-DD"),
       invoicedDatesTo: moment(lastDayInMonth).format("YYYY-MM-DD"),
-      checkAll: false,
-      clients: [],
-      templates: [],
     }
   })
 
   const { register, control, resetField, handleSubmit, reset, formState, watch, setValue } = form
   const { errors } = formState;
 
-  // const checkAll = form.watch("checkAll")
-  // const clients = form.watch("clients")
-
   const { data, isLoading } = trpc.useQuery(["invoiceTemplates.getAll"], {
     refetchOnWindowFocus: false,
+    onSuccess(loadedData) {
+      let clients: {
+        [clientId: string]: {
+          checkAllTemplates: boolean,
+          checkedTemplates: {
+            [templateId: string]: boolean
+          }
+        }
+      } = {}
+
+      loadedData.forEach(client => {
+        let checkedTemplates: { [templateId: string]: boolean } = {}
+        client.invoiceTemplates.forEach(template => {
+          checkedTemplates[template.id] = false
+        })
+
+        clients[client.id] = {
+          checkAllTemplates: false,
+          checkedTemplates: checkedTemplates
+        }
+      })
+
+      store.setStore({
+        clients: clients,
+        checkAll: false
+      })
+    }
   });
 
   const generateInvoicesMutation = trpc.useMutation('invoiceTemplates.generateInvoices', {
@@ -49,11 +74,35 @@ const Generator: NextPage = () => {
     console.log("generating invoices")
   }
 
+  const selectedTemplatesAmount = useMemo(() => {
+    if (store.checkAll) {
+      let amount = 0
+      data?.forEach(c => {
+        c.invoiceTemplates.forEach(i => {
+          amount += 1
+        })
+      })
+
+      return amount
+    }
+
+    let amount = 0
+    Object.keys(store.clients).forEach(clientId => {
+      Object.keys(store.clients[clientId]?.checkedTemplates ?? []).forEach(templateId => {
+        if (store.clients[clientId].checkedTemplates[templateId] || store.clients[clientId].checkAllTemplates) {
+          amount += 1
+        }
+      })
+    })
+
+    return amount
+  }, [store])
+
   return (
     <Page title={"Invoice Generator"} description="Use the invoice generator to generate all your invoices from invoice templates." isLoading={isLoading}>
       <PageBody pt="8">
-        <Form onSubmit={() => console.log("Hej")}>
-          <Stack gap={14}>
+        <Stack gap={14}>
+          <Form onSubmit={() => console.log("Hej")}>
             <Card>
               <CardBody>
                 <Section
@@ -98,86 +147,46 @@ const Generator: NextPage = () => {
                 </Section>
               </CardBody>
             </Card>
+          </Form>
 
-            <Stack gap={6}>
-              <Flex gap={2}>
-                <Checkbox
-                  ml={4}
-                  id='checkAll'
-                  type="checkbox"
-                  variant="filled"
-                  {...register(`checkAll`)}
-                />
-                <Text>
-                  Select all
-                </Text>
-              </Flex>
-              <Divider />
+          <Stack gap={6}>
+            <Flex gap={2}>
+              <Checkbox
+                ml={4}
+                id='checkAll'
+                type="checkbox"
+                variant="filled"
+                isChecked={store.checkAll}
+                onChange={e => store.setCheckAll(e.target.checked)}
+              />
+              <Text>
+                Select all
+              </Text>
+            </Flex>
+            <Divider />
 
+            <Stack gap={2}>
               {
-                data?.map((client, clientIndex) => {
+                data?.map((client, index) => {
                   return (
-                    <Stack key={client.id} gap={2}>
-                      <Flex gap={2}>
-                        <Checkbox
-                          ml={4}
-                          id='exportToEconomic'
-                          type="checkbox"
-                          variant="filled"
-                          {...register(`clients.${clientIndex}`)}
-                        />
-                        <Heading size="md">
-                          {client.name}
-                        </Heading>
-                      </Flex>
+                    <React.Fragment key={client.id}>
+                      <ClientCheckbox templates={client.invoiceTemplates} clientId={client.id} clientName={client.name} />
                       {
-                        client.invoiceTemplates.map((template, templateIndex) => {
-                          return (
-                            <React.Fragment key={template.id}>
-                              <HStack px={4} justifyContent="space-between">
-                                <Text >Title</Text>
-
-                                <Flex w="40%" justifyContent="space-between">
-                                  <Text>Generated Invoice</Text>
-                                  <Text>Time</Text>
-                                  <Text>Amount</Text>
-                                </Flex>
-                              </HStack>
-                              <Card>
-                                <CardBody>
-                                  <Flex alignItems="center" justifyContent="space-between">
-                                    <Flex gap={4}>
-                                      <Checkbox
-                                        id={`templates.${templateIndex}`}
-                                        type="checkbox"
-                                        variant="filled"
-                                        {...register(`templates.${templateIndex}`)}
-                                      />
-                                      <Heading size="md">{template.title}</Heading>
-                                    </Flex>
-                                    <Text>Not generated for selected dates</Text>
-                                  </Flex>
-                                </CardBody>
-                              </Card>
-                            </React.Fragment>
-                          )
-                        })
-                      }
-                      {
-                        data?.length !== 0 && clientIndex !== data?.length - 1
+                        data?.length !== 0 && index !== data?.length - 1
                           ? <Divider py={2} />
                           : null
                       }
-                    </Stack>
+                    </React.Fragment>
                   )
                 })
               }
             </Stack>
-            <Flex justifyContent="end">
-              <Button onClick={generateInvoices} colorScheme="primary" isLoading={generateInvoicesMutation.isLoading}>Generate 4 invoices</Button>
-            </Flex>
+
           </Stack>
-        </Form>
+          <Flex justifyContent="end">
+            <Button onClick={generateInvoices} colorScheme="primary" isLoading={generateInvoicesMutation.isLoading}>Generate {selectedTemplatesAmount} invoices</Button>
+          </Flex>
+        </Stack>
       </PageBody>
     </Page>
   )
