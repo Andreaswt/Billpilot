@@ -1,7 +1,6 @@
 import * as React from 'react'
 
 import { Persona, Property, PropertyList } from '@saas-ui/react'
-
 import { Heading } from '@chakra-ui/react'
 import { Currency, Prisma } from '@prisma/client'
 import {

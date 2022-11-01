@@ -139,7 +139,7 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
 
     let createInvoice = {
         date: (new Date()).toISOString().slice(0, 10),
-        dueDate: invoice.dueDate.toISOString().slice(0, 10),
+        ...(invoice?.dueDate ? { dueDate: invoice.dueDate.toISOString().slice(0, 10) } : {}),
         currency: invoice.currency,
         paymentTerms: {
             paymentTermsNumber: Number(invoice.economicOptions.paymentTerms)

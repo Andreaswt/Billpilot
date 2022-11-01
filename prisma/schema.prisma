@@ -148,7 +148,7 @@ model GeneralInvoice {
   invoicedFrom DateTime?
   invoicedTo DateTime?
   issueDate DateTime @default(now())
-  dueDate DateTime
+  dueDate DateTime?
 
   // Invoice options for specific providers
   economicOptions EconomicInvoiceOptions?

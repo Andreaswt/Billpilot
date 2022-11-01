@@ -1,6 +1,7 @@
 import { InvoiceTemplateFilterTypes } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { generateInvoices } from "../../../lib/generator";
 import { createRouter } from "./context";
 
 export const invoiceTemplatesRouter = createRouter()
@@ -129,11 +130,11 @@ export const invoiceTemplatesRouter = createRouter()
   })
   .mutation("generateInvoices", {
     input: z.object({
-      dateFrom: z.string(),
-      dateTo: z.boolean(),
+      dateFrom: z.date(),
+      dateTo: z.date(),
       invoiceTemplateIds: z.string().array()
     }),
     async resolve({ input, ctx }) {
-      
+      generateInvoices(input.dateFrom, input.dateTo, input.invoiceTemplateIds, ctx.organizationId)
     }
   });

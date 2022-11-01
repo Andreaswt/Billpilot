@@ -229,6 +229,44 @@ export async function getWorklogsThisMonth(organizationId: string, project?: str
     }
 }
 
+export async function getProjectWorklogsBetweenDates(organizationId: string, project: string, fromDate: Date, toDate: Date) {
+    let client = await getClient(organizationId);
+
+    try {
+        let startAt = 0;
+        let total = 1;
+        let maxResults = 100;
+        let jql = `worklogDate >= ${fromDate.toISOString().slice(0, 10)} and worklogDate <= ${toDate.toISOString().slice(0, 10)} and project = ${project}`
+
+        let issues: Issue[] = [];
+        while (startAt <= total) {
+            // Get all issues with worklogs between start and end date of month
+            // Results are paginated, so we need to loop through all pages
+            let response = await client.issueSearch.searchForIssuesUsingJql({ jql: jql, startAt: startAt, maxResults: maxResults, fields: ["worklog", "project"] });
+
+            issues.push(...response.issues!)
+            startAt += maxResults
+            total = response.total!;
+        }
+
+        // Create array to contain worklogs
+        let worklogs: Worklog[] = [];
+
+        // Loop through all issues from search if objects exist
+        issues.forEach(issue => {
+            // Loop through all worklogs
+            issue.fields.worklog.worklogs.forEach(worklog => {
+                worklogs.push(worklog);
+            })
+        });
+
+        return worklogs;
+
+    } catch (error) {
+        logger.error(error);
+    }
+}
+
 export async function createAndBillWorklogs(worklogs: Worklog[], organizationId: string) {
     let client = await getClient(organizationId);
 
@@ -392,6 +430,27 @@ export async function importJiraTime(accountIds: string[], issueIds: string[], p
     return hours;
 }
 
+export async function importFilteredJiraTime(projectsKeys: string[], fromDate: Date, toDate: Date, organizationId: string) {
+    // We want to avoid duplicate time being imported
+    // We keep track of the id's of all worklogs that have been imported, and can check for duplicates during imports
+    let hours = 0;
+    let importedWorklogs: string[] = [];
+
+    /* ------------ Import project hours ------------ */
+    for (let projectKey of projectsKeys) {
+        let projectWorklogs = await getProjectWorklogsBetweenDates(organizationId, projectKey, fromDate, toDate);
+
+        for (let worklog of projectWorklogs!) {
+            if (importedWorklogs.includes(worklog.id!)) continue;
+
+            hours += worklog.timeSpentSeconds! / 3600;
+            importedWorklogs.push(worklog.id!);
+        }
+    }
+
+    return hours;
+}
+
 async function getJiraAccessToken(organizationId: string) {
     let accessToken = await prisma.apiKey.findUniqueOrThrow({
         where: {
@@ -427,10 +486,10 @@ async function getJiraAccessToken(organizationId: string) {
         const { access_token } = await refreshAccessToken(organizationId);
         if (typeof (access_token) !== 'string') throw new Error("Jira access token not string")
 
-        return {access_token: access_token, request_url: requestUrl.value}
+        return { access_token: access_token, request_url: requestUrl.value }
     }
 
-    return {access_token: accessToken.value, request_url: requestUrl.value}
+    return { access_token: accessToken.value, request_url: requestUrl.value }
 }
 
 export async function refreshAccessToken(organizationId: string) {
@@ -449,21 +508,21 @@ export async function refreshAccessToken(organizationId: string) {
 
     // Refresh access_token with refresh_token
     const tokenResponse = await fetch(`https://auth.atlassian.com/oauth/token`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify({
-        grant_type: 'refresh_token',
-        client_id: process.env.JIRA_CLIENT_ID,
-        client_secret: process.env.JIRA_CLIENT_SECRET,
-        refresh_token: refreshToken.value
-      })
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+            grant_type: 'refresh_token',
+            client_id: process.env.JIRA_CLIENT_ID,
+            client_secret: process.env.JIRA_CLIENT_SECRET,
+            refresh_token: refreshToken.value
+        })
     });
-    
+
     const json = await tokenResponse.json();
     if (!json.access_token || !json.refresh_token || !json.expires_in) throw new Error("Missing token during Jira token refresh")
-    
+
     // Update access token
     var accessTokenExpirationDate = new Date()
     accessTokenExpirationDate.setSeconds(accessTokenExpirationDate.getSeconds() + json.expires_in)
@@ -540,7 +599,7 @@ export async function saveJiraTokens(tokens: JiraRotateTokenResponse, requestUrl
 }
 
 async function getClient(organizationId: string) {
-    let {access_token, request_url} = await getJiraAccessToken(organizationId);
+    let { access_token, request_url } = await getJiraAccessToken(organizationId);
 
     return new Version3Client({
         newErrorHandling: true,

@@ -23,7 +23,12 @@ const Generator: NextPage = () => {
   var firstDayInMonth = new Date(date.getFullYear(), date.getMonth(), 1);
   var lastDayInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
-  const form = useForm<{ invoicedDatesFrom: string, invoicedDatesTo: string }>({
+  interface IForm {
+    invoicedDatesFrom: string
+    invoicedDatesTo: string
+  }
+
+  const form = useForm<IForm>({
     defaultValues: {
       invoicedDatesFrom: moment(firstDayInMonth).format("YYYY-MM-DD"),
       invoicedDatesTo: moment(lastDayInMonth).format("YYYY-MM-DD"),
@@ -70,8 +75,31 @@ const Generator: NextPage = () => {
     }
   });
 
-  function generateInvoices() {
-    console.log("generating invoices")
+  function onSubmit(fields: IForm) {
+    let invoiceTemplateIds: string[] = []
+
+    if (store.checkAll) {
+      data?.forEach(client => {
+        client.invoiceTemplates.forEach(template => {
+          invoiceTemplateIds.push(template.id)
+        })
+      })
+    }
+    else {
+      Object.keys(store.clients).forEach(clientId => {
+        Object.keys(store.clients[clientId]?.checkedTemplates ?? []).forEach(templateId => {
+          if (store.clients[clientId].checkedTemplates[templateId] || store.clients[clientId].checkAllTemplates) {
+            invoiceTemplateIds.push(templateId)
+          }
+        })
+      })
+    }
+
+    generateInvoicesMutation.mutate({
+      dateFrom: new Date(fields.invoicedDatesFrom),
+      dateTo: new Date(fields.invoicedDatesTo),
+      invoiceTemplateIds: invoiceTemplateIds
+    })
   }
 
   const selectedTemplatesAmount = useMemo(() => {
@@ -101,15 +129,15 @@ const Generator: NextPage = () => {
   return (
     <Page title={"Invoice Generator"} description="Use the invoice generator to generate all your invoices from invoice templates." isLoading={isLoading}>
       <PageBody pt="8">
-        <Stack gap={14}>
-          <Form onSubmit={() => console.log("Hej")}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Stack p={4} gap={14}>
+
             <Card>
               <CardBody>
                 <Section
                   title="Invoiced Dates"
                   description="Invoced templates will import time for the chosen dates."
-                  variant="annotated"
-                >
+                  variant="annotated">
                   <Card>
                     <CardBody>
                       <FormLayout columns={2}>
@@ -147,46 +175,47 @@ const Generator: NextPage = () => {
                 </Section>
               </CardBody>
             </Card>
-          </Form>
 
-          <Stack gap={6}>
-            <Flex gap={2}>
-              <Checkbox
-                ml={4}
-                id='checkAll'
-                type="checkbox"
-                variant="filled"
-                isChecked={store.checkAll}
-                onChange={e => store.setCheckAll(e.target.checked)}
-              />
-              <Text>
-                Select all
-              </Text>
-            </Flex>
-            <Divider />
 
-            <Stack gap={2}>
-              {
-                data?.map((client, index) => {
-                  return (
-                    <React.Fragment key={client.id}>
-                      <ClientCheckbox templates={client.invoiceTemplates} clientId={client.id} clientName={client.name} />
-                      {
-                        data?.length !== 0 && index !== data?.length - 1
-                          ? <Divider py={2} />
-                          : null
-                      }
-                    </React.Fragment>
-                  )
-                })
-              }
+            <Stack gap={6}>
+              <Flex gap={2}>
+                <Checkbox
+                  ml={4}
+                  id='checkAll'
+                  type="checkbox"
+                  variant="filled"
+                  isChecked={store.checkAll}
+                  onChange={e => store.setCheckAll(e.target.checked)}
+                />
+                <Text>
+                  Select all
+                </Text>
+              </Flex>
+              <Divider />
+
+              <Stack gap={2}>
+                {
+                  data?.map((client, index) => {
+                    return (
+                      <React.Fragment key={client.id}>
+                        <ClientCheckbox templates={client.invoiceTemplates} clientId={client.id} clientName={client.name} />
+                        {
+                          data?.length !== 0 && index !== data?.length - 1
+                            ? <Divider py={2} />
+                            : null
+                        }
+                      </React.Fragment>
+                    )
+                  })
+                }
+              </Stack>
+
             </Stack>
-
+            <Flex justifyContent="end">
+              <Button type="submit" colorScheme="primary" isLoading={generateInvoicesMutation.isLoading}>Generate {selectedTemplatesAmount} invoices</Button>
+            </Flex>
           </Stack>
-          <Flex justifyContent="end">
-            <Button onClick={generateInvoices} colorScheme="primary" isLoading={generateInvoicesMutation.isLoading}>Generate {selectedTemplatesAmount} invoices</Button>
-          </Flex>
-        </Stack>
+        </form>
       </PageBody>
     </Page>
   )
