@@ -1,5 +1,5 @@
 import { Center, Flex, Heading, Spinner, Stack, StackDivider, Text, VStack } from '@chakra-ui/react';
-import { Button, useSnackbar } from '@saas-ui/react';
+import { Button, Loader, useSnackbar } from '@saas-ui/react';
 import { NextPage } from "next";
 import { requireAuth } from "../../common/requireAuth";
 
@@ -57,17 +57,34 @@ const Integrations: NextPage = () => {
 
     }, [router.query, snackbar])
 
+    if (!data) {
+        return (
+            <Page title={"Integrations"}>
+            <PageBody pt="8">
+                <Loader />
+            </PageBody>
+            </Page>
+        )
+    }
+
+    const projectManagementActive = data["JIRA"] || data["HUBSPOT"] || data["ASANA"] ? true : false
+    const accountingActive = data["XERO"] || data["ECONOMIC"] || data["QUICKBOOKS"] ? true : false
+
     return (
         <Page title={"Integrations"}>
             <PageBody pt="8">
                 <Stack p="4" width="100%" gap="4">
                     <Card title={
-                        <Flex>
+                        <Stack justifyContent="start">
                             <Heading>Integrations</Heading>
-                        </Flex>}>
+                            <Text fontSize="xs" as="i">You can only pick one integration from each category.</Text>
+                        </Stack>}>
                         <CardBody>
                             {!isLoading && !isRefetching && data
                                 ? <VStack divider={<StackDivider />} align="stretch" spacing={8} pb="16">
+                                    <Center>
+                                        <Heading size="md">Project Management Integrations</Heading>
+                                    </Center>
                                     <Section
                                         title="Jira"
                                         description="Connect to Jira by clicking the button and logging in."
@@ -84,32 +101,8 @@ const Integrations: NextPage = () => {
                                                             </Button>
                                                         </Flex>
                                                         : <Flex justifyContent="start">
-                                                            <Button onClick={() => router.push("/api/jira/redirect")} colorScheme="primary">
+                                                            <Button disabled={projectManagementActive} onClick={() => router.push("/api/jira/redirect")} colorScheme="primary">
                                                                 Log in with Jira
-                                                            </Button>
-                                                        </Flex>
-                                                }
-                                            </CardBody>
-                                        </Card>
-                                    </Section>
-                                    <Section
-                                        title="E-conomic"
-                                        description="Connect to E-conomic by clicking the button and logging in."
-                                        variant="annotated">
-                                        <Card>
-                                            <CardBody>
-                                                {
-                                                    data["ECONOMIC"]
-                                                        ?
-                                                        <Flex alignItems="center" justifyContent="space-between" gap={2}>
-                                                            <Text fontSize="sm" as="i">Your account is integrated with E-conomic.</Text>
-                                                            <Button onClick={() => mutateAsync({ provider: "ECONOMIC" })} colorScheme="red">
-                                                                Log out of E-conomic
-                                                            </Button>
-                                                        </Flex>
-                                                        : <Flex justifyContent="start">
-                                                            <Button onClick={() => router.push("/api/economic/redirect")} colorScheme="primary">
-                                                                Log in with E-conomic
                                                             </Button>
                                                         </Flex>
                                                 }
@@ -132,32 +125,8 @@ const Integrations: NextPage = () => {
                                                             </Button>
                                                         </Flex>
                                                         : <Flex justifyContent="start">
-                                                            <Button onClick={() => router.push("/api/hubspot/redirect")} colorScheme="primary">
+                                                            <Button disabled={projectManagementActive} onClick={() => router.push("/api/hubspot/redirect")} colorScheme="primary">
                                                                 Log in with Hubspot
-                                                            </Button>
-                                                        </Flex>
-                                                }
-                                            </CardBody>
-                                        </Card>
-                                    </Section>
-                                    <Section
-                                        title="Xero"
-                                        description="Connect to Xero by clicking the button and logging in."
-                                        variant="annotated">
-                                        <Card>
-                                            <CardBody>
-                                                {
-                                                    data["XERO"]
-                                                        ?
-                                                        <Flex alignItems="center" justifyContent="space-between" gap={2}>
-                                                            <Text fontSize="sm" as="i">Your account is integrated with Xero.</Text>
-                                                            <Button onClick={() => mutateAsync({ provider: "XERO" })} colorScheme="red">
-                                                                Log out of Xero
-                                                            </Button>
-                                                        </Flex>
-                                                        : <Flex justifyContent="start">
-                                                            <Button onClick={() => router.push("/hejsa")} colorScheme="primary">
-                                                                Log in with Xero
                                                             </Button>
                                                         </Flex>
                                                 }
@@ -180,8 +149,75 @@ const Integrations: NextPage = () => {
                                                             </Button>
                                                         </Flex>
                                                         : <Flex justifyContent="start">
-                                                            <Button onClick={() => router.push("/hejsa")} colorScheme="primary">
+                                                            <Button
+                                                            disabled={projectManagementActive}
+                                                             onClick={() => {
+                                                                snackbar({
+                                                                    title: "Asana integration not yet set up.",
+                                                                    status: "error",
+                                                                    duration: 4000,
+                                                                    isClosable: true,
+                                                                })
+                                                            }} colorScheme="primary">
                                                                 Log in with Asana
+                                                            </Button>
+                                                        </Flex>
+                                                }
+                                            </CardBody>
+                                        </Card>
+                                    </Section>
+                                    <Center>
+                                        <Heading size="md">Accounting Integrations</Heading>
+                                    </Center>
+                                    <Section
+                                        title="E-conomic"
+                                        description="Connect to E-conomic by clicking the button and logging in."
+                                        variant="annotated">
+                                        <Card>
+                                            <CardBody>
+                                                {
+                                                    data["ECONOMIC"]
+                                                        ?
+                                                        <Flex alignItems="center" justifyContent="space-between" gap={2}>
+                                                            <Text fontSize="sm" as="i">Your account is integrated with E-conomic.</Text>
+                                                            <Button onClick={() => mutateAsync({ provider: "ECONOMIC" })} colorScheme="red">
+                                                                Log out of E-conomic
+                                                            </Button>
+                                                        </Flex>
+                                                        : <Flex justifyContent="start">
+                                                            <Button disabled={accountingActive} onClick={() => router.push("/api/economic/redirect")} colorScheme="primary">
+                                                                Log in with E-conomic
+                                                            </Button>
+                                                        </Flex>
+                                                }
+                                            </CardBody>
+                                        </Card>
+                                    </Section>
+                                    <Section
+                                        title="Xero"
+                                        description="Connect to Xero by clicking the button and logging in."
+                                        variant="annotated">
+                                        <Card>
+                                            <CardBody>
+                                                {
+                                                    data["XERO"]
+                                                        ?
+                                                        <Flex alignItems="center" justifyContent="space-between" gap={2}>
+                                                            <Text fontSize="sm" as="i">Your account is integrated with Xero.</Text>
+                                                            <Button onClick={() => mutateAsync({ provider: "XERO" })} colorScheme="red">
+                                                                Log out of Xero
+                                                            </Button>
+                                                        </Flex>
+                                                        : <Flex justifyContent="start">
+                                                            <Button disabled={accountingActive} onClick={() => {
+                                                                snackbar({
+                                                                    title: "Xero integration not yet set up.",
+                                                                    status: "error",
+                                                                    duration: 4000,
+                                                                    isClosable: true,
+                                                                })
+                                                            }} colorScheme="primary">
+                                                                Log in with Xero
                                                             </Button>
                                                         </Flex>
                                                 }
@@ -204,7 +240,14 @@ const Integrations: NextPage = () => {
                                                             </Button>
                                                         </Flex>
                                                         : <Flex justifyContent="start">
-                                                            <Button onClick={() => router.push("/hejsa")} colorScheme="primary">
+                                                            <Button disabled={accountingActive} onClick={() => {
+                                                                snackbar({
+                                                                    title: "Quickbooks integration not yet set up.",
+                                                                    status: "error",
+                                                                    duration: 4000,
+                                                                    isClosable: true,
+                                                                })
+                                                            }} colorScheme="primary">
                                                                 Log in with Quickbooks
                                                             </Button>
                                                         </Flex>

@@ -22,6 +22,11 @@ export const InvoiceTemplates: React.FC<Props> = (props) => {
             utils.invalidateQueries(['invoiceTemplates.getInvoiceTemplates'])
         }
     });
+    const deletionMutation = trpc.useMutation('invoiceTemplates.delete', {
+        onSuccess() {
+            utils.invalidateQueries(['invoiceTemplates.getInvoiceTemplates'])
+        }
+    });
 
     if (isLoading || !data || !currency) {
         return (<Loader />)
@@ -36,9 +41,14 @@ export const InvoiceTemplates: React.FC<Props> = (props) => {
                             key={x.id}
                             title={x.title}
                             action={
-                                <Button onClick={() => activationMutation.mutate({ invoiceTemplateId: x.id, active: x.active })} colorScheme={x.active ? "red" : "green"} variant="solid">
-                                    {x.active ? "Deactivate" : "Activate"}
-                                </Button>
+                                <Flex gap={4}>
+                                    <Button onClick={() => activationMutation.mutate({ invoiceTemplateId: x.id, active: x.active })} colorScheme={x.active ? "red" : "green"} variant="solid">
+                                        {x.active ? "Deactivate" : "Activate"}
+                                    </Button>
+                                    <Button onClick={() => deletionMutation.mutate({ invoiceTemplateId: x.id })} colorScheme="red" variant="solid">
+                                        Delete
+                                    </Button>
+                                </Flex>
                             }>
                             <CardBody>
                                 <PropertyList>

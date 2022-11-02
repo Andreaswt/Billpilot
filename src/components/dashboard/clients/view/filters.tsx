@@ -32,30 +32,6 @@ export const Filters: React.FC<Props> = (props) => {
             refetchOnWindowFocus: false,
         });
 
-    // const { data: jiraEmployees, isLoading: jiraEmployeesLoading, isRefetching: jiraEmployeesRefetching, refetch: jiraEmployeesRefetch } = trpc.useQuery(
-    //     ["jira.filterEmployees",
-    //         { searchTerm: searchTerm }],
-    //     {
-    //         refetchOnWindowFocus: false,
-    //         enabled: false,
-    //     });
-
-    // const { data: issues, isLoading: issuesLoading, isRefetching: issuesRefetching, refetch: issuesRefetch } = trpc.useQuery([
-    //     "jira.searchIssues",
-    //     { searchTerm: searchTerm }],
-    //     {
-    //         refetchOnWindowFocus: false,
-    //         enabled: false,
-    //     });
-
-    // const { data: epics, isLoading: epicsLoading, isRefetching: epicsRefetching, refetch: epicsRefetch } = trpc.useQuery([
-    //     "jira.searchEpics",
-    //     { searchTerm: searchTerm }],
-    //     {
-    //         refetchOnWindowFocus: false,
-    //         enabled: false,
-    //     });
-
     const addFilter = (id: string, name: string, type: string, provider: InvoiceTemplateFilterTypes) => {
         setFilters(prev => [...prev, { id: id, name: name, type: type, provider: provider }])
     }

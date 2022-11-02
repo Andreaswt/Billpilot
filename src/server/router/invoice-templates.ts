@@ -116,6 +116,18 @@ export const invoiceTemplatesRouter = createRouter()
       })
     }
   })
+  .mutation("delete", {
+    input: z.object({
+      invoiceTemplateId: z.string(),
+    }),
+    async resolve({ input, ctx }) {
+      await ctx.prisma.invoiceTemplate.delete({
+        where: {
+          id: input.invoiceTemplateId,
+        }
+      })
+    }
+  })
   .query("getAll", {
     async resolve({ ctx }) {
       return await ctx.prisma.client.findMany({

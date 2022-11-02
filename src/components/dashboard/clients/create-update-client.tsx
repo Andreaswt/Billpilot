@@ -269,9 +269,7 @@ export const CreateUpdateClient: React.FunctionComponent<IProps> = (props) => {
                                                                                                             id='text1'
                                                                                                             placeholder="Enter Text 1"
                                                                                                             variant="filled"
-                                                                                                            {...register(`economicOptions.text1`, {
-                                                                                                                required: 'Text 1 is required',
-                                                                                                            })}
+                                                                                                            {...register(`economicOptions.text1`)}
                                                                                                         />
                                                                                                         <FormErrorMessage>
                                                                                                             {errors.economicOptions?.text1?.message}
