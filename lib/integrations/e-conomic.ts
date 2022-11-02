@@ -108,7 +108,7 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
     let timeItems = invoice.invoiceLines.map(item => {
         if (!invoice.economicOptions) throw new Error("Economic options not defined for invoice during e-conomic invoice export")
 
-        let hours = item.hours.toNumber()
+        let hours = item.quantity.toNumber()
 
         if (item.updatedHoursSpent && item.updatedHoursSpent.toNumber() > 0) {
             hours = item.updatedHoursSpent.toNumber()

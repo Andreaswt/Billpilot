@@ -27,7 +27,7 @@ const ConfirmInvoice = (props: IProps) => {
             snackbar({
                 title: 'Invoice could not be created',
                 status: 'error',
-                duration: 2000,
+                duration: 4000,
                 isClosable: true,
             })
         }
@@ -41,7 +41,7 @@ const ConfirmInvoice = (props: IProps) => {
             snackbar({
                 title: 'Invoice could not be created',
                 status: 'error',
-                duration: 2000,
+                duration: 4000,
                 isClosable: true,
             })
         }

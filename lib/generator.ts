@@ -66,6 +66,17 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
             // TODO: import from hubspot
         }
 
+        const fixedPriceInvoiceLines = template.invoiceTemplateFixedPriceTimeItems.map(line => {
+            return ({
+                title: line.name,
+                quantity: 1,
+                unitPrice: line.amount,
+                updatedHoursSpent: 0,
+                discountPercentage: 0,
+                organizationId: organizationId
+            })
+        })
+
         // Create general invoice from template
         const invoice = await prisma.generalInvoice.create({
             data: {
@@ -98,12 +109,13 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
                     create: [
                         {
                             title: template.title,
-                            hours: importedTime,
-                            pricePerHour: template.client.pricePerHour,
+                            quantity: importedTime,
+                            unitPrice: template.client.pricePerHour,
                             updatedHoursSpent: 0,
                             discountPercentage: 0,
                             organizationId: organizationId
-                        }
+                        },
+                        ...fixedPriceInvoiceLines
                     ]
                 }
             }

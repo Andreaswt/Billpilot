@@ -124,7 +124,7 @@ const Generator: NextPage = () => {
     })
 
     return amount
-  }, [store])
+  }, [store, data])
 
   return (
     <Page title={"Invoice Generator"} description="Use the invoice generator to generate all your invoices from invoice templates." isLoading={isLoading}>

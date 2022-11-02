@@ -6,11 +6,11 @@ import { Card, CardBody, FormLayout } from "@saas-ui/react";
 import moment from 'moment';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { mapRoundingSchemeToString } from '../../../../../lib/helpers/invoices';
 import useInvoiceStore from '../../../../../store/invoiceStore';
 import { trpc } from '../../../../utils/trpc';
 import RequiredFormField from '../../forms/required-field';
 import { SearchClient } from './search-clients';
-import { mapRoundingScheme, mapRoundingSchemeToString } from '../../../../../lib/helpers/invoices';
 
 interface IProps {
     setStep: Dispatch<SetStateAction<number>>
@@ -111,14 +111,30 @@ const InvoiceInformation = (props: IProps) => {
     }
 
     const { data: invoiceOptionsData, isLoading: invoiceOptionsIsLoading, isRefetching: invoiceOptionsIsRefetching } = trpc.useQuery(["invoices.getInvoiceOptions"], {
-        refetchOnWindowFocus: false
+        refetchOnWindowFocus: false,
     });
 
     const { data: economicData, isLoading: economicIsLoading, isRefetching: economicIsRefetching, refetch: economicRefetch } = trpc.useQuery([
         "invoices.getEconomicOptions",
         { customerNumber: parseInt(economicCustomer) }],
         {
+            refetchOnWindowFocus: false,
             enabled: false,
+            onSuccess(data) {
+                reset(form => {
+                    return ({
+                        ...form,
+                        economicOptions: {
+                            ...form.economicOptions,
+                            unit: data.units[0].unitNumber.toString(),
+                            layout: data.layouts[0].layoutNumber.toString(),
+                            vatZone: data.vatZones[0].vatZoneNumber.toString(),
+                            paymentTerms: data.paymentTerms[0].paymentTermNumber.toString(),
+                            product: data.products[0].productNumber.toString()
+                        }
+                    })
+                })
+            }
         });
 
     useEffect(() => {
@@ -132,7 +148,7 @@ const InvoiceInformation = (props: IProps) => {
     const [selectedClient, setSelectedClient] = useState("")
 
     const { data: clientData, isLoading: clientLoading, refetch: clientRefetch } = trpc.useQuery(["clients.getClient", {
-        id: selectedClient
+        id: selectedClient,
     }], {
         refetchOnWindowFocus: false,
         enabled: false,

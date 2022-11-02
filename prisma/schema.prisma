@@ -26,7 +26,7 @@ model Organization {
     apiKeys ApiKey[]
     worklog Worklog[]
     clients Client[]
-    currency Currency @default(USD)
+    currency Currency @default(DKK)
     roundingScheme RoundingScheme @default(POINTPOINT)
 
     // General invoice models
@@ -121,8 +121,8 @@ enum RoundingScheme {
 model InvoiceLine {
   id String @id @default(cuid())
   title String
-  hours Decimal
-  pricePerHour Decimal
+  quantity Decimal
+  unitPrice Decimal
   updatedHoursSpent Decimal
   discountPercentage Decimal
 

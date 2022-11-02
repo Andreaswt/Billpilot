@@ -179,8 +179,8 @@ export const invoicesRouter = createRouter()
             create: input.pickedIssues.map(line => {
               return ({
                 title: line.name,
-                hours: line.hoursSpent,
-                pricePerHour: input.invoiceInformation.pricePerHour,
+                quantity: line.hoursSpent,
+                unitPrice: input.invoiceInformation.pricePerHour,
                 updatedHoursSpent: line.updatedHoursSpent ?? 0,
                 discountPercentage: line.discountPercentage ?? 0,
                 organizationId: ctx.organizationId
@@ -257,8 +257,8 @@ export const invoicesRouter = createRouter()
             create: input.pickedTickets.map(line => {
               return ({
                 title: line.subject,
-                hours: 0,
-                pricePerHour: input.invoiceInformation.pricePerHour,
+                quantity: 0,
+                unitPrice: input.invoiceInformation.pricePerHour,
                 updatedHoursSpent: line.updatedHoursSpent,
                 discountPercentage: line.discountPercentage,
                 organizationId: ctx.organizationId

@@ -1,4 +1,6 @@
+import { Currency, RoundingScheme } from '@prisma/client';
 import create from 'zustand';
+import { mapRoundingSchemeToString } from '../lib/helpers/invoices';
 
 export interface PickedState {
     pickedTickets: PickedHubspotTicket[]
@@ -72,12 +74,16 @@ interface CreateInvoiceState extends PickedState, InvoiceInformationState {
     pickedProject: string,
 }
 
+// Calculate last day in month for default dueDate in form
+var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+var lastDay = new Date(y, m + 1, 14);
+
 const useInvoiceStore = create<CreateInvoiceState>((set) => ({
     title: "",
     description: "",
-    currency: "USD",
-    dueDate: new Date(),
-    roundingScheme: "2. Decimals",
+    currency: Currency.DKK,
+    dueDate: lastDay,
+    roundingScheme: mapRoundingSchemeToString(RoundingScheme.POINTPOINT),
     pricePerHour: 0,
     client: "",
 
