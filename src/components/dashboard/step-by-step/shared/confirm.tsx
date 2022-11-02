@@ -50,25 +50,7 @@ const ConfirmInvoice = (props: IProps) => {
     const snackbar = useSnackbar()
 
     function submitInvoice() {
-        const pickedTickets = store.pickedTickets.map(item => ({
-            id: item.id,
-            subject: item.subject,
-            content: item.content,
-            lastModified: item.lastModified,
-            updatedHoursSpent: item.updatedHoursSpent ?? 0,
-            discountPercentage: item.discountPercentage ?? 0
-        }))
-
-        const pickedIssues = store.pickedIssues.map(item => ({
-            jiraKey: item.key,
-            jiraId: item.id,
-            name: item.name,
-            hoursSpent: item.hoursSpent,
-            updatedHoursSpent: item.updatedHoursSpent ?? 0,
-            discountPercentage: item.discountPercentage ?? 0
-        }))
-
-        createIssueInvoice.mutate({
+        const invoiceInformation = {
             invoiceInformation: {
                 currency: store.currency,
                 roundingScheme: store.roundingScheme,
@@ -77,9 +59,39 @@ const ConfirmInvoice = (props: IProps) => {
                 description: store.description,
                 dueDate: store.dueDate.toString()
             },
-            pickedIssues: pickedIssues,
-            economicOptions: { ...store.economicOptions }
-        })
+        }
+
+        if (invoiceType === "HUBSPOT") {
+            const pickedTickets = store.pickedTickets.map(item => ({
+                id: item.id,
+                subject: item.subject,
+                content: item.content,
+                lastModified: item.lastModified,
+                updatedHoursSpent: item.updatedHoursSpent ?? 0,
+                discountPercentage: item.discountPercentage ?? 0
+            }))
+            createTicketInvoice.mutate({
+                ...invoiceInformation,
+                pickedTickets: pickedTickets,
+                economicOptions: { ...store.economicOptions }
+            })
+        }
+        else if (invoiceType === "JIRA") {
+            const pickedIssues = store.pickedIssues.map(item => ({
+                jiraKey: item.key,
+                jiraId: item.id,
+                name: item.name,
+                hoursSpent: item.hoursSpent,
+                updatedHoursSpent: item.updatedHoursSpent ?? 0,
+                discountPercentage: item.discountPercentage ?? 0
+            }))
+    
+            createIssueInvoice.mutate({
+                ...invoiceInformation,
+                pickedIssues: pickedIssues,
+                economicOptions: { ...store.economicOptions }
+            })
+        }
     }
 
     const { data } = trpc.useQuery(["invoices.getInvoiceOptions"], {

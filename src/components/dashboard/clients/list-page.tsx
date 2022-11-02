@@ -240,7 +240,6 @@ export const ListPage = <D extends object>(props: ListPageProps<D>) => {
         }}
         {...rest}
       >
-        <Link href="/dashboard/clients/view/hej">test</Link>
         <BulkActions selections={selections} actions={bulkActions} />
         <ActiveFiltersList />
         <PageBody fullWidth>{content}</PageBody>
