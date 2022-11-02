@@ -6,7 +6,7 @@ import Image from 'next/image'
 import * as React from 'react'
 import { SEO } from '../components/landing-page/seo/seo'
 
-import { Br } from '@saas-ui/react'
+import { Br, Button } from '@saas-ui/react'
 import {
   FiArrowRight,
   FiBox, FiCode, FiFlag,
@@ -40,21 +40,24 @@ import { BackendShowcase } from '../components/landing-page/BackendShowcase'
 import { BeforeBillpilot } from '../components/landing-page/BeforeBillpilot'
 import { ProjectToInvoice } from '../components/landing-page/ProjectToInvoice'
 import { Slack } from '../components/landing-page/Slack'
+import { IoIosArrowForward } from 'react-icons/io'
 
 const Home: NextPage = () => {
 
   return (
     <Box>
       <SEO
-        title="Billpilot Landingspage"
-        description="Free SaaS landingspage starter kit"
+        title="Billpilot Landingpage"
+        description="Billpilot imports data from your project
+        mangement software, helps you create invoices,
+        and sends them to your accounting app in minutes."
       />
       <Box>
         <HeroSection />
 
         <ProjectToInvoiceSection />
 
-        <BackendShowcaseSection />
+        {/* <BackendShowcaseSection /> */}
 
         <BeforeBillpilotSection />
 
@@ -125,46 +128,46 @@ const HeroSection: React.FC = () => {
                 </FallInPlace>
               }
             >
-              <FallInPlace delay={0.8} >
+              <FallInPlace delay={0.8}>
                 <HStack pt={{ base: '4', lg: '4' }} pb={{ base: '4', lg: '12' }} spacing="5">
                 </HStack>
                 <Flex w='100%' justifyContent="center" gap={4} flexDir='column'  >
                   <Center alignItems='center' flexDir={{ base: 'column', lg: 'row' }}>
                     <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                    <Image
-                          src="static/images/integrationlogos/asana.png"
-                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                          alt='asana logo'
-                          width={150}
-                          height={30}
-                        />
-                    </Box>
-                    <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                    <Image
-                          src="static/images/integrationlogos/economic.png"
-                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                          alt='e-conomic logo'
-                          width={150}
-                          height={33}
-                        />
-                    </Box>
-                    <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                    <Image
-                          src="static/images/integrationlogos/jira.png"
-                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                          alt='jira logo'
-                          width={150}
-                          height={20}
-                        />
+                      <Image
+                        src="static/images/integrationlogos/asana.png"
+                        style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                        alt='asana logo'
+                        width={150}
+                        height={30}
+                      />
                     </Box>
                     <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
                       <Image
-                          src="static/images/integrationlogos/quickbooks.png"
-                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                          alt='quickbooks logo'
-                          width={150}
-                          height={29}
-                        />
+                        src="static/images/integrationlogos/economic.png"
+                        style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                        alt='e-conomic logo'
+                        width={150}
+                        height={33}
+                      />
+                    </Box>
+                    <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+                      <Image
+                        src="static/images/integrationlogos/jira.png"
+                        style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                        alt='jira logo'
+                        width={150}
+                        height={20}
+                      />
+                    </Box>
+                    <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+                      <Image
+                        src="static/images/integrationlogos/quickbooks.png"
+                        style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                        alt='quickbooks logo'
+                        width={150}
+                        height={29}
+                      />
                     </Box>
                     <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
                       <Image
@@ -175,7 +178,15 @@ const HeroSection: React.FC = () => {
                         height={45}
                       />
                     </Box>
-
+                    <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+                      <Image
+                        src="static/images/integrationlogos/hubspot.png"
+                        style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                        alt='xero logo'
+                        width={150}
+                        height={40}
+                      />
+                    </Box>
                   </Center>
                   <Flex justifyContent="center">
                     <ButtonGroup>
@@ -216,7 +227,7 @@ const HeroSection: React.FC = () => {
       <Flex justifyContent='center'>
         <Box style={{ borderRadius: '20px', overflow: 'hidden' }}>
           <Image
-            src="static/screenshots/showcase.png"
+            src="static/screenshots/showcasedark.png"
             alt="Picture of the author"
             width={1607}
             height={1021}
@@ -313,16 +324,13 @@ const HighlightsSection = () => {
           <Br />
           Contact us if an integration is missing and you would like to see it active.
         </Text>
+        <Flex justifyContent='space-between'>
         <Wrap mt="8">
           {[
             'Jira',
             'Economic',
-            'Xero (Coming Soon)',
-            'Asana (Coming Soon)',
-            'Trello (Coming Soon)',
-            'Click Up (Coming Soon)',
-            'Monday (Coming Soon)',
-            'Notion (Coming Soon)',
+            'Xero',
+            'Hubspot'
           ].map((value) => (
             <Tag
               key={value}
@@ -335,6 +343,11 @@ const HighlightsSection = () => {
             </Tag>
           ))}
         </Wrap>
+        <ButtonLink mt= '7' colorScheme="primary" size="sm" href="/integrations">
+            Integrations
+            <Icon as={IoIosArrowForward} w={3} h={3} /> 
+        </ButtonLink>
+        </Flex>
       </HighlightsItem>
     </Highlights>
   )
