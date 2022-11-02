@@ -7,8 +7,8 @@ export const Logo: React.FC<HTMLChakraProps<'svg'>> = (props) => {
   const { toggleColorMode, colorMode } = useColorMode()
   return (
     <Image
-    alt = 'Billpilot Logo'
-    style={colorMode === 'dark' ? { filter: 'brightness(0) invert(75%)'} : {}}
+      alt='Billpilot Logo'
+      style={colorMode === 'dark' ? { filter: 'brightness(0) invert(75%)' } : {}}
       src="/static/images/billpilotlogo.svg"
       width={30}
       height={30}

@@ -8,8 +8,8 @@ const TermsOfService: NextPage = () => {
   return (
     <Box>
       <SEO
-        title="Billpilot Landingspage"
-        description="Free SaaS landingspage starter kit"
+        title="Billpilot Terms"
+        description="Billpilot's terms and conditions"
       />
       <Box position="relative" overflow="hidden">
         <Container maxW="container.md" pt={{ base: 20, lg: 40 }} pb={{ md: 0 }}>
@@ -30,16 +30,12 @@ const TermsOfService: NextPage = () => {
 
             </Stack>
 
-           
-
             <Stack
               flex="1"
               alignItems="left"
               direction="column"
               spacing="8"
             >
-
-
               <Heading textAlign='left' size="md">1. AGREEMENT TO TERMS</Heading>
               <Heading size="md">2. INTELLECTUAL PROPERTY RIGHTS</Heading>
               <Heading size="md">3. USER REPRESENTATIONS</Heading>

@@ -5,7 +5,7 @@ import { Card, CardBody, Column, Property, PropertyList, useSnackbar } from "@sa
 
 import { ColumnDef, DataGrid, DataGridPagination, Section } from '@saas-ui/pro';
 import moment from 'moment';
-import { PickedIssue } from '../../../../store/invoice';
+import { PickedJiraIssue } from '../../../../store/invoice';
 import useInvoiceIssuesStore from '../../../../store/invoiceIssues';
 import { trpc } from '../../../utils/trpc';
 import router from 'next/router';
@@ -14,7 +14,7 @@ interface IProps {
     setStep: Dispatch<SetStateAction<number>>
 }
 
-const columns: ColumnDef<PickedIssue>[] = [
+const columns: ColumnDef<PickedJiraIssue>[] = [
     {
         id: 'key',
         header: 'Key',
@@ -77,6 +77,7 @@ const ConfirmInvoiceIssues = (props: IProps) => {
 
         snackbar({
             title: 'Invoice successfully created',
+            description: 'Invoice created in E-conomic',
             status: 'success',
             duration: 2000,
             isClosable: true,
@@ -107,7 +108,7 @@ const ConfirmInvoiceIssues = (props: IProps) => {
                 <Heading>Confirm Selections</Heading>
             </Flex>}>
             <CardBody>
-                <VStack divider={<StackDivider />} align="stretch" spacing={8} pb="16">
+                <VStack divider={<StackDivider/>} align="stretch" spacing={8} pb="16">
                     <Section
                         title="Invoice"
                         description="Confirm your selections regarding the general invoice."
@@ -131,7 +132,7 @@ const ConfirmInvoiceIssues = (props: IProps) => {
                             <CardBody>
                                 <PropertyList>
                                     <Property label="Customer" value={store.economicOptions.customerName} />
-                                    <Property label="Customer Price" value={store.economicOptions.customerPrice} />
+                                    <Property label="Customer Price" value={store.pricePerHour} />
                                     <Property label="Text 1" value={store.economicOptions.text1} />
                                     <Property label="Our Reference" value={store.economicOptions.ourReferenceName} />
                                     <Property label="Customer Contact" value={store.economicOptions.customerContactName} />
@@ -145,7 +146,7 @@ const ConfirmInvoiceIssues = (props: IProps) => {
                         variant="annotated">
                         <Card>
                             <CardBody>
-                                <DataGrid<PickedIssue> columns={columns} data={store.pickedIssues} isSortable isHoverable>
+                                <DataGrid<PickedJiraIssue> columns={columns} data={store.pickedIssues} isSortable isHoverable>
                                     <Text fontSize='xs' as='i'>Scroll right to view all columns.</Text>
                                     <DataGridPagination mt={2} pl={0} />
                                 </DataGrid>

@@ -16,7 +16,7 @@ export const ProjectToInvoice: React.FC = (props) => {
 
     return (
         <Center>
-            <Section  maxWidth="container.xl" py={{ base: '50', md: '50', sm: '50' }} px="5" id="projecttoinvoice" >
+            <Section maxWidth="container.xl" width='100%' py={{ base: '50', md: '50', sm: '50' }} px="5" id="projecttoinvoice" >
                 <SectionTitle title="Try it out!" description="Instead of telling you about it, we'd rather show you"></SectionTitle>
                     <Stack  direction="row" height="full" align="flex-start" >
                         <VStack  flex="1" spacing={[4, null, 8]} alignItems="stretch" >

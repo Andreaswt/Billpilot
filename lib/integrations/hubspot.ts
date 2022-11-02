@@ -1,11 +1,12 @@
-
 //==========================================//
 //   Exchanging Proof for an Access Token   //
 //==========================================//
 
 import { Client } from "@hubspot/api-client";
+import { Filter, FilterGroup, PublicObjectSearchRequest } from "@hubspot/api-client/lib/codegen/crm/tickets";
 import { ApiKeyName, ApiKeyProvider } from "@prisma/client";
 import { prisma } from "../../src/server/db/client";
+import { logger } from "../logger";
 
 export const exchangeForTokens = async (organizationId: string, code: string, refreshToken: boolean = false) => {
     const authCodeProof = {
@@ -24,53 +25,65 @@ export const exchangeForTokens = async (organizationId: string, code: string, re
         refresh_token: code
     }
 
-    let accessToken = ""
-
-    fetch("https://api.hubapi.com/oauth/v1/token", {
+    const response = await fetch("https://api.hubapi.com/oauth/v1/token", {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         method: "POST",
         body: new URLSearchParams(refreshToken ? refreshTokenProof : authCodeProof)
     })
-        .then(async response => {
-            // If Jira reports and error back, redirect to integration page with error parameter, so error can be shown
-            if (!response.ok) throw new Error("Faulty response during hubspot token exchange")
-            return response.json() as Promise<{ refresh_token: string, access_token: string, expires_in: number }>
-        })
-        .then(async data => {
-            var accessTokenExpirationDate = new Date()
-            accessTokenExpirationDate.setSeconds(accessTokenExpirationDate.getSeconds() + Math.round(data.expires_in * 0.75))
 
-            await prisma.apiKey.createMany({
-                data: [{
-                    provider: ApiKeyProvider.HUBSPOT,
-                    key: ApiKeyName.JIRAACCESSTOKEN,
-                    value: data.access_token,
-                    expires: null,
-                    organizationId: organizationId
-                },
-                {
-                    provider: ApiKeyProvider.HUBSPOT,
-                    key: ApiKeyName.HUBSPOTACCESSTOKEN,
-                    value: data.refresh_token,
-                    expires: accessTokenExpirationDate,
-                    organizationId: organizationId
-                },
-                {
-                    provider: ApiKeyProvider.HUBSPOT,
-                    key: ApiKeyName.HUBSPOTREFRESHTOKEN,
-                    value: data.access_token,
-                    expires: null,
-                    organizationId: organizationId
-                },
-                ]
-            })
+    // If Jira reports and error back, redirect to integration page with error parameter, so error can be shown
+    if (!response.ok) throw new Error("Faulty response during hubspot token exchange")
+    const jsonResponse = await response.json() as { refresh_token: string, access_token: string, expires_in: number }
 
-            accessToken = data.access_token;
-        })
 
-    return accessToken
+    var accessTokenExpirationDate = new Date()
+    accessTokenExpirationDate.setSeconds(accessTokenExpirationDate.getSeconds() + Math.round(jsonResponse.expires_in * 0.75))
+
+    const newAccessToken = await prisma.apiKey.upsert({
+        where: {
+            organizationsApiKey: {
+                organizationId: organizationId,
+                provider: ApiKeyProvider.HUBSPOT,
+                key: ApiKeyName.HUBSPOTACCESSTOKEN,
+            }
+        },
+        create: {
+            provider: ApiKeyProvider.HUBSPOT,
+            key: ApiKeyName.HUBSPOTACCESSTOKEN,
+            value: jsonResponse.access_token,
+            expires: accessTokenExpirationDate,
+            organizationId: organizationId
+        },
+        update: {
+            value: jsonResponse.access_token,
+            expires: accessTokenExpirationDate,
+        }
+    })
+
+    await prisma.apiKey.upsert({
+        where: {
+            organizationsApiKey: {
+                provider: ApiKeyProvider.HUBSPOT,
+                key: ApiKeyName.HUBSPOTREFRESHTOKEN,
+                organizationId: organizationId
+            }
+        },
+        create: {
+            provider: ApiKeyProvider.HUBSPOT,
+            key: ApiKeyName.HUBSPOTREFRESHTOKEN,
+            value: jsonResponse.refresh_token,
+            expires: null,
+            organizationId: organizationId
+        },
+        update: {
+            value: jsonResponse.refresh_token,
+            expires: null,
+        }
+    })
+
+    return newAccessToken.value
 };
 
 const refreshAccessToken = async (organizationId: string) => {
@@ -78,7 +91,7 @@ const refreshAccessToken = async (organizationId: string) => {
         where: {
             organizationsApiKey: {
                 provider: ApiKeyProvider.HUBSPOT,
-                key: ApiKeyName.JIRAREFRESHTOKEN,
+                key: ApiKeyName.HUBSPOTREFRESHTOKEN,
                 organizationId: organizationId
             }
         },
@@ -118,12 +131,51 @@ const getClient = async (organizationId: string) => {
     return new Client({ accessToken: accessToken.value })
 };
 
+//==========================================//
+//   Methods                                //
+//==========================================//
 
-const getContact = async (organizationId: string) => {
+export const searchCompanies = async (organizationId: string, searchString: string = "") => {
     try {
         const client = await getClient(organizationId)
-        return client.crm.contacts.getAll()
+
+        const publicObjectSearchRequest = {
+            filterGroups: [],
+            sorts: [],
+            query: searchString,
+            properties: ['name', 'domain', 'city'],
+            limit: 100,
+            after: 0,
+        }
+
+        return await client.crm.companies.searchApi.doSearch(publicObjectSearchRequest)
     } catch (e) {
-        throw new Error("Error fetching contacts")
+        logger.error(e)
+        throw new Error("Error fetching companies")
     }
-};
+}
+
+export const searchTickets = async (organizationId: string, companyId: string, searchString: string = "") => {
+    try {
+        if (companyId === "") throw new Error("Emplty companyId")
+
+        const client = await getClient(organizationId)
+
+        const filter: Filter = { propertyName: 'associations.company', operator: "EQ", value: companyId }
+        const filterGroup: FilterGroup = { filters: [filter] }
+
+        const publicObjectSearchRequest: PublicObjectSearchRequest = {
+            filterGroups: [filterGroup],
+            sorts: [],
+            query: searchString,
+            properties: ['subject', 'content', 'hs_lastmodifieddate', 'hs_object_id'],
+            limit: 100,
+            after: 0,
+        }
+
+        return await client.crm.tickets.searchApi.doSearch(publicObjectSearchRequest)
+    } catch (e) {
+        logger.error(e)
+        throw new Error("Error fetching companies")
+    }
+}

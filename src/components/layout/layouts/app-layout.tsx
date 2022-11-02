@@ -8,9 +8,7 @@ import { useLocation } from '@saas-ui/router'
 import { useSession } from 'next-auth/react'
 import { ClientOnly } from '../client-only'
 import { AppSidebar } from '../sidebars/authenticated-sidebar'
-import { SettingsSidebar } from '../sidebars/settings-sidebar'
 import { Box } from '@chakra-ui/react'
-import { ReactNode } from 'react'
 
 import { SkipNavContent, SkipNavLink } from '@chakra-ui/skip-nav'
 
@@ -55,25 +53,6 @@ export const AuthenticatedLayout: React.FC<LayoutProps> = ({
 }
 
 /**
- * Layout for settings pages.
- */
-export const SettingsLayout: React.FC<LayoutProps> = ({
-    children,
-    ...rest
-}) => {
-    return (
-        <AppShell
-            minH="100vh"
-            sidebar={
-                <SettingsSidebar />
-            }
-        >
-            {children}
-        </AppShell>
-    )
-}
-
-/**
  * Layout for public pages. (landing etc)
  */
 export const PublicLayout: React.FC<LayoutProps> = ({
@@ -106,7 +85,7 @@ export const PublicLayout: React.FC<LayoutProps> = ({
     ...rest
 }) => {
     return (
-        <AppShell>
+        <AppShell h="100vh">
             <Center h="100vh" as="main">
                 <Loading />
             </Center>
@@ -131,20 +110,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     const { data: session, status } = useSession();
     const location = useLocation()
 
-    publicRoutes =["/", "/login", "/signup", "/terms", "/privacypolicy"]
+    publicRoutes =["/", "/login", "/signup", "/terms", "/privacypolicy", "/jira", "/xero", "/hubspot", "/economic", "/integrations"]
 
     const isPublicRoute = publicRoutes.indexOf(location.pathname) !== -1
-    const isSettings = location.pathname.indexOf('/dashboard/settings') === 0
 
     let LayoutComponent
     if (isPublicRoute) {
         LayoutComponent = PublicLayout
     }
-    else if (isSettings) {
-        LayoutComponent = SettingsLayout
-    }
     else if (status === 'authenticated' && session) {
         LayoutComponent = AuthenticatedLayout
+    }
+    else if (!isPublicRoute && status === 'unauthenticated') {
+        LayoutComponent = PublicLayout
     }
     else {
         LayoutComponent = LoadingScreen

@@ -2,6 +2,8 @@ import { chakra, Center, Flex, Text, Box, useColorMode, SimpleGrid, Stack, VStac
 import { Section, SectionProps } from '@saas-ui/pro'
 import { Form, Field, FormLayout, SubmitButton } from '@saas-ui/react'
 import { SectionTitle } from './section/section-title'
+import Image from 'next/image'
+import NextLink from 'next/link'
 
 interface IProps {
   sectionId: string
@@ -9,27 +11,26 @@ interface IProps {
 
 export const Slack: React.FC<IProps> = (props) => {
   const { sectionId } = props
-    const { toggleColorMode, colorMode } = useColorMode()
-    
-    return (
-            <Section id={sectionId}>
-                <Center>
-                <Text>
-                    Join our journey on
-                </Text>
-                <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
-                      <picture>
-                        {/* eslint-disable @next/next/no-img-element */}
-                        <a href="https://join.slack.com/t/billpilot/shared_invite/zt-1g7ywroqp-1WX7hk8Wq6fYrXzAdY6AtA">
-                        <img
-                          src="static/images/slack.png"
-                          style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
-                          alt='slack logo'
-                        />
-                        </a>
-                      </picture>
-                    </Box>
-                </Center>
-            </Section>
-    )
+  const { toggleColorMode, colorMode } = useColorMode()
+
+  return (
+    <Section id={sectionId} py={{ base: '20', md: '30' }}>
+      <Center>
+        <Text>
+          Join our journey on
+        </Text>
+        <Box mx={{ base: '0', lg: '1rem' }} my={{ base: '1rem', lg: '0' }}>
+          <a href="https://join.slack.com/t/billpilot/shared_invite/zt-1g7ywroqp-1WX7hk8Wq6fYrXzAdY6AtA">
+              <Image
+                src="static/images/slack.png"
+                style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', maxWidth: '150px' } : { filter: 'brightness(0)', maxWidth: '150px' }}
+                alt='slack logo'
+                width={150}
+                height={61}
+              />
+          </a>
+        </Box>
+      </Center>
+    </Section>
+  )
 }

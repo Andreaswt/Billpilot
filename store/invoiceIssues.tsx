@@ -1,7 +1,7 @@
 import create from 'zustand';
 
 export interface PickedState {
-    pickedIssues: PickedIssue[]
+    pickedIssues: PickedJiraIssue[]
     pickedProject: string,
 }
 
@@ -10,11 +10,11 @@ export interface InvoiceInformation {
     currency: string,
     dueDate: Date,
     roundingScheme: string,
+    pricePerHour: number,
     economicOptions: {
         exportToEconomic: boolean,
         customer: string,
         customerName: string,
-        customerPrice: number,
         text1: string,
         ourReference: string,
         ourReferenceName: string,
@@ -23,7 +23,7 @@ export interface InvoiceInformation {
     },
 }
 
-export interface PickedIssue {
+export interface PickedJiraIssue {
     key: string,
     id: string,
     name: string,
@@ -35,7 +35,7 @@ export interface PickedIssue {
 interface CreateInvoiceState extends PickedState, InvoiceInformation {
     setInvoiceInformation: (invoiceInformation: InvoiceInformation) => void,
     pickProject: (projectKey: string) => void,
-    pickIssues: (pickedIssues: PickedIssue[]) => void,
+    pickIssues: (pickedIssues: PickedJiraIssue[]) => void,
 }
 
 const useInvoiceIssuesStore = create<CreateInvoiceState>((set) => ({
@@ -43,6 +43,7 @@ const useInvoiceIssuesStore = create<CreateInvoiceState>((set) => ({
     currency: "USD",
     dueDate: new Date(),
     roundingScheme: "2. Decimals",
+    pricePerHour: 0,
     client: "",
     pickedProject: "",
     pickedIssues: [],
@@ -50,7 +51,6 @@ const useInvoiceIssuesStore = create<CreateInvoiceState>((set) => ({
         exportToEconomic: false,
         customer: "",
         customerName: "",
-        customerPrice: 0,
         text1: "",
         ourReference: "",
         ourReferenceName: "",
@@ -59,7 +59,7 @@ const useInvoiceIssuesStore = create<CreateInvoiceState>((set) => ({
     },
     setInvoiceInformation: (invoiceInformation: InvoiceInformation) => set((state) => ({ ...state, ...invoiceInformation })),
     pickProject: (projectKey: string) => set((state) => ({ ...state, pickedProject: projectKey })),
-    pickIssues: (pickedIssues: PickedIssue[]) => set((state) => ({ ...state, pickedIssues: pickedIssues })),
+    pickIssues: (pickedIssues: PickedJiraIssue[]) => set((state) => ({ ...state, pickedIssues: pickedIssues })),
 }))
 
 export default useInvoiceIssuesStore;

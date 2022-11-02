@@ -1,9 +1,7 @@
 // src/pages/api/examples.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession as getServerSession } from "next-auth";
-import { saveAgreementGrantToken } from "../../../../lib/integrations/e-conomic";
 import { JiraRotateTokenResponse, saveJiraTokens } from "../../../../lib/integrations/jira";
-import { logger } from "../../../../lib/logger";
 import { authOptions as nextAuthOptions } from "../auth/[...nextauth]";
 
 const callback = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -19,7 +17,7 @@ const callback = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!req.query["code"] || typeof (req.query["code"]) != 'string') throw new Error("No code received");
 
     // Get access token
-    fetch("https://auth.atlassian.com/oauth/token", {
+    const response = await fetch("https://auth.atlassian.com/oauth/token", {
         headers: {
             'Content-Type': 'application/json'
         },
@@ -34,39 +32,37 @@ const callback = async (req: NextApiRequest, res: NextApiResponse) => {
             }
         )
     })
-        .then(async response => {
-            // If Jira reports and error back, redirect to integration page with error parameter, so error can be shown
-            if (!response.ok) {
-                const errorMessage = encodeURIComponent('Error happened during Jira Integration')
-                res.redirect("/dashboard/integrations?error=true&message=" + errorMessage)
-            }
-            return response.json() as Promise<JiraRotateTokenResponse>
-        })
-        .then(data => {
-            // Get cloudid for site
-            fetch("https://api.atlassian.com/oauth/token/accessible-resources", {
-                headers: {
-                    'Accept': 'application/json',
-                    "Authorization": "Bearer " + data.access_token
-                },
-                method: "GET",
-            })
-                .then(async response => {
-                    return response.json() as Promise<{ id: string }[]>
-                })
-                .then(async cloudIdResponse => {
-                    if (!cloudIdResponse[0].id) throw new Error("Cloud id missing")
-                    if (!data.access_token && !data.refresh_token) throw new Error("Token missing")
 
-                    const requestUrl = "https://api.atlassian.com/ex/jira/" + cloudIdResponse[0].id
+    // If Jira reports and error back, redirect to integration page with error parameter, so error can be shown
+    if (!response.ok) {
+        const errorMessage = encodeURIComponent('Error happened during Jira Integration')
+        res.redirect("/dashboard/integrations?error=true&message=" + errorMessage)
+    }
 
-                    // Finally save tokens
-                    saveJiraTokens(data, requestUrl, session.user.organizationId).then(() => {
-                        const successMessage = encodeURIComponent('Jira integration was successfully set up.')
-                        res.redirect("/dashboard/integrations?success=true&message=" + successMessage)
-                    })
-                })
-        })
+    const jsonResponse = await response.json() as { refresh_token: string, access_token: string, expires_in: number }
+
+    // Get cloudid for site
+    const cloudIdResponse = await fetch("https://api.atlassian.com/oauth/token/accessible-resources", {
+        headers: {
+            'Accept': 'application/json',
+            "Authorization": "Bearer " + jsonResponse.access_token
+        },
+        method: "GET",
+    })
+    const cloudIdJsonResponse = await cloudIdResponse.json() as { id: string }[]
+
+    if (!cloudIdJsonResponse[0].hasOwnProperty("id")) throw new Error("Cloud id missing")
+    if (!jsonResponse.hasOwnProperty("access_token") || !jsonResponse.hasOwnProperty("refresh_token")) throw new Error("Tokens missing")
+
+    const requestUrl = "https://api.atlassian.com/ex/jira/" + cloudIdJsonResponse[0].id
+
+    // Finally save tokens
+    saveJiraTokens(jsonResponse, requestUrl, session.user.organizationId).then(() => {
+        const successMessage = encodeURIComponent('Jira integration was successfully set up.')
+        res.redirect("/dashboard/integrations?success=true&message=" + successMessage)
+    })
+
+    return res.status(200);
 };
 
 export default callback;

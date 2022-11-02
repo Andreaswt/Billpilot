@@ -20,12 +20,12 @@ export interface FormInvoiceState {
         currency: string,
         dueDate: string,
         roundingScheme: string,
+        pricePerHour: number
     },
 
     economicOptions: {
         exportToEconomic: boolean
         customer: string
-        customerPrice: number
         text1: string
         ourReference: string
         customerContact: string
@@ -105,11 +105,11 @@ const EconomicOptions = (props: IProps) => {
                 currency: store.currency,
                 dueDate: moment(store.dueDate).format("YYYY-MM-DD"),
                 roundingScheme: store.roundingScheme,
+                pricePerHour: store.pricePerHour,
             },
             economicOptions: {
                 exportToEconomic: store.economicOptions.exportToEconomic,
                 customer: store.economicOptions.customer,
-                customerPrice: store.economicOptions.customerPrice,
                 text1: store.economicOptions.text1,
                 ourReference: store.economicOptions.ourReference,
                 customerContact: store.economicOptions.customerContact
@@ -119,7 +119,6 @@ const EconomicOptions = (props: IProps) => {
 
     const exportToEconomicField = invoiceInformationForm.watch("economicOptions.exportToEconomic")
     const economicCustomer = invoiceInformationForm.watch("economicOptions.customer")
-    const economicCustomerPrice = invoiceInformationForm.watch("economicOptions.customerPrice")
 
     const { register, control, handleSubmit, reset, formState, watch, setValue } = invoiceInformationForm
     const { errors } = formState;
@@ -167,7 +166,7 @@ const EconomicOptions = (props: IProps) => {
     const { toggleColorMode, colorMode } = useColorMode()
     return (
         <Card title={
-            <Flex>
+            <Flex width = '92em'>
                 <Heading>Create Invoice</Heading>
             </Flex>}>
             <CardBody>
@@ -175,7 +174,7 @@ const EconomicOptions = (props: IProps) => {
                     invoiceOptionsIsLoading || invoiceOptionsIsRefetching || !invoiceOptionsData
                         ? <Center><Spinner /></Center>
                         : <form onSubmit={handleSubmit(onSubmit)}>
-                            <VStack divider={<StackDivider />} align="stretch" spacing={8} pb="16">
+                            <VStack divider={<StackDivider />}  align="stretch" spacing={8} pb="16">
                                 <Section
                                     title="Invoice"
                                     description="Information about invoice stored in our systems."
@@ -310,28 +309,28 @@ const EconomicOptions = (props: IProps) => {
 
                                                 {economicCustomer
                                                     ? <FormLayout>
-                                                        <FormControl isInvalid={!!errors.economicOptions?.customerPrice}>
-                                                            <FormLabel htmlFor={`economicOptions.customerPrice`}>Pick E-conomic Customer Price</FormLabel>
+                                                        <FormControl isInvalid={!!errors.invoiceInformation?.pricePerHour}>
+                                                            <FormLabel htmlFor={`invoiceInformation.pricePerHour`}>Price per Hour</FormLabel>
                                                             <Flex flexDirection="column">
                                                                 <Input
-                                                                    id='customerPrice'
+                                                                    id='pricePerHour'
                                                                     type="number"
                                                                     isDisabled={!exportToEconomicField}
-                                                                    placeholder="Enter Customer Price"
+                                                                    placeholder="Enter Price per Hour"
                                                                     variant="filled"
-                                                                    {...register(`economicOptions.customerPrice`, {
+                                                                    {...register(`invoiceInformation.pricePerHour`, {
                                                                         valueAsNumber: true
                                                                     })}
                                                                 />
                                                                 <FormErrorMessage>
-                                                                    {errors.economicOptions?.customerPrice?.message}
+                                                                    {errors.invoiceInformation?.pricePerHour?.message}
                                                                 </FormErrorMessage>
                                                             </Flex>
                                                         </FormControl>
                                                     </FormLayout>
                                                     : null}
 
-                                                {economicCustomer && economicCustomerPrice ? <>
+                                                {economicCustomer ? <>
                                                     <FormLayout>
                                                         <FormLayout>
                                                             <FormControl isInvalid={!!errors.economicOptions?.text1}>

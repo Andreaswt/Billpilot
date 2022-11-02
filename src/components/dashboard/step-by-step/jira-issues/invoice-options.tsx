@@ -6,8 +6,8 @@ import { Card, CardBody, FormLayout } from "@saas-ui/react";
 import { Section } from '@saas-ui/pro';
 import moment from 'moment';
 import { useForm } from 'react-hook-form';
-import useInvoiceIssuesStore from '../../../../store/invoiceIssues';
-import { trpc } from '../../../utils/trpc';
+import useInvoiceStore from '../../../../../store/invoiceStore';
+import { trpc } from '../../../../utils/trpc';
 
 interface IProps {
     setStep: Dispatch<SetStateAction<number>>
@@ -16,48 +16,59 @@ interface IProps {
 export interface FormInvoiceState {
     invoiceInformation: {
         title: string,
+        description: string,
         currency: string,
         dueDate: string,
         roundingScheme: string,
+        pricePerHour: number
     },
 
     economicOptions: {
         exportToEconomic: boolean
         customer: string
-        customerPrice: number
         text1: string
         ourReference: string
         customerContact: string
+        unit: string
+        layout: string
+        vatZone: string
+        paymentTerms: string
+        product: string
     }
 }
 
 const EconomicOptions = (props: IProps) => {
     const { setStep } = props
-    const store = useInvoiceIssuesStore()
+    const store = useInvoiceStore()
 
     const invoiceInformationForm = useForm<FormInvoiceState>({
         reValidateMode: "onSubmit",
         defaultValues: {
             invoiceInformation: {
                 title: store.title,
+                description: store.description,
                 currency: store.currency,
                 dueDate: moment(store.dueDate).format("YYYY-MM-DD"),
                 roundingScheme: store.roundingScheme,
+                pricePerHour: store.pricePerHour,
             },
             economicOptions: {
                 exportToEconomic: store.economicOptions.exportToEconomic,
                 customer: store.economicOptions.customer,
-                customerPrice: store.economicOptions.customerPrice,
                 text1: store.economicOptions.text1,
                 ourReference: store.economicOptions.ourReference,
-                customerContact: store.economicOptions.customerContact
+                customerContact: store.economicOptions.customerContact,
+                unit: store.economicOptions.unit,
+                layout: store.economicOptions.layout,
+                vatZone: store.economicOptions.vatZone,
+                paymentTerms: store.economicOptions.paymentTerms,
+                product: store.economicOptions.product,
             }
         },
     });
 
     const exportToEconomicField = invoiceInformationForm.watch("economicOptions.exportToEconomic")
     const economicCustomer = invoiceInformationForm.watch("economicOptions.customer")
-    const economicCustomerPrice = invoiceInformationForm.watch("economicOptions.customerPrice")
 
     const { register, control, handleSubmit, reset, formState, watch, setValue } = invoiceInformationForm
     const { errors } = formState;
@@ -71,6 +82,12 @@ const EconomicOptions = (props: IProps) => {
         const customerName = invoiceOptionsData?.economicCustomers.find(x => x.customerNumber === parseInt(data.economicOptions.customer))?.name ?? ""
         const ourReferenceName = economicData?.ourReferences.find(x => x.employeeNumber === parseInt(data.economicOptions.ourReference))?.name ?? ""
         const ourContactName = economicData?.customerContacts.find(x => x.customerContactNumber === parseInt(data.economicOptions.customerContact))?.name ?? ""
+        const unitName = economicData?.units.find(x => x.unitNumber === parseInt(data.economicOptions.unit))?.name ?? ""
+        const layoutName = economicData?.layouts.find(x => x.layoutNumber === parseInt(data.economicOptions.layout))?.name ?? ""
+        const vatZoneName = economicData?.vatZones.find(x => x.vatZoneNumber === parseInt(data.economicOptions.vatZone))?.name ?? ""
+        const paymentTermsName = economicData?.paymentTerms.find(x => x.paymentTermNumber === parseInt(data.economicOptions.paymentTerms))?.name ?? ""
+        const productName = economicData?.products.find(x => x.productNumber.toString() === data.economicOptions.product)?.name ?? ""
+        
 
         store.setInvoiceInformation({
             ...data.invoiceInformation,
@@ -79,7 +96,12 @@ const EconomicOptions = (props: IProps) => {
                 ...data.economicOptions,
                 customerName: customerName,
                 ourReferenceName: ourReferenceName,
-                customerContactName: ourContactName
+                customerContactName: ourContactName,
+                unitName: unitName,
+                layoutName: layoutName,
+                vatZoneName: vatZoneName,
+                paymentTermsName: paymentTermsName,
+                productName: productName
             }
         })
 
@@ -142,6 +164,22 @@ const EconomicOptions = (props: IProps) => {
                                                             />
                                                             <FormErrorMessage>
                                                                 {errors.invoiceInformation?.title?.message}
+                                                            </FormErrorMessage>
+                                                        </Flex>
+                                                    </FormControl>
+                                                </FormLayout>
+                                                <FormLayout>
+                                                    <FormControl isInvalid={!!errors.invoiceInformation?.description}>
+                                                        <FormLabel htmlFor={`invoiceInformation.description`}>Description</FormLabel>
+                                                        <Flex flexDirection="column">
+                                                            <Textarea
+                                                                id='description'
+                                                                placeholder="Enter description"
+                                                                variant="filled"
+                                                                {...register(`invoiceInformation.description`)}
+                                                            />
+                                                            <FormErrorMessage>
+                                                                {errors.invoiceInformation?.description?.message}
                                                             </FormErrorMessage>
                                                         </Flex>
                                                     </FormControl>
@@ -250,28 +288,28 @@ const EconomicOptions = (props: IProps) => {
 
                                                         {economicCustomer
                                                             ? <FormLayout>
-                                                                <FormControl isInvalid={!!errors.economicOptions?.customerPrice}>
-                                                                    <FormLabel htmlFor={`economicOptions.customerPrice`}>Pick E-conomic Customer Price</FormLabel>
+                                                                <FormControl isInvalid={!!errors.invoiceInformation?.pricePerHour}>
+                                                                    <FormLabel htmlFor={`invoiceInformation.pricePerHour`}>Price per Hour</FormLabel>
                                                                     <Flex flexDirection="column">
                                                                         <Input
-                                                                            id='customerPrice'
+                                                                            id='pricePerHour'
                                                                             type="number"
                                                                             isDisabled={!exportToEconomicField}
-                                                                            placeholder="Enter Customer Price"
+                                                                            placeholder="Enter Price per Hour"
                                                                             variant="filled"
-                                                                            {...register(`economicOptions.customerPrice`, {
+                                                                            {...register(`invoiceInformation.pricePerHour`, {
                                                                                 valueAsNumber: true
                                                                             })}
                                                                         />
                                                                         <FormErrorMessage>
-                                                                            {errors.economicOptions?.customerPrice?.message}
+                                                                            {errors.invoiceInformation?.pricePerHour?.message}
                                                                         </FormErrorMessage>
                                                                     </Flex>
                                                                 </FormControl>
                                                             </FormLayout>
                                                             : null}
 
-                                                        {economicCustomer && economicCustomerPrice ? <>
+                                                        {economicCustomer ? <>
                                                             <FormLayout>
                                                                 <FormLayout>
                                                                     <FormControl isInvalid={!!errors.economicOptions?.text1}>

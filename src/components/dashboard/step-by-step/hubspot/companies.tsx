@@ -1,21 +1,21 @@
-import { Button, Center, Flex, Heading, Input, Spinner, Text } from '@chakra-ui/react';
+import { Button, Center, Flex, Heading, Spinner, Text } from '@chakra-ui/react';
 import { Dispatch, SetStateAction, useState } from 'react';
 
 import { ColumnDef, DataGrid, DataGridPagination } from '@saas-ui/pro';
 import { Card, CardBody, SearchInput } from "@saas-ui/react";
-import useCreateInvoiceStore from '../../../../store/invoice';
-import { trpc } from '../../../utils/trpc';
-import useInvoiceIssuesStore from '../../../../store/invoiceIssues';
+import useInvoiceStore from '../../../../../store/invoiceStore';
+import { trpc } from '../../../../utils/trpc';
+
 
 interface IProps {
     setStep: Dispatch<SetStateAction<number>>
 }
 
-interface TableProject {
-    name: string
-    type: string
-    key: string
+interface TableRow {
     id: string
+    name: string
+    domain: string
+    city: string
 }
 
 interface IPagination {
@@ -23,47 +23,51 @@ interface IPagination {
     total: number
 }
 
-const Projects = (props: IProps) => {
+const Companies = (props: IProps) => {
     const { setStep } = props
-    const store = useInvoiceIssuesStore();
+    const store = useInvoiceStore();
 
     const [searchTerm, setSearchTerm] = useState<string>("")
     const [pagination, setPagination] = useState<IPagination>({ amount: 0, total: 0 })
-    const [projects, setProjects] = useState<TableProject[]>([])
+    const [companies, setCompanies] = useState<TableRow[]>([])
 
-    const { isLoading, isRefetching } = trpc.useQuery(["jira.searchProjectsForIssueInvoicing", { searchTerm: searchTerm }], {
+    const { isLoading, isRefetching } = trpc.useQuery(["hubspot.searchCompanies", { searchTerm: searchTerm }], {
         onSuccess(data) {
             setPagination({ amount: data.amount, total: data.total })
-            setProjects(data.projects)
+            setCompanies(data.companies)
         },
         refetchOnWindowFocus: false
     });
 
-    function pickProject(key: string) {
-        store.pickProject(key)
+    function pickCompany(id: string) {
+        store.pickCompany(id)
         setStep((step) => step + 1)
     }
 
-    const columns: ColumnDef<TableProject>[] = [
+    const columns: ColumnDef<TableRow>[] = [
         {
             id: 'name',
             header: 'Name',
         },
         {
-            id: 'type',
-            header: 'Type',
+            id: 'domain',
+            header: 'Domain',
         },
         {
-            id: 'key',
-            header: 'Key',
+            id: 'city',
+            header: 'City',
         },
         {
-            id: 'percentDiscount',
+            id: 'id',
+            header: 'Id',
+        },
+        {
+            id: 'select',
             header: '',
             cell: (data) => (
                 <>
                     <Flex justifyContent="end">
-                        <Button colorScheme="primary" onClick={() => pickProject(data.row.original.name)} size="sm">Select</Button>
+                        <Button colorScheme="primary" onClick={() => pickCompany(data.row.original.id)} size="sm">Select</Button>
                     </Flex>
                 </>
             )
@@ -73,7 +77,7 @@ const Projects = (props: IProps) => {
     return (
         <Card title={
             <Flex>
-                <Heading>Pick Project</Heading>
+                <Heading>Pick Company</Heading>
             </Flex>}>
             <CardBody>
                 <Flex gap={4} flexDir="column">
@@ -88,7 +92,7 @@ const Projects = (props: IProps) => {
                             ? <Center><Spinner /></Center>
                             : <DataGrid
                                 columns={columns}
-                                data={projects}
+                                data={companies}
                                 isSortable>
                                 <DataGridPagination mt={2} pl={0} />
                                 <Text fontSize='xs' as='i'>Loaded {pagination.amount} of {pagination.total} results total. Search to narrow results.</Text>
@@ -100,4 +104,4 @@ const Projects = (props: IProps) => {
     )
 }
 
-export default Projects;
+export default Companies;

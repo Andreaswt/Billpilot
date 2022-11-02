@@ -1,9 +1,7 @@
 import { Button, Center, Spinner, Stack } from '@chakra-ui/react';
 import { Card, CardBody, EmptyStateActions, EmptyStateBody, EmptyStateContainer, EmptyStateDescription, EmptyStateIcon, EmptyStateTitle, Stepper, StepperStep } from '@saas-ui/react';
-import { GetServerSideProps, NextPage } from "next";
+import { NextPage } from "next";
 import React from 'react';
-import useCreateInvoiceStore from '../../../store/invoice';
-import { requireAuth } from "../../common/requireAuth";
 
 import { WarningIcon } from '@chakra-ui/icons';
 import {
@@ -11,12 +9,17 @@ import {
 } from '@saas-ui/pro';
 import router from 'next/router';
 import { trpc } from '../../utils/trpc';
-import ConfirmInvoiceIssues from '../../components/dashboard/invoice-jira-issues/Confirm';
-import EconomicOptions from '../../components/dashboard/invoice-jira-issues/InvoiceOptions';
-import Projects from '../../components/dashboard/invoice-jira-issues/Projects';
-import Issues from '../../components/dashboard/invoice-jira-issues/Issues';
+import Companies from '../../components/dashboard/step-by-step/hubspot/companies';
+import Tickets from '../../components/dashboard/step-by-step/hubspot/tickets';
+import ConfirmInvoice from '../../components/dashboard/step-by-step/shared/confirm';
+import InvoiceInformation from '../../components/dashboard/step-by-step/shared/invoice-information';
+import { requireAuth } from '../../common/requireAuth';
 
-const InvoiceIssues: NextPage = () => {
+export const getServerSideProps = requireAuth(async (ctx) => {
+    return { props: {} };
+});
+
+const InvoiceHubspot: NextPage = () => {
     const [step, setStep] = React.useState(0);
 
     const { data, isLoading, isRefetching, refetch } = trpc.useQuery(["integrations.getActiveIntegrations"], {
@@ -50,17 +53,17 @@ const InvoiceIssues: NextPage = () => {
                                         <Card>
                                             <CardBody>
                                                 <Stepper step={step}>
-                                                    <StepperStep title="Pick Project" />
-                                                    <StepperStep title="Pick Issues" />
+                                                    <StepperStep title="Pick Company" />
+                                                    <StepperStep title="Pick Tickets" />
                                                     <StepperStep title="Invoice Information" />
                                                     <StepperStep title="Confirm" />
                                                 </Stepper>
                                             </CardBody>
                                         </Card>
-                                        {step == 0 ? <Projects setStep={setStep} /> : null}
-                                        {step == 1 ? <Issues setStep={setStep} /> : null}
-                                        {step == 2 ? <EconomicOptions setStep={setStep} /> : null}
-                                        {step == 3 ? <ConfirmInvoiceIssues setStep={setStep} /> : null}
+                                        {step == 0 ? <Companies setStep={setStep} /> : null}
+                                        {step == 1 ? <Tickets setStep={setStep} /> : null}
+                                        {step == 2 ? <InvoiceInformation setStep={setStep} /> : null}
+                                        {step == 3 ? <ConfirmInvoice invoiceType='HUBSPOT' setStep={setStep} /> : null}
                                     </>
                             )
                     }
@@ -70,4 +73,4 @@ const InvoiceIssues: NextPage = () => {
     )
 }
 
-export default InvoiceIssues;
+export default InvoiceHubspot;

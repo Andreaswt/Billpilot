@@ -50,8 +50,8 @@ const SignupPage: NextPage = () => {
   return (
     <Box>
       <SEO
-        title="Saas UI Landingspage"
-        description="Free SaaS landingspage starter kit"
+        title="Sign Up"
+        description="Signup for your Billpilot account"
       />
       <Box>
         <Box position="relative" overflow="hidden">
@@ -71,65 +71,65 @@ const SignupPage: NextPage = () => {
                       Sign up for access
                     </Heading>
                     <form onSubmit={handleSubmit(onSubmit)}>
-            <Stack spacing={4}>
-              <Box>
-                <FormControl isInvalid={!errors?.name?.message == false} id="fullName" isRequired>
-                  <FormLabel>Full name</FormLabel>
-                  <Input type="text" {...register("name")} />
-                  <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
-                </FormControl>
-              </Box>
-              <FormControl isInvalid={!errors?.email?.message == false} id="email" isRequired>
-                <FormLabel>Email address</FormLabel>
-                <Input type="email" {...register("email")} />
-                <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
-              </FormControl>
-              <FormControl isInvalid={!errors?.password?.message == false} id="password" isRequired>
-                <FormLabel>Password</FormLabel>
-                <InputGroup>
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    {...register("password")}
-                  />
-                  <FormErrorMessage>{errors?.password?.message}</FormErrorMessage>
-                  <InputRightElement h={"full"}>
-                    <Button
-                      variant={"ghost"}
-                      _hover={{ bg: "transparent" }}
-                      _active={{ bg: "transparent" }}
-                      onClick={() =>
-                        setShowPassword(
-                          (showPassword) => !showPassword,
-                        )
-                      }
-                    >
-                      {showPassword ? <ViewIcon /> : <ViewOffIcon />}
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-              </FormControl>
-              <Stack spacing={10} pt={2}>
-                <Button
-                  loadingText="Submitting"
-                  size="lg"
-                  type="submit"
-                  isLoading={isSubmitting}
-                  colorScheme="primary"
-                  color={"white"}
-                >
-                  Sign up
-                </Button>
-              </Stack>
-              <Stack pt={6}>
-                <Text align={"center"}>
-                  Already a user?{" "}
-                  <NextLink color={"primary.400"} href="login">
-                    Sign in
-                  </NextLink>
-                </Text>
-              </Stack>
-            </Stack>
-          </form>
+                      <Stack spacing={4}>
+                        <Box>
+                          <FormControl isInvalid={!errors?.name?.message == false} id="fullName" isRequired>
+                            <FormLabel>Full name</FormLabel>
+                            <Input type="text" {...register("name")} />
+                            <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
+                          </FormControl>
+                        </Box>
+                        <FormControl isInvalid={!errors?.email?.message == false} id="email" isRequired>
+                          <FormLabel>Email address</FormLabel>
+                          <Input type="email" {...register("email")} />
+                          <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
+                        </FormControl>
+                        <FormControl isInvalid={!errors?.password?.message == false} id="password" isRequired>
+                          <FormLabel>Password</FormLabel>
+                          <InputGroup>
+                            <Input
+                              type={showPassword ? "text" : "password"}
+                              {...register("password")}
+                            />
+                            <FormErrorMessage>{errors?.password?.message}</FormErrorMessage>
+                            <InputRightElement h={"full"}>
+                              <Button
+                                variant={"ghost"}
+                                _hover={{ bg: "transparent" }}
+                                _active={{ bg: "transparent" }}
+                                onClick={() =>
+                                  setShowPassword(
+                                    (showPassword) => !showPassword,
+                                  )
+                                }
+                              >
+                                {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                              </Button>
+                            </InputRightElement>
+                          </InputGroup>
+                        </FormControl>
+                        <Stack spacing={10} pt={2}>
+                          <Button
+                            loadingText="Submitting"
+                            size="lg"
+                            type="submit"
+                            isLoading={isSubmitting}
+                            colorScheme="primary"
+                            color={"white"}
+                          >
+                            Sign up
+                          </Button>
+                        </Stack>
+                        <Stack pt={6}>
+                          <Text align={"center"}>
+                            Already a user?{" "}
+                            <NextLink color={"primary.400"} href="login">
+                              Sign in
+                            </NextLink>
+                          </Text>
+                        </Stack>
+                      </Stack>
+                    </form>
                   </Stack>
                 </Container>
               </Stack>

@@ -93,7 +93,7 @@ const Projects = (props: IProps) => {
             header: 'Key',
         },
         {
-            id: 'percentDiscount',
+            id: 'select',
             header: '',
             cell: (data) => (
                 <>
