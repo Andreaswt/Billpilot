@@ -2,18 +2,18 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity", "fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
-  provider = "mysql"
-  url = env("DATABASE_URL")
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
   referentialIntegrity = "prisma"
 }
 
 model Example {
-    id String @id @default(cuid())
+  id String @id @default(cuid())
 }
 
 model Organization {
@@ -38,6 +38,8 @@ model Organization {
     invoiceTemplates InvoiceTemplate[]
     invoiceTemplateFilters InvoiceTemplateFilter[]
     invoiceTemplateFixedPriceTimeItem InvoiceTemplateFixedPriceTimeItem[]
+
+    dashboardReports DashboardIndex[]
 }
 
 enum ApiKeyProvider {
@@ -59,26 +61,28 @@ enum ApiKeyName {
 }
 
 model ApiKey {
-    id String @id @default(cuid())
-    provider ApiKeyProvider
-    key ApiKeyName
-    value String @db.Text()
-    expires DateTime?
-    organizationId String
-    organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-    @@unique(fields: [provider, key, organizationId], name: "organizationsApiKey")
+  id             String         @id @default(cuid())
+  provider       ApiKeyProvider
+  key            ApiKeyName
+  value          String         @db.Text()
+  expires        DateTime?
+  organizationId String
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique(fields: [provider, key, organizationId], name: "organizationsApiKey")
 }
 
 model Worklog {
-  id String @id @default(cuid())
-  worklogId String
-  issueId String
-  hours Decimal
-  started DateTime
-  billed Boolean?
-  billedDate DateTime?
+  id             String       @id @default(cuid())
+  worklogId      String
+  issueId        String
+  hours          Decimal
+  started        DateTime
+  billed         Boolean?
+  billedDate     DateTime?
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
   @@unique(fields: [worklogId, organizationId], name: "organizationsWorklog")
 }
 
@@ -88,23 +92,25 @@ enum ClientStatus {
 }
 
 model Client {
-  id String @id @default(cuid())
-  name String
-  currency Currency @default(USD)
+  id             String         @id @default(cuid())
+  name           String
+  currency       Currency       @default(USD)
   roundingScheme RoundingScheme @default(POINTPOINT)
-  createdAt DateTime @default(now())
-  latestBill DateTime?
-  status ClientStatus @default(NOTBILLED)
-  pricePerHour Decimal
+  createdAt      DateTime       @default(now())
+  latestBill     DateTime?
+  status         ClientStatus   @default(NOTBILLED)
+  pricePerHour   Decimal
 
   // Options for specific providers
   economicOptions EconomicInvoiceOptions?
+  generalInvoices GeneralInvoice[]
 
   invoiceTemplates InvoiceTemplate[]
 
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  @@unique ([id, organizationId], name: "organizationsClient")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([id, organizationId], name: "organizationsClient")
 }
 
 enum Currency {
@@ -127,20 +133,24 @@ model InvoiceLine {
   discountPercentage Decimal
 
   generalInvoiceId String
-  generalInvoice GeneralInvoice @relation(fields: [generalInvoiceId], references: [id])
+  generalInvoice   GeneralInvoice @relation(fields: [generalInvoiceId], references: [id])
 
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model GeneralInvoice {
-  id String @id @default(cuid())
-  title String
-  description String
-  pricePerHour Decimal
+  id           String  @id @default(cuid())
+  title        String
+  description  String
+  pricePerHour Float
+  billed       Boolean
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   // invoiceType InvoiceType @default(GENERAL)
-  currency Currency @default(USD)
+  currency       Currency       @default(USD)
   roundingScheme RoundingScheme @default(POINTPOINT)
 
   invoiceLines InvoiceLine[]
@@ -154,29 +164,29 @@ model GeneralInvoice {
   economicOptions EconomicInvoiceOptions?
 
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model EconomicInvoiceOptions {
-  id String @id @default(cuid())
-  customer String
-  text1 String
-  ourReference String
+  id              String @id @default(cuid())
+  customer        String
+  text1           String
+  ourReference    String
   customerContact String
-  unit String
-  layout String
-  vatZone String
-  paymentTerms String
-  product String
+  unit            String
+  layout          String
+  vatZone         String
+  paymentTerms    String
+  product         String
 
   clientId String? @unique
-  client Client? @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
-  generalInvoiceId String? @unique
-  generalInvoice GeneralInvoice? @relation(fields: [generalInvoiceId], references: [id], onDelete: Cascade)
+  generalInvoiceId String?         @unique
+  generalInvoice   GeneralInvoice? @relation(fields: [generalInvoiceId], references: [id], onDelete: Cascade)
 
   organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 // Templating
@@ -262,19 +272,19 @@ enum UserRoles {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  password      String?
-  image         String?
-  role          UserRoles @default(USER)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime?  @updatedAt @default(now())
-  accounts      Account[]
-  sessions      Session[]
-  organizationId  String?
-  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  id             String        @id @default(cuid())
+  name           String?
+  email          String?       @unique
+  emailVerified  DateTime?
+  password       String?
+  image          String?
+  role           UserRoles     @default(USER)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime?     @default(now()) @updatedAt
+  accounts       Account[]
+  sessions       Session[]
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -283,4 +293,16 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model DashboardIndex {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reportJson String @db.Text
+
+  // Relations
+  organizationId String       @unique
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }

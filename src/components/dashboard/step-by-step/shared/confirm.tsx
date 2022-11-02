@@ -19,6 +19,8 @@ interface IProps {
 const ConfirmInvoice = (props: IProps) => {
     const { setStep, invoiceType } = props
     const store = useInvoiceStore();
+
+    // Following mutation is never used? TODO: Andreas fix
     const createTicketInvoice = trpc.useMutation('invoices.createHubspotTicketInvoice', {
         onSuccess: () => {
             router.push("/dashboard")
@@ -55,6 +57,8 @@ const ConfirmInvoice = (props: IProps) => {
                 currency: store.currency,
                 roundingScheme: store.roundingScheme,
                 pricePerHour: store.pricePerHour,
+                clientId: 'haha sut', // TODO Andreas fix
+                billed: false, // TODO Andreas fix
                 title: store.title,
                 description: store.description,
                 dueDate: store.dueDate.toString()

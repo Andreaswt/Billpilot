@@ -126,6 +126,8 @@ export const invoicesRouter = createRouter()
         dueDate: z.string(),
         roundingScheme: z.string(),
         pricePerHour: z.number(),
+        billed: z.boolean(),
+        clientId: z.string(),
       }),
       pickedIssues: z.object({
         jiraId: z.string(),
@@ -160,6 +162,8 @@ export const invoicesRouter = createRouter()
           dueDate: new Date(input.invoiceInformation.dueDate),
           roundingScheme: roundingScheme,
           pricePerHour: input.invoiceInformation.pricePerHour,
+          clientId: input.invoiceInformation.clientId,
+          billed: input.invoiceInformation.billed,
           organizationId: ctx.organizationId,
           economicOptions: {
             create: {
@@ -204,6 +208,8 @@ export const invoicesRouter = createRouter()
         dueDate: z.string(),
         roundingScheme: z.string(),
         pricePerHour: z.number(),
+        clientId: z.string(),
+        billed: z.boolean(),
       }),
       pickedTickets: z.object({
         id: z.string(),
@@ -238,6 +244,8 @@ export const invoicesRouter = createRouter()
           dueDate: new Date(input.invoiceInformation.dueDate),
           roundingScheme: roundingScheme,
           pricePerHour: input.invoiceInformation.pricePerHour,
+          clientId: input.invoiceInformation.clientId,
+          billed: input.invoiceInformation.billed,
           organizationId: ctx.organizationId,
           economicOptions: {
             create: {
