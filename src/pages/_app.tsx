@@ -12,16 +12,16 @@ import type { AppRouter } from "../server/router";
 import type { Session } from "next-auth";
 import '@fontsource/inter/variable.css'
 import Link from "next/link";
-import TimeAgo from 'javascript-time-ago'
-import en from 'javascript-time-ago/locale/en.json'
-
-TimeAgo.addDefaultLocale(en)
+import { useEffect } from "react";
+import TimeAgo from "javascript-time-ago";
+import en from "javascript-time-ago/locale/en.json";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
   const router = useRouter();
+  
   return (
     <SaasProvider linkComponent={Link} theme={landingPageTheme}>
       <SessionProvider session={session} refetchInterval={0}>

@@ -15,7 +15,7 @@ export interface ClientSidebarProps extends PageSidebarProps {
     createdAt: Date;
     latestBill: Date | null;
     status: string;
-    pricePerHour: Prisma.Decimal;
+    pricePerHour: number;
   }
   economicOptions?: {
     customer: string;

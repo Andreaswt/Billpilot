@@ -12,10 +12,6 @@ datasource db {
   referentialIntegrity = "prisma"
 }
 
-model Example {
-  id String @id @default(cuid())
-}
-
 model Organization {
     id String @id @default(cuid())
     users User[]
@@ -76,7 +72,7 @@ model Worklog {
   id             String       @id @default(cuid())
   worklogId      String
   issueId        String
-  hours          Decimal
+  hours          Float
   started        DateTime
   billed         Boolean?
   billedDate     DateTime?
@@ -99,7 +95,7 @@ model Client {
   createdAt      DateTime       @default(now())
   latestBill     DateTime?
   status         ClientStatus   @default(NOTBILLED)
-  pricePerHour   Decimal
+  pricePerHour   Float
 
   // Options for specific providers
   economicOptions EconomicInvoiceOptions?
@@ -127,10 +123,10 @@ enum RoundingScheme {
 model InvoiceLine {
   id String @id @default(cuid())
   title String
-  quantity Decimal
-  unitPrice Decimal
-  updatedHoursSpent Decimal
-  discountPercentage Decimal
+  quantity Int
+  unitPrice Float
+  updatedHoursSpent Float
+  discountPercentage Int
 
   generalInvoiceId String
   generalInvoice   GeneralInvoice @relation(fields: [generalInvoiceId], references: [id])
@@ -144,10 +140,10 @@ model GeneralInvoice {
   title        String
   description  String
   pricePerHour Float
-  billed       Boolean
+  billed       Boolean @default(false)
 
-  clientId String
-  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  clientId String?
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   // invoiceType InvoiceType @default(GENERAL)
   currency       Currency       @default(USD)
@@ -228,7 +224,7 @@ model InvoiceTemplateFilter {
 model InvoiceTemplateFixedPriceTimeItem {
   id String @id @default(cuid())
   name String
-  amount Decimal
+  amount Float
 
   invoiceTemplateId String
   invoiceTemplate InvoiceTemplate @relation(fields: [invoiceTemplateId], references: [id], onDelete: Cascade)

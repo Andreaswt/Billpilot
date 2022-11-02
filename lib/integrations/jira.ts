@@ -163,7 +163,7 @@ export async function getUninvoicedHoursThisMonth(organizationId: string) {
 
     let billedTime = 0;
     billedWorklogs!.forEach(worklog => {
-        billedTime += new Prisma.Decimal(worklog.hours).toNumber();
+        billedTime += worklog.hours;
     })
 
     return totalHoursThisMonth - billedTime;
@@ -339,7 +339,7 @@ export async function getHoursForProject(projectsKey: string, organizationId: st
     let hours = 0;
     try {
         worklogs!.forEach(worklog => {
-            hours += new Prisma.Decimal(worklog.timeSpentSeconds!).toNumber() / 3600;
+            hours += worklog.timeSpentSeconds! / 3600;
         })
 
         return hours;
@@ -369,7 +369,7 @@ export async function getHoursForEmployee(accountId: string, organizationId: str
     try {
         worklogs!.forEach(worklog => {
             if (worklog.author!.accountId === accountId) {
-                hours += new Prisma.Decimal(worklog.timeSpentSeconds!).toNumber() / 3600;
+                hours += worklog.timeSpentSeconds! / 3600;
             }
         })
 
@@ -410,7 +410,7 @@ export async function importJiraTime(accountIds: string[], issueIds: string[], p
 
         // Employee Hours and Issue Hours
         if (accountIds.includes(worklog.author!.accountId!) || issueIds.includes(worklog.issueId!)) {
-            hours += new Prisma.Decimal(worklog.timeSpentSeconds!).toNumber() / 3600;
+            hours += worklog.timeSpentSeconds! / 3600;
             importedWorklogs.push(worklog.id!);
         }
     }
@@ -422,7 +422,7 @@ export async function importJiraTime(accountIds: string[], issueIds: string[], p
         for (let worklog of projectWorklogs!) {
             if (importedWorklogs.includes(worklog.id!)) continue;
 
-            hours += new Prisma.Decimal(worklog.timeSpentSeconds!).toNumber() / 3600;
+            hours += worklog.timeSpentSeconds! / 3600;
             importedWorklogs.push(worklog.id!);
         }
     }

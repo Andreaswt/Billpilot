@@ -17,6 +17,7 @@ import RevenueChart from "../../components/dashboard/RevenueChart";
 import { trpc } from "../../utils/trpc";
 import { useEffect } from "react";
 import { useSnackbar } from "@saas-ui/react";
+import router from "next/router";
 
 export const getServerSideProps = requireAuth(async (ctx) => {
   return { props: {} };
@@ -61,7 +62,7 @@ const SimpleCard: NextPage = () => {
       snackbar({
         title: "Report rebuilt successfully",
         status: 'success',
-        duration: 2000,
+        duration: 5000,
         isClosable: true,
     })
     }
@@ -88,10 +89,10 @@ const SimpleCard: NextPage = () => {
   ]
 
   useEffect(() => {
-    if (isError && !rebuildReport.isLoading) {
+    if (data === null && !rebuildReport.isLoading) {
       rebuildReport.mutate();
     }
-  }, [isError, rebuildReport.isLoading])
+  }, [isError, rebuildReport])
 
   return (
     <Page title={"Dashboard"} isLoading={isLoading}>
@@ -111,7 +112,7 @@ const SimpleCard: NextPage = () => {
                   </Heading>
                 </Flex>
                 <Flex gap={4}>
-                  <Button colorScheme="primary">Create Invoice</Button>
+                  <Button onClick={() => router.push("/dashboard/generator")} colorScheme="primary">Create Invoice</Button>
                   <ButtonGroup isAttached variant="outline">
                     <Button>Year</Button>
                     <Button isActive>Month</Button>

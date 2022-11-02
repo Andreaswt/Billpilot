@@ -50,7 +50,7 @@ const SignupPage: NextPage = () => {
   return (
     <Box>
       <SEO
-        title="Billpilot SignUp"
+        title="Sign Up"
         description="Signup for your Billpilot account"
       />
       <Box>

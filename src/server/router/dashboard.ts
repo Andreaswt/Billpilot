@@ -40,11 +40,15 @@ export const dashboardRouter = createRouter()
     })
     .query("getDashboard", {
         async resolve({ ctx }) {
-            const dashboardReport = await ctx.prisma.dashboardIndex.findUniqueOrThrow({
+            const dashboardReport = await ctx.prisma.dashboardIndex.findUnique({
                 where: {
                     organizationId: ctx.organizationId
                 }
             })
+
+            if (dashboardReport === null) {
+                return null
+            }
 
             const dataReport = JSON.parse(dashboardReport.reportJson);
 
@@ -107,8 +111,8 @@ export const dashboardRouter = createRouter()
                     clientId: true,
                     invoiceLines: {
                         select: {
-                            hours: true,
-                            pricePerHour: true,
+                            quantity: true,
+                            unitPrice: true,
                         }
                     },
                 },
@@ -154,16 +158,17 @@ export const dashboardRouter = createRouter()
 
             invoices.forEach((invoice) => {
                 invoice.invoiceLines.forEach((line) => {
-                    const hours = line.hours;
-                    const pricePerHour = line.pricePerHour;
+                    const hours = line.quantity;
+                    const pricePerHour = line.unitPrice;
                     const billableAmount = hours * pricePerHour;
 
-                    if (invoice.billed) {
+                    if (invoice.billed && invoice.clientId) {
                         totalHoursBilled += hours;
                         finalClients[invoice.clientId].billed += billableAmount
-                    } else {
+                    } else if (invoice.clientId) {
                         finalClients[invoice.clientId].notBilled += billableAmount
                     }
+
                     totalBillableAmount += billableAmount;
                     totalBillableHours += hours;
                 })

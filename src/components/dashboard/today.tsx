@@ -1,10 +1,12 @@
 import { Flex, Link, SimpleGrid, Spinner, Text } from '@chakra-ui/react'
 import { useSnackbar } from '@saas-ui/react'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { IconType } from 'react-icons'
 import { trpc } from '../../utils/trpc'
 import { Metric } from './new-metric'
 import ReactTimeAgo from 'react-time-ago'
+import TimeAgo from 'javascript-time-ago'
+import en from 'javascript-time-ago/locale/en.json'
 
 interface Props {
   lastUpdated: Date,
@@ -17,6 +19,8 @@ interface Props {
 }
 
 export const Today: React.FunctionComponent<Props> = (props) => {
+  TimeAgo.addDefaultLocale(en)
+  
   const { data, lastUpdated } = props;
 
   const utils = trpc.useContext();

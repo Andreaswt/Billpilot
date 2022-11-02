@@ -24,7 +24,6 @@ export const appRouter = createRouter()
   .merge("hubspot.", hubspotRouter)
   .merge("contact.", contactRouter)
   .merge("account.", accountRouter)
-  .merge("clients.", clientsRouter)
   .merge("invoiceTemplates.", invoiceTemplatesRouter)
   .merge("dashboard.", dashboardRouter)
   .merge("clients.", clientsRouter);
