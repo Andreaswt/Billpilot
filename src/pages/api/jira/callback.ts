@@ -49,7 +49,11 @@ const callback = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         method: "GET",
     })
+
     const cloudIdJsonResponse = await cloudIdResponse.json() as { id: string }[]
+    if (!cloudIdJsonResponse) {
+        throw new Error("cloudIdJsonResponse is: " + cloudIdResponse)
+    }
 
     if (!cloudIdJsonResponse[0].hasOwnProperty("id")) throw new Error("Cloud id missing")
     if (!jsonResponse.hasOwnProperty("access_token") || !jsonResponse.hasOwnProperty("refresh_token")) throw new Error("Tokens missing")

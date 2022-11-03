@@ -39,6 +39,9 @@ export const invoicesRouter = createRouter()
       // Get optional data for integrations, if integrated
       const activeIntegrationsResponse: { [provider: string]: boolean } = {}
       let activeIntegrations = await ctx.prisma.apiKey.findMany({
+        where: {
+          organizationId: ctx.organizationId
+        },
         select: {
           provider: true,
           key: true
