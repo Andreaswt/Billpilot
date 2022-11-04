@@ -5,7 +5,7 @@ import { Button, Checkbox, Divider, Flex, FormControl, FormErrorMessage, FormLab
 import {
   Page, PageBody, Section
 } from '@saas-ui/pro';
-import { Card, CardBody, Form, FormLayout, useForm } from "@saas-ui/react";
+import { Card, CardBody, Form, FormLayout, useForm, useSnackbar } from "@saas-ui/react";
 import moment from 'moment';
 import React, { useMemo } from "react";
 import { trpc } from "../../utils/trpc";
@@ -18,6 +18,7 @@ export const getServerSideProps = requireAuth(async (ctx) => {
 
 const Generator: NextPage = () => {
   const store = useInvoiceTemplatesStore()
+  const snackbar = useSnackbar()
 
   var date = new Date();
   var firstDayInMonth = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -71,7 +72,21 @@ const Generator: NextPage = () => {
 
   const generateInvoicesMutation = trpc.useMutation('invoiceTemplates.generateInvoices', {
     onSuccess() {
-
+      snackbar({
+        title: "Invoices generated successfully.",
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      })
+    },
+    onError(error) {
+      snackbar({
+        title: "Error during invoice generation.",
+        description: "Error trace: " + error.message,
+        status: 'error',
+        duration: 8000,
+        isClosable: true,
+      })
     }
   });
 

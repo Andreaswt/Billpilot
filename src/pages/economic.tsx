@@ -38,8 +38,6 @@ const EconomicPage: NextPage = () => {
       <Box position="relative" overflow="hidden">
         <Container maxW="container.xl" pt={{ base: 20, lg: 40 }} pb={{ md: 0 }}>
           {/* <Center> */}
-
-
           <Stack flex="1" direction="column" >
             <Stack
               flex="1"

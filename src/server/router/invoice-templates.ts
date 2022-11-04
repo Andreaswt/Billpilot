@@ -147,6 +147,6 @@ export const invoiceTemplatesRouter = createRouter()
       invoiceTemplateIds: z.string().array()
     }),
     async resolve({ input, ctx }) {
-      generateInvoices(input.dateFrom, input.dateTo, input.invoiceTemplateIds, ctx.organizationId)
+      return generateInvoices(input.dateFrom, input.dateTo, input.invoiceTemplateIds, ctx.organizationId)
     }
   });

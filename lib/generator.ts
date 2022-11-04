@@ -25,8 +25,7 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
     // Create and bill all invoice templates
 
     // Templates without time shoulsd not be billed. User is informed about this
-    let templatesWithNoTime: string[] = []
-    let templateTime: { [templateId: string]: number } = {}
+    let templateInfo: { [templateId: string]: { time: number, amount: number | null } } = {}
 
     for (let i = 0; i < invoiceIds.length; i++) {
         const id = invoiceIds[i]
@@ -56,8 +55,9 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
 
             importedTime = await importFilteredJiraTime(projectFilters, dateFrom, dateTo, organizationId)
 
+            templateInfo[template.id] = ({ time: importedTime, amount: null })
+
             if (importedTime === 0) {
-                templatesWithNoTime.push(template.id)
                 continue
             }
         }
@@ -118,15 +118,24 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
                         ...fixedPriceInvoiceLines
                     ]
                 }
+            },
+            include: {
+                invoiceLines: true
             }
         })
+
+        let invoiceAmount = 0
+        invoice.invoiceLines.forEach(x => {
+            invoiceAmount += x.quantity * x.unitPrice
+        })
+
+        templateInfo[template.id] = {...templateInfo[template.id], amount: invoiceAmount }
 
         // Export to relevant integration
         createInvoiceDraft(invoice.id, organizationId)
     }
 
     return {
-        templatesWithNoTime: templatesWithNoTime,
-        templateTime: templateTime
+        templateTime: templateInfo
     }
 }
