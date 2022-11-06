@@ -9,18 +9,35 @@ export interface State {
             }
         }
     },
+    generatedTemplatesInfo: {
+        [templateId: string]: {
+            time: number | null,
+            amount: number | null,
+            formattedAmount: string | null
+        }
+    },
     checkAll: boolean,
+}
+
+interface GeneratedTemplatesInfo {
+    [templateId: string]: {
+        time: number | null,
+        amount: number | null,
+        formattedAmount: string | null
+    }
 }
 
 interface StoreState extends State {
     setStore: (store: State) => void,
     setCheckAll: (value: boolean) => void,
     setCheckClient: (clientId: string, value: boolean) => void,
-    setCheckClientTemplate: (clientId: string, templateId: string, value: boolean) => void
+    setCheckClientTemplate: (clientId: string, templateId: string, value: boolean) => void,
+    setGeneratedTemplatesInfo: (templates: GeneratedTemplatesInfo) => void
 }
 
 const useInvoiceTemplatesStore = create<StoreState>((set) => ({
     clients: {},
+    generatedTemplatesInfo: {},
     checkAll: false,
     setStore: (store: State) => set(() => store),
     setCheckAll: (value: boolean) => set((state) => ({ ...state, checkAll: value })),
@@ -47,6 +64,10 @@ const useInvoiceTemplatesStore = create<StoreState>((set) => ({
             },
         }
     })),
+    setGeneratedTemplatesInfo: (templates: GeneratedTemplatesInfo) => set((state) => ({
+        ...state,
+        generatedTemplatesInfo: templates
+    }))
 }))
 
 export default useInvoiceTemplatesStore;
