@@ -1,5 +1,6 @@
 import { ApiKeyProvider, InvoiceTemplateFilterTypes } from "@prisma/client";
 import { prisma } from "../src/server/db/client";
+import { formatCurrency } from "./helpers/currency";
 import { createInvoiceDraft } from "./integrations/e-conomic";
 import { importFilteredJiraTime } from "./integrations/jira";
 
@@ -25,7 +26,7 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
     // Create and bill all invoice templates
 
     // Templates without time shoulsd not be billed. User is informed about this
-    let templateInfo: { [templateId: string]: { time: number, amount: number | null } } = {}
+    let templateInfo: { [templateId: string]: { time: number | null, amount: number | null, formattedAmount: string | null } } = {}
 
     for (let i = 0; i < invoiceIds.length; i++) {
         const id = invoiceIds[i]
@@ -55,9 +56,9 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
 
             importedTime = await importFilteredJiraTime(projectFilters, dateFrom, dateTo, organizationId)
 
-            templateInfo[template.id] = ({ time: importedTime, amount: null })
+            templateInfo[template.id] = ({ time: importedTime, formattedAmount: null, amount: null })
 
-            if (importedTime === 0) {
+            if (importedTime === 0 && template.invoiceTemplateFixedPriceTimeItems.length === 0) {
                 continue
             }
         }
@@ -105,18 +106,21 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
                     }
                 } : {}),
 
+                // If imported time is 0, only create lines with fixed price items
                 invoiceLines: {
-                    create: [
-                        {
-                            title: template.title,
-                            quantity: importedTime,
-                            unitPrice: template.client.pricePerHour,
-                            updatedHoursSpent: 0,
-                            discountPercentage: 0,
-                            organizationId: organizationId
-                        },
-                        ...fixedPriceInvoiceLines
-                    ]
+                    ...(importedTime === 0 ? {
+                        create: [
+                            {
+                                title: template.title,
+                                quantity: importedTime,
+                                unitPrice: template.client.pricePerHour,
+                                updatedHoursSpent: 0,
+                                discountPercentage: 0,
+                                organizationId: organizationId
+                            },
+                            ...fixedPriceInvoiceLines
+                        ]
+                    } : { create: [...fixedPriceInvoiceLines] })
                 }
             },
             include: {
@@ -129,13 +133,13 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
             invoiceAmount += x.quantity * x.unitPrice
         })
 
-        templateInfo[template.id] = {...templateInfo[template.id], amount: invoiceAmount }
+        templateInfo[template.id] = { ...templateInfo[template.id], formattedAmount: formatCurrency(invoiceAmount, template.client.currency), amount: invoiceAmount }
 
         // Export to relevant integration
         createInvoiceDraft(invoice.id, organizationId)
     }
 
     return {
-        templateTime: templateInfo
+        templateTime: templateInfo,
     }
 }

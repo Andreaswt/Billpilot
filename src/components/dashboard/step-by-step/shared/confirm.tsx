@@ -157,7 +157,7 @@ const ConfirmInvoice = (props: IProps) => {
                 </VStack>
                 <Flex justifyContent="space-between">
                     <Button mt={6} colorScheme="primary" onClick={() => setStep((step) => step - 1)}>Previous</Button>
-                    <Button isLoading={createTicketInvoice.isLoading} mt={6} colorScheme="primary" onClick={submitInvoice}>Submit Invoice</Button>
+                    <Button isLoading={createTicketInvoice.isLoading || createIssueInvoice.isLoading} mt={6} colorScheme="primary" onClick={submitInvoice}>Submit Invoice</Button>
                 </Flex>
             </CardBody>
         </Card >

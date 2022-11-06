@@ -33,7 +33,7 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
         defaultValues: {
             title: "",
             active: "active",
-            fixedPriceTimeItems: [{ name: '', amount: 0 }],
+            fixedPriceTimeItems: [],
         },
     });
 

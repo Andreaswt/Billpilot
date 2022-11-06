@@ -5,12 +5,14 @@ import { Button, Checkbox, Divider, Flex, FormControl, FormErrorMessage, FormLab
 import {
   Page, PageBody, Section
 } from '@saas-ui/pro';
-import { Card, CardBody, Form, FormLayout, useForm, useSnackbar } from "@saas-ui/react";
+import { Card, CardBody, EmptyStateActions, EmptyStateBody, EmptyStateContainer, EmptyStateDescription, EmptyStateIcon, EmptyStateTitle, Form, FormLayout, useForm, useSnackbar } from "@saas-ui/react";
 import moment from 'moment';
 import React, { useMemo } from "react";
 import { trpc } from "../../utils/trpc";
 import useInvoiceTemplatesStore from "../../../store/invoice-templates";
 import ClientCheckbox from "../../components/dashboard/create-invoice/invoice-generator/ClientCheckbox";
+import { WarningIcon } from "@chakra-ui/icons";
+import router from "next/router";
 
 export const getServerSideProps = requireAuth(async (ctx) => {
   return { props: {} };
@@ -65,13 +67,16 @@ const Generator: NextPage = () => {
 
       store.setStore({
         clients: clients,
+        generatedTemplatesInfo: {},
         checkAll: false
       })
     }
   });
 
   const generateInvoicesMutation = trpc.useMutation('invoiceTemplates.generateInvoices', {
-    onSuccess() {
+    onSuccess(mutationData) {
+      store.setGeneratedTemplatesInfo(mutationData.templateTime)
+
       snackbar({
         title: "Invoices generated successfully.",
         status: 'success',
@@ -140,6 +145,31 @@ const Generator: NextPage = () => {
 
     return amount
   }, [store, data])
+
+
+  const { data: activeIntegrationsData } = trpc.useQuery(["integrations.getActiveIntegrations"], {
+    refetchOnWindowFocus: false
+  })
+
+  if (!activeIntegrationsData || !activeIntegrationsData["JIRA"]) {
+    return (
+      <Page title={"Invoice Generator"}>
+        <PageBody pt="8">
+          <EmptyStateContainer colorScheme="primary">
+            <EmptyStateBody>
+              <EmptyStateIcon as={WarningIcon} />
+              <EmptyStateTitle>Invoice generator only supports the jira integration for now</EmptyStateTitle>
+              <EmptyStateDescription>Do you want to set it up now?</EmptyStateDescription>
+              <EmptyStateActions>
+                <Button onClick={() => router.push("/dashboard/integrations")} colorScheme="primary">Set up</Button>
+                <Button onClick={() => router.back()} variant="outline">Back</Button>
+              </EmptyStateActions>
+            </EmptyStateBody>
+          </EmptyStateContainer>
+        </PageBody>
+      </Page>
+    )
+  }
 
   return (
     <Page title={"Invoice Generator"} description="Use the invoice generator to generate all your invoices from invoice templates." isLoading={isLoading}>
