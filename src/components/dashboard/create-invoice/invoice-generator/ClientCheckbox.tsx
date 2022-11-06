@@ -1,5 +1,4 @@
-import { Checkbox, Flex, Heading } from '@chakra-ui/react'
-import { TemplatesApi } from '@hubspot/api-client/lib/codegen/crm/timeline'
+import { Checkbox, Flex, Heading, Text } from '@chakra-ui/react'
 import { InvoiceTemplate } from '@prisma/client'
 import * as React from 'react'
 import useInvoiceTemplatesStore from '../../../../../store/invoice-templates'
@@ -31,11 +30,13 @@ const ClientCheckbox: React.FC<Props> = (props) => {
                 </Heading>
             </Flex>
             {
-                props.templates.map(x => {
-                    return (
-                        <TemplateCheckbox key={x.id} invoiceTemplate={x} />
-                    )
-                })
+                props.templates.length === 0
+                    ? <Text pl={4}>No invoice templates</Text>
+                    : (props.templates.map(x => {
+                        return (
+                            <TemplateCheckbox key={x.id} invoiceTemplate={x} />
+                        )
+                    }))
             }
         </>
     )

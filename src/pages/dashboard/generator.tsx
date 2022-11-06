@@ -96,6 +96,17 @@ const Generator: NextPage = () => {
   });
 
   function onSubmit(fields: IForm) {
+    if (selectedTemplatesAmount === 0) {
+      snackbar({
+        title: "Select templates to use invoice generator.",
+        status: 'error',
+        duration: 8000,
+        isClosable: true,
+      })
+
+      return
+    }
+
     let invoiceTemplateIds: string[] = []
 
     if (store.checkAll) {

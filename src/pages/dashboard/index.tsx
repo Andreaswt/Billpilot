@@ -92,7 +92,7 @@ const SimpleCard: NextPage = () => {
     if (data === null && !rebuildReport.isLoading) {
       rebuildReport.mutate();
     }
-  }, [isError, rebuildReport])
+  }, [isError, rebuildReport, data])
 
   return (
     <Page title={"Dashboard"} isLoading={isLoading}>

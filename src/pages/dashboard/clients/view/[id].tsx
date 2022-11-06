@@ -71,7 +71,7 @@ const View: NextPage = () => {
                 </TabPanel>
                 <TabPanel>
                   <ErrorBoundary>
-                    <InvoiceTemplates currency={data?.currency} clientId={clientId} />
+                    <InvoiceTemplates currency={data?.currency} changeTabs={handleTabsChange} clientId={clientId} />
                   </ErrorBoundary>
                 </TabPanel>
                 <TabPanel>
