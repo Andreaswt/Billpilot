@@ -18,8 +18,11 @@ interface Props {
   }[]
 }
 
+
+
 export const Today: React.FunctionComponent<Props> = (props) => {
-  TimeAgo.addDefaultLocale(en)
+  TimeAgo.setDefaultLocale(en.locale)
+  TimeAgo.addLocale(en)
   
   const { data, lastUpdated } = props;
 
