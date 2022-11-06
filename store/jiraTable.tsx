@@ -1,14 +1,10 @@
 import create from 'zustand';
-import { persist } from 'zustand/middleware';
-import { difference } from 'lodash';
-import produce from 'immer';
 
 export interface CheckedItemsState {
     project: { id: string, key: string, displayName: string }[]
     issue: { id: string, key: string, displayName: string }[]
     employee: { id: string, key: string, displayName: string }[]
 }
-
 
 interface TaxDiscountState extends CheckedItemsState {
     checkProject: (item: { id: string, key: string, displayName: string }) => void,

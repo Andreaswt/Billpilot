@@ -24,10 +24,11 @@ import {
   ColumnFiltersState,
   useColumnVisibility,
 } from '@saas-ui/pro'
-
+import { Link } from '@saas-ui/react'
 import { useDebouncedCallback } from '@react-hookz/web'
 
 import { DatePickerModal } from '@saas-ui/date-picker'
+import router from 'next/router'
 
 export interface ListPageProps<D extends object>
   extends PageProps,
@@ -87,8 +88,9 @@ export const ListPage = <D extends object>(props: ListPageProps<D>) => {
 
   const onRowClick = (row: Row<D>, e: React.MouseEvent) => {
     // Find the first A and trigger a click.
-    const link: HTMLAnchorElement | null = e.currentTarget.querySelector('td a')
-    link?.click()
+    // const link: HTMLAnchorElement | null = e.currentTarget.querySelector('td a')
+    // link?.click()
+    router.push(`/dashboard/clients/view/${row.id}`)
   }
 
   const onFilter = React.useCallback((filters: Filter[]) => {

@@ -13,7 +13,7 @@ import {
 import Navigation from './navigation'
 import { Logo } from './logo'
 import { useViewportScroll } from 'framer-motion'
-import Link from 'next/link'
+import NextLink from 'next/link'
 
 export interface HeaderProps extends Omit<BoxProps, 'children'> { }
 
@@ -61,13 +61,11 @@ export const Header = (props: HeaderProps) => {
             }}
           />
           {/* style = {colorMode === 'dark' ? {color = '#2479DB'} : {color = '#FFFFFF'} */}
-          <Link passHref href='/'>
-            <a>
+          <NextLink passHref href='/'>
             <Text letterSpacing='2px' textColor={colorMode === 'dark' ? '#FFFFFF' : '#2479DB'} as='em'>
               Billpilot
             </Text>
-            </a>
-          </Link>
+          </NextLink>
           <Navigation />
         </Flex>
       </Container>

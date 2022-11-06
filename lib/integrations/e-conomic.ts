@@ -108,17 +108,17 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
     let timeItems = invoice.invoiceLines.map(item => {
         if (!invoice.economicOptions) throw new Error("Economic options not defined for invoice during e-conomic invoice export")
 
-        let hours = item.hours.toNumber()
+        let hours = item.quantity
 
-        if (item.updatedHoursSpent && item.updatedHoursSpent.toNumber() > 0) {
-            hours = item.updatedHoursSpent.toNumber()
+        if (item.updatedHoursSpent && item.updatedHoursSpent > 0) {
+            hours = item.updatedHoursSpent
         }
 
-        let lineAmount = hours * invoice.pricePerHour.toNumber();
+        let lineAmount = hours * invoice.pricePerHour;
 
         // Apply discount
-        if (item.discountPercentage && item.discountPercentage.toNumber() > 0) {
-            lineAmount *= ((100 - item.discountPercentage.toNumber()) / 100)
+        if (item.discountPercentage && item.discountPercentage > 0) {
+            lineAmount *= ((100 - item.discountPercentage) / 100)
         }
 
         return ({
@@ -127,8 +127,8 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
                 unitNumber: Number(invoice.economicOptions.unit)
             },
             quantity: hours,
-            unitNetPrice: invoice.pricePerHour.toNumber(),
-            discountPercentage: item.discountPercentage.toNumber(),
+            unitNetPrice: invoice.pricePerHour,
+            discountPercentage: item.discountPercentage,
             totalNetAmount: lineAmount,
             description: item.title,
             product: {
@@ -139,7 +139,7 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
 
     let createInvoice = {
         date: (new Date()).toISOString().slice(0, 10),
-        dueDate: invoice.dueDate.toISOString().slice(0, 10),
+        ...(invoice?.dueDate ? { dueDate: invoice.dueDate.toISOString().slice(0, 10) } : {}),
         currency: invoice.currency,
         paymentTerms: {
             paymentTermsNumber: Number(invoice.economicOptions.paymentTerms)
@@ -156,18 +156,16 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
         layout: {
             layoutNumber: Number(invoice.economicOptions.layout)
         },
-        lines: [ ...timeItems ],
+        lines: [...timeItems],
         notes: {
             heading: invoice.title,
             textLine1: invoice.economicOptions.text1
         },
         references: {
-            salesPerson: {
-                employeeNumber: Number(invoice.economicOptions.ourReference)
-            },
-            customerContact: {
-                customerContactNumber: Number(invoice.economicOptions.customerContact)
-            }
+            ...(invoice.economicOptions.ourReference ? { salesPerson: { employeeNumber: Number(invoice.economicOptions.ourReference) } } : {}
+            ),
+            ...(invoice.economicOptions.customerContact ? { customerContact: { customerContactNumber: Number(invoice.economicOptions.customerContact) } } : {}
+            )
         }
     }
 

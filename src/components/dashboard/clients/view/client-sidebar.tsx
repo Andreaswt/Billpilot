@@ -1,7 +1,6 @@
 import * as React from 'react'
 
 import { Persona, Property, PropertyList } from '@saas-ui/react'
-
 import { Heading } from '@chakra-ui/react'
 import { Currency, Prisma } from '@prisma/client'
 import {
@@ -16,7 +15,7 @@ export interface ClientSidebarProps extends PageSidebarProps {
     createdAt: Date;
     latestBill: Date | null;
     status: string;
-    pricePerHour: Prisma.Decimal;
+    pricePerHour: number;
   }
   economicOptions?: {
     customer: string;
@@ -48,7 +47,7 @@ export const ClientSidebar: React.FC<ClientSidebarProps> = (props) => {
       </PageSidebarHeader>
       <PageSidebarBody>
         <PropertyList>
-        <Heading size="md">Invoice</Heading>
+        <Heading size="md">Client</Heading>
           <Property label="Currency" value={client?.currency} />
           <Property label="Rounding Scheme" value={client?.roundingScheme} />
           <Property label="Created At" value={client?.createdAt.toISOString()} />

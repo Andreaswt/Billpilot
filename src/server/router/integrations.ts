@@ -15,6 +15,9 @@ export const integrationsRouter = createRouter()
     .query("getActiveIntegrations", {
         async resolve({ ctx }) {
             let apiKeys = await ctx.prisma.apiKey.findMany({
+                where: {
+                    organizationId: ctx.organizationId
+                },
                 select: {
                     provider: true,
                     key: true

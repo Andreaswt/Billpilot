@@ -53,6 +53,79 @@ export const jiraRouter = createRouter()
       return searchResult;
     },
   })
+  .query("filterProjects", {
+    input: z
+      .object({
+        searchTerm: z.string(),
+      }),
+    async resolve({ input, ctx }) {
+      let projects = await searchProjects(input.searchTerm, ctx.organizationId);
+      let projectsResponse: { 
+        id: string,
+        key: string,
+        name: string 
+      }[] = [];
+
+      projects?.values!.forEach((project) => {
+        projectsResponse.push({
+          id: project.id,
+          key: project.key,
+          name: project.name,
+        });
+      })
+
+      let searchResult: {
+        amount: number,
+        total: number,
+        projectsResponse: {
+          id: string,
+          key: string,
+          name: string
+        }[]
+      } = {
+        amount: projects?.values.length || 0,
+        total: projects?.total || 0,
+        projectsResponse: projectsResponse
+      };
+
+      return searchResult;
+    },
+  })
+  .query("filterEmployees", {
+    input: z
+    .object({
+      searchTerm: z.string(),
+    }),
+    async resolve({ input, ctx }) {
+      let employees = await getEmployees(input.searchTerm, ctx.organizationId);
+      let employeesResponse: { 
+        id: string, 
+        name: string 
+      }[] = [];
+
+      employees?.forEach((employee) => {
+        employeesResponse.push({
+          id: employee.accountId,
+          name: employee.displayName!
+        })
+      })
+
+      let searchResult: {
+        amount: number,
+        total: number,
+        employeesResponse: {
+          id: string,
+          name: string
+        }[]
+      } = {
+        amount: employees?.length || 0,
+        total: employees?.length || 0,
+        employeesResponse: employeesResponse
+      };
+
+      return searchResult;
+    },
+  })
   .query("searchProjectsForIssueInvoicing", {
     input: z
       .object({

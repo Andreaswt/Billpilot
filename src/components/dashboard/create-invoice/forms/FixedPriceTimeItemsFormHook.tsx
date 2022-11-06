@@ -1,13 +1,8 @@
 import { AddIcon, MinusIcon } from "@chakra-ui/icons";
-import { Button, Flex, FormControl, FormErrorMessage, FormLabel, Heading, IconButton, Input, InputGroup, InputLeftAddon, InputRightAddon, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, Stack, Text, Tooltip } from "@chakra-ui/react";
+import { Button, Flex, FormControl, FormErrorMessage, FormLabel, Heading, IconButton, Input, InputGroup, InputLeftAddon, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, Stack, Text } from "@chakra-ui/react";
 import { Card, CardBody, Divider } from "@saas-ui/react";
-import React, { useEffect } from "react";
-import { FormProvider, useFieldArray, useForm, UseFormReturn, useWatch } from "react-hook-form";
-import { TbAd2, TbPercentage, TbReceipt } from "react-icons/tb";
-import useTaxDiscountStore from "../../../../../store/taxDiscount";
-import { TimeItemsTable } from "../CollapseableTable";
-import FixedPriceTimeItemsStats from "./FixedPriceTimeItemsStats";
-import TimeItemsStats from "./TimeItemsStats";
+import React from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 
 const TimeItemsFormHook = () => {
 

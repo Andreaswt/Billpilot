@@ -1,59 +1,68 @@
-import { Box, Grid, GridItem, Heading, SimpleGrid, Stat, StatArrow, StatHelpText, StatNumber, Text } from '@chakra-ui/react'
-import { Card, CardBody, CardHeader } from '@saas-ui/react'
+import { Flex, Link, SimpleGrid, Spinner, Text } from '@chakra-ui/react'
+import { useSnackbar } from '@saas-ui/react'
+import React, { useEffect } from 'react'
+import { IconType } from 'react-icons'
+import { trpc } from '../../utils/trpc'
 import { Metric } from './new-metric'
+import ReactTimeAgo from 'react-time-ago'
+import TimeAgo from 'javascript-time-ago'
+import en from 'javascript-time-ago/locale/en.json'
 
-import { IoIosPaper, IoMdCalendar } from 'react-icons/io'
-import { MdPayment } from 'react-icons/md'
-import React from 'react'
+interface Props {
+  lastUpdated: Date,
+  data: {
+    label: string,
+    icon: IconType,
+    value: string,
+    change?: number
+  }[]
+}
 
-const data = [
-  {
-    label: 'Total Hours Billed',
-    icon: IoIosPaper,
-    value: '19.473',
-    change: 23,
-  },
-  {
-    label: 'Total Billable Hours',
-    icon: MdPayment,
-    value: '130',
-    change: 29,
-  },
-  {
-    label: 'Total Hours Due',
-    icon: IoMdCalendar,
-    value: '5',
-    change: -10,
-  },
-  {
-    label: 'Total Due',
-    icon: IoMdCalendar,
-    value: '10',
-    change: 60,
-  },
-]
+export const Today: React.FunctionComponent<Props> = (props) => {
+  TimeAgo.addDefaultLocale(en)
+  
+  const { data, lastUpdated } = props;
 
-export const Today = () => {
+  const utils = trpc.useContext();
+  const snackbar = useSnackbar()
+
+  const rebuildReport = trpc.useMutation('dashboard.rebuildReport', {
+    onSuccess() {
+      utils.invalidateQueries(['dashboard.getDashboard']);
+      snackbar({
+        title: "Report rebuilt successfully",
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      })
+    }
+  });
+
+
+  const handleRebuildReport = () => {
+    rebuildReport.mutateAsync();
+  }
+
+
   return (
     <>
-      {/* <Grid templateRows='repeat(2, 1fr)' templateColumns='repeat(3, 1fr)' gap="4"> */}
-      {/* <GridItem rowSpan={2} colSpan={2}> */}
       <SimpleGrid columns={{ md: 4, base: 2 }} gap={4}>
         {data.map((metric, index) => (
           <React.Fragment key={index}>
             <Metric {...metric} color="primary" />
           </React.Fragment>
         ))}
+        <Flex flexDir="column" alignItems="end" justifyContent="start" gap={1}>
+          {rebuildReport.isLoading ? (
+            <Spinner color='brand.800' />
+          ) : (
+            <>
+              <Text fontSize="sm">This report was built <ReactTimeAgo date={lastUpdated} />.</Text>
+              <Link color='blue.400' fontSize="sm" onClick={handleRebuildReport}>Rebuild Report</Link>
+            </>
+          )}
+        </Flex>
       </SimpleGrid>
-      {/* </GridItem> */}
-      {/* <GridItem colSpan={1}>
-          <Card borderRadius="8px" border="1px solid #e0dede" boxShadow='md' title="Recent invoices">
-            <CardBody>
-              SaaS UI datagrid here
-            </CardBody>
-          </Card>
-        </GridItem> */}
-      {/* </Grid> */}
     </>
   )
 }

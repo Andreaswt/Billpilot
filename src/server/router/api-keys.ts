@@ -18,6 +18,9 @@ export const apiKeysRouter = createRouter()
     async resolve({ ctx }) {
       return await ctx.prisma.apiKey.findMany(
         {
+          where: {
+            organizationId: ctx.organizationId
+          },
           select: {
             key: true,
             value: true,

@@ -8,7 +8,7 @@ import { FiArrowRightCircle } from 'react-icons/fi';
 import { BackgroundGradient } from '../components/landing-page/gradients/background-gradient'
 import { SEO } from '../components/landing-page/seo/seo'
 import { IoIosArrowForward } from 'react-icons/io';
-
+import NextLink from 'next/link'
 
 
 interface FeatureProps {
@@ -25,7 +25,7 @@ const Feature: React.FunctionComponent<FeatureProps> = (props) => {
     <GridItem>
       <Card borderRadius="8px" boxShadow='md' height='100%'>
         <Link>
-          <a href={props.link}>
+          <NextLink passHref href={props.link}>
             <CardBody>
               <Stack>
                 <Flex
@@ -47,7 +47,7 @@ const Feature: React.FunctionComponent<FeatureProps> = (props) => {
 
               </Stack>
             </CardBody>
-          </a>
+          </NextLink>
         </Link>
       </Card>
     </GridItem>

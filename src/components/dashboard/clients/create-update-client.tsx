@@ -1,4 +1,5 @@
 import { Center, Flex, FormControl, FormErrorMessage, FormLabel, Input, Select, Spinner, Stack, StackDivider, Textarea, VStack } from '@chakra-ui/react';
+import { Currency, RoundingScheme } from '@prisma/client';
 import { Page, PageBody, Section } from '@saas-ui/pro';
 import { Button, Card, CardBody, FormLayout } from '@saas-ui/react';
 import router from 'next/router';
@@ -53,7 +54,7 @@ export const CreateUpdateClient: React.FunctionComponent<IProps> = (props) => {
     });
 
     const { data: invoiceOptionsData, isLoading: invoiceOptionsIsLoading } = trpc.useQuery(["invoices.getInvoiceOptions"], {
-        refetchOnWindowFocus: false
+        refetchOnWindowFocus: false,
     });
 
     async function onSubmit(data: CreateClientForm) {
@@ -70,8 +71,8 @@ export const CreateUpdateClient: React.FunctionComponent<IProps> = (props) => {
         defaultValues: {
             clientInformation: {
                 name: "",
-                currency: "",
-                roundingScheme: "",
+                currency: Currency.DKK,
+                roundingScheme: mapRoundingSchemeToString(RoundingScheme.POINTPOINT),
                 pricePerHour: 0,
             },
             economicOptions: {
@@ -125,6 +126,21 @@ export const CreateUpdateClient: React.FunctionComponent<IProps> = (props) => {
         { customerNumber: parseInt(economicCustomer) }],
         {
             enabled: false,
+            onSuccess(data) {
+                reset(form => {
+                    return ({
+                        ...form,
+                        economicOptions: {
+                            ...form.economicOptions,
+                            unit: data.units[0].unitNumber.toString(),
+                            layout: data.layouts[0].layoutNumber.toString(),
+                            vatZone: data.vatZones[0].vatZoneNumber.toString(),
+                            paymentTerms: data.paymentTerms[0].paymentTermNumber.toString(),
+                            product: data.products[0].productNumber.toString()
+                        }
+                    })
+                })
+            }
         });
 
     useEffect(() => {
@@ -269,9 +285,7 @@ export const CreateUpdateClient: React.FunctionComponent<IProps> = (props) => {
                                                                                                             id='text1'
                                                                                                             placeholder="Enter Text 1"
                                                                                                             variant="filled"
-                                                                                                            {...register(`economicOptions.text1`, {
-                                                                                                                required: 'Text 1 is required',
-                                                                                                            })}
+                                                                                                            {...register(`economicOptions.text1`)}
                                                                                                         />
                                                                                                         <FormErrorMessage>
                                                                                                             {errors.economicOptions?.text1?.message}
@@ -330,9 +344,7 @@ export const CreateUpdateClient: React.FunctionComponent<IProps> = (props) => {
                                                                                                             id='customerContact'
                                                                                                             variant="filled"
                                                                                                             placeholder="Select Customer Contact"
-                                                                                                            {...register(`economicOptions.customerContact`, {
-                                                                                                                required: 'Customer Contact is required',
-                                                                                                            })}>
+                                                                                                            {...register(`economicOptions.customerContact`)}>
                                                                                                             {economicData.customerContacts.map(item => {
                                                                                                                 return (<option key={item.customerContactNumber} value={item.customerContactNumber}>{item.name}</option>)
                                                                                                             })}
@@ -350,9 +362,7 @@ export const CreateUpdateClient: React.FunctionComponent<IProps> = (props) => {
                                                                                                                 id='ourReference'
                                                                                                                 variant="filled"
                                                                                                                 placeholder="Select Our Reference"
-                                                                                                                {...register(`economicOptions.ourReference`, {
-                                                                                                                    required: 'Our reference is required',
-                                                                                                                })}>
+                                                                                                                {...register(`economicOptions.ourReference`)}>
                                                                                                                 {economicData.ourReferences.map(item => {
                                                                                                                     return (<option key={item.employeeNumber} value={item.employeeNumber}>{item.name}</option>)
                                                                                                                 })}
