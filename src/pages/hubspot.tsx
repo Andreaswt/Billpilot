@@ -105,8 +105,8 @@ const HubspotPage: NextPage = () => {
                         src="static/images/integrationlogos/Hubspot.png"
                         style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', minWidth: '400px' } : {minWidth: '400px'}}
                         alt='Hubspot logo'
-                        width={225}
-                        height={50}
+                        width={150}
+                        height={40}
                       />
                     </Flex>
 
