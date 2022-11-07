@@ -117,7 +117,65 @@ export const invoicesRouter = createRouter()
         invoiceId: z.string(),
       }),
     async resolve({ ctx, input }) {
-      
+      return await ctx.prisma.generalInvoice.findUniqueOrThrow({
+        where: {
+          id: input.invoiceId
+        },
+        include: {
+          economicOptions: true,
+          invoiceLines: true
+        }
+      })
+    },
+  })
+  .query("getInvoices", {
+    async resolve({ ctx, input }) {
+      const invoices = await ctx.prisma.generalInvoice.findMany({
+        where: {
+          organizationId: ctx.organizationId
+        },
+        take: 100,
+        select: {
+          id: true,
+          title: true,
+          client: {
+            select: {
+              name: true
+            }
+          },
+          currency: true,
+          issueDate: true,
+          invoicedFrom: true,
+          invoicedTo: true,
+          pricePerHour: true
+        }
+      })
+
+      return invoices.map(x => {
+        return ({
+          id: x.id,
+          title: x.title,
+          clientName: x.client?.name,
+          currency: x.currency,
+          issueDate: x.issueDate,
+          invoicedFrom: x.invoicedFrom,
+          invoicedTo: x.invoicedTo,
+          pricePerHour: x.pricePerHour,
+        })
+      })
+    },
+  })
+  .mutation("deleteInvoice", {
+    input: z
+      .object({
+        invoiceId: z.string(),
+      }),
+    async resolve({ ctx, input }) {
+      await ctx.prisma.generalInvoice.delete({
+        where: {
+          id: input.invoiceId
+        }
+      })
     },
   })
   .mutation("createIssueInvoice", {

@@ -46,6 +46,7 @@ export interface ListPageProps<D extends object>
   operators?: FilterOperators
   searchQuery?: string
   visibleColumns: string[]
+  viewLink: string
 }
 
 /**
@@ -61,6 +62,7 @@ export const ListPage = <D extends object>(props: ListPageProps<D>) => {
     emptyState,
     columns,
     visibleColumns,
+    viewLink,
     data = [],
     isLoading,
     onSelectedRowsChange,
@@ -90,7 +92,7 @@ export const ListPage = <D extends object>(props: ListPageProps<D>) => {
     // Find the first A and trigger a click.
     // const link: HTMLAnchorElement | null = e.currentTarget.querySelector('td a')
     // link?.click()
-    router.push(`/dashboard/clients/view/${row.id}`)
+    router.push(`${viewLink}/${row.id}`)
   }
 
   const onFilter = React.useCallback((filters: Filter[]) => {

@@ -1,11 +1,10 @@
 import * as React from 'react'
-import * as Yup from 'yup'
 
 import {
     BulkActionsSelections, DataGridCell, MenuProperty, ToggleButton, ToggleButtonGroup, Toolbar,
     ToolbarButton, useColumns
 } from '@saas-ui/pro'
-import {useDataGridFilter as getDataGridFilter} from '@saas-ui/pro'
+import { useDataGridFilter as getDataGridFilter } from '@saas-ui/pro'
 import {
     Button, EmptyState, Menu,
     MenuButton,
@@ -20,107 +19,101 @@ import { Box, Portal, Spacer, Tag, useBreakpointValue } from '@chakra-ui/react'
 import { format } from 'date-fns'
 import { NextPage } from 'next'
 import router, { useRouter } from 'next/router'
-import { AddFilterButton, filters } from '../../../components/dashboard/clients/client-filters'
-import { ClientStatuses } from '../../../components/dashboard/clients/client-statuses'
 import { InlineSearch } from '../../../components/dashboard/list-page/inline-search'
 import { ListPage } from '../../../components/dashboard/list-page/list-page'
 import { trpc } from '../../../utils/trpc'
+import { AddFilterButton, filters } from '../../../components/dashboard/invoices/invoice-filters'
 
-interface Client {
+interface Invoice {
     id: string
-    name: string
-    createdAt: Date
-    latestBill: Date
-    status: string
+    title: string
+    pricePerHour: number
+    clientName: string
+    currency: string
+    invoicedFrom: Date
+    invoicedTo: Date
+    issueDate: Date
 }
 
-const billedStatus: Record<string, { label: string; color: string }> = {
-    billed: {
-        label: 'Billed',
-        color: 'green',
-    },
-    notBilled: {
-        label: 'Not billed',
-        color: 'orange',
-    },
-}
-
-const StatusCell: DataGridCell<Client> = (cell) => {
-    const status = billedStatus[cell.getValue<string>()] || billedStatus.notBilled
-    return (
-        <Tag colorScheme={status.color} size="sm">
-            {status.label}
-        </Tag>
-    )
-}
-
-const DateCell: DataGridCell<Client> = ({ cell }) => {
+const DateCell: DataGridCell<Invoice> = ({ cell }) => {
     return <>{format(new Date(cell.getValue<string>()), 'PP')}</>
 }
 
-const ActionCell: DataGridCell<Client> = (client) => {
+const ActionCell: DataGridCell<Invoice> = (invoice) => {
     const utils = trpc.useContext()
-    
-    const mutation = trpc.useMutation(["clients.deleteClient"], {
+
+    const mutation = trpc.useMutation(["invoices.deleteInvoice"], {
         onSuccess() {
-            utils.invalidateQueries(['clients.getClients'])
+            utils.invalidateQueries(['invoices.getInvoices'])
         }
     });
 
     return (
         <Box onClick={(e) => e.stopPropagation()}>
             <OverflowMenu size="xs">
-                <MenuItem onClick={async () => await mutation.mutateAsync({id: client.row.original.id})}>Delete</MenuItem>
-                <MenuItem onClick={() => router.push(`/dashboard/clients/update/${client.row.original.id}`)}>Edit</MenuItem>
+                <MenuItem onClick={async () => await mutation.mutateAsync({ invoiceId: invoice.row.original.id })}>Delete</MenuItem>
+                <MenuItem onClick={() => router.push(`/dashboard/invoices/update/${invoice.row.original.id}`)}>Edit</MenuItem>
             </OverflowMenu>
         </Box>
     )
 }
 
-const ClientsListPage: NextPage = () => {
+const InvoicesListPage: NextPage = () => {
     const [searchQuery, setSearchQuery] = React.useState('')
     const isMobile = useBreakpointValue({ base: true, lg: false })
     const params = useRouter()
-    const { data, isLoading } = trpc.useQuery(["clients.getClients", { status: params?.query?.type as string ?? "" }]);
+    const { data, isLoading } = trpc.useQuery(["invoices.getInvoices"]);
 
-    const columns = useColumns<Client>(
+    const columns = useColumns<Invoice>(
         () => [
             {
-                id: 'name',
-                accessorKey: 'name',
-                header: 'Name',
+                id: 'title',
+                accessorKey: 'title',
+                header: 'Title',
                 size: 300,
                 meta: {
-                    href: ({ id }) => `/dashboard/clients/view/${id}`,
+                    href: ({ id }) => `/dashboard/invoices/view/${id}`,
                 },
             },
             {
-                id: 'createdAt',
-                header: 'Created at',
+                id: 'pricePerHour',
+                accessorKey: 'pricePerHour',
+                header: 'Price per hour',
+                meta: {
+                    isNumeric: true,
+                },
+            },
+            {
+                id: 'clientName',
+                accessorKey: 'clientName',
+                header: 'Client name',
+                size: 300,
+            },
+            {
+                id: 'currency',
+                accessorKey: 'currency',
+                header: 'Currency',
+            },
+            {
+                id: 'invoicedFrom',
+                header: 'Invoiced from',
                 cell: DateCell,
                 filterFn: getDataGridFilter('date'),
                 enableGlobalFilter: false,
             },
             {
-                id: 'latestBill',
-                header: 'Latest bill',
-                cell: (data) => (
-                    !data.row.original.latestBill
-                    ? <> - </>
-                    : DateCell
-                    ),
+                id: 'invoicedTo',
+                header: 'Invoiced to',
+                cell: DateCell,
                 filterFn: getDataGridFilter('date'),
                 enableGlobalFilter: false,
             },
             {
-                id: 'status',
-                header: 'Status',
-                cell: StatusCell,
-                filterFn: getDataGridFilter('string'),
+                id: 'issueDate',
+                header: 'Issue date',
+                cell: DateCell,
+                filterFn: getDataGridFilter('date'),
                 enableGlobalFilter: false,
-                meta: {
-                    isNumeric: true,
-                },
             },
             {
                 id: 'action',
@@ -135,8 +128,8 @@ const ClientsListPage: NextPage = () => {
     )
 
     const [visibleColumns, setVisibleColumns] = useLocalStorage(
-        'clients.columns',
-        ['name', 'createdAt', 'latestBill', 'status'],
+        'invoices.columns',
+        ['title', 'pricePerHour', 'clientName', 'currency', 'invoicedFrom', 'invoicedTo', 'issueDate'],
     )
 
     const displayProperties = (
@@ -168,16 +161,15 @@ const ClientsListPage: NextPage = () => {
 
     const primaryAction = (
         <ToolbarButton
-            label="Add client"
+            label="Add invoice"
             variant="solid"
             colorScheme="primary"
-            onClick={() => router.push("/dashboard/clients/create")}
+            onClick={() => router.push("/dashboard/generator")}
         />
     )
 
     const toolbarItems = (
         <>
-            <ClientStatuses />
             <AddFilterButton />
             <Spacer />
             <InlineSearch
@@ -227,14 +219,14 @@ const ClientsListPage: NextPage = () => {
 
     const emptyState = (
         <EmptyState
-            title="No clients added yet"
-            description="Add a client to get started."
+            title="No invoices added yet"
+            description="Add an invoice to get started."
             colorScheme="primary"
             icon={FiUser}
             actions={
                 <>
-                    <Button colorScheme="primary" variant="solid" onClick={() => router.push("/dashboard/clients/create")}>
-                        Add a client
+                    <Button colorScheme="primary" variant="solid" onClick={() => router.push("/dashboard/generator")}>
+                        Create invoice
                     </Button>
                 </>
             }
@@ -243,8 +235,8 @@ const ClientsListPage: NextPage = () => {
 
     return (
         <>
-            <ListPage<Client>
-                title="Clients"
+            <ListPage<Invoice>
+                title="Invoices"
                 toolbar={toolbar}
                 tabbar={tabbar}
                 bulkActions={bulkActions}
@@ -253,8 +245,8 @@ const ClientsListPage: NextPage = () => {
                 emptyState={emptyState}
                 columns={columns}
                 visibleColumns={visibleColumns}
-                viewLink="/dashboard/clients/view"
-                data={data as Client[]}
+                viewLink="/dashboard/invoices/view"
+                data={data as Invoice[]}
                 isLoading={isLoading}
             />
         </>
@@ -262,4 +254,4 @@ const ClientsListPage: NextPage = () => {
     )
 }
 
-export default ClientsListPage;
+export default InvoicesListPage;
