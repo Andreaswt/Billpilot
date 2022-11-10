@@ -108,7 +108,7 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
 
                 // If imported time is 0, only create lines with fixed price items
                 invoiceLines: {
-                    ...(importedTime === 0 ? {
+                    ...(importedTime !== 0 ? {
                         create: [
                             {
                                 title: template.title,
