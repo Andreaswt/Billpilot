@@ -35,25 +35,25 @@ const Projects = (props: IProps) => {
         return [
             {
                 name: 'Group 3.1',
-                type: 'Project',
+                type: 'A.P. Møller Maersk',
                 key: 'G31',
                 id: '1',
             },
             {
                 name: 'Sprint 4.2',
-                type: 'Project',
+                type: 'Vodafone',
                 key: 'TES',
                 id: '2',
             },
             {
                 name: 'Sprint 7.7',
-                type: 'Project',
+                type: 'Kingfisher plc',
                 key: 'F73',
                 id: '3',
             },
             {
                 name: 'Meet 8.2',
-                type: 'Meeting',
+                type: 'Vestas Wind Systems',
                 key: 'F13',
                 id: '4',
             },
