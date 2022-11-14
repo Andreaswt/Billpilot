@@ -4,7 +4,7 @@ import { formatCurrency } from "./helpers/currency";
 import { createInvoiceDraft } from "./integrations/e-conomic";
 import { importFilteredJiraTime } from "./integrations/jira";
 
-export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds: string[], organizationId: string) {
+export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds: { clientId: string, invoiceTemplateId: string }[], organizationId: string) {
     // Find active integrations for organization, so the invoice can be created for the integrations
     const organization = await prisma.organization.findUniqueOrThrow({
         where: {
@@ -29,11 +29,12 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
     let templateInfo: { [templateId: string]: { time: number | null, amount: number | null, formattedAmount: string | null } } = {}
 
     for (let i = 0; i < invoiceIds.length; i++) {
-        const id = invoiceIds[i]
+        const invoiceTemplateId = invoiceIds[i].invoiceTemplateId
+        const clientId = invoiceIds[i].clientId
 
         const template = await prisma.invoiceTemplate.findUniqueOrThrow({
             where: {
-                id: id
+                id: invoiceTemplateId
             },
             include: {
                 client: {
@@ -87,6 +88,7 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
                 roundingScheme: template.client.roundingScheme,
                 pricePerHour: template.client.pricePerHour,
                 organizationId: organizationId,
+                clientId: clientId,
 
                 // Add E-conomic options if enabled
                 ...(economicIsActive && template.client.economicOptions ? {

@@ -1,8 +1,8 @@
 import { ApiKeyProvider, Currency, RoundingScheme } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { mapRoundingScheme } from "../../../lib/helpers/invoices";
-import { createInvoiceDraft, getAllCustomers, getAllEmployees, getAllLayouts, getAllPaymentTerms, getAllProducts, getAllUnits, getAllVatZones, getCustomerContacts } from "../../../lib/integrations/e-conomic";
+import { mapRoundingScheme, mapRoundingSchemeToString, mapStatusToString } from "../../../lib/helpers/invoices";
+import { createInvoiceDraft, getAllCustomers, getAllEmployees, getAllLayouts, getAllPaymentTerms, getAllProducts, getAllUnits, getAllVatZones, getCustomer, getCustomerContact, getCustomerContacts, getEmployee, getLayout, getPaymentTerm, getProduct, getUnit, getVatZone } from "../../../lib/integrations/e-conomic";
 import { createRouter } from "./context";
 
 export const invoicesRouter = createRouter()
@@ -117,7 +117,7 @@ export const invoicesRouter = createRouter()
         invoiceId: z.string(),
       }),
     async resolve({ ctx, input }) {
-      return await ctx.prisma.generalInvoice.findUniqueOrThrow({
+      const invoice = await ctx.prisma.generalInvoice.findUniqueOrThrow({
         where: {
           id: input.invoiceId
         },
@@ -126,6 +126,25 @@ export const invoicesRouter = createRouter()
           invoiceLines: true
         }
       })
+
+      return {
+        ...invoice,
+        roundingScheme: mapRoundingSchemeToString(invoice.roundingScheme),
+        ...(invoice.economicOptions ? {
+          economicOptions: {
+            layout: (await getLayout(ctx.organizationId, invoice.economicOptions.layout)).name,
+            customer: (await getCustomer(ctx.organizationId, invoice.economicOptions.customer)).name,
+            text1: invoice.economicOptions.text1 ?? "-",
+            ourReference: (await getEmployee(ctx.organizationId, invoice.economicOptions.ourReference)).name,
+            customerContact: (await getCustomerContact(ctx.organizationId, invoice.economicOptions.customer, invoice.economicOptions.customerContact)).name,
+            unit: (await getUnit(ctx.organizationId, invoice.economicOptions.unit)).name,
+            vatZone: (await getVatZone(ctx.organizationId, invoice.economicOptions.vatZone)).name,
+            paymentTerms: (await getPaymentTerm(ctx.organizationId, invoice.economicOptions.paymentTerms)).name,
+            product: (await getProduct(ctx.organizationId, invoice.economicOptions.product)).name,
+          }
+        } : {}),
+        ...invoice.invoiceLines
+      }
     },
   })
   .query("getInvoices", {
@@ -148,7 +167,7 @@ export const invoicesRouter = createRouter()
           invoicedFrom: true,
           invoicedTo: true,
           pricePerHour: true
-        }
+        },
       })
 
       return invoices.map(x => {

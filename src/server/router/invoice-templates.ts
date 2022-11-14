@@ -144,7 +144,10 @@ export const invoiceTemplatesRouter = createRouter()
     input: z.object({
       dateFrom: z.date(),
       dateTo: z.date(),
-      invoiceTemplateIds: z.string().array()
+      invoiceTemplateIds: z.object({
+        clientId: z.string(), 
+        invoiceTemplateId: z.string(),
+      }).array()
     }),
     async resolve({ input, ctx }) {
       return generateInvoices(input.dateFrom, input.dateTo, input.invoiceTemplateIds, ctx.organizationId)

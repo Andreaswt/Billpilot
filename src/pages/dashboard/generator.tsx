@@ -107,12 +107,12 @@ const Generator: NextPage = () => {
       return
     }
 
-    let invoiceTemplateIds: string[] = []
+    let invoiceTemplateIds: { clientId: string, invoiceTemplateId: string }[] = []
 
     if (store.checkAll) {
       data?.forEach(client => {
         client.invoiceTemplates.forEach(template => {
-          invoiceTemplateIds.push(template.id)
+          invoiceTemplateIds.push({ clientId: client.id, invoiceTemplateId: template.id })
         })
       })
     }
@@ -120,7 +120,7 @@ const Generator: NextPage = () => {
       Object.keys(store.clients).forEach(clientId => {
         Object.keys(store.clients[clientId]?.checkedTemplates ?? []).forEach(templateId => {
           if (store.clients[clientId].checkedTemplates[templateId] || store.clients[clientId].checkAllTemplates) {
-            invoiceTemplateIds.push(templateId)
+            invoiceTemplateIds.push({ clientId: clientId, invoiceTemplateId: templateId })
           }
         })
       })

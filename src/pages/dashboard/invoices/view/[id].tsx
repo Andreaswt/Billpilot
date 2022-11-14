@@ -33,54 +33,57 @@ const View: NextPage = () => {
     <Page title={breadcrumbs} isLoading={isLoading} fullWidth>
       <PageBody pt="8">
         <Stack p="4" width="100%" gap="4">
-        <Card>
-              <CardBody>
+          <Card>
+            <CardBody>
               <VStack divider={<StackDivider />} align="stretch" spacing={8} pb="16">
-            <Section
-              title="Invoice options"
-              description="General invoice options."
-              variant="annotated"
-            >
-              <Card>
-                <CardBody>
-                  <PropertyList>
-                    <Property label="Title" value={data?.title} />
-                    <Property label="Description" value={data?.description} />
-                    <Property label="Price per hour" value={data?.pricePerHour} />
-                    <Property label="Currency" value={data?.currency} />
-                    <Property label="Rounding scheme" value={data?.roundingScheme} />
-                    <Property label="Invoiced from" value={data?.invoicedFrom?.toUTCString()} />
-                    <Property label="Invoiced to" value={data?.invoicedTo?.toUTCString()} />
-                    <Property label="Issue date" value={data?.issueDate.toUTCString()} />
-                    <Property label="Due date" value={data?.dueDate?.toUTCString()} />
-
-                  </PropertyList>
-                </CardBody>
-              </Card>
-            </Section>
-            {
-              data?.economicOptions
-                ? <Section
-                  title="E-conomic options"
-                  description="Settings for when invoice is exported to e-conomic."
+                <Section
+                  title="Invoice options"
+                  description="General invoice options."
                   variant="annotated"
                 >
-                  <Property label="Customer" value={data?.economicOptions.customer} />
-                  <Property label="Text 1" value={data?.economicOptions.text1} />
-                  <Property label="Our Reference" value={data?.economicOptions.ourReference} />
-                  <Property label="Customer Contact" value={data?.economicOptions.customerContact} />
-                  <Property label="Unit" value={data?.economicOptions.unit} />
-                  <Property label="Layout" value={data?.economicOptions.layout} />
-                  <Property label="Vat Zone" value={data?.economicOptions.vatZone} />
-                  <Property label="Payment Terms" value={data?.economicOptions.paymentTerms} />
-                  <Property label="Product" value={data?.economicOptions.product} />
-                </Section>
-                : null
-            }
-          </VStack>
-              </CardBody>
-            </Card>
+                  <Card>
+                    <CardBody>
+                      <PropertyList>
+                        <Property hidden={!data?.title} label="Title" value={data?.title} />
+                        <Property hidden={!data?.description} label="Description" value={data?.description} />
+                        <Property hidden={!data?.pricePerHour} label="Price per hour" value={data?.pricePerHour} />
+                        <Property hidden={!data?.currency} label="Currency" value={data?.currency} />
+                        <Property hidden={!data?.roundingScheme} label="Rounding scheme" value={data?.roundingScheme} />
+                        <Property hidden={!data?.invoicedFrom} label="Invoiced from" value={data?.invoicedFrom?.toUTCString()} />
+                        <Property hidden={!data?.invoicedTo} label="Invoiced to" value={data?.invoicedTo?.toUTCString()} />
+                        <Property hidden={!data?.issueDate} label="Issue date" value={data?.issueDate.toUTCString()} />
+                        <Property hidden={!data?.dueDate} label="Due date" value={data?.dueDate?.toUTCString()} />
 
+                      </PropertyList>
+                    </CardBody>
+                  </Card>
+                </Section>
+                {
+                  data?.economicOptions
+                    ? <Section
+                      title="E-conomic options"
+                      description="Settings for when invoice is exported to e-conomic."
+                      variant="annotated"
+                    >
+                      <Card>
+                        <CardBody>
+                          <Property hidden={!data?.economicOptions.customer} label="Customer" value={data?.economicOptions.customer} />
+                          <Property hidden={!data?.economicOptions.text1} label="Text 1" value={data?.economicOptions.text1} />
+                          <Property hidden={!data?.economicOptions.ourReference} label="Our Reference" value={data?.economicOptions.ourReference} />
+                          <Property hidden={!data?.economicOptions.customerContact} label="Customer Contact" value={data?.economicOptions.customerContact} />
+                          <Property hidden={!data?.economicOptions.unit} label="Unit" value={data?.economicOptions.unit} />
+                          <Property hidden={!data?.economicOptions.layout} label="Layout" value={data?.economicOptions.layout} />
+                          <Property hidden={!data?.economicOptions.vatZone} label="Vat Zone" value={data?.economicOptions.vatZone} />
+                          <Property hidden={!data?.economicOptions.paymentTerms} label="Payment Terms" value={data?.economicOptions.paymentTerms} />
+                          <Property hidden={!data?.economicOptions.product} label="Product" value={data?.economicOptions.product} />
+                        </CardBody>
+                      </Card>
+                    </Section>
+                    : null
+                }
+              </VStack>
+            </CardBody>
+          </Card>
 
           <Card title="Invoice lines">
             <CardBody>
@@ -109,7 +112,7 @@ const View: NextPage = () => {
                         {x.title}
                       </Flex>
                       <Flex w="20%">
-                        {x.quantity}
+                        {x.quantity} hours
                       </Flex>
                       <Flex w="20%">
                         {formatCurrency(x.unitPrice, data?.currency)}

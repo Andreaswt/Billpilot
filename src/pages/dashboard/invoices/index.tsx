@@ -36,6 +36,10 @@ interface Invoice {
 }
 
 const DateCell: DataGridCell<Invoice> = ({ cell }) => {
+    if (!cell.getValue()) {
+        return "-"
+    }
+
     return <>{format(new Date(cell.getValue<string>()), 'PP')}</>
 }
 
@@ -76,18 +80,18 @@ const InvoicesListPage: NextPage = () => {
                 },
             },
             {
+                id: 'clientName',
+                accessorKey: 'clientName',
+                header: 'Client name',
+                size: 300,
+            },
+            {
                 id: 'pricePerHour',
                 accessorKey: 'pricePerHour',
                 header: 'Price per hour',
                 meta: {
                     isNumeric: true,
                 },
-            },
-            {
-                id: 'clientName',
-                accessorKey: 'clientName',
-                header: 'Client name',
-                size: 300,
             },
             {
                 id: 'currency',
