@@ -1,5 +1,5 @@
 import { Flex, Link, SimpleGrid, Spinner, Text } from '@chakra-ui/react'
-import { useSnackbar } from '@saas-ui/react'
+import { Loading, useSnackbar } from '@saas-ui/react'
 import React, { useEffect } from 'react'
 import { IconType } from 'react-icons'
 import { trpc } from '../../utils/trpc'
@@ -9,7 +9,7 @@ import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en.json'
 
 interface Props {
-  lastUpdated: Date,
+  lastUpdated?: Date,
   data: {
     label: string,
     icon: IconType,
@@ -20,15 +20,17 @@ interface Props {
 
 export const Today: React.FunctionComponent<Props> = (props) => {
   TimeAgo.addDefaultLocale(en)
-  
-  const { data, lastUpdated } = props;
 
-  const utils = trpc.useContext();
+  const { data, lastUpdated } = props
+
+  const utils = trpc.useContext()
   const snackbar = useSnackbar()
+
+  const now = new Date()
 
   const rebuildReport = trpc.useMutation('dashboard.rebuildReport', {
     onSuccess() {
-      utils.invalidateQueries(['dashboard.getDashboard']);
+      utils.invalidateQueries(['dashboard.getDashboard', {year: now.getFullYear(), month: now.getMonth()}]);
       snackbar({
         title: "Report rebuilt successfully",
         status: 'success',
@@ -38,7 +40,6 @@ export const Today: React.FunctionComponent<Props> = (props) => {
     }
   });
 
-
   const handleRebuildReport = () => {
     rebuildReport.mutateAsync();
   }
@@ -47,17 +48,23 @@ export const Today: React.FunctionComponent<Props> = (props) => {
   return (
     <>
       <SimpleGrid columns={{ md: 4, base: 2 }} gap={4}>
-        {data.map((metric, index) => (
-          <React.Fragment key={index}>
-            <Metric {...metric} color="primary" />
-          </React.Fragment>
-        ))}
+        {
+          data.map((metric, index) => (
+            <React.Fragment key={index}>
+              <Metric {...metric} color="primary" />
+            </React.Fragment>
+          ))
+        }
         <Flex flexDir="column" alignItems="end" justifyContent="start" gap={1}>
           {rebuildReport.isLoading ? (
             <Spinner color='brand.800' />
           ) : (
             <>
-              <Text fontSize="sm">This report was built <ReactTimeAgo date={lastUpdated} />.</Text>
+              {
+                lastUpdated
+                  ? <Text fontSize="sm">This report was built <ReactTimeAgo date={lastUpdated} />.</Text>
+                  : <Loading />
+              }
               <Link color='blue.400' fontSize="sm" onClick={handleRebuildReport}>Rebuild Report</Link>
             </>
           )}

@@ -16,7 +16,7 @@ import {
 import RevenueChart from "../../components/dashboard/RevenueChart";
 import { trpc } from "../../utils/trpc";
 import { useEffect } from "react";
-import { useSnackbar } from "@saas-ui/react";
+import { Loading, useSnackbar } from "@saas-ui/react";
 import router from "next/router";
 
 export const getServerSideProps = requireAuth(async (ctx) => {
@@ -49,13 +49,15 @@ const SimpleCard: NextPage = () => {
     </Toolbar>
   )
 
-  const { data, isLoading, isError } = trpc.useQuery(["dashboard.getDashboard"], {
+  const now = new Date()
+
+  const { data, isLoading, isError } = trpc.useQuery(["dashboard.getDashboard", {year: now.getFullYear(), month: now.getMonth()}], {
     refetchOnWindowFocus: false,
   });
 
   const utils = trpc.useContext();
   const snackbar = useSnackbar()
-  
+
   const rebuildReport = trpc.useMutation('dashboard.rebuildReport', {
     onSuccess() {
       utils.invalidateQueries(['dashboard.getDashboard']);
@@ -64,7 +66,7 @@ const SimpleCard: NextPage = () => {
         status: 'success',
         duration: 5000,
         isClosable: true,
-    })
+      })
     }
   });
 
@@ -88,58 +90,54 @@ const SimpleCard: NextPage = () => {
     },
   ]
 
-  useEffect(() => {
-    if (data === null && !rebuildReport.isLoading) {
-      rebuildReport.mutate();
-    }
-  }, [isError, rebuildReport, data])
+  // useEffect(() => {
+  //   if (!rebuildReport.isLoading && data === null) {
+  //     rebuildReport.mutate();
+  //   }
+  // }, [isError, rebuildReport, data])
 
   return (
     <Page title={"Dashboard"} isLoading={isLoading}>
       <PageBody pt="8">
         {/* <IntroTour /> */}
-        {
-          data
-            ? <>
-              <Flex justifyContent="space-between" px={4}>
-                <Flex gap={4}>
-                  <Flex gap={2}>
-                    <IconButton icon={<FiArrowLeft />} aria-label="Previous Month" />
-                    <IconButton icon={<FiArrowRight />} aria-label="Next Month" />
-                  </Flex>
-                  <Heading>
-                    {data.month || ""} {data.year}
-                  </Heading>
-                </Flex>
-                <Flex gap={4}>
-                  <Button onClick={() => router.push("/dashboard/generator")} colorScheme="primary">Create Invoice</Button>
-                  <ButtonGroup isAttached variant="outline">
-                    <Button>Year</Button>
-                    <Button isActive>Month</Button>
-                  </ButtonGroup>
-                </Flex>
-              </Flex>
-              <Grid
-                templateColumns={['repeat(1, 1fr)', null, 'repeat(1, 1fr)']}
-                width="100%"
-                gap="4"
-                p="4"
-              >
+        <Flex justifyContent="space-between" px={4}>
+          <Flex gap={4}>
+            <Flex gap={2}>
+              <IconButton icon={<FiArrowLeft />} aria-label="Previous Month" />
+              <IconButton icon={<FiArrowRight />} aria-label="Next Month" />
+            </Flex>
+            <Heading>
+              {data?.month || ""} {data?.year}
+            </Heading>
+          </Flex>
+          <Flex gap={4}>
+            <Button onClick={() => router.push("/dashboard/generator")} colorScheme="primary">Create Invoice</Button>
+            <ButtonGroup isAttached variant="outline">
+              <Button>Year</Button>
+              <Button isActive>Month</Button>
+            </ButtonGroup>
+          </Flex>
+        </Flex>
+        <Grid
+          templateColumns={['repeat(1, 1fr)', null, 'repeat(1, 1fr)']}
+          width="100%"
+          gap="4"
+          p="4">
+          <GridItem>
+            <Today data={todayData} lastUpdated={data?.updatedAt} />
+          </GridItem>
+          {
+            data
+              ? <>
                 <GridItem>
-                  <Today data={todayData} lastUpdated={data.updatedAt} />
+                  <RevenueChart recentInvoices={data?.recentInvoices} />
                 </GridItem>
                 <GridItem>
-                  <RevenueChart recentInvoices={data.recentInvoices} />
-                </GridItem>
-
-
-                <GridItem>
-                  <Clients clients={data.clients} />
-                </GridItem>
-              </Grid>
-            </>
-            : null
-        }
+                  <Clients clients={data?.clients} />
+                </GridItem></>
+              : null
+          }
+        </Grid>
       </PageBody>
     </Page>
   )

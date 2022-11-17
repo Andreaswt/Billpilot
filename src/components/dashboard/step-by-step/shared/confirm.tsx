@@ -57,8 +57,7 @@ const ConfirmInvoice = (props: IProps) => {
                 currency: store.currency,
                 roundingScheme: store.roundingScheme,
                 pricePerHour: store.pricePerHour,
-                clientId: 'haha sut', // TODO Andreas fix
-                billed: false, // TODO Andreas fix
+                billed: false,
                 title: store.title,
                 description: store.description,
                 dueDate: store.dueDate.toString()
@@ -89,7 +88,7 @@ const ConfirmInvoice = (props: IProps) => {
                 updatedHoursSpent: item.updatedHoursSpent ?? 0,
                 discountPercentage: item.discountPercentage ?? 0
             }))
-    
+            
             createIssueInvoice.mutate({
                 ...invoiceInformation,
                 pickedIssues: pickedIssues,

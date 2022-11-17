@@ -2,16 +2,20 @@ import { Currency } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { createRouter } from "./context";
 import * as z from 'zod'
-
+import { formatCurrency } from "../../../lib/helpers/currency";
 
 interface DashboardReport {
-    month: string
-    year: number
-    totalHoursBilled: string
-    totalHoursBilledChange: number
-    totalBillableHours: string
-    totalBillableHoursChange: number
-    uninvoicedTime: string
+    monthlyStatistics: {
+        [year: number]: {
+            [month: number]: {
+                totalHoursBilled: number
+                totalHoursBilledChange: number
+                totalBillableHours: number
+                totalBillableHoursChange: number
+                uninvoicedTime: number
+            }
+        }
+    }
     recentInvoices: {
         id: string
         title: string
@@ -27,8 +31,6 @@ interface DashboardReport {
     }[]
 }
 
-
-
 export const dashboardRouter = createRouter()
     .middleware(async ({ ctx, next }) => {
         const organizationId = ctx.session?.user.organizationId;
@@ -39,7 +41,11 @@ export const dashboardRouter = createRouter()
         return next({ ctx: { ...ctx, organizationId } })
     })
     .query("getDashboard", {
-        async resolve({ ctx }) {
+        input: z.object({
+            year: z.number(),
+            month: z.number()
+        }),
+        async resolve({ ctx, input }) {
             const dashboardReport = await ctx.prisma.dashboardIndex.findUnique({
                 where: {
                     organizationId: ctx.organizationId
@@ -53,13 +59,15 @@ export const dashboardRouter = createRouter()
             const dataReport = JSON.parse(dashboardReport.reportJson);
 
             const dataReportSchema = z.object({
-                month: z.string(),
-                year: z.number(),
-                totalHoursBilled: z.string(),
-                totalHoursBilledChange: z.number(),
-                totalBillableHours: z.string(),
-                totalBillableHoursChange: z.number(),
-                uninvoicedTime: z.string(),
+                monthlyStatistics: z.record(
+                    z.number(),
+                    z.record(z.object({
+                        totalHoursBilled: z.number(),
+                        totalHoursBilledChange: z.number(),
+                        totalBillableHours: z.number(),
+                        totalBillableHoursChange: z.number(),
+                        uninvoicedTime: z.number()
+                    }))),
                 recentInvoices: z.array(z.object({
                     id: z.string(),
                     title: z.string(),
@@ -78,12 +86,33 @@ export const dashboardRouter = createRouter()
             const dataReportParsed = dataReportSchema.safeParse(dataReport);
 
             if (!dataReportParsed.success) {
-                return null;
+                return null
             }
 
+            if (!dataReportParsed.data.monthlyStatistics[input.year] || !dataReportParsed.data.monthlyStatistics[input.year][input.month]) {
+                return null
+            }
+
+            const lastMonth = input.month - 1 < 0 ? 11 : input.month - 1
+            const lastMonthsYear = lastMonth < 0 ? input.year - 1 : input.year
+            const lastMonthExists = !dataReportParsed.data.monthlyStatistics[lastMonthsYear] || !dataReportParsed.data.monthlyStatistics[lastMonthsYear][lastMonth]
+
+            const nextMonth = input.month + 1 > 11 ? 0 : input.month + 1
+            const nextMonthsYear = nextMonth > 0 ? input.year + 1 : input.year
+            const nextMonthExists = !dataReportParsed.data.monthlyStatistics[nextMonthsYear] || !dataReportParsed.data.monthlyStatistics[nextMonthsYear][nextMonthsYear]
+
             const response = {
-                ...dataReportParsed.data,
-                updatedAt: dashboardReport.updatedAt
+                ...dataReportParsed.data.monthlyStatistics[input.year][input.month],
+                uninvoicedTime: dataReportParsed.data.monthlyStatistics[input.year][input.month].uninvoicedTime.toString(),
+                totalBillableHours: dataReportParsed.data.monthlyStatistics[input.year][input.month].totalBillableHours.toString(),
+                totalHoursBilled: dataReportParsed.data.monthlyStatistics[input.year][input.month].totalHoursBilled.toString(),
+                recentInvoices: dataReportParsed.data.recentInvoices,
+                clients: dataReportParsed.data.clients,
+                updatedAt: dashboardReport.updatedAt,
+                lastMonth: lastMonthExists,
+                nextMonth: nextMonthExists,
+                month: toMonthName(input.month),
+                year: input.year
             }
 
             return response;
@@ -103,6 +132,7 @@ export const dashboardRouter = createRouter()
                 select: {
                     id: true,
                     title: true,
+                    issueDate: true,
                     invoicedFrom: true,
                     invoicedTo: true,
                     currency: true,
@@ -152,11 +182,41 @@ export const dashboardRouter = createRouter()
                 }
             })
 
-            let totalHoursBilled = 0;
-            let totalBillableHours = 0;
-            let totalBillableAmount = 0;
+            // Sort all invoices by their corresponding months and years
+            let monthlyStatistics: {
+                [year: number]: {
+                    [month: number]: {
+                        totalHoursBilled: number
+                        totalHoursBilledChange: number
+                        totalBillableHours: number
+                        totalBillableHoursChange: number
+                        uninvoicedTime: number
+                    }
+                }
+            } = {}
 
             invoices.forEach((invoice) => {
+                const year = invoice.issueDate.getFullYear()
+                const month = invoice.issueDate.getMonth()
+
+                if (!monthlyStatistics[year]) {
+                    monthlyStatistics[year] = {}
+
+                    if (!monthlyStatistics[year][month]) {
+                        monthlyStatistics[year][month] = {
+                            totalHoursBilled: 0,
+                            totalHoursBilledChange: 0,
+                            totalBillableHours: 0,
+                            totalBillableHoursChange: 0,
+                            uninvoicedTime: 0,
+                        }
+                    }
+                }
+
+                let totalHoursBilled = 0;
+                let totalBillableHours = 0;
+                let totalBillableAmount = 0;
+
                 invoice.invoiceLines.forEach((line) => {
                     const hours = line.quantity;
                     const pricePerHour = line.unitPrice;
@@ -172,28 +232,43 @@ export const dashboardRouter = createRouter()
                     totalBillableAmount += billableAmount;
                     totalBillableHours += hours;
                 })
+
+                let totalHoursBilledChange = 0
+                let totalBillableHoursChange = 0
+
+                const lastMonthNo = month - 1 < 0 ? 11 : month - 1
+                const yearNoForStats = lastMonthNo < 0 ? year - 1 : year
+                if (monthlyStatistics[year] && monthlyStatistics[year][yearNoForStats]) {
+                    totalHoursBilledChange = (monthlyStatistics[year][month].totalBillableHours / monthlyStatistics[year][month].totalBillableHours) * 100
+                    totalBillableHoursChange = (monthlyStatistics[year][month].totalBillableHoursChange / monthlyStatistics[year][month].totalBillableHoursChange) * 100
+                }
+
+                monthlyStatistics[year][month] = {
+                    totalHoursBilled: totalHoursBilled,
+                    totalHoursBilledChange: totalHoursBilledChange,
+                    totalBillableHours: totalBillableHours,
+                    totalBillableHoursChange: totalBillableHoursChange,
+                    uninvoicedTime: totalBillableHours - totalHoursBilled,
+                }
             });
 
             const recentInvoices = invoices.slice(0, Math.min(invoices.length, 5)).map(item => {
+                let invoiceTotal = 0
+
+                item.invoiceLines.forEach(x => {
+                    invoiceTotal = x.quantity * x.unitPrice
+                })
+
                 return {
                     id: item.id,
                     title: item.title,
                     invoicedDates: item.invoicedFrom && item.invoicedTo ? item.invoicedFrom?.toDateString() + " - " + item.invoicedTo?.toDateString() : "-",
-                    total: totalBillableAmount + item.currency
+                    total: formatCurrency(invoiceTotal, item.currency)
                 }
             });
 
-
-            const uninvoicedTime = totalBillableHours - totalHoursBilled;
-
             const response: DashboardReport = {
-                month: toMonthName(today.getMonth()),
-                year: today.getFullYear(),
-                totalHoursBilled: String(totalHoursBilled),
-                totalHoursBilledChange: 20,
-                totalBillableHours: String(totalBillableHours),
-                totalBillableHoursChange: 0,
-                uninvoicedTime: String(uninvoicedTime),
+                monthlyStatistics: monthlyStatistics,
                 recentInvoices: recentInvoices,
                 clients: Object.keys(finalClients).map((clientId) => ({ ...finalClients[clientId], id: clientId })),
             }
