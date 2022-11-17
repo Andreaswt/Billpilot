@@ -217,8 +217,8 @@ export const invoicesRouter = createRouter()
       pickedTickets: z.object({
         id: z.string(),
         subject: z.string(),
-        content: z.string(),
         lastModified: z.string(),
+        hoursSpent: z.number().nullish(),
         updatedHoursSpent: z.number(),
         discountPercentage: z.number(),
       }).array(),

@@ -42,7 +42,7 @@ export interface InvoiceInformationState {
 export interface PickedHubspotTicket {
     id: string
     subject: string
-    content: string
+    hoursSpent: number | null
     lastModified: string
     updatedHoursSpent: number | null,
     discountPercentage: number | null
@@ -64,7 +64,7 @@ interface CreateInvoiceState extends PickedState, InvoiceInformationState {
     // Hubspot
     pickCompany: (companyId: string) => void,
     pickTickets: (pickedTickets: PickedHubspotTicket[]) => void,
-    pickedTickets: PickedHubspotTicket[]
+    pickedTickets: PickedHubspotTicket[],
     pickedCompany: string,
 
     // Jira

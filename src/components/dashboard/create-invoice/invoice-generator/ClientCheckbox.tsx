@@ -33,9 +33,12 @@ const ClientCheckbox: React.FC<Props> = (props) => {
                 props.templates.length === 0
                     ? <Text pl={4}>No invoice templates</Text>
                     : (props.templates.map(x => {
-                        return (
-                            <TemplateCheckbox key={x.id} invoiceTemplate={x} />
-                        )
+                        if (x.active) {
+                            return (<TemplateCheckbox defaultChecked={x.active} key={x.id} invoiceTemplate={x} />)
+                        }
+                        else {
+                            return (<Text pl={4}>No invoice templates</Text>)
+                        }
                     }))
             }
         </>

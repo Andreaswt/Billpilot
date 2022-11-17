@@ -1,11 +1,11 @@
 import { NextPage } from "next";
 import { requireAuth } from "../../common/requireAuth";
 
-import { Button, Checkbox, Divider, Flex, FormControl, FormErrorMessage, FormLabel, Heading, HStack, Input, Stack, Text } from "@chakra-ui/react";
+import { Button, Center, Checkbox, Divider, Flex, FormControl, FormErrorMessage, FormLabel, Heading, HStack, Input, Stack, Text } from "@chakra-ui/react";
 import {
   Page, PageBody, Section
 } from '@saas-ui/pro';
-import { Card, CardBody, EmptyStateActions, EmptyStateBody, EmptyStateContainer, EmptyStateDescription, EmptyStateIcon, EmptyStateTitle, Form, FormLayout, useForm, useSnackbar } from "@saas-ui/react";
+import { Card, CardBody, EmptyStateActions, EmptyStateBody, EmptyStateContainer, EmptyStateDescription, EmptyStateIcon, EmptyStateTitle, Form, FormLayout, Loader, useForm, useSnackbar } from "@saas-ui/react";
 import moment from 'moment';
 import React, { useMemo } from "react";
 import { trpc } from "../../utils/trpc";
@@ -56,7 +56,7 @@ const Generator: NextPage = () => {
       loadedData.forEach(client => {
         let checkedTemplates: { [templateId: string]: boolean } = {}
         client.invoiceTemplates.forEach(template => {
-          checkedTemplates[template.id] = false
+          checkedTemplates[template.id] = template.active
         })
 
         clients[client.id] = {
@@ -162,116 +162,117 @@ const Generator: NextPage = () => {
     refetchOnWindowFocus: false
   })
 
-  if (!activeIntegrationsData || !activeIntegrationsData["JIRA"]) {
-    return (
-      <Page title={"Invoice Generator"}>
-        <PageBody pt="8">
-          <EmptyStateContainer colorScheme="primary">
-            <EmptyStateBody>
-              <EmptyStateIcon as={WarningIcon} />
-              <EmptyStateTitle>Invoice generator only supports the jira integration for now</EmptyStateTitle>
-              <EmptyStateDescription>Do you want to set it up now?</EmptyStateDescription>
-              <EmptyStateActions>
-                <Button onClick={() => router.push("/dashboard/integrations")} colorScheme="primary">Set up</Button>
-                <Button onClick={() => router.back()} variant="outline">Back</Button>
-              </EmptyStateActions>
-            </EmptyStateBody>
-          </EmptyStateContainer>
-        </PageBody>
-      </Page>
-    )
-  }
 
   return (
     <Page title={"Invoice Generator"} description="Use the invoice generator to generate all your invoices from invoice templates." isLoading={isLoading}>
       <PageBody pt="8">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack p={4} gap={14}>
+        {
+          !activeIntegrationsData
+            ? <Center>
+              <Loader />
+            </Center>
+            : (
+              !activeIntegrationsData["JIRA"] && !activeIntegrationsData["HUBSPOT"]
+                ? <EmptyStateContainer colorScheme="primary">
+                  <EmptyStateBody>
+                    <EmptyStateIcon as={WarningIcon} />
+                    <EmptyStateTitle>Invoice generator only supports the jira and hubspot integrations for now</EmptyStateTitle>
+                    <EmptyStateDescription>Do you want to set it up now?</EmptyStateDescription>
+                    <EmptyStateActions>
+                      <Button onClick={() => router.push("/dashboard/integrations")} colorScheme="primary">Set up</Button>
+                      <Button onClick={() => router.back()} variant="outline">Back</Button>
+                    </EmptyStateActions>
+                  </EmptyStateBody>
+                </EmptyStateContainer>
+                : <form onSubmit={handleSubmit(onSubmit)}>
+                  <Stack p={4} gap={14}>
 
-            <Card>
-              <CardBody>
-                <Section
-                  title="Invoiced Dates"
-                  description="Invoced templates will import time for the chosen dates."
-                  variant="annotated">
-                  <Card>
-                    <CardBody>
-                      <FormLayout columns={2}>
-                        <FormControl isInvalid={!!errors?.invoicedDatesFrom}>
-                          <FormLabel htmlFor={`invoicedDatesFrom`}>Invoiced Dates From</FormLabel>
-                          <Flex flexDirection="column">
-                            <Input
-                              id='invoicedDatesFrom'
-                              type="date"
-                              variant="filled"
-                              {...register(`invoicedDatesFrom`)}
-                            />
-                            <FormErrorMessage>
-                              {errors.invoicedDatesFrom?.message}
-                            </FormErrorMessage>
-                          </Flex>
-                        </FormControl>
-                        <FormControl isInvalid={!!errors?.invoicedDatesTo}>
-                          <FormLabel htmlFor={`invoicedDatesTo`}>Invoiced Dates To</FormLabel>
-                          <Flex flexDirection="column">
-                            <Input
-                              id='invoicedDatesTo'
-                              type="date"
-                              variant="filled"
-                              {...register(`invoicedDatesTo`)}
-                            />
-                            <FormErrorMessage>
-                              {errors.invoicedDatesTo?.message}
-                            </FormErrorMessage>
-                          </Flex>
-                        </FormControl>
-                      </FormLayout>
-                    </CardBody>
-                  </Card>
-                </Section>
-              </CardBody>
-            </Card>
+                    <Card>
+                      <CardBody>
+                        <Section
+                          title="Invoiced Dates"
+                          description="Invoced templates will import time for the chosen dates."
+                          variant="annotated">
+                          <Card>
+                            <CardBody>
+                              <FormLayout columns={2}>
+                                <FormControl isInvalid={!!errors?.invoicedDatesFrom}>
+                                  <FormLabel htmlFor={`invoicedDatesFrom`}>Invoiced Dates From</FormLabel>
+                                  <Flex flexDirection="column">
+                                    <Input
+                                      id='invoicedDatesFrom'
+                                      type="date"
+                                      variant="filled"
+                                      {...register(`invoicedDatesFrom`)}
+                                    />
+                                    <FormErrorMessage>
+                                      {errors.invoicedDatesFrom?.message}
+                                    </FormErrorMessage>
+                                  </Flex>
+                                </FormControl>
+                                <FormControl isInvalid={!!errors?.invoicedDatesTo}>
+                                  <FormLabel htmlFor={`invoicedDatesTo`}>Invoiced Dates To</FormLabel>
+                                  <Flex flexDirection="column">
+                                    <Input
+                                      id='invoicedDatesTo'
+                                      type="date"
+                                      variant="filled"
+                                      {...register(`invoicedDatesTo`)}
+                                    />
+                                    <FormErrorMessage>
+                                      {errors.invoicedDatesTo?.message}
+                                    </FormErrorMessage>
+                                  </Flex>
+                                </FormControl>
+                              </FormLayout>
+                            </CardBody>
+                          </Card>
+                        </Section>
+                      </CardBody>
+                    </Card>
 
 
-            <Stack gap={6}>
-              <Flex gap={2}>
-                <Checkbox
-                  ml={4}
-                  id='checkAll'
-                  type="checkbox"
-                  variant="filled"
-                  isChecked={store.checkAll}
-                  onChange={e => store.setCheckAll(e.target.checked)}
-                />
-                <Text>
-                  Select all
-                </Text>
-              </Flex>
-              <Divider />
+                    <Stack gap={6}>
+                      <Flex gap={2}>
+                        <Checkbox
+                          ml={4}
+                          id='checkAll'
+                          type="checkbox"
+                          variant="filled"
+                          isChecked={store.checkAll}
+                          onChange={e => store.setCheckAll(e.target.checked)}
+                        />
+                        <Text>
+                          Select all
+                        </Text>
+                      </Flex>
+                      <Divider />
 
-              <Stack gap={2}>
-                {
-                  data?.map((client, index) => {
-                    return (
-                      <React.Fragment key={client.id}>
-                        <ClientCheckbox templates={client.invoiceTemplates} clientId={client.id} clientName={client.name} />
+                      <Stack gap={2}>
                         {
-                          data?.length !== 0 && index !== data?.length - 1
-                            ? <Divider py={2} />
-                            : null
+                          data?.map((client, index) => {
+                            return (
+                              <React.Fragment key={client.id}>
+                                <ClientCheckbox templates={client.invoiceTemplates} clientId={client.id} clientName={client.name} />
+                                {
+                                  data?.length !== 0 && index !== data?.length - 1
+                                    ? <Divider py={2} />
+                                    : null
+                                }
+                              </React.Fragment>
+                            )
+                          })
                         }
-                      </React.Fragment>
-                    )
-                  })
-                }
-              </Stack>
+                      </Stack>
 
-            </Stack>
-            <Flex justifyContent="end">
-              <Button type="submit" colorScheme="primary" isLoading={generateInvoicesMutation.isLoading}>Generate {selectedTemplatesAmount} invoices</Button>
-            </Flex>
-          </Stack>
-        </form>
+                    </Stack>
+                    <Flex justifyContent="end">
+                      <Button type="submit" colorScheme="primary" isLoading={generateInvoicesMutation.isLoading}>Generate {selectedTemplatesAmount} invoices</Button>
+                    </Flex>
+                  </Stack>
+                </form>
+            )
+        }
       </PageBody>
     </Page>
   )

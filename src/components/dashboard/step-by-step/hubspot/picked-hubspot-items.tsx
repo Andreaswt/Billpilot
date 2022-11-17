@@ -7,8 +7,8 @@ import { TableTooltip } from '../shared/table-tooltip';
 interface TableRow {
     id: string
     subject: string
-    content: string
     lastModified: string
+    hoursSpent: number | null
     updatedHoursSpent: number | null
     discountPercentage: number | null
 }
@@ -20,24 +20,24 @@ const columns: ColumnDef<TableRow>[] = [
         cell: (data) => (<TableTooltip text={data.row.original.subject} />)
     },
     {
-        id: 'content',
-        header: 'Content',
-        cell: (data) => (<TableTooltip text={data.row.original.content} />)
-    },
-    {
         id: 'lastModified',
         header: 'Last Modified',
         cell: (data) => (<TableTooltip text={data.row.original.lastModified} />)
     },
     {
+        id: 'hoursSpent',
+        header: 'Hours Spent',
+        cell: (data) => (<p>{<TableTooltip text={data.row.original.hoursSpent ? data.row.original.hoursSpent.toString() + " hours" : " Not set in hubspot"} />}</p>)
+    },
+    {
         id: 'updatedHoursSpent',
         header: 'Updated Hours Spent',
-        cell: (data) => (<p>{data.row.original.updatedHoursSpent ?? "-"}</p>)
+        cell: (data) => (<p>{data.row.original.updatedHoursSpent ? data.row.original.updatedHoursSpent + " hours" : "-"}</p>)
     },
     {
         id: 'discountPercentage',
         header: 'Percentage Discount',
-        cell: (data) => (<p>{data.row.original.discountPercentage ?? "-"}</p>)
+        cell: (data) => (<p>{data.row.original.discountPercentage ? data.row.original.discountPercentage + " %" : "-"}</p>)
     },
     {
         id: 'id',
