@@ -2,6 +2,7 @@ import { ApiKeyProvider, InvoiceTemplateFilterTypes } from "@prisma/client";
 import { prisma } from "../src/server/db/client";
 import { formatCurrency } from "./helpers/currency";
 import { createInvoiceDraft } from "./integrations/e-conomic";
+import { importTicketsFromFilters, searchTickets } from "./integrations/hubspot";
 import { importFilteredJiraTime } from "./integrations/jira";
 
 export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds: { clientId: string, invoiceTemplateId: string }[], organizationId: string) {
@@ -56,16 +57,20 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
                 .map(x => x.filterId)
 
             importedTime = await importFilteredJiraTime(projectFilters, dateFrom, dateTo, organizationId)
-
-            templateInfo[template.id] = ({ time: importedTime, formattedAmount: null, amount: null })
-
-            if (importedTime === 0 && template.invoiceTemplateFixedPriceTimeItems.length === 0) {
-                continue
-            }
         }
 
-        if (hubspotIsActive) {
-            // TODO: import from hubspot
+        else if (hubspotIsActive) {
+            const companiesFilters = template.filters
+                .filter(x => x.type === InvoiceTemplateFilterTypes.HUBSPOTCOMPANY)
+                .map(x => x.filterId)
+
+            importedTime = await importTicketsFromFilters(organizationId, companiesFilters)
+        }
+
+        templateInfo[template.id] = ({ time: importedTime, formattedAmount: null, amount: null })
+
+        if (importedTime === 0 && template.invoiceTemplateFixedPriceTimeItems.length === 0) {
+            continue
         }
 
         const fixedPriceInvoiceLines = template.invoiceTemplateFixedPriceTimeItems.map(line => {

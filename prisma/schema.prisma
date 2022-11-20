@@ -129,7 +129,7 @@ model InvoiceLine {
   discountPercentage Int
 
   generalInvoiceId String
-  generalInvoice   GeneralInvoice @relation(fields: [generalInvoiceId], references: [id])
+  generalInvoice   GeneralInvoice @relation(fields: [generalInvoiceId], references: [id], onDelete: Cascade)
 
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)

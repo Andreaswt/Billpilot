@@ -2,6 +2,7 @@ import { ApiKeyProvider, InvoiceTemplateFilterTypes } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { generateInvoices } from "../../../lib/generator";
+import { validateTimeSetForTickets } from "../../../lib/integrations/hubspot";
 import { createRouter } from "./context";
 
 export const invoiceTemplatesRouter = createRouter()

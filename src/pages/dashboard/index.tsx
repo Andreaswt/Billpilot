@@ -1,11 +1,11 @@
 import { NextPage } from "next";
 import { requireAuth } from "../../common/requireAuth";
 
-import { Button, ButtonGroup, Flex, Grid, GridItem, Heading, IconButton } from '@chakra-ui/react';
-import { IoIosPaper, IoMdCalendar } from 'react-icons/io'
-import { MdPayment } from 'react-icons/md'
+import { Button, Flex, Grid, GridItem, Heading, IconButton } from '@chakra-ui/react';
 import { FaGithub, FaTwitter } from 'react-icons/fa';
 import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
+import { IoIosPaper, IoMdCalendar } from 'react-icons/io';
+import { MdPayment } from 'react-icons/md';
 import { Clients } from "../../components/dashboard/clients";
 import { Today } from "../../components/dashboard/today";
 
@@ -13,11 +13,10 @@ import {
   Page, PageBody, Toolbar,
   ToolbarButton
 } from '@saas-ui/pro';
+import { useSnackbar } from "@saas-ui/react";
+import router from "next/router";
 import RevenueChart from "../../components/dashboard/RevenueChart";
 import { trpc } from "../../utils/trpc";
-import { useEffect } from "react";
-import { Loading, useSnackbar } from "@saas-ui/react";
-import router from "next/router";
 
 export const getServerSideProps = requireAuth(async (ctx) => {
   return { props: {} };

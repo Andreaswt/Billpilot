@@ -52,8 +52,8 @@ const TemplateCheckbox: React.FC<Props> = (props) => {
                                                 : <AiOutlineCheck />
                                         }
                                     </Flex>
-                                    <Flex justifyContent="center" w="33%">{store.generatedTemplatesInfo[id].time + " hours" ?? "-"}</Flex>
-                                    <Flex justifyContent="center" w="33%">{store.generatedTemplatesInfo[id].formattedAmount  ?? "-"}</Flex>
+                                    <Flex justifyContent="center" w="33%">{store.generatedTemplatesInfo[id].time ? store.generatedTemplatesInfo[id].time + " hours" : "-"}</Flex>
+                                    <Flex justifyContent="center" w="33%">{store.generatedTemplatesInfo[id].formattedAmount ?? "-"}</Flex>
                                 </Flex>
                                 : <Text>Not generated for selected dates</Text>
                         }

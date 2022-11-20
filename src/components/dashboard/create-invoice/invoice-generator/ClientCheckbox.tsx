@@ -18,6 +18,7 @@ const ClientCheckbox: React.FC<Props> = (props) => {
         <>
             <Flex gap={2}>
                 <Checkbox
+                    disabled={props.templates.length === 0}
                     ml={4}
                     id='exportToEconomic'
                     type="checkbox"
@@ -33,12 +34,7 @@ const ClientCheckbox: React.FC<Props> = (props) => {
                 props.templates.length === 0
                     ? <Text pl={4}>No invoice templates</Text>
                     : (props.templates.map(x => {
-                        if (x.active) {
-                            return (<TemplateCheckbox defaultChecked={x.active} key={x.id} invoiceTemplate={x} />)
-                        }
-                        else {
-                            return (<Text pl={4}>No invoice templates</Text>)
-                        }
+                        return (<TemplateCheckbox defaultChecked={x.active} key={x.id} invoiceTemplate={x} />)
                     }))
             }
         </>

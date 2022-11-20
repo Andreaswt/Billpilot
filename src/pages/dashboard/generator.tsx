@@ -5,9 +5,9 @@ import { Button, Center, Checkbox, Divider, Flex, FormControl, FormErrorMessage,
 import {
   Page, PageBody, Section
 } from '@saas-ui/pro';
-import { Card, CardBody, EmptyStateActions, EmptyStateBody, EmptyStateContainer, EmptyStateDescription, EmptyStateIcon, EmptyStateTitle, Form, FormLayout, Loader, useForm, useSnackbar } from "@saas-ui/react";
+import { Card, CardBody, EmptyStateActions, EmptyStateBody, EmptyStateContainer, EmptyStateDescription, EmptyStateIcon, EmptyStateTitle, Form, FormLayout, Loader, useForm, useModals, useSnackbar } from "@saas-ui/react";
 import moment from 'moment';
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { trpc } from "../../utils/trpc";
 import useInvoiceTemplatesStore from "../../../store/invoice-templates";
 import ClientCheckbox from "../../components/dashboard/create-invoice/invoice-generator/ClientCheckbox";
@@ -21,6 +21,8 @@ export const getServerSideProps = requireAuth(async (ctx) => {
 const Generator: NextPage = () => {
   const store = useInvoiceTemplatesStore()
   const snackbar = useSnackbar()
+  const [hubspotValidated, setHubspotValidated] = React.useState(false)
+  const modals = useModals()
 
   var date = new Date();
   var firstDayInMonth = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -95,6 +97,41 @@ const Generator: NextPage = () => {
     }
   });
 
+  const validateTimeSetForTicketsMutation = trpc.useMutation('hubspot.validateTimeSetForTickets', {
+    onSuccess(ticketsData) {
+      modals.confirm({
+        title: "Time not defined for the following hubspot tickets that will be imported.",
+        body: (<>
+          {Object.keys(ticketsData).map(key => {
+            const ticket = ticketsData[key]
+            return (<Text key={key}> Subject: {ticket.subject} - Id: {key}</Text>)
+          })}
+        </>),
+        type: "custom",
+        confirmProps: {
+            colorScheme: 'red',
+            label: 'Accept',
+          },
+        onConfirm: () => {
+          setHubspotValidated(true)
+
+          snackbar({
+            title: "Submitting form.",
+            status: 'success',
+            duration: 5000,
+            isClosable: true,
+          })
+        },
+      })
+    },
+  });
+
+  useEffect(() => {
+    if (hubspotValidated) {
+      handleSubmit(onSubmit)()
+    }
+  }, [hubspotValidated, handleSubmit])
+
   function onSubmit(fields: IForm) {
     if (selectedTemplatesAmount === 0) {
       snackbar({
@@ -126,11 +163,21 @@ const Generator: NextPage = () => {
       })
     }
 
+    if (activeIntegrationsData && "HUBSPOT" in activeIntegrationsData && !hubspotValidated) {
+      validateTimeSetForTicketsMutation.mutate({
+        invoiceTemplateIds: invoiceTemplateIds.map(x => x.invoiceTemplateId)
+      })
+
+      return
+    }
+
     generateInvoicesMutation.mutate({
       dateFrom: new Date(fields.invoicedDatesFrom),
       dateTo: new Date(fields.invoicedDatesTo),
       invoiceTemplateIds: invoiceTemplateIds
     })
+
+    setHubspotValidated(false)
   }
 
   const selectedTemplatesAmount = useMemo(() => {
@@ -161,7 +208,6 @@ const Generator: NextPage = () => {
   const { data: activeIntegrationsData } = trpc.useQuery(["integrations.getActiveIntegrations"], {
     refetchOnWindowFocus: false
   })
-
 
   return (
     <Page title={"Invoice Generator"} description="Use the invoice generator to generate all your invoices from invoice templates." isLoading={isLoading}>
@@ -231,7 +277,6 @@ const Generator: NextPage = () => {
                       </CardBody>
                     </Card>
 
-
                     <Stack gap={6}>
                       <Flex gap={2}>
                         <Checkbox
@@ -267,7 +312,7 @@ const Generator: NextPage = () => {
 
                     </Stack>
                     <Flex justifyContent="end">
-                      <Button type="submit" colorScheme="primary" isLoading={generateInvoicesMutation.isLoading}>Generate {selectedTemplatesAmount} invoices</Button>
+                      <Button type="submit" colorScheme="primary" isLoading={generateInvoicesMutation.isLoading || validateTimeSetForTicketsMutation.isLoading}>Generate {selectedTemplatesAmount} invoices</Button>
                     </Flex>
                   </Stack>
                 </form>

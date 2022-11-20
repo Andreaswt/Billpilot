@@ -114,7 +114,7 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
             hours = item.updatedHoursSpent
         }
 
-        let lineAmount = hours * invoice.pricePerHour;
+        let lineAmount = hours * item.unitPrice;
 
         // Apply discount
         if (item.discountPercentage && item.discountPercentage > 0) {
@@ -127,7 +127,7 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
                 unitNumber: Number(invoice.economicOptions.unit)
             },
             quantity: hours,
-            unitNetPrice: invoice.pricePerHour,
+            unitNetPrice: item.unitPrice,
             discountPercentage: item.discountPercentage,
             totalNetAmount: lineAmount,
             description: item.title,

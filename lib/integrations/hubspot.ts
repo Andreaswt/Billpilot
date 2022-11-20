@@ -180,6 +180,72 @@ export const searchTickets = async (organizationId: string, companyId: string, s
     }
 }
 
+export const importTicketsFromFilters = async (organizationId: string, companyIds: string[]) => {
+    try {
+        const client = await getClient(organizationId)
+        let totalTime = 0
+
+        const filter: Filter = { propertyName: 'associations.company', operator: "IN", values: companyIds }
+        const filterGroup: FilterGroup = { filters: [filter] }
+
+        const publicObjectSearchRequest: PublicObjectSearchRequest = {
+            filterGroups: [filterGroup],
+            sorts: [],
+            properties: ['content'],
+            limit: 100,
+            after: 0,
+        }
+
+        const tickets = await client.crm.tickets.searchApi.doSearch(publicObjectSearchRequest)
+
+        tickets.results.forEach(ticket => {
+            const ticketTime = parseNumberToHours(ticket.properties["content"])
+            totalTime += ticketTime ?? 0
+        })
+
+        return totalTime
+
+    } catch (e) {
+        logger.error(e)
+        throw new Error("Error importing time from hubspot filters")
+    }
+}
+
+export const validateTimeSetForTickets = async (organizationId: string, companyIds: string[]) => {
+    try {
+        const client = await getClient(organizationId)
+
+        let response: { [ticketId: string]: { subject: string } } = {}
+
+        const filter: Filter = { propertyName: 'associations.company', operator: "IN", values: companyIds }
+        const filterGroup: FilterGroup = { filters: [filter] }
+
+        const publicObjectSearchRequest: PublicObjectSearchRequest = {
+            filterGroups: [filterGroup],
+            sorts: [],
+            properties: ['subject', 'content', 'hs_object_id'],
+            limit: 100,
+            after: 0,
+        }
+
+        const tickets = await client.crm.tickets.searchApi.doSearch(publicObjectSearchRequest)
+
+        tickets.results.forEach(ticket => {
+            const ticketTime = parseNumberToHours(ticket.properties["content"])
+
+            if (!ticketTime) {
+                response[ticket.id] = { subject: ticket.properties["subject"] }
+            }
+        })
+
+        return response
+
+    } catch (e) {
+        logger.error(e)
+        throw new Error("Error importing time from hubspot filters")
+    }
+}
+
 //==========================================//
 //   Private methods                        //
 //==========================================//
