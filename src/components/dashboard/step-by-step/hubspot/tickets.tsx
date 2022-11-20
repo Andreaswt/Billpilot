@@ -1,4 +1,4 @@
-import { Button, Center, Flex, Heading, Input, InputGroup, InputRightElement, Spinner, Text } from '@chakra-ui/react';
+import { Button, Center, Flex, Heading, Input, InputGroup, InputRightElement, Spinner, Stack, Text } from '@chakra-ui/react';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 
 import { ColumnDef, DataGrid, DataGridPagination } from '@saas-ui/pro';
@@ -16,7 +16,7 @@ interface IProps {
 interface TableRow {
     id: string
     subject: string
-    content: string
+    hoursSpent: number | null
     lastModified: string
 }
 
@@ -33,6 +33,7 @@ const Tickets = (props: IProps) => {
     const [pagination, setPagination] = useState<IPagination>({ amount: 0, total: 0 })
     const [tickets, setTickets] = useState<TableRow[]>([])
     const [pickAtLeastOneTicket, setPickAtLeastOneTicket] = useState(false)
+    const [hoursNotDefined, setHoursNotDefined] = useState(false)
 
     const [updatedHoursSpent, setUpdatedHoursSpent] = useState<{ [ticketId: string]: { updatedTimeSpent: number } }>(() => {
         let updatedHoursSpent: { [ticketId: string]: { updatedTimeSpent: number } } = {}
@@ -84,6 +85,19 @@ const Tickets = (props: IProps) => {
             return
         }
 
+        let hasHoursNotDefined = false
+        selected.forEach(index => {
+            const ticket = tickets[parseInt(index)]
+            if (!ticket.hoursSpent && (!updatedHoursSpent[ticket.id]?.updatedTimeSpent || updatedHoursSpent[ticket.id].updatedTimeSpent === 0)) {
+                hasHoursNotDefined = true
+            }
+        })
+
+        if (hasHoursNotDefined) {
+            setHoursNotDefined(true)
+            return
+        }
+
         selected.forEach((item) => {
             const rowTicket = tickets[parseInt(item)]
             const updatedHoursSpentForTicket = updatedHoursSpent[rowTicket.id]?.updatedTimeSpent
@@ -123,9 +137,9 @@ const Tickets = (props: IProps) => {
             cell: (data) => (<TableTooltip text={data.row.original.subject} />)
         },
         {
-            id: 'content',
-            header: 'Content',
-            cell: (data) => (<TableTooltip text={data.row.original.content} />)
+            id: 'hoursSpent',
+            header: 'Hours Spent',
+            cell: (data) => (<TableTooltip text={data.row.original.hoursSpent ? data.row.original.hoursSpent.toString() + " hours" : " Not set in hubspot"} />)
         },
         {
             id: 'lastModified',
@@ -236,16 +250,21 @@ const Tickets = (props: IProps) => {
                                 <Text fontSize='xs' as='i'>Loaded {pagination.amount} of {pagination.total} results total. Search to narrow results.</Text>
                             </DataGrid>
                     }
+                    <Stack gap={2} alignItems="end">
+                        {
+                            hoursNotDefined
+                                ? <Text color="red.400">Selected tickets must have hours defined in hubspot, or updated hours spent defined instead.</Text>
+                                : <></>
+                        }
+                        {
+                            pickAtLeastOneTicket
+                                ? <Text color="red.400">Pick at least 1 ticket.</Text>
+                                : <></>
+                        }
+                    </Stack>
                     <Flex justifyContent="space-between">
                         <Button mt={6} colorScheme="primary" onClick={() => setStep((step) => step - 1)}>Previous</Button>
-                        <Flex gap={2} flexDirection="column">
-                            <Button mt={6} colorScheme="primary" onClick={() => pickTickets()}>Confirm selected</Button>
-                            {
-                                pickAtLeastOneTicket
-                                    ? <Text color="red.400">Pick at least 1 ticket.</Text>
-                                    : <></>
-                            }
-                        </Flex>
+                        <Button mt={6} colorScheme="primary" onClick={() => pickTickets()}>Confirm selected</Button>
                     </Flex>
                 </Flex>
             </CardBody>

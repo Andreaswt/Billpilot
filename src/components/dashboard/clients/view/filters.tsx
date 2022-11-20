@@ -31,11 +31,30 @@ export const Filters: React.FC<Props> = (props) => {
         { searchTerm: searchTerm }],
         {
             refetchOnWindowFocus: false,
+            enabled: false
+
         });
 
+    const { data: hubspotCompanies, isLoading: hubspotCompaniesLoading, isRefetching: hubspotCompaniesRefetching, refetch: hubspotCompaniesRefetch } = trpc.useQuery([
+        "hubspot.searchCompanies",
+        { searchTerm: searchTerm }],
+        {
+            refetchOnWindowFocus: false,
+            enabled: false
+        });
 
     const { data: activeIntegrationsData } = trpc.useQuery(["integrations.getActiveIntegrations"], {
-        refetchOnWindowFocus: false
+        refetchOnWindowFocus: false,
+        onSuccess: (data) => {
+            if (data["JIRA"]) {
+                jiraProjectsRefetch()
+                setCurrentType("Projects")
+            }
+            else if (data["HUBSPOT"]) {
+                hubspotCompaniesRefetch()
+                setCurrentType("Companies")
+            }
+        }
     })
 
     const addFilter = (id: string, name: string, type: string, provider: InvoiceTemplateFilterTypes) => {
@@ -61,63 +80,102 @@ export const Filters: React.FC<Props> = (props) => {
                                 ? (!activeIntegrationsData["JIRA"] && !activeIntegrationsData["HUBSPOT"]
                                     ? <Box py={4}>
                                         <EmptyStateContainer colorScheme="primary">
-                                        <EmptyStateBody>
-                                            <EmptyStateIcon as={WarningIcon} />
-                                            <EmptyStateTitle>Filtering is not possible before integrations is set up.</EmptyStateTitle>
-                                            <EmptyStateDescription>Do you want to set it up now?</EmptyStateDescription>
-                                            <EmptyStateActions>
-                                                <Button onClick={() => router.push("/dashboard/integrations")} colorScheme="primary">Set up</Button>
-                                            </EmptyStateActions>
-                                        </EmptyStateBody>
-                                    </EmptyStateContainer>
+                                            <EmptyStateBody>
+                                                <EmptyStateIcon as={WarningIcon} />
+                                                <EmptyStateTitle>Filtering is not possible before integrations is set up.</EmptyStateTitle>
+                                                <EmptyStateDescription>Do you want to set it up now?</EmptyStateDescription>
+                                                <EmptyStateActions>
+                                                    <Button onClick={() => router.push("/dashboard/integrations")} colorScheme="primary">Set up</Button>
+                                                </EmptyStateActions>
+                                            </EmptyStateBody>
+                                        </EmptyStateContainer>
                                     </Box>
-                                    : <Grid
-                                        templateColumns='repeat(3, 1fr)'
-                                        gap={4}>
-                                        <GridItem bg="blackAlpha.300" colSpan={1}>
-                                            <Stack p={4} gap={4}>
-                                                <Heading size="md">Filter by</Heading>
-                                                <Stack>
-                                                    <Heading size="sm">Jira</Heading>
-                                                    <Divider />
-                                                    <Button onClick={() => { setCurrentType("Projects"); jiraProjectsRefetch(); }} variant={currentType === "Projects" ? "solid" : "outline"}>Projects</Button>
-                                                    {/* <Button onClick={() => { setCurrentType("Employees"); jiraEmployeesRefetch(); }} variant={currentType === "Employees" ? "solid" : "outline"}>Employees</Button> */}
-                                                </Stack>
-                                            </Stack>
-                                        </GridItem>
-                                        <GridItem py={4} mt={6} pr={4} colSpan={2}>
-                                            <Stack maxH={400} overflowY="scroll" gap={4}>
-                                                <SearchInput
-                                                    placeholder="Search"
-                                                    value={searchTerm}
-                                                    onChange={(e: any) => setSearchTerm(e.target.value)}
-                                                    onReset={() => setSearchTerm('')}
-                                                />
-                                                <Stack gap={2} flexDir="column">
-                                                    <Heading size="sm">{currentType}</Heading>
-                                                    <Divider />
-                                                    {currentType === "Projects"
-                                                        ? (jiraProjectsLoading || jiraProjectsRefetching || !jiraProjects
-                                                            ? <Loader />
-                                                            : jiraProjects.projectsResponse
-                                                                .filter(x => filter(x.id))
-                                                                .map(x => {
-                                                                    return (<Button key={x.id} onClick={() => addFilter(x.id, `${x.name} (${x.key})`, "Project", InvoiceTemplateFilterTypes.JIRAPROJECT)} colorScheme="primary">{x.name} ({x.key})</Button>)
-                                                                }))
-                                                        : null}
-                                                    {/* {currentType === "Employees"
-                                                    ? (jiraEmployeesLoading || jiraEmployeesRefetching || !jiraEmployees
-                                                        ? <Loader />
-                                                        : jiraEmployees.employeesResponse
-                                                            .filter(x => filter(x.id))
-                                                            .map(x => {
-                                                                return (<Button key={x.id} onClick={() => addFilter(x.id, x.name, "Employee", InvoiceTemplateFilterTypes.JIRAEMPLOYEE)} colorScheme="primary">{x.name}</Button>)
-                                                            }))
-                                                    : null} */}
-                                                </Stack>
-                                            </Stack>
-                                        </GridItem>
-                                    </Grid>)
+                                    : <>
+                                        {
+                                            activeIntegrationsData["JIRA"]
+                                                ? <Grid
+                                                    templateColumns='repeat(3, 1fr)'
+                                                    gap={4}>
+                                                    <GridItem bg="blackAlpha.300" colSpan={1}>
+                                                        <Stack p={4} gap={4}>
+                                                            <Heading size="md">Filter by</Heading>
+                                                            <Stack>
+                                                                <Heading size="sm">Jira</Heading>
+                                                                <Divider />
+                                                                <Button onClick={() => { setCurrentType("Projects"); jiraProjectsRefetch(); }} variant={currentType === "Projects" ? "solid" : "outline"}>Projects</Button>
+                                                                {/* <Button onClick={() => { setCurrentType("Employees"); jiraEmployeesRefetch(); }} variant={currentType === "Employees" ? "solid" : "outline"}>Employees</Button> */}
+                                                            </Stack>
+                                                        </Stack>
+                                                    </GridItem>
+                                                    <GridItem py={4} mt={6} pr={4} colSpan={2}>
+                                                        <Stack maxH={400} overflowY="scroll" gap={4}>
+                                                            <SearchInput
+                                                                placeholder="Search"
+                                                                value={searchTerm}
+                                                                onChange={(e: any) => setSearchTerm(e.target.value)}
+                                                                onReset={() => setSearchTerm('')}
+                                                            />
+                                                            <Stack gap={2} flexDir="column">
+                                                                <Heading size="sm">{currentType}</Heading>
+                                                                <Divider />
+                                                                {currentType === "Projects"
+                                                                    ? (jiraProjectsLoading || jiraProjectsRefetching || !jiraProjects
+                                                                        ? <Loader />
+                                                                        : jiraProjects.projectsResponse
+                                                                            .filter(x => filter(x.id))
+                                                                            .map(x => {
+                                                                                return (<Button key={x.id} onClick={() => addFilter(x.id, `${x.name} (${x.key})`, "Project", InvoiceTemplateFilterTypes.JIRAPROJECT)} colorScheme="primary">{x.name} ({x.key})</Button>)
+                                                                            }))
+                                                                    : null}
+                                                            </Stack>
+                                                        </Stack>
+                                                    </GridItem>
+                                                </Grid>
+                                                : null
+                                        }
+
+                                        {
+                                            activeIntegrationsData["HUBSPOT"]
+                                                ? <Grid
+                                                    templateColumns='repeat(3, 1fr)'
+                                                    gap={4}>
+                                                    <GridItem bg="blackAlpha.300" colSpan={1}>
+                                                        <Stack p={4} gap={4}>
+                                                            <Heading size="md">Filter by</Heading>
+                                                            <Stack>
+                                                                <Heading size="sm">Hubspot</Heading>
+                                                                <Divider />
+                                                                <Button onClick={() => { setCurrentType("Companies"); hubspotCompaniesRefetch(); }} variant={currentType === "Companies" ? "solid" : "outline"}>Companies</Button>
+                                                            </Stack>
+                                                        </Stack>
+                                                    </GridItem>
+                                                    <GridItem py={4} mt={6} pr={4} colSpan={2}>
+                                                        <Stack maxH={400} overflowY="scroll" gap={4}>
+                                                            <SearchInput
+                                                                placeholder="Search"
+                                                                value={searchTerm}
+                                                                onChange={(e: any) => setSearchTerm(e.target.value)}
+                                                                onReset={() => setSearchTerm('')}
+                                                            />
+                                                            <Stack gap={2} flexDir="column">
+                                                                <Heading size="sm">{currentType}</Heading>
+                                                                <Divider />
+                                                                {currentType === "Companies"
+                                                                    ? (hubspotCompaniesLoading || hubspotCompaniesRefetching || !hubspotCompanies
+                                                                        ? <Loader />
+                                                                        : hubspotCompanies.companies
+                                                                            .filter(x => filter(x.id))
+                                                                            .map(x => {
+                                                                                return (<Button key={x.id} onClick={() => addFilter(x.id, `${x.name} (${x.id})`, "Company", InvoiceTemplateFilterTypes.HUBSPOTCOMPANY)} colorScheme="primary">{x.name} ({x.id})</Button>)
+                                                                            }))
+                                                                    : null}
+                                                            </Stack>
+                                                        </Stack>
+                                                    </GridItem>
+                                                </Grid>
+                                                : null
+                                        }
+                                    </>)
                                 : <Loading />
                         }
                     </PopoverBody>

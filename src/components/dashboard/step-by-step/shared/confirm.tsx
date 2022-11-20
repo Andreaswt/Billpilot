@@ -68,7 +68,7 @@ const ConfirmInvoice = (props: IProps) => {
             const pickedTickets = store.pickedTickets.map(item => ({
                 id: item.id,
                 subject: item.subject,
-                content: item.content,
+                hoursSpent: item.hoursSpent,
                 lastModified: item.lastModified,
                 updatedHoursSpent: item.updatedHoursSpent ?? 0,
                 discountPercentage: item.discountPercentage ?? 0

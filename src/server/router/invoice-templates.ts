@@ -1,4 +1,4 @@
-import { InvoiceTemplateFilterTypes } from "@prisma/client";
+import { ApiKeyProvider, InvoiceTemplateFilterTypes } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { generateInvoices } from "../../../lib/generator";
@@ -130,14 +130,45 @@ export const invoiceTemplatesRouter = createRouter()
   })
   .query("getAll", {
     async resolve({ ctx }) {
-      return await ctx.prisma.client.findMany({
+      // If user has formerly been connected to another integration, don't return invoice tempaltes for that integration
+      // since they can't be billed now the api key doesn't exist
+      let invoiceTemplateFilterTypes: InvoiceTemplateFilterTypes[] = [];
+
+      let apiKeys = await ctx.prisma.apiKey.findMany({
+        where: {
+          organizationId: ctx.organizationId
+        },
+        select: {
+          provider: true,
+          key: true
+        }
+      })
+
+      if (apiKeys.find(x => x.provider === ApiKeyProvider.JIRA)) {
+        invoiceTemplateFilterTypes = [InvoiceTemplateFilterTypes.JIRAEMPLOYEE, InvoiceTemplateFilterTypes.JIRAPROJECT]
+      }
+
+      if (apiKeys.find(x => x.provider === ApiKeyProvider.HUBSPOT)) {
+        invoiceTemplateFilterTypes = [InvoiceTemplateFilterTypes.HUBSPOTCOMPANY]
+      }
+
+      const invoiceTemplates = await ctx.prisma.client.findMany({
         where: {
           organizationId: ctx.organizationId,
         },
         include: {
-          invoiceTemplates: true
+          invoiceTemplates: {
+            include: {
+              filters: true
+            }
+          }
         }
       })
+
+      // TODO: Only show invoice templates that have filters that are connected to an integration
+      
+
+      return invoiceTemplates
     }
   })
   .mutation("generateInvoices", {

@@ -7,6 +7,7 @@ import useInvoiceTemplatesStore from '../../../../../store/invoice-templates'
 
 interface Props {
     invoiceTemplate: InvoiceTemplate
+    defaultChecked: boolean
 }
 
 const TemplateCheckbox: React.FC<Props> = (props) => {

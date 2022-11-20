@@ -157,7 +157,7 @@ export const searchCompanies = async (organizationId: string, searchString: stri
 
 export const searchTickets = async (organizationId: string, companyId: string, searchString: string = "") => {
     try {
-        if (companyId === "") throw new Error("Emplty companyId")
+        if (!companyId) throw new Error("Empty companyId")
 
         const client = await getClient(organizationId)
 
@@ -178,4 +178,19 @@ export const searchTickets = async (organizationId: string, companyId: string, s
         logger.error(e)
         throw new Error("Error fetching companies")
     }
+}
+
+//==========================================//
+//   Private methods                        //
+//==========================================//
+export const parseNumberToHours = (hoursAsString: string) => {
+    if (hoursAsString === "") {
+        return 0
+    }
+
+    if (isNaN(Number(hoursAsString))) {
+        return null
+    }
+
+    return parseFloat(hoursAsString)
 }
