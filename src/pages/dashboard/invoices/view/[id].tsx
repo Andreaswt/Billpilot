@@ -107,7 +107,8 @@ const View: NextPage = () => {
                 </Flex>
                 {
                   data?.invoiceLines.map(x => {
-                    return (<Flex justifyContent="space-between">
+                    return (
+                    <Flex key={x.id} justifyContent="space-between">
                       <Flex w="20%">
                         {x.title}
                       </Flex>
