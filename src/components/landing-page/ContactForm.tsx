@@ -1,6 +1,6 @@
 import { Center, Flex } from '@chakra-ui/react'
 import { Section, SectionProps } from '@saas-ui/pro'
-import { Field, Form, FormLayout, SubmitButton, useSnackbar } from '@saas-ui/react'
+import { Button, Field, Form, FormLayout, SubmitButton, useSnackbar } from '@saas-ui/react'
 import { trpc } from '../../utils/trpc'
 import { SectionTitle } from './section/section-title'
 
@@ -95,7 +95,7 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
                                 placeholder="Tell us what you're thinking!"
                                 rules={{ required: true }}
                             />
-                            <SubmitButton>Send Message</SubmitButton>
+                            <Button type={"submit"}>Send Message</Button>
                         </FormLayout>
                     </Form>
                 </Flex>

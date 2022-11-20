@@ -25,8 +25,10 @@ export const contactRouter = createRouter()
                 auth: {
                     user: 'contact@billpilot.io',
                     pass: 'z@uZeNvWj.BX7P9'
-                }
+                },
+                secure: true,
             });
+
 
             var mailOptions = {
                 from: 'contact@billpilot.io',
