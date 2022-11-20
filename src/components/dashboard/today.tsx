@@ -47,7 +47,6 @@ export const Today: React.FunctionComponent<Props> = (props) => {
     rebuildReport.mutateAsync();
   }
 
-
   return (
     <>
       <SimpleGrid columns={{ md: 4, base: 2 }} gap={4}>

@@ -51,10 +51,6 @@ const SimpleCard: NextPage = () => {
 
   const now = new Date()
 
-  const { data, isLoading, isError } = trpc.useQuery(["dashboard.getDashboard", {year: now.getFullYear(), month: now.getMonth()}], {
-    refetchOnWindowFocus: false,
-  });
-
   const utils = trpc.useContext();
   const snackbar = useSnackbar()
 
@@ -67,6 +63,15 @@ const SimpleCard: NextPage = () => {
         duration: 5000,
         isClosable: true,
       })
+    }
+  });
+
+  const { data, isLoading, isError } = trpc.useQuery(["dashboard.getDashboard", {year: now.getFullYear(), month: now.getMonth()}], {
+    refetchOnWindowFocus: false,
+    onSuccess(getDashboardData) {
+      if (!getDashboardData) {
+        rebuildReport.mutate()
+      }
     }
   });
 
@@ -90,12 +95,6 @@ const SimpleCard: NextPage = () => {
     },
   ]
 
-  // useEffect(() => {
-  //   if (!rebuildReport.isLoading && data === null) {
-  //     rebuildReport.mutate();
-  //   }
-  // }, [isError, rebuildReport, data])
-
   return (
     <Page title={"Dashboard"} isLoading={isLoading}>
       <PageBody pt="8">
@@ -103,20 +102,21 @@ const SimpleCard: NextPage = () => {
         <Flex justifyContent="space-between" px={4}>
           <Flex gap={4}>
             <Flex gap={2}>
-              <IconButton icon={<FiArrowLeft />} aria-label="Previous Month" />
-              <IconButton icon={<FiArrowRight />} aria-label="Next Month" />
+              <IconButton disabled={!data?.lastMonth} icon={<FiArrowLeft />} aria-label="Previous Month" />
+              <IconButton disabled={!data?.nextMonth} icon={<FiArrowRight />} aria-label="Next Month" />
             </Flex>
             <Heading>
               {data?.month || ""} {data?.year}
             </Heading>
           </Flex>
-          <Flex gap={4}>
+          <Button onClick={() => router.push("/dashboard/generator")} colorScheme="primary">Create Invoice</Button>
+          {/* <Flex gap={4}>
             <Button onClick={() => router.push("/dashboard/generator")} colorScheme="primary">Create Invoice</Button>
             <ButtonGroup isAttached variant="outline">
               <Button>Year</Button>
               <Button isActive>Month</Button>
             </ButtonGroup>
-          </Flex>
+          </Flex> */}
         </Flex>
         <Grid
           templateColumns={['repeat(1, 1fr)', null, 'repeat(1, 1fr)']}

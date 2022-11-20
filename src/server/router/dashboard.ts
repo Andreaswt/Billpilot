@@ -60,14 +60,14 @@ export const dashboardRouter = createRouter()
 
             const dataReportSchema = z.object({
                 monthlyStatistics: z.record(
-                    z.number(),
-                    z.record(z.object({
-                        totalHoursBilled: z.number(),
-                        totalHoursBilledChange: z.number(),
-                        totalBillableHours: z.number(),
-                        totalBillableHoursChange: z.number(),
-                        uninvoicedTime: z.number()
-                    }))),
+                    z.record(
+                        z.object({
+                            totalHoursBilled: z.number(),
+                            totalHoursBilledChange: z.number(),
+                            totalBillableHours: z.number(),
+                            totalBillableHoursChange: z.number(),
+                            uninvoicedTime: z.number()
+                        }))),
                 recentInvoices: z.array(z.object({
                     id: z.string(),
                     title: z.string(),
@@ -95,11 +95,11 @@ export const dashboardRouter = createRouter()
 
             const lastMonth = input.month - 1 < 0 ? 11 : input.month - 1
             const lastMonthsYear = lastMonth < 0 ? input.year - 1 : input.year
-            const lastMonthExists = !dataReportParsed.data.monthlyStatistics[lastMonthsYear] || !dataReportParsed.data.monthlyStatistics[lastMonthsYear][lastMonth]
+            const lastMonthExists = lastMonthsYear in dataReportParsed.data.monthlyStatistics && lastMonth in dataReportParsed.data.monthlyStatistics[lastMonthsYear]
 
             const nextMonth = input.month + 1 > 11 ? 0 : input.month + 1
-            const nextMonthsYear = nextMonth > 0 ? input.year + 1 : input.year
-            const nextMonthExists = !dataReportParsed.data.monthlyStatistics[nextMonthsYear] || !dataReportParsed.data.monthlyStatistics[nextMonthsYear][nextMonthsYear]
+            const nextMonthsYear = nextMonth > 11 ? input.year + 1 : input.year
+            const nextMonthExists = nextMonthsYear in dataReportParsed.data.monthlyStatistics && nextMonthsYear in dataReportParsed.data.monthlyStatistics[nextMonthsYear]
 
             const response = {
                 ...dataReportParsed.data.monthlyStatistics[input.year][input.month],
@@ -116,18 +116,16 @@ export const dashboardRouter = createRouter()
             }
 
             return response;
-
         },
     })
-
-    // TODO validate deserialized JSON against interface, and replace column contents with rebuild report if not valid
     .mutation("rebuildReport", {
         async resolve({ ctx }) {
-            const today = new Date()
-
             const invoices = await ctx.prisma.generalInvoice.findMany({
                 where: {
                     organizationId: ctx.organizationId,
+                    client: {
+                        isNot: null
+                    }
                 },
                 select: {
                     id: true,
@@ -195,7 +193,9 @@ export const dashboardRouter = createRouter()
                 }
             } = {}
 
-            invoices.forEach((invoice) => {
+            for (let i = 0; i < invoices.length; i++) {
+                const invoice = invoices[i]
+            
                 const year = invoice.issueDate.getFullYear()
                 const month = invoice.issueDate.getMonth()
 
@@ -217,7 +217,9 @@ export const dashboardRouter = createRouter()
                 let totalBillableHours = 0;
                 let totalBillableAmount = 0;
 
-                invoice.invoiceLines.forEach((line) => {
+                for (let j = 0; j < invoice.invoiceLines.length; j++) {
+                    const line = invoice.invoiceLines[j]
+            
                     const hours = line.quantity;
                     const pricePerHour = line.unitPrice;
                     const billableAmount = hours * pricePerHour;
@@ -231,7 +233,7 @@ export const dashboardRouter = createRouter()
 
                     totalBillableAmount += billableAmount;
                     totalBillableHours += hours;
-                })
+                }
 
                 let totalHoursBilledChange = 0
                 let totalBillableHoursChange = 0
@@ -250,7 +252,21 @@ export const dashboardRouter = createRouter()
                     totalBillableHoursChange: totalBillableHoursChange,
                     uninvoicedTime: totalBillableHours - totalHoursBilled,
                 }
-            });
+            }
+
+            // If no invoices has been generated yet, create empty statistics
+            if (Object.keys(monthlyStatistics).length === 0) {
+                const now = new Date()
+
+                monthlyStatistics[now.getFullYear()] = {}
+                monthlyStatistics[now.getFullYear()][now.getMonth()] = {
+                    totalHoursBilled: 0,
+                    totalHoursBilledChange: 0,
+                    totalBillableHours: 0,
+                    totalBillableHoursChange: 0,
+                    uninvoicedTime: 0,
+                }
+            }
 
             const recentInvoices = invoices.slice(0, Math.min(invoices.length, 5)).map(item => {
                 let invoiceTotal = 0
