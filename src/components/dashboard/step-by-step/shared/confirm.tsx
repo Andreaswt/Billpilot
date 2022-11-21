@@ -20,7 +20,6 @@ const ConfirmInvoice = (props: IProps) => {
     const { setStep, invoiceType } = props
     const store = useInvoiceStore();
 
-    // Following mutation is never used? TODO: Andreas fix
     const createTicketInvoice = trpc.useMutation('invoices.createHubspotTicketInvoice', {
         onSuccess: () => {
             router.push("/dashboard")
@@ -65,14 +64,21 @@ const ConfirmInvoice = (props: IProps) => {
         }
 
         if (invoiceType === "HUBSPOT") {
-            const pickedTickets = store.pickedTickets.map(item => ({
-                id: item.id,
-                subject: item.subject,
-                hoursSpent: item.hoursSpent,
-                lastModified: item.lastModified,
-                updatedHoursSpent: item.updatedHoursSpent ?? 0,
-                discountPercentage: item.discountPercentage ?? 0
-            }))
+            const pickedTickets = store.pickedTickets.map(item => {
+                if ((item.hoursSpent === 0 || !item.hoursSpent) && item.updatedHoursSpent === 0) {
+                    throw new Error("Hours and updatedHoursSpent spent cannot be 0")
+                }
+
+                return ({
+                    id: item.id,
+                    subject: item.subject,
+                    hoursSpent: item.hoursSpent ?? 0,
+                    lastModified: item.lastModified,
+                    updatedHoursSpent: item.updatedHoursSpent ?? 0,
+                    discountPercentage: item.discountPercentage ?? 0
+                })
+
+            })
             createTicketInvoice.mutate({
                 ...invoiceInformation,
                 pickedTickets: pickedTickets,

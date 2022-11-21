@@ -121,6 +121,10 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
             lineAmount *= ((100 - item.discountPercentage) / 100)
         }
 
+        if (hours === 0) {
+            throw new Error("Hours spent on invoice line is 0." + JSON.stringify(invoice))
+        }
+
         return ({
             lineNumber: lineNumber++,
             unit: {

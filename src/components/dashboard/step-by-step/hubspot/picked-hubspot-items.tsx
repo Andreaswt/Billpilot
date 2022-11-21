@@ -27,17 +27,17 @@ const columns: ColumnDef<TableRow>[] = [
     {
         id: 'hoursSpent',
         header: 'Hours Spent',
-        cell: (data) => (<p>{<TableTooltip text={data.row.original.hoursSpent ? data.row.original.hoursSpent.toString() + " hours" : " Not set in hubspot"} />}</p>)
+        cell: (data) => (<TableTooltip text={data.row.original.hoursSpent ? data.row.original.hoursSpent.toString() + " hours" : " Not set in hubspot"} />)
     },
     {
         id: 'updatedHoursSpent',
         header: 'Updated Hours Spent',
-        cell: (data) => (<p>{data.row.original.updatedHoursSpent ? data.row.original.updatedHoursSpent + " hours" : "-"}</p>)
+        cell: (data) => (<TableTooltip text={data.row.original.updatedHoursSpent ? data.row.original.updatedHoursSpent + " hours" : "-"} />)
     },
     {
         id: 'discountPercentage',
         header: 'Percentage Discount',
-        cell: (data) => (<p>{data.row.original.discountPercentage ? data.row.original.discountPercentage + " %" : "-"}</p>)
+        cell: (data) => (<TableTooltip text={data.row.original.discountPercentage ? data.row.original.discountPercentage + " %" : "-"} />)
     },
     {
         id: 'id',
