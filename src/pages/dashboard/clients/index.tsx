@@ -1,11 +1,9 @@
 import * as React from 'react'
-import * as Yup from 'yup'
 
 import {
     BulkActionsSelections, DataGridCell, MenuProperty, ToggleButton, ToggleButtonGroup, Toolbar,
-    ToolbarButton, useColumns
+    ToolbarButton, useColumns, useDataGridFilter as getDataGridFilter
 } from '@saas-ui/pro'
-import {useDataGridFilter as getDataGridFilter} from '@saas-ui/pro'
 import {
     Button, EmptyState, Menu,
     MenuButton,
@@ -16,12 +14,11 @@ import {
 } from '@saas-ui/react'
 import { FiSliders, FiUser } from 'react-icons/fi'
 
-import { Box, Portal, Spacer, Tag, useBreakpointValue } from '@chakra-ui/react'
+import { Box, Portal, Spacer, useBreakpointValue } from '@chakra-ui/react'
 import { format } from 'date-fns'
 import { NextPage } from 'next'
-import router, { useRouter } from 'next/router'
+import router from 'next/router'
 import { AddFilterButton, filters } from '../../../components/dashboard/clients/client-filters'
-import { ClientStatuses } from '../../../components/dashboard/clients/client-statuses'
 import { InlineSearch } from '../../../components/dashboard/list-page/inline-search'
 import { ListPage } from '../../../components/dashboard/list-page/list-page'
 import { trpc } from '../../../utils/trpc'
@@ -29,29 +26,9 @@ import { trpc } from '../../../utils/trpc'
 interface Client {
     id: string
     name: string
+    pricePerHour: number
+    currency: string
     createdAt: Date
-    latestBill: Date
-    status: string
-}
-
-const billedStatus: Record<string, { label: string; color: string }> = {
-    billed: {
-        label: 'Billed',
-        color: 'green',
-    },
-    notBilled: {
-        label: 'Not billed',
-        color: 'orange',
-    },
-}
-
-const StatusCell: DataGridCell<Client> = (cell) => {
-    const status = billedStatus[cell.getValue<string>()] || billedStatus.notBilled
-    return (
-        <Tag colorScheme={status.color} size="sm">
-            {status.label}
-        </Tag>
-    )
 }
 
 const DateCell: DataGridCell<Client> = ({ cell }) => {
@@ -80,8 +57,7 @@ const ActionCell: DataGridCell<Client> = (client) => {
 const ClientsListPage: NextPage = () => {
     const [searchQuery, setSearchQuery] = React.useState('')
     const isMobile = useBreakpointValue({ base: true, lg: false })
-    const params = useRouter()
-    const { data, isLoading } = trpc.useQuery(["clients.getClients", { status: params?.query?.type as string ?? "" }]);
+    const { data, isLoading } = trpc.useQuery(["clients.getClients"]);
 
     const columns = useColumns<Client>(
         () => [
@@ -99,25 +75,19 @@ const ClientsListPage: NextPage = () => {
                 header: 'Created at',
                 cell: DateCell,
                 filterFn: getDataGridFilter('date'),
-                enableGlobalFilter: false,
             },
             {
-                id: 'latestBill',
-                header: 'Latest bill',
-                cell: (data) => (
-                    !data.row.original.latestBill
-                    ? <> - </>
-                    : DateCell
-                    ),
-                filterFn: getDataGridFilter('date'),
-                enableGlobalFilter: false,
+                id: 'pricePerHour',
+                header: 'Price Per Hour',
+                // filterFn: getDataGridFilter('number'),
+                // meta: {
+                //     isNumeric: true,
+                // },
             },
             {
-                id: 'status',
-                header: 'Status',
-                cell: StatusCell,
-                filterFn: getDataGridFilter('string'),
-                enableGlobalFilter: false,
+                id: 'currency',
+                header: 'Currency',
+                filterFn: getDataGridFilter('number'),
                 meta: {
                     isNumeric: true,
                 },
@@ -136,7 +106,7 @@ const ClientsListPage: NextPage = () => {
 
     const [visibleColumns, setVisibleColumns] = useLocalStorage(
         'clients.columns',
-        ['name', 'createdAt', 'latestBill', 'status'],
+        ['name', 'createdAt', 'pricePerHour', 'currency'],
     )
 
     const displayProperties = (
@@ -177,7 +147,6 @@ const ClientsListPage: NextPage = () => {
 
     const toolbarItems = (
         <>
-            <ClientStatuses />
             <AddFilterButton />
             <Spacer />
             <InlineSearch

@@ -159,7 +159,8 @@ const Tickets = (props: IProps) => {
                         <Input defaultValue={store.pickedTickets.find(x => x.id === data.row.original.id)?.updatedHoursSpent ?? 0} onChange={(e: any) => {
                             setUpdatedHoursSpent(prevState => {
                                 const newState = prevState;
-                                newState[data.row.original.id.toString()] = { updatedTimeSpent: parseInt(e.target.value) }
+                                const updatedTimeSpent = parseInt(e.target.value)
+                                newState[data.row.original.id.toString()] = { updatedTimeSpent: isNaN(updatedTimeSpent) ? 0 : updatedTimeSpent }
                                 return newState
                             })
                         }} min={0} type="number"></Input>
@@ -179,7 +180,8 @@ const Tickets = (props: IProps) => {
                         <Input defaultValue={store.pickedTickets.find(x => x.id === data.row.original.id)?.discountPercentage ?? 0} onChange={(e: any) => {
                             setDiscountPercentage(prevState => {
                                 const newState = prevState;
-                                newState[data.row.original.id.toString()] = { discountPercentage: parseInt(e.target.value) }
+                                const discountPercentage = parseInt(e.target.value)
+                                newState[data.row.original.id.toString()] = { discountPercentage: isNaN(discountPercentage) ? 0 : discountPercentage }
                                 return newState
                             })
                         }} min={0} max={100} type="number"></Input>
@@ -199,7 +201,7 @@ const Tickets = (props: IProps) => {
             const rowTicket = tickets[parseInt(item)]
             const updatedHoursSpentForTicket = updatedHoursSpent[rowTicket.id]?.updatedTimeSpent
 
-            let rowTotal = 0 // rowTicket.hoursSpent TODO: field not created yet
+            let rowTotal = 0
             if (updatedHoursSpentForTicket && updatedHoursSpentForTicket > 0) {
                 rowTotal = updatedHoursSpentForTicket
             }

@@ -13,7 +13,7 @@ export interface InvoiceInformationState {
     title: string,
     description: string,
     currency: string,
-    dueDate: Date,
+    dueDate: Date | null,
     roundingScheme: string,
     pricePerHour: number,
     economicOptions: {

@@ -130,7 +130,7 @@ const Generator: NextPage = () => {
     if (hubspotValidated) {
       handleSubmit(onSubmit)()
     }
-  }, [hubspotValidated, handleSubmit])
+  }, [hubspotValidated, handleSubmit, onSubmit])
 
   function onSubmit(fields: IForm) {
     if (selectedTemplatesAmount === 0) {

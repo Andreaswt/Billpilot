@@ -78,7 +78,7 @@ const InvoiceInformation = (props: IProps) => {
 
     function onSubmit(data: FormInvoiceState) {
         const dateFields = {
-            dueDate: new Date(data.invoiceInformation.dueDate),
+            dueDate: exportToEconomicField ? null : new Date(data.invoiceInformation.dueDate),
         }
 
         // We can't show customernumber, referencenumber etc in confirmation step, so the actual names are stores as well
@@ -267,6 +267,7 @@ const InvoiceInformation = (props: IProps) => {
                                                         <FormLabel htmlFor={`invoiceInformation.dueDate`}>Due Date</FormLabel>
                                                         <Flex flexDirection="column">
                                                             <Input
+                                                                disabled={exportToEconomicField}
                                                                 id='dueDate'
                                                                 type="date"
                                                                 variant="filled"
@@ -276,6 +277,7 @@ const InvoiceInformation = (props: IProps) => {
                                                                 {errors.invoiceInformation?.dueDate?.message}
                                                             </FormErrorMessage>
                                                         </Flex>
+                                                        <Text as="i" fontSize="xs">Not required if e-conomic payment terms is set.</Text>
                                                     </FormControl>
                                                     <FormLayout>
                                                         <FormControl isInvalid={!!errors.invoiceInformation?.pricePerHour}>

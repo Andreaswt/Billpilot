@@ -66,7 +66,7 @@ const View: NextPage = () => {
               >
                 <TabPanel>
                   <ErrorBoundary>
-                    Invoices
+                    Implementation pending.
                   </ErrorBoundary>
                 </TabPanel>
                 <TabPanel>

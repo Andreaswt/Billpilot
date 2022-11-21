@@ -82,19 +82,12 @@ model Worklog {
   @@unique(fields: [worklogId, organizationId], name: "organizationsWorklog")
 }
 
-enum ClientStatus {
-  BILLED
-  NOTBILLED
-}
-
 model Client {
   id             String         @id @default(cuid())
   name           String
   currency       Currency       @default(USD)
   roundingScheme RoundingScheme @default(POINTPOINT)
   createdAt      DateTime       @default(now())
-  latestBill     DateTime?
-  status         ClientStatus   @default(NOTBILLED)
   pricePerHour   Float
 
   // Options for specific providers

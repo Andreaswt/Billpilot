@@ -72,21 +72,17 @@ export const clientsRouter = createRouter()
     }
   })
   .query("getClients", {
-    input: z.object({
-      status: z.string(),
-    }),
     async resolve({ input, ctx }) {
       return await ctx.prisma.client.findMany({
         where: {
-          organizationId: ctx.organizationId,
-          ...(input.status ? { status: mapStatus(input.status)} : {}) 
+          organizationId: ctx.organizationId
         },
         select: {
           id: true,
           name: true,
           createdAt: true,
-          latestBill: true,
-          status: true
+          pricePerHour: true,
+          currency: true,
         }
       })
     }

@@ -60,7 +60,7 @@ const ConfirmInvoice = (props: IProps) => {
                 billed: false,
                 title: store.title,
                 description: store.description,
-                dueDate: store.dueDate.toString()
+                dueDate: store.dueDate ? store.dueDate.toString() : null
             },
         }
 
@@ -88,7 +88,7 @@ const ConfirmInvoice = (props: IProps) => {
                 updatedHoursSpent: item.updatedHoursSpent ?? 0,
                 discountPercentage: item.discountPercentage ?? 0
             }))
-            
+
             createIssueInvoice.mutate({
                 ...invoiceInformation,
                 pickedIssues: pickedIssues,
@@ -120,7 +120,9 @@ const ConfirmInvoice = (props: IProps) => {
                                         <Text width="50%" overflowWrap="break-word">{store.description}</Text>
                                     </Property>
                                     <Property label="Currency" value={store.currency} />
-                                    <Property label="Due Date" value={moment(store.dueDate).format("YYYY-MM-DD")} />
+                                    {store.dueDate
+                                        ? <Property label="Due Date" value={moment(store.dueDate).format("YYYY-MM-DD")} />
+                                        : null}
                                     <Property label="Rounding Scheme" value={store.roundingScheme} />
                                 </PropertyList>
                             </CardBody>
