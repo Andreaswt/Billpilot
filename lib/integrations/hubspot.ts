@@ -213,6 +213,10 @@ export const importTicketsFromFilters = async (organizationId: string, companyId
 
 export const validateTimeSetForTickets = async (organizationId: string, companyIds: string[]) => {
     try {
+        if (companyIds.length === 0) {
+            return {}
+        }
+
         const client = await getClient(organizationId)
 
         let response: { [ticketId: string]: { subject: string } } = {}

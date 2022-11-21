@@ -98,31 +98,36 @@ const Generator: NextPage = () => {
 
   const validateTimeSetForTicketsMutation = trpc.useMutation('hubspot.validateTimeSetForTickets', {
     onSuccess(ticketsData) {
-      modals.confirm({
-        title: "Time not defined for the following hubspot tickets that will be imported.",
-        body: (<>
-          {Object.keys(ticketsData).map(key => {
-            const ticket = ticketsData[key]
-            return (<Text key={key}> Subject: {ticket.subject} - Id: {key}</Text>)
-          })}
-        </>),
-        type: "custom",
-        confirmProps: {
-            colorScheme: 'red',
-            label: 'Accept',
+      if (Object.keys(ticketsData).length > 0) {
+        modals.confirm({
+          title: "Time not defined for the following hubspot tickets that will be imported.",
+          body: (<>
+            {Object.keys(ticketsData).map(key => {
+              const ticket = ticketsData[key]
+              return (<Text key={key}> Subject: {ticket.subject} - Id: {key}</Text>)
+            })}
+          </>),
+          type: "custom",
+          confirmProps: {
+              colorScheme: 'red',
+              label: 'Accept',
+            },
+          onConfirm: () => {
+  
+            snackbar({
+              title: "Submitting form.",
+              status: 'success',
+              duration: 5000,
+              isClosable: true,
+            })
+  
+            submitData()
           },
-        onConfirm: () => {
-
-          snackbar({
-            title: "Submitting form.",
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
-          })
-
-          submitData()
-        },
-      })
+        })
+      }
+      else {
+        submitData()
+      }
     },
   });
 

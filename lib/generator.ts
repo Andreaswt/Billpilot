@@ -56,7 +56,9 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
                 .filter(x => x.type === InvoiceTemplateFilterTypes.JIRAPROJECT)
                 .map(x => x.filterId)
 
-            importedTime = await importFilteredJiraTime(projectFilters, dateFrom, dateTo, organizationId)
+            if (projectFilters.length > 0) {
+                importedTime = await importFilteredJiraTime(projectFilters, dateFrom, dateTo, organizationId)
+            }
         }
 
         else if (hubspotIsActive) {
@@ -64,7 +66,9 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
                 .filter(x => x.type === InvoiceTemplateFilterTypes.HUBSPOTCOMPANY)
                 .map(x => x.filterId)
 
-            importedTime = await importTicketsFromFilters(organizationId, companiesFilters)
+            if (companiesFilters.length > 0) {
+                importedTime = await importTicketsFromFilters(organizationId, companiesFilters)
+            }
         }
 
         templateInfo[template.id] = ({ time: importedTime, formattedAmount: null, amount: null })
