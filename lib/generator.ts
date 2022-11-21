@@ -94,6 +94,8 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
                 pricePerHour: template.client.pricePerHour,
                 organizationId: organizationId,
                 clientId: clientId,
+                invoicedFrom: dateFrom,
+                invoicedTo: dateTo,
 
                 // Add E-conomic options if enabled
                 ...(economicIsActive && template.client.economicOptions ? {

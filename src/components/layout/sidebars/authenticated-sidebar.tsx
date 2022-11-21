@@ -103,7 +103,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
               />
             </NavGroup>
 
-            {!isCondensed && (
+            {/* {!isCondensed && (
               <NavGroup title="Search Invoices" isCollapsible>
                 <AppSidebarLink
                   href={"/dashboard/invoices/"}
@@ -116,7 +116,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
                   icon={<FiHash />}
                 />
               </NavGroup>
-            )}
+            )} */}
 
             <NavGroup title="Settings" isCollapsible defaultIsOpen={false}>
               <AppSidebarLink

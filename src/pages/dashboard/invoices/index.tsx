@@ -56,7 +56,7 @@ const ActionCell: DataGridCell<Invoice> = (invoice) => {
         <Box onClick={(e) => e.stopPropagation()}>
             <OverflowMenu size="xs">
                 <MenuItem onClick={async () => await mutation.mutateAsync({ invoiceId: invoice.row.original.id })}>Delete</MenuItem>
-                <MenuItem onClick={() => router.push(`/dashboard/invoices/update/${invoice.row.original.id}`)}>Edit</MenuItem>
+                {/* <MenuItem onClick={() => router.push(`/dashboard/invoices/update/${invoice.row.original.id}`)}>Edit</MenuItem> */}
             </OverflowMenu>
         </Box>
     )

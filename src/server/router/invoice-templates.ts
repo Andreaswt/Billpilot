@@ -168,7 +168,6 @@ export const invoiceTemplatesRouter = createRouter()
 
       // TODO: Only show invoice templates that have filters that are connected to an integration
       
-
       return invoiceTemplates
     }
   })

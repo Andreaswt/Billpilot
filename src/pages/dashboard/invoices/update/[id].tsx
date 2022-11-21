@@ -8,7 +8,8 @@ const Update: NextPage = () => {
     if (!clientId) router.push("/404")
 
     return (
-        <CreateUpdateClient clientId={clientId} />
+        <>Implementation pending.</> // TODO: implement
+        // <CreateUpdateClient clientId={clientId} />
     )
 }
 

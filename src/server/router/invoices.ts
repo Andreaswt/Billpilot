@@ -168,6 +168,9 @@ export const invoicesRouter = createRouter()
           invoicedTo: true,
           pricePerHour: true
         },
+        orderBy: {
+          issueDate: "desc"
+        }
       })
 
       return invoices.map(x => {
