@@ -1,7 +1,7 @@
 import { ApiKeyProvider, Currency, RoundingScheme } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { mapRoundingScheme, mapRoundingSchemeToString, mapStatusToString } from "../../../lib/helpers/invoices";
+import { mapRoundingScheme, mapRoundingSchemeToString } from "../../../lib/helpers/invoices";
 import { createInvoiceDraft, getAllCustomers, getAllEmployees, getAllLayouts, getAllPaymentTerms, getAllProducts, getAllUnits, getAllVatZones, getCustomer, getCustomerContact, getCustomerContacts, getEmployee, getLayout, getPaymentTerm, getProduct, getUnit, getVatZone } from "../../../lib/integrations/e-conomic";
 import { createRouter } from "./context";
 

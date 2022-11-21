@@ -13,8 +13,6 @@ export interface ClientSidebarProps extends PageSidebarProps {
     currency: Currency;
     roundingScheme: string;
     createdAt: Date;
-    latestBill: Date | null;
-    status: string;
     pricePerHour: number;
   }
   economicOptions?: {
@@ -51,8 +49,6 @@ export const ClientSidebar: React.FC<ClientSidebarProps> = (props) => {
           <Property label="Currency" value={client?.currency} />
           <Property label="Rounding Scheme" value={client?.roundingScheme} />
           <Property label="Created At" value={client?.createdAt.toISOString()} />
-          <Property label="Latest Bill" value={client?.latestBill ? client?.latestBill.toISOString() : "-"} />
-          <Property label="Status" value={client?.status} />
           <Property label="Price per Hour" value={Number(client?.pricePerHour)} />
         </PropertyList>
         {economicOptions

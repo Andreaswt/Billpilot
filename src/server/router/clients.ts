@@ -1,7 +1,7 @@
 import { Currency } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { mapRoundingScheme, mapRoundingSchemeToString, mapStatus, mapStatusToString } from "../../../lib/helpers/invoices";
+import { mapRoundingScheme, mapRoundingSchemeToString } from "../../../lib/helpers/invoices";
 import { getCustomer, getCustomerContact, getEmployee, getLayout, getPaymentTerm, getProduct, getUnit, getVatZone } from "../../../lib/integrations/e-conomic";
 import { createRouter } from "./context";
 
@@ -52,7 +52,6 @@ export const clientsRouter = createRouter()
       return {
         ...client,
         roundingScheme: mapRoundingSchemeToString(client.roundingScheme),
-        status: mapStatusToString(client.status),
         ...(client.economicOptions
           ? {
             economicOptions: {
