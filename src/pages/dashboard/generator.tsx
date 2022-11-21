@@ -21,7 +21,6 @@ export const getServerSideProps = requireAuth(async (ctx) => {
 const Generator: NextPage = () => {
   const store = useInvoiceTemplatesStore()
   const snackbar = useSnackbar()
-  const [hubspotValidated, setHubspotValidated] = React.useState(false)
   const modals = useModals()
 
   var date = new Date();
@@ -113,7 +112,6 @@ const Generator: NextPage = () => {
             label: 'Accept',
           },
         onConfirm: () => {
-          setHubspotValidated(true)
 
           snackbar({
             title: "Submitting form.",
@@ -121,29 +119,14 @@ const Generator: NextPage = () => {
             duration: 5000,
             isClosable: true,
           })
+
+          submitData()
         },
       })
     },
   });
 
-  useEffect(() => {
-    if (hubspotValidated) {
-      handleSubmit(onSubmit)()
-    }
-  }, [hubspotValidated, handleSubmit, onSubmit])
-
-  function onSubmit(fields: IForm) {
-    if (selectedTemplatesAmount === 0) {
-      snackbar({
-        title: "Select templates to use invoice generator.",
-        status: 'error',
-        duration: 8000,
-        isClosable: true,
-      })
-
-      return
-    }
-
+  function getInvoiceTemplateIds() {
     let invoiceTemplateIds: { clientId: string, invoiceTemplateId: string }[] = []
 
     if (store.checkAll) {
@@ -163,7 +146,35 @@ const Generator: NextPage = () => {
       })
     }
 
-    if (activeIntegrationsData && "HUBSPOT" in activeIntegrationsData && !hubspotValidated) {
+    return invoiceTemplateIds
+  }
+
+  function submitData() {
+    const invoicedDatesFrom = form.watch("invoicedDatesFrom")
+    const invoicedDatesTo = form.watch("invoicedDatesTo")
+
+    generateInvoicesMutation.mutate({
+      dateFrom: new Date(invoicedDatesFrom),
+      dateTo: new Date(invoicedDatesTo),
+      invoiceTemplateIds: getInvoiceTemplateIds()
+    })
+  }
+
+  function onSubmit(fields: IForm) {
+    if (selectedTemplatesAmount === 0) {
+      snackbar({
+        title: "Select templates to use invoice generator.",
+        status: 'error',
+        duration: 8000,
+        isClosable: true,
+      })
+
+      return
+    }
+
+    const invoiceTemplateIds = getInvoiceTemplateIds()
+
+    if (activeIntegrationsData && "HUBSPOT" in activeIntegrationsData) {
       validateTimeSetForTicketsMutation.mutate({
         invoiceTemplateIds: invoiceTemplateIds.map(x => x.invoiceTemplateId)
       })
@@ -171,13 +182,7 @@ const Generator: NextPage = () => {
       return
     }
 
-    generateInvoicesMutation.mutate({
-      dateFrom: new Date(fields.invoicedDatesFrom),
-      dateTo: new Date(fields.invoicedDatesTo),
-      invoiceTemplateIds: invoiceTemplateIds
-    })
-
-    setHubspotValidated(false)
+    submitData()
   }
 
   const selectedTemplatesAmount = useMemo(() => {
