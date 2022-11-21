@@ -18,44 +18,8 @@ const days = [1, 2, 3, 7, 14, 21, 31, 60]
 
 export const filters: FilterItem[] = [
   {
-    id: 'status',
-    label: 'Status',
-    icon: <FiCircle />,
-    type: 'enum',
-    items: [
-      {
-        id: 'BILLED',
-        label: 'Billed',
-        icon: <Badge boxSize="8px" borderRadius="full" bg="blue.400" />,
-      },
-      {
-        id: 'NOTBILLED',
-        label: 'Not billed',
-        icon: <Badge boxSize="8px" borderRadius="full" bg="green.400" />,
-      },
-    ],
-  },
-  {
     id: 'createdAt',
     label: 'Created at',
-    icon: <FiCalendar />,
-    type: 'date',
-    operators: ['after', 'before'],
-    defaultOperator: 'after',
-    items: days
-      .map((day): FilterItem => {
-        const date = startOfDay(subDays(new Date(), day))
-        return {
-          id: `${day}days`,
-          label: formatDistanceToNowStrict(date, { addSuffix: true }),
-          value: date,
-        }
-      })
-      .concat([{ id: 'custom', label: 'Custom' }]),
-  },
-  {
-    id: 'latestBill',
-    label: 'Latest bill',
     icon: <FiCalendar />,
     type: 'date',
     operators: ['after', 'before'],

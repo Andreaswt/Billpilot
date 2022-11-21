@@ -2,7 +2,7 @@
 //   Helpers and Mappers                    //
 //==========================================//
 
-import { ClientStatus, RoundingScheme } from "@prisma/client"
+import { RoundingScheme } from "@prisma/client"
 
 export const mapRoundingScheme = (roundingSchemeString: string) => {
     let roundingScheme: RoundingScheme = RoundingScheme.POINTPOINT
@@ -20,21 +20,5 @@ export const mapRoundingSchemeToString = (roundingScheme: RoundingScheme) => {
       return "2. Decimals"
     case RoundingScheme.POINTPOINTPOINT:
       return "3. Decimals"
-  }
-}
-
-export const mapStatus = (clientStatusString: string) => {
-  let status: ClientStatus = ClientStatus.NOTBILLED
-  if (clientStatusString === "billed") status = ClientStatus.BILLED
-  if (clientStatusString === "notbilled") status = ClientStatus.NOTBILLED
-  return status
-}
-
-export const mapStatusToString = (status: ClientStatus) => {
-  switch (status) {
-    case ClientStatus.NOTBILLED:
-      return "Not billed"
-    case ClientStatus.BILLED:
-      return "Billed"
   }
 }
