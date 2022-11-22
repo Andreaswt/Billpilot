@@ -126,9 +126,6 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
             throw new Error("Hours spent on invoice line is 0." + JSON.stringify(invoice))
         }
 
-        console.log("Yeet", hours)
-        console.log(roundHours(hours, invoice.roundingScheme))
-
         return ({
             lineNumber: lineNumber++,
             unit: {
