@@ -2,6 +2,7 @@ import { ApiKeyName, ApiKeyProvider } from "@prisma/client";
 import { Employee } from "xero-node";
 import { prisma } from "../../src/server/db/client";
 import { Contact, Customer, Layout, PaymentTerms, Product, SalesPerson, Unit, VatZone } from "../../types/integrations/economic";
+import { roundHours } from "../helpers/invoices";
 import { logger } from "../logger";
 
 enum httpMethod {
@@ -125,12 +126,15 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
             throw new Error("Hours spent on invoice line is 0." + JSON.stringify(invoice))
         }
 
+        console.log("Yeet", hours)
+        console.log(roundHours(hours, invoice.roundingScheme))
+
         return ({
             lineNumber: lineNumber++,
             unit: {
                 unitNumber: Number(invoice.economicOptions.unit)
             },
-            quantity: hours,
+            quantity: roundHours(hours, invoice.roundingScheme),
             unitNetPrice: item.unitPrice,
             discountPercentage: item.discountPercentage,
             totalNetAmount: lineAmount,
