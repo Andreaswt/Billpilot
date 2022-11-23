@@ -74,7 +74,7 @@ export const CreateInvoiceTemplate: React.FC<Props> = (props) => {
             return
         }
 
-        createInvoiceTemplate.mutate({ ...data, clientId: clientId, active: active, filters: filters })
+        await createInvoiceTemplate.mutateAsync({ ...data, clientId: clientId, active: active, filters: filters })
     }
 
     const removeFilter = (id: string) => {

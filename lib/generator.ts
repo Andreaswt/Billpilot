@@ -149,7 +149,7 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
         templateInfo[template.id] = { ...templateInfo[template.id], formattedAmount: formatCurrency(invoiceAmount, template.client.currency), amount: invoiceAmount }
 
         // Export to relevant integration
-        createInvoiceDraft(invoice.id, organizationId)
+        await createInvoiceDraft(invoice.id, organizationId)
     }
 
     return {

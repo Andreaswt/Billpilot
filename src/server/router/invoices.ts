@@ -276,7 +276,7 @@ export const invoicesRouter = createRouter()
       })
 
       if (input.economicOptions.exportToEconomic) {
-        createInvoiceDraft(invoice.id, ctx.organizationId)
+        await createInvoiceDraft(invoice.id, ctx.organizationId)
       }
     }
   })
@@ -356,7 +356,7 @@ export const invoicesRouter = createRouter()
       })
 
       if (input.economicOptions.exportToEconomic) {
-        createInvoiceDraft(invoice.id, ctx.organizationId)
+        await createInvoiceDraft(invoice.id, ctx.organizationId)
       }
     }
   });

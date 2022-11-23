@@ -1,7 +1,7 @@
 import { Button, Collapse, Flex, FormControl, FormErrorMessage, FormLabel, Heading, IconButton, Input, Select, Spacer, Stack, Text, Textarea } from '@chakra-ui/react';
 import { Stepper, StepperStep, useCollapse } from '@saas-ui/react';
 import { NextPage } from "next";
-import React, { useEffect } from 'react';
+import React from 'react';
 import * as Yup from 'yup';
 import useCreateInvoiceStore, { FixedPriceTimeItemsState, InvoiceState, TaxesState, TimeItemsState } from '../../../store/invoice';
 import { requireAuth } from "../../common/requireAuth";
@@ -14,17 +14,10 @@ import { Card, CardBody, FormLayout } from "@saas-ui/react";
 import { Field, Form, Formik } from "formik";
 
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
-import useJiraItemsStore, { CheckedTimeItems } from '../../../store/jiraItems';
-import FixedPriceTimeItemsForm from '../../components/dashboard/create-invoice/forms/FixedPriceTimeItemsForm';
-import TaxesForm from '../../components/dashboard/create-invoice/forms/TaxesForm';
-import TimeItemsForm from '../../components/dashboard/create-invoice/forms/TimeItemsForm';
 import moment from 'moment';
-import DiscountsForm from '../../components/dashboard/create-invoice/forms/DiscountsForm';
-import TimeItemsFormHook from '../../components/dashboard/create-invoice/forms/TimeItemsForm';
-import { useForm, useWatch } from 'react-hook-form';
-import TaxesFormHook from '../../components/dashboard/create-invoice/forms/TaxesForm';
-import useTaxDiscountStore from '../../../store/taxDiscount';
+import useJiraItemsStore, { CheckedTimeItems } from '../../../store/jiraItems';
 import FixedPriceTimeItemsFormHook from '../../components/dashboard/create-invoice/forms/FixedPriceTimeItemsFormHook';
+import TimeItemsFormHook from '../../components/dashboard/create-invoice/forms/TimeItemsForm';
 
 export const getServerSideProps = requireAuth(async (ctx) => {
     return { props: {} };
@@ -57,15 +50,6 @@ const CreateInvoice: NextPage = () => {
             }
         }
     }
-
-    // Total time in time items
-    const [totalTimeItemsTime, setTotalTimeItemsTime] = React.useState(0);
-    const [totalFixedPriceTimeItemsTime, setTotalFixedPriceTimeItemsTime] = React.useState(0);
-
-    function updateTotal() {
-        console.log(timeItemsRef.current)
-    }
-
 
     // Collapseable cards
     const { isOpen: invoiceOpen, onToggle: invoiceToggle, getCollapseProps: invoiceCollapseProps } = useCollapse({ defaultIsOpen: true })

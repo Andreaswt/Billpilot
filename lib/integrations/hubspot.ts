@@ -203,7 +203,7 @@ export const importTicketsFromFilters = async (organizationId: string, companyId
             totalTime += ticketTime ?? 0
         })
 
-        return totalTime
+        return Math.round(totalTime * 100) / 100
 
     } catch (e) {
         logger.error(e)

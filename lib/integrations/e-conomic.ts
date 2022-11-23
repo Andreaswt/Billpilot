@@ -52,8 +52,8 @@ export async function request<T>(endpoint: string, method: httpMethod, organizat
 
     if (!response.ok) {
         let errorMsg = await response.json();
-        logger.error(errorMsg);
-        throw new Error(response.statusText)
+        logger.error(JSON.stringify(errorMsg));
+        throw new Error(JSON.stringify(errorMsg))
     }
 
     return await response.json() as Promise<T>
