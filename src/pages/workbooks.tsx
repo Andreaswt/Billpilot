@@ -23,17 +23,17 @@ import { SetStateAction } from 'react'
 import { FallInPlace } from '../components/landing-page/motion/fall-in-place'
 import { IoIosArrowDown, IoIosArrowForward } from 'react-icons/io'
 
-const HubspotPage: NextPage = () => {
+const WorkbooksPage: NextPage = () => {
   const isMobile = useBreakpointValue({ base: true, md: false });
   const { toggleColorMode, colorMode } = useColorMode()
 
   return (
     <Box>
       <SEO
-        title="Billpilot - Hubspot Integration"
+        title="Billpilot - Workbooks Integration"
         description="Import hour logs from your project
         mangement software, create customizable invoices,
-        and send them to Hubspot in minutes."
+        and send them to Workbooks in minutes."
       />
       <Box position="relative" overflow="hidden">
         <Container maxW="container.xl" pt={{ base: 20, lg: 40 }} pb={{ md: 0 }}>
@@ -54,20 +54,20 @@ const HubspotPage: NextPage = () => {
                 <Box alignItems="center" justifyContent="center" pt='0px' bgGradient={colorMode === 'dark' ? 'linear(to-l, #68affb, #FFFFFF)' : 'linear(to-l, #68affb, #000)'} bgClip='text' h='max'>
 
                   <Heading size='xl' fontWeight='400'>
-                    Billpilot&apos;s Hubspot Plugin
+                    Billpilot&apos;s Workbooks Plugin
                   </Heading>
                 </Box>
               </FallInPlace>
 
               <Highlights p='0'>
-                <HighlightsItem colSpan={[1, null, 3]} title="Hubspot Solution">
+                <HighlightsItem colSpan={[1, null, 3]} title="Workbooks Solution">
                   <Text>
                     If you use {' '}
-                    <Link color='blue.500' href="https://www.Hubspot.com/">
-                      Hubspot
+                    <Link color='blue.500' href="https://www.workbooks.com/">
+                      Workbooks
                     </Link>
                     {' '} connect it with Billpilot to streamline your invoicing process.
-                    How Billpilot integrates with Hubspot?
+                    How Billpilot integrates with Workbooks?
                     We&apos;ll automatically sync all your hour logs in Billpilot, help you assign hours to clients,
                     issue invoices, and export these invoices into your accounting app.
                   </Text>
@@ -80,11 +80,11 @@ const HubspotPage: NextPage = () => {
                     </ListItem>
                     <ListItem>
                       <ListIcon as={IoCheckmarkCircle} color='primary.400' />
-                      Automate which issues are selected from Hubspot for invoicing
+                      Automate which issues are selected from Workbooks for invoicing
                     </ListItem>
                     <ListItem>
                       <ListIcon as={IoCheckmarkCircle} color='primary.400' />
-                      Sync projects and issues from Hubspot
+                      Sync projects and issues from Workbooks
                     </ListItem>
                     <ListItem>
                       <ListIcon as={IoCheckmarkCircle} color='primary.400' />
@@ -94,18 +94,18 @@ const HubspotPage: NextPage = () => {
                 </HighlightsItem>
                 <HighlightsItem title="One Click Setup" colSpan={[1, null, 1]}>
                   <Text color="muted" fontSize="lg">
-                    Integrate Billpilot and Hubspot with a simple one click login process. Sync afterwards to start Invoicing.
+                    Integrate Billpilot and Workbooks with a simple one click login process. Sync afterwards to start Invoicing.
                   </Text>
                 </HighlightsItem>
-                <HighlightsItem colSpan={[1, null, 3]} title="Billpilot Integrations for Hubspot" height="max">
+                <HighlightsItem colSpan={[1, null, 3]} title="Billpilot Integrations for Workbooks" height="max">
                   <Flex w='100%' justifyContent="center" gap={4} h={{ base: 60, md: 20}} flexDir={{ base: 'column', md: 'row'}} alignItems="center" >
 
                   <Flex align='center' justifyContent='center' width={{ base: "100%", md: "26%"}}>
                       <Image
-                        src="static/images/integrationlogos/hubspot.png"
+                        src="static/images/integrationlogos/workbooks.png"
                         style={colorMode === 'dark' ? { filter: 'brightness(0) invert(1)', minWidth: '400px' } : {minWidth: '400px'}}
-                        alt='Hubspot logo'
-                        width={150}
+                        alt='Workbooks logo'
+                        width={350}
                         height={40}
                       />
                     </Flex>
@@ -182,4 +182,4 @@ const HubspotPage: NextPage = () => {
   )
 }
 
-export default HubspotPage
+export default WorkbooksPage
