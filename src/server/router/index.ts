@@ -13,6 +13,7 @@ import { accountRouter } from "./account";
 import { clientsRouter } from "./clients";
 import { invoiceTemplatesRouter } from "./invoice-templates";
 import { dashboardRouter } from "./dashboard";
+import { workbooksRouter } from "./workbooks";
 
 export const appRouter = createRouter()
   .transformer(superjson)
@@ -26,7 +27,8 @@ export const appRouter = createRouter()
   .merge("account.", accountRouter)
   .merge("invoiceTemplates.", invoiceTemplatesRouter)
   .merge("dashboard.", dashboardRouter)
-  .merge("clients.", clientsRouter);
+  .merge("clients.", clientsRouter)
+  .merge("workbooks.", workbooksRouter);
 
 // export type definition of API
 

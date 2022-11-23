@@ -31,7 +31,7 @@ async function getAgreemenGrantToken(organizationId: string) {
     return agreemenGrantToken.value;
 }
 
-export async function request<T>(endpoint: string, method: httpMethod, organizationId: string, body: any = {}): Promise<T> {
+async function request<T>(endpoint: string, method: httpMethod, organizationId: string, body: any = {}): Promise<T> {
     let agreementGrantToken = await getAgreemenGrantToken(organizationId);
 
     let options: any = {

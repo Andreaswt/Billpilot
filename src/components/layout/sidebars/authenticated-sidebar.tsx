@@ -84,6 +84,11 @@ export const AppSidebar: React.FC<AppSidebarProps> = (props) => {
                 label="Clients"
                 icon={<BsFillPeopleFill />}
               />
+              <AppSidebarLink
+                href={"/dashboard/workbooks"}
+                label="Workbooks"
+                icon={<BsFillPeopleFill />}
+              />
             </NavGroup>
             <NavGroup title="Create Invoice From" isCollapsible>
             <AppSidebarLink
