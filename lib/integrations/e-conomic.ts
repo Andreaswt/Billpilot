@@ -2,6 +2,7 @@ import { ApiKeyName, ApiKeyProvider } from "@prisma/client";
 import { Employee } from "xero-node";
 import { prisma } from "../../src/server/db/client";
 import { Contact, Customer, Layout, PaymentTerms, Product, SalesPerson, Unit, VatZone } from "../../types/integrations/economic";
+import { roundHours } from "../helpers/invoices";
 import { logger } from "../logger";
 
 enum httpMethod {
@@ -51,8 +52,8 @@ export async function request<T>(endpoint: string, method: httpMethod, organizat
 
     if (!response.ok) {
         let errorMsg = await response.json();
-        logger.error(errorMsg);
-        throw new Error(response.statusText)
+        logger.error(JSON.stringify(errorMsg));
+        throw new Error(JSON.stringify(errorMsg))
     }
 
     return await response.json() as Promise<T>
@@ -130,7 +131,7 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
             unit: {
                 unitNumber: Number(invoice.economicOptions.unit)
             },
-            quantity: hours,
+            quantity: roundHours(hours, invoice.roundingScheme),
             unitNetPrice: item.unitPrice,
             discountPercentage: item.discountPercentage,
             totalNetAmount: lineAmount,

@@ -110,13 +110,12 @@ enum Currency {
 enum RoundingScheme {
   POINT
   POINTPOINT
-  POINTPOINTPOINT
 }
 
 model InvoiceLine {
   id String @id @default(cuid())
   title String
-  quantity Int
+  quantity Float
   unitPrice Float
   updatedHoursSpent Float
   discountPercentage Int

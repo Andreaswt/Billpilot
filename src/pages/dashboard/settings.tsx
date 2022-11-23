@@ -1,10 +1,8 @@
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import { Page, PageBody } from "@saas-ui/pro";
 
 //icons
 import { NextPage } from "next";
 import { requireAuth } from "../../common/requireAuth";
-import ApiKeyTab from "../../components/dashboard/settings/api-keys-tab";
 
 export const getServerSideProps = requireAuth(async (ctx) => {
   return { props: {} };

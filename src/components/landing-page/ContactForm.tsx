@@ -20,16 +20,6 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
     const snackbar = useSnackbar()
 
     function submitHandler(fields: PostInputs) {
-        console.log(fields)
-        
-        const handleContact = async () => {
-            const name = fields.name;
-            const company = fields.company;
-            const email = fields.email;
-            const phone = fields.phone;
-            const message = fields.message;
-        };
-
         mutation.mutate({
             name: fields.name,
             company: fields.company,

@@ -1,4 +1,3 @@
-// src/pages/api/examples.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const redirect = async (req: NextApiRequest, res: NextApiResponse) => {    

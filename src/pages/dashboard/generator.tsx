@@ -247,7 +247,7 @@ const Generator: NextPage = () => {
                       <CardBody>
                         <Section
                           title="Invoiced Dates"
-                          description="Invoced templates will import time for the chosen dates."
+                          description="Invoiced templates will import time for the chosen dates."
                           variant="annotated">
                           <Card>
                             <CardBody>

@@ -1,7 +1,7 @@
 import { ApiKeyProvider, Currency, RoundingScheme } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { mapRoundingScheme, mapRoundingSchemeToString } from "../../../lib/helpers/invoices";
+import { mapRoundingScheme, mapRoundingSchemeToString, roundHours } from "../../../lib/helpers/invoices";
 import { createInvoiceDraft, getAllCustomers, getAllEmployees, getAllLayouts, getAllPaymentTerms, getAllProducts, getAllUnits, getAllVatZones, getCustomer, getCustomerContact, getCustomerContacts, getEmployee, getLayout, getPaymentTerm, getProduct, getUnit, getVatZone } from "../../../lib/integrations/e-conomic";
 import { createRouter } from "./context";
 
@@ -33,7 +33,7 @@ export const invoicesRouter = createRouter()
       const clients = organisation.clients.map(x => x.name)
       const statuses = ["DRAFT", "SENT", "PAID", "NOCHARGE"]
       const currencies = ["USD", "DKK"]
-      const roundingSchemes = ["1. Decimal", "2. Decimals", "3. Decimals"]
+      const roundingSchemes = ["1. Decimal", "2. Decimals"]
 
       // Get active integration, so only options for active integrations are shown
       // Get optional data for integrations, if integrated
@@ -276,7 +276,7 @@ export const invoicesRouter = createRouter()
       })
 
       if (input.economicOptions.exportToEconomic) {
-        createInvoiceDraft(invoice.id, ctx.organizationId)
+        await createInvoiceDraft(invoice.id, ctx.organizationId)
       }
     }
   })
@@ -356,7 +356,7 @@ export const invoicesRouter = createRouter()
       })
 
       if (input.economicOptions.exportToEconomic) {
-        createInvoiceDraft(invoice.id, ctx.organizationId)
+        await createInvoiceDraft(invoice.id, ctx.organizationId)
       }
     }
   });

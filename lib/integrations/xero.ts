@@ -15,7 +15,7 @@ export async function getXeroClient(organizationId?: string) {
         let tokenset: TokenSet;
 
         try {
-            tokenset = await getXeroTokenset(organizationId);
+            tokenset = getXeroTokenset(organizationId);
         }
         catch (e) {
             return xero;
@@ -126,7 +126,7 @@ export async function getAccounts(organizationId: string) {
     return accounts.body.accounts;
 }
 
-async function getXeroTokenset(organizationId: string) {
+function getXeroTokenset(organizationId: string) {
     // let storedTokenset = await prisma.xeroAuthenticationKey.findUniqueOrThrow({
     //     where: {
     //         organizationId: organizationId
