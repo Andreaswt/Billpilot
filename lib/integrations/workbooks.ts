@@ -6,7 +6,7 @@ import { logger } from "../logger";
 //   Methods                                //
 //==========================================//
 export async function test(organizationId: string) {
-
+    return await request("/crm/people", httpMethod.get, organizationId, {})
 }
 
 
@@ -69,7 +69,7 @@ async function login(organizationId: string) {
     let response = await sendLoginRequest(organizationId, false);
     let responseJson = await response.json();
 
-    const sessionId = responseJson.session_id;
+    const sessionId = responseJson.session_id as string;
     if (!sessionId) throw new Error("No session id returned from Workbooks login");
 
     // If the session was expired, we need to login again without the session key
@@ -109,17 +109,19 @@ async function login(organizationId: string) {
 }
 
 async function request<T>(endpoint: string, method: httpMethod, organizationId: string, body: any = {}): Promise<T> {
-    const sessionId = login(organizationId);
+    const sessionId = await login(organizationId);
 
-    const response = await fetch(baseApiPath + "/login.api", {
+    const response = await fetch(baseApiPath + endpoint + ".api", {
         method: method,
         headers: {
+            // 'api_key': "63515-84c94-c6cb2-33828-c90e7-f9ef4-63ad9-dbbc6",
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             'cookie': `Workbooks-Session=${sessionId}`
         },
-        body: JSON.stringify(body)
+        // body: JSON.stringify(body)
     });
+    console.log(response)
 
     if (!response.ok) {
         let errorMsg = await response.json();

@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { login } from "../../../lib/integrations/workbooks";
+import { test } from "../../../lib/integrations/workbooks";
 import { createRouter } from "./context";
 
 export const workbooksRouter = createRouter()
@@ -13,6 +13,6 @@ export const workbooksRouter = createRouter()
   })
   .query("test", {
     async resolve({ input, ctx }) {
-      await login(ctx.organizationId)
+      console.log(JSON.stringify(await test(ctx.organizationId)))
     },
   });
