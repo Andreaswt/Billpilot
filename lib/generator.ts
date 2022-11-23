@@ -24,7 +24,8 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
     const economicIsActive = organization.apiKeys.find(x => x.provider === ApiKeyProvider.ECONOMIC) ? true : false
     const hubspotIsActive = organization.apiKeys.find(x => x.provider === ApiKeyProvider.HUBSPOT) ? true : false
 
-    // Create and bill all invoice templates
+    // Ensure promises have been resolved before returning
+    let createInvoiceDraftPromises: Promise<any>[] = []
 
     // Templates without time shoulsd not be billed. User is informed about this
     let templateInfo: { [templateId: string]: { time: number | null, amount: number | null, formattedAmount: string | null } } = {}
@@ -149,8 +150,10 @@ export async function generateInvoices(dateFrom: Date, dateTo: Date, invoiceIds:
         templateInfo[template.id] = { ...templateInfo[template.id], formattedAmount: formatCurrency(invoiceAmount, template.client.currency), amount: invoiceAmount }
 
         // Export to relevant integration
-        await createInvoiceDraft(invoice.id, organizationId)
+        createInvoiceDraftPromises.push(await createInvoiceDraft(invoice.id, organizationId))
     }
+
+    await Promise.all(createInvoiceDraftPromises)
 
     return {
         templateTime: templateInfo,
