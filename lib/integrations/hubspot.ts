@@ -257,10 +257,11 @@ export const parseNumberToHours = (hoursAsString: string) => {
     if (hoursAsString === "") {
         return 0
     }
-
-    if (isNaN(Number(hoursAsString))) {
-        return null
+    const returnValue = parseFloat(hoursAsString);
+    
+    if(isNaN(returnValue)) {
+        return null;
     }
 
-    return parseFloat(hoursAsString)
+    return returnValue;
 }

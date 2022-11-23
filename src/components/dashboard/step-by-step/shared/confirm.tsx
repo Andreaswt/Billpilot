@@ -72,7 +72,7 @@ const ConfirmInvoice = (props: IProps) => {
                 return ({
                     id: item.id,
                     subject: item.subject,
-                    hoursSpent: item.hoursSpent ?? 0,
+                    hoursSpent: item.hoursSpent !== null ? item.hoursSpent : 0,
                     lastModified: item.lastModified,
                     updatedHoursSpent: item.updatedHoursSpent ?? 0,
                     discountPercentage: item.discountPercentage ?? 0

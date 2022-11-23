@@ -295,7 +295,7 @@ export const invoicesRouter = createRouter()
         id: z.string(),
         subject: z.string(),
         lastModified: z.string(),
-        hoursSpent: z.number(),
+        hoursSpent: z.number().nullish(),
         updatedHoursSpent: z.number(),
         discountPercentage: z.number(),
       }).array(),
@@ -344,7 +344,7 @@ export const invoicesRouter = createRouter()
             create: input.pickedTickets.map(line => {
               return ({
                 title: line.subject,
-                quantity: line.hoursSpent,
+                quantity: line.hoursSpent ?? 0,
                 unitPrice: input.invoiceInformation.pricePerHour,
                 updatedHoursSpent: line.updatedHoursSpent,
                 discountPercentage: line.discountPercentage,
