@@ -115,6 +115,10 @@ export async function createInvoiceDraft(generalInvoiceId: string, organizationI
             hours = item.updatedHoursSpent
         }
 
+        if (item.quantity === 0 && item.updatedHoursSpent === 0) {
+            throw new Error("e-conomic.ts: quantity and updatedHoursSpent are both 0")
+        }
+
         let lineAmount = hours * item.unitPrice;
 
         // Apply discount

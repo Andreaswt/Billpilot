@@ -66,13 +66,13 @@ const ConfirmInvoice = (props: IProps) => {
         if (invoiceType === "HUBSPOT") {
             const pickedTickets = store.pickedTickets.map(item => {
                 if ((item.hoursSpent === 0 || !item.hoursSpent) && item.updatedHoursSpent === 0) {
-                    throw new Error("Hours and updatedHoursSpent spent cannot be 0")
+                    throw new Error("Hours spent and Updated Hours Spent cannot be 0")
                 }
 
                 return ({
                     id: item.id,
                     subject: item.subject,
-                    hoursSpent: item.hoursSpent !== null ? item.hoursSpent : 0,
+                    hoursSpent: item.hoursSpent,
                     lastModified: item.lastModified,
                     updatedHoursSpent: item.updatedHoursSpent ?? 0,
                     discountPercentage: item.discountPercentage ?? 0

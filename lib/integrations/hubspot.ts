@@ -255,7 +255,7 @@ export const validateTimeSetForTickets = async (organizationId: string, companyI
 //==========================================//
 export const parseNumberToHours = (hoursAsString: string) => {
     if (hoursAsString === "") {
-        return 0
+        return null
     }
     const returnValue = parseFloat(hoursAsString);
     

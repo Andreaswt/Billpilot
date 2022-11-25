@@ -76,7 +76,7 @@ export const hubspotRouter = createRouter()
         response.push({
           id: ticket.properties["hs_object_id"],
           subject: ticket.properties["subject"],
-          hoursSpent: parseNumberToHours(ticket.properties["content"]) ?? null,
+          hoursSpent: parseNumberToHours(ticket.properties["content"]),
           lastModified: new Date(ticket.properties["hs_lastmodifieddate"]).toUTCString()
         })
       })
