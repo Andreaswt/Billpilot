@@ -53,7 +53,7 @@ const siteConfig = {
   footer: {
     copyright: (
       <>
-        Billpilot Limited
+        Pilotsoftware Limited
       </>
     ),
     links: [

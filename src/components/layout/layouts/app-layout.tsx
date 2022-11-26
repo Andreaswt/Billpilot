@@ -110,7 +110,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     const { data: session, status } = useSession();
     const location = useLocation()
 
-    publicRoutes =["/", "/login", "/signup", "/terms", "/privacypolicy", "/jira", "/xero", "/hubspot", "/economic", "/integrations"]
+    publicRoutes =["/", "/login", "/signup", "/terms", "/privacypolicy", "/jira", "/xero", "/hubspot", "/economic", "/integrations", "/workbooks",]
 
     const isPublicRoute = publicRoutes.indexOf(location.pathname) !== -1
 

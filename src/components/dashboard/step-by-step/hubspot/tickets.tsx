@@ -97,16 +97,16 @@ const Tickets = (props: IProps) => {
             setHoursNotDefined(true)
             return
         }
-
+        
         selected.forEach((item) => {
             const rowTicket = tickets[parseInt(item)]
             const updatedHoursSpentForTicket = updatedHoursSpent[rowTicket.id]?.updatedTimeSpent
             const discountPercentageForTicket = discountPercentage[rowTicket.id]?.discountPercentage
-
+            
             const ticketWithEdits = { ...rowTicket, updatedHoursSpent: updatedHoursSpentForTicket ?? null, discountPercentage: discountPercentageForTicket ?? null }
             selectedData.push(ticketWithEdits)
         })
-
+        
         store.pickTickets(selectedData)
 
         setStep((state) => state + 1)
