@@ -108,6 +108,7 @@ model Client {
 enum Currency {
   USD
   DKK
+  GBP
 }
 
 enum RoundingScheme {

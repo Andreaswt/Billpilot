@@ -6,9 +6,20 @@ import { logger } from "../logger";
 //   Methods                                //
 //==========================================//
 export async function test(organizationId: string) {
-    return await request("/crm/people", httpMethod.get, organizationId, {})
+    return await request("/crm/people", httpMethod.get, organizationId)
 }
 
+export async function organisations(organizationId: string) {
+    return await request("/crm/organisations", httpMethod.get, organizationId)
+}
+
+export async function tasks(organizationId: string) {
+    return await request("/activity/tasks", httpMethod.get, organizationId)
+}
+
+export async function activities(organizationId: string) {
+    return await request("/activity/activities", httpMethod.get, organizationId)
+}
 
 //==========================================//
 //   Private Methods                        //
@@ -114,14 +125,12 @@ async function request<T>(endpoint: string, method: httpMethod, organizationId: 
     const response = await fetch(baseApiPath + endpoint + ".api", {
         method: method,
         headers: {
-            // 'api_key': "63515-84c94-c6cb2-33828-c90e7-f9ef4-63ad9-dbbc6",
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             'cookie': `Workbooks-Session=${sessionId}`
         },
-        // body: JSON.stringify(body)
+        ...(method !== httpMethod.get ? { body: JSON.stringify(body) } : {})
     });
-    console.log(response)
 
     if (!response.ok) {
         let errorMsg = await response.json();

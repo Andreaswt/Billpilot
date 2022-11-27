@@ -1,27 +1,17 @@
-import { Box, Button, Center, Container, Flex, Heading, Icon, Link, List, ListIcon, ListItem, SimpleGrid, Stack, Tag, Text, useBreakpointValue, useColorMode, VStack, Wrap } from '@chakra-ui/react'
-import { ResizeBox, Section, SectionTitle } from '@saas-ui/pro'
-import { Br, Card, CardBody } from '@saas-ui/react'
+import { Box, Container, Flex, Heading, Icon, Link, List, ListIcon, ListItem, Stack, Text, useBreakpointValue, useColorMode } from '@chakra-ui/react'
 import { NextPage } from 'next'
 import Image from 'next/image'
-import { BackgroundGradient } from '../components/landing-page/gradients/background-gradient'
+import { Autoplay, Navigation, Pagination } from "swiper"
+import { Swiper, SwiperSlide } from 'swiper/react'
 import { Highlights, HighlightsItem } from '../components/landing-page/highlights/highlights'
 import { SEO } from '../components/landing-page/seo/seo'
-import { Em } from '../components/landing-page/typography'
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Pagination, Navigation } from "swiper";
-import { FiArrowRight } from 'react-icons/fi'
 
 // Import Swiper styles
-import 'swiper/css';
-import { Logo } from '../components/landing-page/layout/logo'
-import siteConfig from '../data/config'
-import { MdCheckCircle } from 'react-icons/md'
-import { IoCheckmarkCircle } from 'react-icons/io5'
-import router from 'next/router'
-import EconomicOptions from '../components/landing-page/ikea/InvoiceOptions'
-import { SetStateAction } from 'react'
-import { FallInPlace } from '../components/landing-page/motion/fall-in-place'
 import { IoIosArrowDown, IoIosArrowForward } from 'react-icons/io'
+import { IoCheckmarkCircle } from 'react-icons/io5'
+import 'swiper/css'
+import { FallInPlace } from '../components/landing-page/motion/fall-in-place'
+import siteConfig from '../data/config'
 
 const WorkbooksPage: NextPage = () => {
   const isMobile = useBreakpointValue({ base: true, md: false });
