@@ -1,5 +1,6 @@
 import { ApiKeyName, ApiKeyProvider } from "@prisma/client";
 import { prisma } from "../../src/server/db/client";
+import { Activity, ActivityLink, Response } from "../../types/integrations/workbooks";
 import { logger } from "../logger";
 
 //==========================================//
@@ -9,8 +10,12 @@ export async function test(organizationId: string) {
     return await request("/crm/people", httpMethod.get, organizationId)
 }
 
+export async function metadata(organizationId: string) {
+    return await request("/metadata/types", httpMethod.get, organizationId)
+}
+
 export async function organisations(organizationId: string) {
-    return await request("/crm/organisations", httpMethod.get, organizationId)
+    return await request("/crm/organisations", httpMethod.get, organizationId, "?_limit=1")
 }
 
 export async function tasks(organizationId: string) {
@@ -19,6 +24,22 @@ export async function tasks(organizationId: string) {
 
 export async function activities(organizationId: string) {
     return await request("/activity/activities", httpMethod.get, organizationId)
+}
+
+export async function activityLinks(organizationId: string) {
+    return await request("/activity/activity_links", httpMethod.get, organizationId)
+}
+
+export async function organizationsActivities(organizationId: string, id: number) {
+    var activityLinkResponse = await request<Response<ActivityLink>>("/activity/activity_links", httpMethod.get, organizationId, `?_ff[]=id&_ft[]=eq&_fc[]=${id}`)
+    if (!activityLinkResponse.success) throw new Error("Failed to get activity link")
+    var activityLinks = activityLinkResponse.data.map(x => x.activity_id)
+
+    var queryString = "?" + activityLinks.map(x => `_ff[]=id&_ft[]=eq&_fc[]=${x}`).join("&")
+    var activityResponse = await request<Response<Activity>>("/activity/activities", httpMethod.get, organizationId, queryString)
+    if (!activityResponse.success) throw new Error("Failed to get activities");
+    
+    return activityResponse.data[0]
 }
 
 //==========================================//
@@ -119,10 +140,10 @@ async function login(organizationId: string) {
     return sessionId
 }
 
-async function request<T>(endpoint: string, method: httpMethod, organizationId: string, body: any = {}): Promise<T> {
+async function request<T>(endpoint: string, method: httpMethod, organizationId: string, queryString: string = "", body: any = {}): Promise<T> {
     const sessionId = await login(organizationId);
 
-    const response = await fetch(baseApiPath + endpoint + ".api", {
+    const response = await fetch(baseApiPath + endpoint + ".api" + queryString, {
         method: method,
         headers: {
             'Accept': 'application/json',
@@ -131,6 +152,9 @@ async function request<T>(endpoint: string, method: httpMethod, organizationId: 
         },
         ...(method !== httpMethod.get ? { body: JSON.stringify(body) } : {})
     });
+
+    // console.log("hehhs")
+    // console.log(response)
 
     if (!response.ok) {
         let errorMsg = await response.json();

@@ -2,7 +2,7 @@ import { Currency } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { formatCurrency } from "../../../lib/helpers/currency";
-import { activities, organisations, tasks, test } from "../../../lib/integrations/workbooks";
+import { activities, activityLinks, metadata, organisations, organizationsActivities, tasks, test } from "../../../lib/integrations/workbooks";
 import { createRouter } from "./context";
 
 export const workbooksRouter = createRouter()
@@ -21,6 +21,8 @@ export const workbooksRouter = createRouter()
         invoicedDatesTo: z.date(),
       }),
     async resolve({ input, ctx }) {
+      console.log(await organizationsActivities(ctx.organizationId, 3243));
+
       return {
         clients: [
           {
