@@ -1,12 +1,10 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
-import {
-    Text, Flex, Heading, HStack, Icon, Stack, Collapse, Box
-} from '@chakra-ui/react';
+import { Collapse, Flex, Heading, HStack, Icon, Stack, Text } from '@chakra-ui/react';
 import { Card, CardBody, Divider } from '@saas-ui/react';
 import { useState } from 'react';
-import { BsArrowReturnRight, BsFillPeopleFill } from 'react-icons/bs';
-import Job from './job';
+import { BsFillPeopleFill } from 'react-icons/bs';
 import { Client } from '../../../../types/pages/dashboard/workbooks';
+import Job from './job';
 
 const Client = (props: Client) => {
     const [showJobs, setShowJobs] = useState(false)
@@ -36,11 +34,11 @@ const Client = (props: Client) => {
                                 </Flex>
 
                                 <Flex w="75%" justifyContent="space-between">
-                                <Flex justifyContent="start" w="20%"><Text>{props.budgetedHours} Hours</Text></Flex>
-                                <Flex justifyContent="start" w="20%"><Text>{props.budget}</Text></Flex>
-                                <Flex justifyContent="start" w="20%"><Text>{props.hoursTracked} Hours</Text></Flex>
-                                <Flex justifyContent="start" w="20%"><Text>{props.cost}</Text></Flex>
-                                <Flex justifyContent="start" w="20%"><Text>{props.overUnderBudget}</Text></Flex>
+                                    <Flex justifyContent="start" w="20%"><Text>{props.budgetedHours} Hours</Text></Flex>
+                                    <Flex justifyContent="start" w="20%"><Text>{props.budget}</Text></Flex>
+                                    <Flex justifyContent="start" w="20%"><Text>{props.hoursTracked} Hours</Text></Flex>
+                                    <Flex justifyContent="start" w="20%"><Text>{props.cost}</Text></Flex>
+                                    <Flex justifyContent="start" w="20%"><Text>{props.overUnderBudget}</Text></Flex>
                                 </Flex>
                             </HStack>
 
@@ -54,17 +52,14 @@ const Client = (props: Client) => {
                             </Flex>
                         </Stack>
                         <Collapse in={showJobs}>
-                            <Flex gap={4}>
-                                <Icon mt={14} as={BsArrowReturnRight} height={6} width={6}></Icon>
-                                <Stack gap={4} w="100%">
-                                    <Divider />
-                                    {
-                                        props.jobs.map((job, index) => {
-                                            return (<Job key={index} {...job} />)
-                                        })
-                                    }
-                                </Stack>
-                            </Flex>
+                            <Stack gap={4} w="100%">
+                                <Divider label="Jobs" />
+                                {
+                                    props.jobs.map((job, index) => {
+                                        return (<Job key={index} {...job} showArrowLogo={index === 0} />)
+                                    })
+                                }
+                            </Stack>
                         </Collapse>
                     </Stack>
                 </CardBody>

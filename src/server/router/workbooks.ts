@@ -1,5 +1,6 @@
 import { Currency } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 import { formatCurrency } from "../../../lib/helpers/currency";
 import { activities, organisations, tasks, test } from "../../../lib/integrations/workbooks";
 import { createRouter } from "./context";
@@ -14,6 +15,11 @@ export const workbooksRouter = createRouter()
     return next({ ctx: { ...ctx, organizationId } })
   })
   .mutation("test", {
+    input: z
+      .object({
+        invoicedDatesFrom: z.date(),
+        invoicedDatesTo: z.date(),
+      }),
     async resolve({ input, ctx }) {
       return {
         clients: [
@@ -39,7 +45,7 @@ export const workbooksRouter = createRouter()
                 overUnderBudget: formatCurrency(200, Currency.GBP),
                 name: "John Doe",
               },
-            {
+              {
                 budgetedHours: 50,
                 budget: formatCurrency(700, Currency.GBP),
                 hoursTracked: 75,
@@ -63,7 +69,7 @@ export const workbooksRouter = createRouter()
                 overUnderBudget: formatCurrency(200, Currency.GBP),
                 name: "John Doe",
               },
-            {
+              {
                 budgetedHours: 50,
                 budget: formatCurrency(700, Currency.GBP),
                 hoursTracked: 75,

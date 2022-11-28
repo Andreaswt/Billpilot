@@ -1,18 +1,17 @@
-import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
-import {
-    Text, Flex, Heading, HStack, Icon, Stack, Collapse
-} from '@chakra-ui/react';
+import { Flex, Heading, HStack, Icon, Stack, Text } from '@chakra-ui/react';
 import { Card, CardBody } from '@saas-ui/react';
-import { useState } from 'react';
-import { BsPersonFill } from 'react-icons/bs';
-import { Employee } from '../../../../types/pages/dashboard/workbooks';
+import { BsArrowReturnRight, BsPersonFill } from 'react-icons/bs';
+import { Employee as EmployeeInterface } from '../../../../types/pages/dashboard/workbooks';
 
-const Employee = (props: Employee) => {
+interface Props extends EmployeeInterface {
+    showArrowLogo: boolean
+}
+
+const Employee = (props: Props) => {
     return (
         <Stack>
-            <HStack px={4} justifyContent="space-between">
+            <HStack ml={8} px={4} justifyContent="space-between">
                 <Text w="25%" color="gray.400">Employee</Text>
-
                 <Flex color="gray.400" w="75%" justifyContent="space-between">
                     <Flex justifyContent="start" w="20%"><Text>Budgeted Hours</Text></Flex>
                     <Flex justifyContent="start" w="20%"><Text>Budget</Text></Flex>
@@ -21,25 +20,32 @@ const Employee = (props: Employee) => {
                     <Flex justifyContent="start" w="20%"><Text>Over/Under Budget</Text></Flex>
                 </Flex>
             </HStack>
-            <Card>
-                <CardBody>
-                    <Stack>
-                        <HStack justifyContent="space-between">
-                            <Flex w="25%" gap={4}>
-                                <Icon as={BsPersonFill} width={5} height={5} />
-                                <Heading size="md">{props.name}</Heading>
-                            </Flex>
-                            <Flex w="75%" justifyContent="space-between">
-                                <Flex justifyContent="start" w="20%"><Text>{props.budgetedHours} Hours</Text></Flex>
-                                <Flex justifyContent="start" w="20%"><Text>{props.budget}</Text></Flex>
-                                <Flex justifyContent="start" w="20%"><Text>{props.hoursTracked} Hours</Text></Flex>
-                                <Flex justifyContent="start" w="20%"><Text>{props.cost}</Text></Flex>
-                                <Flex justifyContent="start" w="20%"><Text>{props.overUnderBudget}</Text></Flex>
-                            </Flex>
-                        </HStack>
-                    </Stack>
-                </CardBody>
-            </Card>
+            <Flex gap={2} alignItems="center">
+                {
+                    props.showArrowLogo
+                    ? <Icon as={BsArrowReturnRight} height={6} width={6}></Icon>
+                    : null
+                }
+                <Card ml={!props.showArrowLogo ? 8 : 0} w="100%">
+                    <CardBody>
+                        <Stack>
+                            <HStack justifyContent="space-between">
+                                <Flex w="25%" gap={4}>
+                                    <Icon as={BsPersonFill} width={5} height={5} />
+                                    <Heading size="md">{props.name}</Heading>
+                                </Flex>
+                                <Flex w="75%" justifyContent="space-between">
+                                    <Flex justifyContent="start" w="20%"><Text>{props.budgetedHours} Hours</Text></Flex>
+                                    <Flex justifyContent="start" w="20%"><Text>{props.budget}</Text></Flex>
+                                    <Flex justifyContent="start" w="20%"><Text>{props.hoursTracked} Hours</Text></Flex>
+                                    <Flex justifyContent="start" w="20%"><Text>{props.cost}</Text></Flex>
+                                    <Flex justifyContent="start" w="20%"><Text>{props.overUnderBudget}</Text></Flex>
+                                </Flex>
+                            </HStack>
+                        </Stack>
+                    </CardBody>
+                </Card>
+            </Flex>
         </Stack>
     )
 }

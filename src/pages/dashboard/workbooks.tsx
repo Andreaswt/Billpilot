@@ -10,6 +10,7 @@ import { Card, CardBody, Divider, EmptyStateBody, EmptyStateContainer, EmptyStat
 import { requireAuth } from '../../common/requireAuth';
 import Client from '../../components/dashboard/stat-report/client';
 import { trpc } from '../../utils/trpc';
+import moment from 'moment';
 
 export const getServerSideProps = requireAuth(async (ctx) => {
     return { props: {} };
@@ -17,8 +18,13 @@ export const getServerSideProps = requireAuth(async (ctx) => {
 
 const Workbooks: NextPage = () => {
     const [step, setStep] = React.useState(0);
-    const [invoicedDatesFrom, setInvoicedDatesFrom] = React.useState("");
-    const [invoicedDatesTo, setInvoicedDatesTo] = React.useState("");
+
+    var date = new Date();
+    var firstDayInMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    var lastDayInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+    const [invoicedDatesFrom, setInvoicedDatesFrom] = React.useState(moment(firstDayInMonth).format("YYYY-MM-DD"));
+    const [invoicedDatesTo, setInvoicedDatesTo] = React.useState(moment(lastDayInMonth).format("YYYY-MM-DD"));
 
     const { data, isLoading, mutateAsync } = trpc.useMutation(["workbooks.test"])
 
@@ -76,7 +82,7 @@ const Workbooks: NextPage = () => {
                         <Stack gap={4}>
                             <Flex justifyContent="space-between">
                                 <Heading>Report</Heading>
-                                <Button isLoading={isLoading} onClick={async () => await mutateAsync()} colorScheme="primary">Generate report</Button>
+                                <Button isLoading={isLoading} onClick={async () => await mutateAsync({ invoicedDatesFrom: new Date(invoicedDatesFrom), invoicedDatesTo: new Date(invoicedDatesTo) })} colorScheme="primary">Generate report</Button>
                             </Flex>
                             <Divider />
                         </Stack>
