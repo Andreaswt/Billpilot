@@ -28,5 +28,6 @@ declare namespace NodeJS {
         HUBSPOT_CLIENT_SECRET: string
         HUBSPOT_REDIRECT_URI: string
         HUBSPOT_CALLBACK_URL: string
+        HOST: string
     }
   }

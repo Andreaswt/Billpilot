@@ -79,6 +79,11 @@ const SignupPage: NextPage = () => {
                             <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
                           </FormControl>
                         </Box>
+                        <FormControl isInvalid={!errors?.organizationName?.message == false} id="organizationName" isRequired>
+                          <FormLabel>Organization name</FormLabel>
+                          <Input type="organizationName" {...register("organizationName")} />
+                          <FormErrorMessage>{errors.organizationName?.message}</FormErrorMessage>
+                        </FormControl>
                         <FormControl isInvalid={!errors?.email?.message == false} id="email" isRequired>
                           <FormLabel>Email address</FormLabel>
                           <Input type="email" {...register("email")} />

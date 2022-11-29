@@ -29,7 +29,6 @@ export const contactRouter = createRouter()
                 secure: true,
             });
 
-
             var mailOptions = {
                 from: 'contact@billpilot.io',
                 to: 'contact@billpilot.io',

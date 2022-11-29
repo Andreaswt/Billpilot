@@ -6,7 +6,13 @@ export const loginSchema = z.object({
 });
 
 export const signUpSchema = loginSchema.extend({
-  name: z.string().min(2).max(40)
+  name: z.string().min(2).max(40),
+  organizationName: z.string().min(2).max(40)
+});
+
+export const signUpInvitedUserSchema = loginSchema.extend({
+  name: z.string().min(2).max(40),
+  organizationId: z.string()
 });
 
 export type ILogin = z.infer<typeof loginSchema>;

@@ -9,30 +9,27 @@ import {
 } from '@saas-ui/react'
 
 import { SubmitHandler } from 'react-hook-form'
+import { trpc } from '../../utils/trpc'
+import { Text } from '@chakra-ui/react'
 
 export interface MembersInviteData {
-  emails: string[]
-  role?: 'admin' | 'member' | string
+  email: string
+  role?: 'member' | string
 }
 
 interface MembersInviteInputs {
-  emails: string
-  role?: 'admin' | 'member' | string
+  email: string
+  role?: 'member' | string
 }
 
 export interface MembersInviteDialogProps
   extends Omit<FormDialogProps<MembersInviteInputs>, 'onSubmit'> {
-  onInvite(data: MembersInviteData): Promise<any>
   roles?: Option[]
   requiredLabel?: string
   placeholder?: string
 }
 
 export const defaultMemberRoles = [
-  {
-    value: 'admin',
-    label: 'Admin',
-  },
   {
     value: 'member',
     label: 'Member',
@@ -42,24 +39,39 @@ export const defaultMemberRoles = [
 export function MembersInviteDialog(props: MembersInviteDialogProps) {
   const {
     onClose,
-    onInvite,
     onError,
     roles,
     defaultValues,
-    placeholder = 'example@company.com, example2@company.com',
-    requiredLabel = 'Add at least one email address.',
+    placeholder = 'example@company.com',
+    requiredLabel = 'Add an email address.',
     ...rest
   } = props
+  const [errorMessage, setErrorMessage] = React.useState<string>("")
+
+  const inviteUsersMutation = trpc.useMutation('users.inviteUsers', {
+    onSuccess() {
+
+    }
+  });
+
+  const onInvite = async (data: MembersInviteData) => {
+    const invitationResponse = await inviteUsersMutation.mutateAsync({ email: data.email })
+
+    if (!invitationResponse?.success && invitationResponse?.message) {
+      setErrorMessage(invitationResponse.message)
+      throw new Error(invitationResponse.message)
+    }
+  }
 
   const fieldRef = React.useRef(null)
 
   const onSubmit: SubmitHandler<MembersInviteInputs> = async ({
-    emails,
+    email,
     role,
   }) => {
     try {
       await onInvite?.({
-        emails: emails.split(',').map((email: string) => email.trim()),
+        email: email.trim(),
         role,
       })
 
@@ -84,12 +96,13 @@ export function MembersInviteDialog(props: MembersInviteDialogProps) {
     >
       <FormLayout>
         <Field
-          name="emails"
+          name="email"
           type="textarea"
           placeholder={placeholder}
           rules={{ required: requiredLabel }}
           ref={fieldRef}
         />
+        <Text fontSize="sm" color="red.400">{errorMessage.length > 0 ? errorMessage : null}</Text>
         <Field label="Role" name="role" type="select" options={roleOptions} />
       </FormLayout>
     </FormDialog>

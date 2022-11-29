@@ -15,6 +15,7 @@ datasource db {
 model Organization {
     id String @id @default(cuid())
     users User[]
+    userInvitations UserInvitation[]
     name String?
     description String?
     createdAt DateTime @default(now())
@@ -36,6 +37,15 @@ model Organization {
     invoiceTemplateFixedPriceTimeItem InvoiceTemplateFixedPriceTimeItem[]
 
     dashboardReports DashboardIndex[]
+}
+
+model UserInvitation {
+  id String @id @default(cuid())
+  email String
+  expires DateTime
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  @@unique(fields: [organizationId, email], name: "organizationsUserInvitation")
 }
 
 enum ApiKeyProvider {
@@ -226,6 +236,17 @@ model InvoiceTemplateFixedPriceTimeItem {
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
+model DashboardIndex {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reportJson String @db.Text
+
+  // Relations
+  organizationId String       @unique
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
 
 // Necessary for Next auth
 model Account {
@@ -282,16 +303,4 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-}
-
-model DashboardIndex {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  reportJson String @db.Text
-
-  // Relations
-  organizationId String       @unique
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
