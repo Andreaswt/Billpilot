@@ -6,6 +6,7 @@ import {
   FormLayout,
   Field,
   Option,
+  useSnackbar,
 } from '@saas-ui/react'
 
 import { SubmitHandler } from 'react-hook-form'
@@ -48,9 +49,19 @@ export function MembersInviteDialog(props: MembersInviteDialogProps) {
   } = props
   const [errorMessage, setErrorMessage] = React.useState<string>("")
 
-  const inviteUsersMutation = trpc.useMutation('users.inviteUsers', {
-    onSuccess() {
+  const snackbar = useSnackbar()
 
+  const inviteUsersMutation = trpc.useMutation('users.inviteUser', {
+    onSuccess() {
+      snackbar({
+        title: "Invitation successfully sent",
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      })
+    },
+    onError() {
+      setErrorMessage("Invalid email address.")
     }
   });
 
@@ -59,7 +70,9 @@ export function MembersInviteDialog(props: MembersInviteDialogProps) {
 
     if (!invitationResponse?.success && invitationResponse?.message) {
       setErrorMessage(invitationResponse.message)
-      throw new Error(invitationResponse.message)
+    }
+    else {
+      onClose()
     }
   }
 
@@ -74,8 +87,6 @@ export function MembersInviteDialog(props: MembersInviteDialogProps) {
         email: email.trim(),
         role,
       })
-
-      onClose()
     } catch (e: any) {
       onError?.(e)
     }

@@ -3,7 +3,7 @@ import sha256 from "crypto-js/sha256";
 import { omit } from "lodash";
 import * as nodemailer from 'nodemailer';
 import { z } from "zod";
-import { signUpInvitedUserSchema, signUpSchema } from "../../common/validation/auth";
+import { signUpInvitedUserEndpointSchema, signUpSchema } from "../../common/validation/auth";
 import { prisma } from "../db/client";
 import { createRouter } from "./context";
 
@@ -81,12 +81,13 @@ export const usersRouter = createRouter()
         id: z.string(),
       }),
     async resolve({ ctx, input }) {
-      return await ctx.prisma.userInvitation.findUniqueOrThrow({
+      const userInvitation = await ctx.prisma.userInvitation.findUniqueOrThrow({
         where: {
           id: input.id
         },
         select: {
           email: true,
+          expires: true,
           organization: {
             select: {
               name: true,
@@ -94,36 +95,46 @@ export const usersRouter = createRouter()
           }
         }
       })
+
+      if (userInvitation.expires < new Date()) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invitation expired" });
+      }
+
+      return userInvitation
     },
   })
   .mutation("createInvitedUser", {
-    input: signUpInvitedUserSchema,
+    input: signUpInvitedUserEndpointSchema,
     async resolve({ ctx, input }) {
-      const { name, email, password, organizationId } = input;
+      const { name, password, invitationId } = input;
 
-      const exists = await ctx.prisma.user.findFirst({
-        where: { email },
+      const userInvitation = await ctx.prisma.userInvitation.findUnique({
+        where: { id: invitationId },
       });
 
-      if (exists) {
+      if (!userInvitation) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "User already exists.",
+          message: "User invitation doesn't exist.",
         });
       }
+
+      await ctx.prisma.userInvitation.delete({
+        where: { id: invitationId },
+      });
 
       let hashedPassword = sha256(password).toString();
 
       const organization = await prisma.organization.findUniqueOrThrow({
         where: {
-          id: organizationId
+          id: userInvitation.organizationId
         }
       })
 
       const user = await prisma.user.create({
         data: {
           name: name,
-          email: email,
+          email: userInvitation.email,
           password: hashedPassword,
           organizationId: organization.id
         },
@@ -144,10 +155,10 @@ export const usersRouter = createRouter()
     }
     return next({ ctx: { ...ctx, organizationId } })
   })
-  .mutation("inviteUsers", {
+  .mutation("inviteUser", {
     input: z
       .object({
-        email: z.string(),
+        email: z.string().email(),
       }),
     async resolve({ ctx, input }) {
       const existingUser = await prisma.user.findFirst({
