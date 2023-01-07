@@ -15,13 +15,14 @@ import Link from "next/link";
 import { useEffect } from "react";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en.json";
+import Script from "next/script";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
   const router = useRouter();
-  
+
   return (
     <SaasProvider linkComponent={Link} theme={landingPageTheme}>
       <SessionProvider session={session} refetchInterval={0}>
@@ -29,6 +30,15 @@ const MyApp: AppType<{ session: Session | null }> = ({
           <AppLayout>
             <NProgressNextRouter router={router} />
             <Component {...pageProps} />
+            <Script src="https://scripts.simpleanalyticscdn.com/latest.js" />
+            <noscript>
+              {/* eslint-disable @next/next/no-img-element */}
+              <img
+                src="https://queue.simpleanalyticscdn.com/noscript.gif"
+                alt=""
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </noscript>
           </AppLayout>
         </ModalsProvider>
       </SessionProvider>
